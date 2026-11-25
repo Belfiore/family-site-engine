@@ -91,7 +91,7 @@ concurrency:
 
 jobs:
   site:
-    uses: Belfiore/family-site-engine/.github/workflows/build-site.yml@v1
+    uses: Belfiore/family-site-engine/.github/workflows/build-site.yml@v1.0.0
     with:
       engine-version: ${{ inputs.engine-version || '' }}
       # the site's own checks, run against the build before it is published (optional)
@@ -100,6 +100,7 @@ jobs:
 ```
 
 - `branches` is the branch the live site comes from. Only that branch should publish.
+- `@v1.0.0` is the release whose build workflow the site uses. It only changes when a release changes that workflow (see [releases](releasing.md)); the engine version the site builds with comes from its channel.
 - The four `permissions` are what publishing needs: `pages` and `id-token` to publish, and `actions: read` so the publishing step can find the built site it was handed.
 - If the site's files are in a folder of the repository rather than at the top, add `site-dir: that-folder`.
 - `site-tests` are run from the site folder with `DIST` set to the built site. A test can find the build with `process.env.DIST`.

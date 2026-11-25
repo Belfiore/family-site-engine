@@ -1,13 +1,14 @@
-# Makes a release when a version tag (v1.2.0) is pushed: runs every check, makes sure VERSION says the same
-# version as the tag, and publishes a GitHub release with that version's notes from CHANGELOG.md.
+# Runs when a release is published on GitHub (Releases > Draft a new release, with a new tag vX.Y.Z on main):
+# runs every check against the tagged commit, makes sure VERSION says the same version as the tag, and puts
+# that version's notes from CHANGELOG.md on the release.
 #
 # A release reaches no site by itself. Sites take it when channels.json points their channel at it
 # (see docs/releasing.md), which notify-sites.yml then tells them about.
 name: Release
 
 on:
-  push:
-    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+  release:
+    types: [published]
 
 permissions:
   contents: read
@@ -21,15 +22,17 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      TAG: ${{ github.event.release.tag_name }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: The tag and VERSION agree
         run: |
-          tag="${GITHUB_REF_NAME#v}"
+          tag="${TAG#v}"
           file="$(tr -d '[:space:]' < VERSION)"
           if [ "$tag" != "$file" ]; then
-            echo "::error::The tag says $tag but VERSION says $file. Fix VERSION, then tag again."
+            echo "::error::The release's tag says $tag but VERSION says $file. Delete this release and its tag, fix VERSION on main, then make the release again."
             exit 1
           fi
 
@@ -37,14 +40,14 @@ jobs:
         run: |
           python3 - <<'PY'
           import os, re
-          v = os.environ['GITHUB_REF_NAME'].lstrip('v')
+          v = os.environ['TAG'].lstrip('v')
           text = open('CHANGELOG.md', encoding='utf-8').read()
           m = re.search(r'^## ' + re.escape(v) + r'\b.*?$(.*?)(?=^## |\Z)', text, re.S | re.M)
           notes = m.group(1).strip() if m else 'See CHANGELOG.md.'
           open('release-notes.md', 'w', encoding='utf-8').write(notes + '\n')
           PY
 
-      - name: Publish the release
+      - name: Put the notes on the release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file release-notes.md --verify-tag
+        run: gh release edit "$TAG" --notes-file release-notes.md

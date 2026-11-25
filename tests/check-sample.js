@@ -171,7 +171,9 @@ function serve() {
     section('Family map');
     {
         const page = await open('map.html');
-        await page.waitForTimeout(3000);
+        // the map lays itself out once its data has loaded; on a slow machine that takes a while
+        await page.waitForFunction(() => /Beyond/.test((document.getElementById('beyondBtn') || {}).textContent || ''), null, { timeout: 30000 }).catch(() => {});
+        await page.waitForTimeout(500);
         const m = await page.evaluate(() => ({
             beyond: (document.getElementById('beyondBtn') || {}).textContent,
             families: [...document.querySelectorAll('#famSel option')].map(o => o.value),

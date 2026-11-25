@@ -26,26 +26,16 @@ Each site follows one channel (`engine.channel` in its `site.config.json`). A re
 
 1. Make the change on a branch, with checks, and open a pull request. The **Checks** workflow runs the build checks and the sample site in a browser.
 2. Add the change to `CHANGELOG.md` under the new version, and set `VERSION` to it. Merge.
-3. Tag the merge and push the tag:
+3. Publish the release on GitHub: **Releases > Draft a new release**, **Choose a tag**, type the new version (`v1.1.0`) and pick **Create new tag on publish**, leave the target as `main`, give it the same title, and **Publish release**. A release is a person's decision: the engine never makes one by itself.
 
-   ```sh
-   git tag v1.1.0 && git push origin v1.1.0
-   ```
-
-   The **Release** workflow runs every check again, makes sure the tag and `VERSION` agree, and publishes a GitHub release with the notes from `CHANGELOG.md`. No site changes yet.
+   The **Release** workflow then runs every check against the tagged commit, makes sure the tag and `VERSION` agree, and puts the notes from `CHANGELOG.md` on the release. No site changes yet.
 4. Move `canary` to the new version in `channels.json` on `main`. The **Tell the sites** workflow sends every site in `sites.json` a rebuild request; the canary sites build with the new version, the rest rebuild with the version they already had.
 5. Check the canary sites: their **Actions** runs passed, and the pages look right.
 6. Move `beta`, check, then `stable`, the same way.
 
-### The workflow tag
+### The build workflow
 
-Sites call the build workflow as `build-site.yml@v1`, so changes to that file reach every site at once, whatever its channel. Keep that file small and its changes rare and backward compatible. After changing it, move the `v1` tag to the release that has the change, once the canary sites have run it:
-
-```sh
-git tag -f v1 v1.1.0 && git push -f origin v1
-```
-
-A change to the workflow that sites have to act on is a new major tag (`v2`), which sites move to in their own `deploy.yml`.
+Each site names the release whose build workflow it uses: `build-site.yml@v1.0.0` in its `deploy.yml` and `check.yml`. That file decides how a site is checked and published, so a change to it does not reach a site through its channel: when a release changes `build-site.yml`, update the tag in each site's two workflows by pull request, canary sites first. Keep the file small and its changes rare. Most releases leave it alone, and the version of the engine a site builds with still comes from its channel.
 
 ### The token that tells the sites
 
@@ -63,7 +53,7 @@ Save it in this repository under **Settings > Secrets and variables > Actions** 
 - **One site, until further notice**: set `engine.version` in its `site.config.json` to the last good version. Remove it once the fix is out.
 - **Every site on a channel**: set that channel back to the last good version in `channels.json`. The sites are told and rebuild with it.
 
-A release is never deleted or re-tagged: a fix is a new release.
+A release that is in use is never deleted or re-tagged: a fix is a new release.
 
 ## Before a release, check
 
