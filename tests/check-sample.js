@@ -63,13 +63,14 @@ check(!/[\u2013\u2014]/.test(JSON.stringify(kb)), 'no em or en dashes in the ind
 
 // ------------------------------------------------------------------ the pages, in a browser
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.pbf': 'application/x-protobuf', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml' };
-function serve() {
+function serve(dir) {
+    dir = dir || DIST;
     return new Promise(res => {
         const srv = http.createServer((req, rsp) => {
             let p = decodeURIComponent(req.url.split('?')[0].split('#')[0]);
             if (p.endsWith('/')) p += 'index.html';
-            const f = path.join(DIST, p);
-            if (!f.startsWith(DIST) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { rsp.writeHead(404); return rsp.end('not found'); }
+            const f = path.join(dir, p);
+            if (!f.startsWith(dir) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { rsp.writeHead(404); return rsp.end('not found'); }
             rsp.writeHead(200, { 'content-type': TYPES[path.extname(f).toLowerCase()] || 'application/octet-stream' });
             fs.createReadStream(f).pipe(rsp);
         });
@@ -193,6 +194,50 @@ function serve() {
         check(susan, 'living people are on the map like anyone else');
         check(!page.errors.length, 'no page errors', page.errors.join(' | '));
         await page.context().close();
+    }
+
+    section('A map with no places yet');
+    {
+        // a copy of the sample whose places.json has no places, though people.json still names places
+        const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'engine-empty-map-'));
+        const site = path.join(tmp, 'site'), out = path.join(tmp, '_site');
+        fs.cpSync(path.join(ROOT, 'sample'), site, { recursive: true });
+        fs.writeFileSync(path.join(site, 'data', 'places.json'), JSON.stringify({ meta: { note: 'No places yet.' }, places: [] }) + '\n');
+        cp.execFileSync('python3', [path.join(ROOT, 'build', 'build_site.py'), '--site', site, '--out', out], { stdio: 'ignore' });
+        const srv2 = await serve(path.resolve(out));
+        const base = 'http://127.0.0.1:' + srv2.address().port + '/';
+        for (const [w, h] of [[1440, 900], [390, 844]]) {
+            const ctx = await browser.newContext({ viewport: { width: w, height: h }, isMobile: w < 800, hasTouch: w < 800 });
+            await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, r => r.abort());
+            const page = await ctx.newPage();
+            const errors = [];
+            page.on('pageerror', e => errors.push(e.message));
+            // asking for Timeline in the address must still open Explore on an empty map
+            await page.goto(base + 'map.html?mode=timeline', { waitUntil: 'load' });
+            await page.waitForFunction(() => window.FM && window.FM.ready, null, { timeout: 30000 }).catch(() => {});
+            await page.waitForTimeout(600);
+            const m = await page.evaluate(() => {
+                const shown = id => { const e = document.getElementById(id); return !!e && e.offsetParent !== null && getComputedStyle(e).visibility !== 'hidden'; };
+                const c = window.FM.map ? window.FM.map.getCenter() : null, b = (window.FamilySite.map.home || {}).bounds;
+                return {
+                    note: shown('emptyNote') ? document.getElementById('emptyText').textContent : null,
+                    years: shown('yearsBox'), person: shown('personBox'), list: shown('listOpen'), modes: shown('modeSwitch'),
+                    mode: document.getElementById('fm').dataset.mode,
+                    framed: !!(c && b && c.lng > b[0][0] && c.lng < b[1][0] && c.lat > b[0][1] && c.lat < b[1][1]),
+                    tray: (document.getElementById('trayBtn') || {}).textContent || ''
+                };
+            });
+            check(m.note === 'No places are on the map yet.', w + 'px: the empty map says so, in the default words', m.note);
+            check(!m.years && !m.person && !m.list && !m.modes, w + 'px: no years slider, Timeline, list or person search', JSON.stringify(m));
+            check(m.mode === 'explore', w + 'px: a link to Timeline opens Explore', m.mode);
+            check(m.framed, w + 'px: the map frames the home region');
+            check(/Not yet on the map: \d+/.test(m.tray), w + 'px: dated facts wait in "Not yet on the map"', m.tray);
+            check(!errors.length, w + 'px: no page errors', errors.join(' | '));
+            await shot(page, 'map-empty-' + w);
+            await ctx.close();
+        }
+        srv2.close();
+        fs.rmSync(tmp, { recursive: true, force: true });
     }
 
     section('Stuart\'s page and button');

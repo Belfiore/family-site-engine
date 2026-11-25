@@ -1,6 +1,6 @@
 {
   "name": "family-site-engine",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "The shared engine behind the family history sites: the family tree, the family map and Stuart, the family archivist.",
   "license": "UNLICENSED",

@@ -36,6 +36,10 @@ Living people are on the map like anyone else, with whatever their record holds.
 
 Dates: an exact day or month is kept as it is; a season becomes its quarter; "about", "probably" and "likely" mark a date as approximate; ranges and decades keep both ends. The timeline plays an approximate or ranged date at its earliest possible point and lights its range bar while the playhead is inside it.
 
+## A map with no places yet
+
+A site can turn the map on before its places are collected, with `{ "places": [] }` in `places.json`. The map then opens on the home region with a short note in the site's own words (`map.emptyNote`, default "No places are on the map yet."), keeps the key and the "Not yet on the map" list, and leaves out the years, Timeline, "View as list" and the person search, which have nothing to work on. A person whose facts already name a place (`placeId`) is fine: the build warns once that `places.json` does not have those places yet, and the dated facts wait in "Not yet on the map".
+
 ## Drawing places
 
 Each place's `drawAs`:

@@ -185,11 +185,13 @@ def validate_site(site, cfg):
                 elif k in ('sourceId',) and v and v not in sources:
                     warnings.append('%s: cites %s, which is not in sources.json' % (path, v))
                 elif k in ('placeId', 'fromPlaceId', 'toPlaceId') and v and ldoc is not None and v not in places:
-                    warnings.append('%s: place %s is not in places.json' % (path, v))
+                    if places: warnings.append('%s: place %s is not in places.json' % (path, v))
+                    else: unplaced.setdefault(v, []).append(path)   # a map with no places yet: one warning below
                 else:
                     walk(v, path + '.' + k, pid)
         elif isinstance(o, list):
             for i, v in enumerate(o): walk(v, '%s[%d]' % (path, i), pid)
+    unplaced = {}
     for pid, p in by.items():
         walk(p, pid, pid)
         for fn in re.findall(r'\[\^([a-z0-9-]+)\]', p.get('story') or ''):
@@ -202,6 +204,10 @@ def validate_site(site, cfg):
                 f = m.get(k)
                 if f and not re.match(r'^(https?:)?//', f) and not os.path.exists(os.path.join(site, f)):
                     warnings.append('%s.media[%d].%s: %s is not in the site' % (pid, i, k, f))
+    if unplaced:
+        n = sum(len(v) for v in unplaced.values())
+        warnings.append('places.json has no places yet, but %d fact%s name%s a place (%s); the map cannot show %s until places.json has %s'
+                        % (n, '' if n == 1 else 's', 's' if n == 1 else '', ', '.join(sorted(unplaced)), 'it' if n == 1 else 'them', 'it' if len(unplaced) == 1 else 'them'))
     if ldoc:
         for pl in ldoc.get('places') or []:
             for e in pl.get('events') or []:

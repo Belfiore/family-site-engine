@@ -221,6 +221,12 @@ body.map-body { overflow: hidden; height: 100vh; height: 100dvh; background: var
 .fm-chip[hidden] { display: none; }
 .fm-note { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 40; max-width: min(560px, 90vw); background: var(--fm-ink); color: #fff; font-family: var(--font-accent); font-size: .95rem; padding: .55rem 1rem; border-radius: 8px; box-shadow: var(--fm-shadow-lift); }
 .fm[data-mode="timeline"] .fm-note { bottom: calc(var(--fm-tl-h, 170px) + 14px); }
+/* a map with no places yet: a short note in the site's words (map.emptyNote), over the home region */
+.fm-empty { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 8; pointer-events: none; max-width: min(440px, calc(100% - 48px)); padding: 1.1rem 1.4rem; text-align: center; background: var(--fm-paper); color: var(--fm-ink); border: 1px solid var(--fm-rule); border-radius: 10px; box-shadow: var(--fm-shadow-lift); font-family: var(--font-accent); font-size: 1.05rem; line-height: 1.45; }
+.fm-empty[hidden] { display: none; }
+.fm-empty p { margin: 0; }
+.fm-years[hidden] { display: none; }
+.fm.is-empty #yearsBox, .fm.is-empty #personBox, .fm.is-empty #listOpen, .fm.is-empty #modeSwitch { display: none; }
 .fm-edition { position: absolute; left: 12px; bottom: 28px; z-index: 6; background: rgba(255,253,249,.94); border: 1px solid var(--fm-rule); border-radius: 6px; padding: .3rem .6rem; font-family: var(--font-accent); font-size: .82rem; color: var(--fm-ink-2); max-width: 300px; line-height: 1.3; }
 .fm-edition a { color: var(--fm-muted); }
 .fm[data-mode="timeline"] .fm-edition { bottom: calc(var(--fm-tl-h, 170px) + 12px); }

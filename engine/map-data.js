@@ -275,7 +275,8 @@
         peopleDoc.people.forEach(function (p) {
             if (!visible(p.id) || (orkney[p.id] && !KEEP[p.id]) || placeholder[p.id]) return;
             function un(ref, f, type, what) {
-                if (!f || f.placeId) return;
+                // a fact whose place is not in places.json yet (none are, on a new map) waits in the tray with the rest
+                if (!f || (f.placeId && places[f.placeId])) return;
                 var disp = factDisplay(ref, f);
                 if (!disp && !f.date) return;
                 var d = factDates(ref, f);

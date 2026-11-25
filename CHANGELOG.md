@@ -2,6 +2,12 @@
 
 Each release, newest first. A major version says what a site has to change.
 
+## 1.0.2
+
+- **A map with no places yet says so.** A site can have the family map before its places are collected (`"places": []`). The map opens on the home region with a short note in the site's own words, the new setting `map.emptyNote` (default "No places are on the map yet."), and leaves out the years slider, Timeline, "View as list" and the person search until there are places. It used to open on an empty map with a slider reading "50 to 50".
+- **Facts whose place is not in `places.json` yet** go to "Not yet on the map" instead of disappearing from the map altogether. While `places.json` has no places, the data checker gives one warning for all of them instead of one per fact; the build carries on as before.
+- **New check:** a copy of the sample with no places shows the note, hides the controls, frames the home region and has no page errors.
+
 ## 1.0.1
 
 - **Stuart takes a site's own words.** `stuart.synonyms` in a site's settings adds words Stuart treats as alike when he searches the story pages (`{ "earl": ["orkney"] }`). The two words that only made sense for the FitzMaurice and Andrews family (Orkney, the Evening News) moved out of the engine into that site's settings.
