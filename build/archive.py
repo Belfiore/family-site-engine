@@ -491,7 +491,7 @@ def build():
         'pages': {'home': HOMEP, 'tree': pages_cfg.get('tree'), 'map': pages_cfg.get('map'), 'ask': pages_cfg.get('ask')},
     }
     for k in ('overviewSections', 'overviewFallback', 'overviewFollowups', 'warFollowups', 'stories', 'helpExample', 'photos',
-              'wordlikeNames', 'familyNames'):
+              'wordlikeNames', 'familyNames', 'synonyms'):
         if st.get(k) is not None: site[k] = st[k]
     kb = {'schema': SCHEMA, 'title': ((CFG.get('site') or {}).get('name') or 'Family') + ' family archive', 'site': site,
           'counts': {'people': len(people), 'living': len(living_ids), 'sections': len(sections), 'photos': len(photos),

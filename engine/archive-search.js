@@ -34,7 +34,7 @@
         photo: ['photograph', 'portrait', 'picture'], photos: ['photograph', 'portrait'], picture: ['photograph', 'portrait'], pictures: ['photograph'],
         document: ['record', 'register', 'certificate', 'census'], documents: ['record', 'register', 'certificate', 'census'],
         certificate: ['register', 'index', 'record'], records: ['register', 'census', 'record'], census: ['household', 'enumerated'],
-        newspaper: ['cutting', 'clipping', 'paper', 'evening news'], cutting: ['newspaper', 'clipping'], earl: ['orkney', 'earldom'],
+        newspaper: ['cutting', 'clipping', 'paper'], cutting: ['newspaper', 'clipping'], earl: ['earldom'],
         school: ['scholar', 'pupil'], money: ['estate', 'probate', 'effects'], will: ['probate', 'estate'], church: ['parish', 'baptised', 'married'],
         father: ['dad'], mother: ['mum'], dad: ['father'], mum: ['mother'], mom: ['mother'], kids: ['children'], children: ['child', 'son', 'daughter']
     };
@@ -226,7 +226,11 @@
     }
 
     // ------------------------------------------------------------------ passages (BM25)
-    function Index(docs) {
+    // extra:  a site's own words for things ({ "earl": ["orkney"] }), added to the table above
+    function Index(docs, extra) {
+        var table = {};
+        Object.keys(SYN).forEach(function (k) { table[k] = SYN[k].slice(); });
+        Object.keys(extra || {}).forEach(function (k) { var w = String(k).toLowerCase(); table[w] = (table[w] || []).concat(extra[k] || []); });
         var N = docs.length, df = {}, avg = 0, k1 = 1.2, b = 0.75;
         docs.forEach(function (d) {
             d._t = terms((d.title || '') + ' ' + (d.title || '') + ' ' + d.text);
@@ -238,7 +242,7 @@
         avg = avg / Math.max(1, N);
         function expand(q) {
             var base = tokens(q), extra = [];
-            base.forEach(function (w) { (SYN[w] || []).forEach(function (s) { extra.push(s); }); });
+            base.forEach(function (w) { (Object.prototype.hasOwnProperty.call(table, w) ? table[w] : []).forEach(function (s) { extra.push(s); }); });
             var main = base.map(stem), syn = [];
             extra.forEach(function (s) { tokens(s).map(stem).forEach(function (t) { if (main.indexOf(t) < 0 && syn.indexOf(t) < 0) syn.push(t); }); });
             return { main: main, syn: syn };

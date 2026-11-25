@@ -85,7 +85,8 @@
    "links": [{"title": "Home: the photographs", "url": "index.html#h-photos"}, {"title": "The family tree", "url": "family-tree.html"}]
   },
   "wordlikeNames": [],
-  "familyNames": ["hartleys", "moreaus"]
+  "familyNames": ["hartleys", "moreaus"],
+  "synonyms": {"weaver": ["silk"]}
  },
  "widget": {"enabled": true, "exclude": []},
  "publish": {"exclude": ["README.md"]}

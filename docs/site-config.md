@@ -139,6 +139,7 @@ Stuart answers from the data and from the story pages listed here. See [Stuart](
 | `wordlikeNames` | Surnames that are also everyday words (Field, Cousins), which are only read as names when they look like one |
 | `familyNames` | Plural family names for "who were the Moreaus?" |
 | `nicknames` | Short forms of given names, added to the engine's own list (Reg for Reginald, Bob for Robert): `{ "margaret": ["Peggy", "Meg"] }` |
+| `synonyms` | The site's own words for things, added to the words Stuart treats as alike when searching: `{ "earl": ["orkney"] }` |
 | `skipClasses` | Classes of page furniture Stuart should not read |
 
 ## widget

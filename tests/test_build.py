@@ -129,6 +129,12 @@ class TestBuiltSample(unittest.TestCase):
             self.assertEqual(len(re.findall(r'src="site-config\.js\?v=[0-9a-f]{10}"', html)), 1, name)
             self.assertEqual(html.count(BASE + 'nav.js'), 1, name)
 
+    def test_the_theme_comes_after_the_engine_styles(self):
+        # a site's theme only wins if it loads after the engine's own colours
+        for name, sheet in (('family-tree.html', 'tree-canvas.css'), ('map.html', 'map.css'), ('ask.html', 'stuart.css')):
+            html = self.pages[name]
+            self.assertLess(html.index(BASE + sheet), html.index('site-theme.css'), name)
+
     def test_stuart_button_on_site_pages_only(self):
         for name, html in self.pages.items():
             widgets = re.findall(r'<script src="%sstuart\.js"[^>]*\bdata-widget\b' % re.escape(BASE), html)

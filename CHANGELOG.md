@@ -2,6 +2,13 @@
 
 Each release, newest first. A major version says what a site has to change.
 
+## 1.0.1
+
+- **Stuart takes a site's own words.** `stuart.synonyms` in a site's settings adds words Stuart treats as alike when he searches the story pages (`{ "earl": ["orkney"] }`). The two words that only made sense for the FitzMaurice and Andrews family (Orkney, the Evening News) moved out of the engine into that site's settings.
+- **A fix in Stuart's search:** a question containing a word such as "constructor" could break the search, because the table of alike words was looked up without checking the word was really in it.
+- **Publishing uses configure-pages 6 and upload-pages-artifact 5,** which run on Node 24, as GitHub now expects. Sites take this by moving their workflows to `build-site.yml@v1.0.1`.
+- **New checks:** a site's theme loads after the engine's own colours on every engine page, and the sample's theme really changes them; Stuart's passage search with a site's own words.
+
 ## 1.0.0
 
 The first release: the family tree, the family map, Stuart and the navigation bar, taken from the FitzMaurice and Andrews site and made to work for any family from its settings.

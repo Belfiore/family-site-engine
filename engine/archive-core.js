@@ -121,7 +121,7 @@
         function mentionIds(text, self) {
             return names.find(text).mentions.filter(function (m) { return m.how === 'name' && m.cands.length === 1 && m.cands[0].id !== self; }).map(function (m) { return m.cands[0].id; });
         }
-        var index = S.Index(docs);
+        var index = S.Index(docs, (kb.site || {}).synonyms);
         var docById = {}; docs.forEach(function (d) { docById[d.id] = d; });
 
         // ---------------------------------------------------------------- sources (numbered per answer)

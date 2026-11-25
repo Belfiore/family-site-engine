@@ -47,6 +47,8 @@ const QUESTIONS = [
     ['When was Susan Hartley born?', ['1938']],
     ['When did Susan Hartley die?', ['is living']],
     ['Who was Pierre Moreau?', ['Pierre Moreau']],
+    // passage search, with a word the sample adds to Stuart's own (weaver is also silk)
+    ['Where can I read about the weavers?', ['Moreau']],
 ];
 QUESTIONS.forEach(([q, want]) => {
     const t = plain(A.ask(q, {}));
@@ -148,9 +150,11 @@ function serve() {
                 janetLiving: !!(card('janet-hartley') && card('janet-hartley').querySelector('.c-living')),
                 susan: card('susan-hartley') && card('susan-hartley').textContent,
                 sides: [...document.querySelectorAll('.tc-side')].map(e => e.textContent.trim()),
+                gold: getComputedStyle(document.documentElement).getPropertyValue('--gold').trim(),
                 william: box('william-hartley'), alice: box('alice-turner'), arthur: box('arthur-hartley'), margot: box('marguerite-moreau')
             };
         });
+        check(t.gold === '#8a6a2f', 'the site\'s theme overrides the engine\'s colours', t.gold);
         check(t.n === 22, '22 people on the tree (everyone but the legend)', t.n);
         check(!t.legend && t.pierre, 'a hidden region is left off, and its suspected relative kept');
         check(t.pierreUncertain, 'the suspected relative is drawn as unproven');

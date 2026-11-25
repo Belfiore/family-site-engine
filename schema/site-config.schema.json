@@ -718,6 +718,16 @@
      "items": {
       "type": "string"
      }
+    },
+    "synonyms": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "description": "The site's own words for things, added to the words Stuart already treats as alike when searching the story pages: { \"earl\": [\"orkney\"], \"newspaper\": [\"evening news\"] }."
     }
    },
    "additionalProperties": false,
