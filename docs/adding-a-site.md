@@ -83,6 +83,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
 
 concurrency:
   group: pages
@@ -99,6 +100,7 @@ jobs:
 ```
 
 - `branches` is the branch the live site comes from. Only that branch should publish.
+- The four `permissions` are what publishing needs: `pages` and `id-token` to publish, and `actions: read` so the publishing step can find the built site it was handed.
 - If the site's files are in a folder of the repository rather than at the top, add `site-dir: that-folder`.
 - `site-tests` are run from the site folder with `DIST` set to the built site. A test can find the build with `process.env.DIST`.
 - `repository_dispatch` is how the engine tells the site that its channel moved (see [releases](releasing.md)). It only works on the repository's default branch.

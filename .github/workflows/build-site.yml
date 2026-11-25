@@ -8,6 +8,10 @@
 #         site-tests: |
 #           node tests/verify-canvas.js
 #
+# The calling workflow grants what publishing needs: contents: read, pages: write, id-token: write and
+# actions: read (deploy-pages looks up the uploaded site through the Actions API). A run that only checks
+# (deploy: false) needs contents: read.
+#
 # Which engine is used: the version given for this run, else engine.version in site.config.json, else the
 # version the site's channel (engine.channel) points to in channels.json on the engine's main branch.
 # If the data check, the build or any of the site's checks fails, nothing is published and the live site
