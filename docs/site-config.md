@@ -1,0 +1,167 @@
+# Site settings: site.config.json
+
+Each site has one settings file, `site.config.json`, at the top of its folder. It says which engine the site takes, what the site is called, which of the engine's pages it has, what is in the navigation bar, and how the tree, the map and Stuart behave for this family. The family itself is in the data files ([the data format](data-format.md)); nothing about how the site looks belongs there.
+
+The settings are checked against `schema/site-config.schema.json` on every build. Pointing an editor at the schema gives completion and checking as you type:
+
+```json
+{ "$schema": "https://raw.githubusercontent.com/Belfiore/family-site-engine/main/schema/site-config.schema.json", "schemaVersion": 1 }
+```
+
+Only `schemaVersion`, `site` and `nav` are required. Everything else has a default. `sample/site.config.json` uses almost every setting and is the best starting point.
+
+## engine
+
+```json
+"engine": { "channel": "stable" }
+```
+
+- `channel`: which releases the site takes: `stable` (most sites), `beta` or `canary`. See [releases](releasing.md).
+- `version`: pins the site to one engine version (`"1.0.0"`), whatever its channel says. For a site that must not change while something is checked, or to roll one site back. Remove the pin to follow the channel again.
+
+## site
+
+```json
+"site": { "name": "Hartley & Moreau", "familyName": "the Hartley and Moreau families", "lang": "en-GB", "description": "..." }
+```
+
+- `name`: the short name, used as the logo in the navigation bar and at the end of page titles.
+- `familyName`: how Stuart names the family in a sentence ("I look after the records of the Hartley and Moreau families").
+- `lang`: the language of the pages.
+
+## pages
+
+The site's home page, and which of the engine's three pages it has:
+
+```json
+"pages": {
+  "home": "index.html",
+  "tree": { "file": "family-tree.html", "title": "Family Tree | Hartley & Moreau", "description": "...", "stylesheets": ["styles.css"] },
+  "map": "map.html",
+  "ask": null
+}
+```
+
+Each of `tree`, `map` and `ask` (Stuart) is a file name, an object with `file`, `title`, `description`, `heading` and `stylesheets`, or `null` for a site without that page. `heading` replaces the engine's heading at the top of the page ("The Family Tree"). When a page is off the engine leaves out every link to it (the tree's "Show on the family map", "Ask Stuart about", Stuart's button) and the build refuses a navigation bar that still links to it. A map needs `data/places.json`.
+
+`stylesheets` are the site's own stylesheets for that page; without them the page uses `head.stylesheets`.
+
+## nav
+
+The navigation bar, in order. It is the same on every page, built by the engine, and replaces whatever bar a page had:
+
+```json
+"nav": [
+  { "href": "index.html", "label": "Home" },
+  { "href": "family-tree.html", "label": "Family Tree", "match": ["family-tree-classic.html"] },
+  { "href": "branches.html", "label": "Branches", "match": ["falcke.html", "bennett.html"] },
+  { "comment": "Family Crest is switched off for now." }
+]
+```
+
+- The link for the page being read is lit. `match` lists other pages that light the same link (each branch page lights "Branches").
+- A `comment` entry is written into the bar as an HTML comment: a way to keep a switched-off link where someone will find it.
+- A page can choose its lit link itself with `data-active="branches.html"` on its own `<nav class="main-nav">`.
+
+Below 1,180 pixels the links fold into a menu button.
+
+## head and theme
+
+```json
+"head": { "fonts": "https://fonts.googleapis.com/css2?family=...", "stylesheets": ["styles.css"] },
+"theme": { "--pc-accent": "#7b1f1f", "--gold": "#c9a227" }
+```
+
+- `head.fonts`: a stylesheet for web fonts, added to the engine's pages. Stuart's page allows that host and nothing else in its content security policy.
+- `head.stylesheets`: the site's own stylesheets for the engine's pages.
+- `theme`: colours and fonts for the engine's parts, written into `site-theme.css`, which loads after the engine's styles so it wins. Any of the engine's custom properties can be set:
+
+| Properties | What they colour |
+| --- | --- |
+| `--gold`, `--gold-dark`, `--cream`, `--ink`, `--font-display`, `--font-body`, `--font-accent` | Shared: the navigation bar, and the defaults for the rest |
+| `--pc-bg`, `--pc-paper`, `--pc-ink`, `--pc-muted`, `--pc-accent`, `--pc-accent-deep`, `--pc-accent-light`, `--pc-accent-rgb`, `--pc-title`, `--pc-gold`, `--pc-rule`, `--pc-line`, `--pc-line-direct`, `--pc-focus`, and the rest at the top of `engine/tree-canvas.css` (badges for living people, tooltips, hovers, the confidence badges, the document viewer) | The family tree. The Belfiore & Circelli site's `theme` turns the whole tree green this way |
+| `--fm-bg`, `--fm-paper`, `--fm-ink`, `--fm-muted`, `--fm-accent`, `--fm-accent-deep`, `--fm-gold`, `--fm-rule` | The family map |
+| `--st-ink`, `--st-paper`, `--st-cream`, `--st-wine`, `--st-gold`, `--st-sepia`, `--st-line`, `--st-display`, `--st-text` | Stuart |
+
+## data
+
+`data.dir` is the folder that holds `people.json`, `sources.json` and `places.json` (default `data`).
+
+## tree
+
+The family tree. Any key here also overrides the same key in `people.json` meta, which is where older data kept them.
+
+| Setting | What it does |
+| --- | --- |
+| `rootPersonId` | Whose tree it is: the default viewpoint for "how are they related" |
+| `familyLabel`, `directLineLabel` | Names used in the tree's headings and key ("Daniel's direct line") |
+| `generations` | Names for the rows: `{ "generation": 2, "label": "III", "title": "Arthur and Margot", "range": "1902 to 1905" }` |
+| `rootOrder` | The oldest people across the top, left to right |
+| `sides` | `{ "left": "arthur-hartley", "right": "marguerite-moreau", "leftLabel": "...", "rightLabel": "..." }`: one partner's family on the left and the other's on the right, so their lines never cross. Their children are drawn on the right |
+| `hiddenRegions` | Regions (from each person's `region`) that are not drawn on the tree or the map, and that Stuart does not know. The people stay in the data |
+| `suspectedRelatives` | `{ "pierre-moreau": "jean-baptiste-moreau" }`: someone kept from a hidden region and drawn beside another person, with no proven link |
+| `regions`, `regionKicker` | Framed groups on the tree whose link to the family is unproven |
+| `kinAnchor`, `kinLabel` | The kin box: relatives whose exact link is not known, drawn beside this person |
+| `initialView` | Where the tree opens: `{ "ids": [...], "fromGen": 16, "toGen": 19 }` |
+| `cardPhotos` | `set` (default): a card shows the person's `photo` only. `best`: a card with no `photo` uses the best picture in their media |
+| `coupleBlocks` | `explicit` (default): a couple who both have parents on the tree are drawn together only where the data says so (`layoutJoin`). `auto`: always, in the family of the partner on the direct line, else the husband |
+| `legendNote` | A sentence added to the tree's key, in the site's own words; HTML allowed |
+| `noscript` | What the tree page says to visitors without JavaScript, in the site's own words; HTML allowed. The default points to the home page |
+
+## map
+
+| Setting | What it does |
+| --- | --- |
+| `home` | The region the map frames first: `{ "name": "England", "bounds": [[-6.4, 49.85], [1.9, 55.9]] }` (west, south, east, north). Places outside it are listed as "Beyond England" |
+| `historicMaps` | `uk-os` for the National Library of Scotland's Ordnance Survey maps of Great Britain (needs `maptilerKey`), or `null` for no "Then" style |
+| `maptilerKey`, `googleEmbedKey` | Browser keys for the satellite and historic maps and for Street View inside the page. Both are optional. Restrict each to the site's address; see [map keys](map-keys.md) |
+| `branches` | Groups of places for the map's branch filter: `{ "id": "moreau", "label": "The Moreaus", "pages": ["moreau.html"], "people": [...], "regions": [...] }`. One has `"default": true` |
+| `kinAnchors` | People the timeline relates others to ("Margot's father"): `[{ "id": "marguerite-moreau", "name": "Margot" }]` |
+| `families` | The Family filter's choices: `{ "id": "margot", "label": "Margot's family", "option": "Margot's family (Moreau)", "roots": ["marguerite-moreau"] }`. Without any, the filter is hidden |
+| `noscript` | Extra words for visitors without JavaScript; HTML allowed |
+
+## stuart
+
+Stuart answers from the data and from the story pages listed here. See [Stuart](stuart.md).
+
+| Setting | What it does |
+| --- | --- |
+| `anchors` | The couple at the heart of the site, left-hand side first: `[{ "key": "arthur", "id": "arthur-hartley", "title": "Grandpa Arthur", "short": "Arthur" }, ...]`. Stuart describes people by them ("Grandma Margot and Grandpa Arthur's grandson") |
+| `homeCountry` | The country that counts as home, for "who was born abroad?" |
+| `pages` | The story pages Stuart reads, in reading order. Give their headings `id`s so answers can link to them |
+| `generalPages` | Pages about many people (the home page, an index of branches), which are not taken to be about one person |
+| `examples` | Starter questions: `{ "kind": "genealogy", "q": "...", "needs": ["person-id"] }`. A question whose `needs` are not on the tree is dropped |
+| `helpExample` | The example in Stuart's help text |
+| `overviewSections`, `overviewFallback`, `overviewFollowups` | What "Tell me about this family" answers from: page sections (`pg:index#h-start`), a sentence when there are none, and follow-up questions |
+| `warFollowups` | Follow-up questions after a question about war service |
+| `stories` | `{ "page": "index.html", "anchors": [...] }`: sections of one page that hold the family's stories |
+| `photos` | The answer to "where are the photographs?": `{ "text": "...", "links": [{ "title": "...", "url": "..." }] }` |
+| `wordlikeNames` | Surnames that are also everyday words (Field, Cousins), which are only read as names when they look like one |
+| `familyNames` | Plural family names for "who were the Moreaus?" |
+| `nicknames` | Short forms of given names, added to the engine's own list (Reg for Reginald, Bob for Robert): `{ "margaret": ["Peggy", "Meg"] }` |
+| `skipClasses` | Classes of page furniture Stuart should not read |
+
+## widget
+
+Stuart's button on the site's own pages (the engine's pages place it themselves):
+
+```json
+"widget": { "enabled": true, "exclude": ["family-tree-classic.html"], "pages": { "gallery.html": { "compact": true, "avoid": ".gallery-controls" } } }
+```
+
+`compact` shows only Stuart's seal; `avoid` lists controls the button must keep clear of. There is no button when the site has no Stuart page.
+
+## publish and process
+
+- `publish.exclude`: files and folders not to publish (globs from the site folder: `"drafts/"`, `"*.psd"`). `.git`, `.github`, `node_modules`, `_site` and `site.config.json` are never published.
+- `process.exclude`: pages the build copies exactly as they are, without the engine's bar, files or button.
+
+## What the build does to the site's own pages
+
+For every `.html` file at the top of the site folder, unless it is in `process.exclude`:
+
+- the `<nav class="main-nav">` block is replaced by the bar from `nav`;
+- references to engine files the page may still carry from before the engine (`nav.css`, `stuart.js`, `tree-canvas.js`, `config.js` and so on) are removed, and `records.css` and `records.js` are pointed at the engine's copies;
+- Stuart's stylesheet, the theme and `nav.css` are added at the end of the head (so nothing overrides the bar), and the site settings, the menu script and Stuart's button at the end of the body.
+
+Everything else on the page is left exactly as the site wrote it.

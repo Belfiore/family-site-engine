@@ -1,0 +1,92 @@
+{
+ "$schema": "https://raw.githubusercontent.com/Belfiore/family-site-engine/main/schema/site-config.schema.json",
+ "$comment": "The sample site: a made-up family that the engine's tests run against, and a starting point for a new site. Nothing here is a real person.",
+ "schemaVersion": 1,
+ "engine": {"channel": "stable"},
+ "site": {
+  "name": "Hartley & Moreau",
+  "familyName": "the Hartley and Moreau families",
+  "lang": "en-GB",
+  "description": "The Hartley and Moreau families: Grandpa Arthur and Grandma Margot, and the families they came from. A made-up family."
+ },
+ "pages": {
+  "home": "index.html",
+  "tree": {"file": "family-tree.html", "title": "Family Tree | Hartley & Moreau", "description": "The Hartley and Moreau family tree. Grandpa Arthur's family is on the left and Grandma Margot's on the right."},
+  "map": {"file": "map.html", "title": "Family Map | Hartley & Moreau", "description": "Where the Hartleys and Moreaus were born, lived, married and sailed, on a map and a timeline."},
+  "ask": {"file": "ask.html", "title": "Ask Stuart | Hartley & Moreau"}
+ },
+ "nav": [
+  {"href": "index.html", "label": "Home"},
+  {"href": "family-tree.html", "label": "Family Tree"},
+  {"href": "map.html", "label": "Family Map"},
+  {"href": "moreau.html", "label": "The Moreaus"},
+  {"href": "ask.html", "label": "Ask Stuart"}
+ ],
+ "head": {"fonts": null, "stylesheets": ["styles.css"]},
+ "theme": {"--gold": "#8a6a2f", "--gold-dark": "#6b5022"},
+ "data": {"dir": "data"},
+ "tree": {
+  "familyLabel": "Hartley & Moreau family",
+  "rootPersonId": "daniel-hartley",
+  "directLineLabel": "Daniel's direct line",
+  "generations": [
+   {"generation": 0, "label": "I", "title": "Great-great-grandparents", "range": "c. 1848 to 1855"},
+   {"generation": 1, "label": "II", "title": "Great-grandparents", "range": "c. 1875 to 1883"},
+   {"generation": 2, "label": "III", "title": "Arthur and Margot", "range": "1902 to 1905"},
+   {"generation": 3, "label": "IV", "title": "Their children", "range": "from 1935"},
+   {"generation": 4, "label": "V", "title": "Grandchildren", "range": null}
+  ],
+  "rootOrder": ["thomas-hartley", "george-turner", "jean-baptiste-moreau"],
+  "sides": {"left": "arthur-hartley", "right": "marguerite-moreau", "leftLabel": "Grandpa Arthur's family", "rightLabel": "Grandma Margot's family"},
+  "hiddenRegions": ["legend"],
+  "suspectedRelatives": {"pierre-moreau": "jean-baptiste-moreau"},
+  "cardPhotos": "best",
+  "coupleBlocks": "auto"
+ },
+ "map": {
+  "maptilerKey": null,
+  "googleEmbedKey": null,
+  "home": {"name": "England", "bounds": [[-6.4, 49.85], [1.9, 55.9]]},
+  "historicMaps": null,
+  "branches": [
+   {"id": "hartley", "label": "The Hartleys", "people": ["thomas-hartley", "mary-ann-briggs", "william-hartley", "alice-turner", "arthur-hartley"], "default": true},
+   {"id": "moreau", "label": "The Moreaus", "pages": ["moreau.html"], "people": ["jean-baptiste-moreau", "louise-fabre", "henri-moreau", "marguerite-moreau"]}
+  ],
+  "kinAnchors": [{"id": "marguerite-moreau", "name": "Margot"}, {"id": "arthur-hartley", "name": "Arthur"}],
+  "families": [
+   {"id": "arthur", "label": "Arthur's family", "option": "Arthur's family (Hartley)", "roots": ["arthur-hartley"]},
+   {"id": "margot", "label": "Margot's family", "option": "Margot's family (Moreau)", "roots": ["marguerite-moreau"]},
+   {"id": "both", "label": "Arthur's and Margot's families", "option": "Arthur's and Margot's families", "roots": ["arthur-hartley", "marguerite-moreau"]}
+  ],
+  "noscript": "The places are also told on <a href=\"moreau.html\">the Moreau page</a>."
+ },
+ "stuart": {
+  "anchors": [
+   {"key": "arthur", "id": "arthur-hartley", "title": "Grandpa Arthur", "short": "Arthur"},
+   {"key": "margot", "id": "marguerite-moreau", "title": "Grandma Margot", "short": "Margot"}
+  ],
+  "homeCountry": "England",
+  "pages": ["index.html", "moreau.html"],
+  "generalPages": ["index.html"],
+  "examples": [
+   {"kind": "genealogy", "q": "How was Thomas Hartley related to Grandpa Arthur?", "needs": ["thomas-hartley", "arthur-hartley"]},
+   {"kind": "biography", "q": "Who was Jean-Baptiste Moreau?", "needs": ["jean-baptiste-moreau"]},
+   {"kind": "migration", "q": "Who came from France?", "needs": ["jean-baptiste-moreau"]},
+   {"kind": "calculation", "q": "How old was Arthur Hartley when he married?", "needs": ["arthur-hartley"]}
+  ],
+  "helpExample": "Who were Arthur Hartley's grandparents?",
+  "overviewSections": ["pg:index#h-start", "pg:index#h-arthur", "pg:index#h-margot"],
+  "overviewFallback": "This archive covers the families of Grandpa Arthur Hartley and Grandma Margot Moreau.",
+  "overviewFollowups": ["Who is the earliest documented member of the family?", "Who came from France?", "How was Thomas Hartley related to Grandpa Arthur?"],
+  "warFollowups": [],
+  "stories": {"page": "index.html", "anchors": ["h-lyon", "h-wedding"]},
+  "photos": {
+   "text": "The photographs are on the family tree, under each person's documents and photographs, and on the home page.",
+   "links": [{"title": "Home: the photographs", "url": "index.html#h-photos"}, {"title": "The family tree", "url": "family-tree.html"}]
+  },
+  "wordlikeNames": [],
+  "familyNames": ["hartleys", "moreaus"]
+ },
+ "widget": {"enabled": true, "exclude": []},
+ "publish": {"exclude": ["README.md"]}
+}

@@ -1,0 +1,56 @@
+/* The sample site's own stylesheet. The navigation bar, the tree, the map and Stuart are styled by the
+   engine; this file styles only the site's own pages. The colours and fonts come from the engine's
+   tokens (tokens.css) and the theme in site.config.json. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: var(--font-body, Georgia, serif);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--ink, #1a1a2e);
+    background: var(--cream, #fdf8f0);
+}
+
+h1, h2 {
+    font-family: var(--font-display, Georgia, serif);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--ink, #1a1a2e);
+}
+
+a { color: var(--gold-dark, #6b5022); }
+a:focus-visible { outline: 2px solid var(--gold-dark, #6b5022); outline-offset: 2px; }
+
+.hero {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 7rem 1.5rem 2rem;
+}
+.hero h1 { font-size: clamp(2rem, 5vw, 3rem); margin: 0.2em 0; }
+.hero-lede { font-size: 1.3rem; margin: 0 0 1.2rem; }
+.hero-note { font-style: italic; color: #6a5a48; margin: 0; }
+.hero-actions { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+
+.page {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+}
+.page > h1 { margin-top: 5rem; }
+.page section { margin: 0 0 2.5rem; }
+.page h2 { font-size: 1.6rem; margin: 0 0 0.5rem; }
+
+.photos { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+.photos figure { margin: 0; }
+.photos img { display: block; max-width: 100%; height: auto; }
+.photos figcaption { font-style: italic; font-size: 1rem; }
+
+.site-footer {
+    border-top: 1px solid #d4c5a9;
+    padding: 1.5rem;
+    text-align: center;
+    font-size: 1rem;
+    color: #6a5a48;
+}

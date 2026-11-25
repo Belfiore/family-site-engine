@@ -1,0 +1,16 @@
+/* Family site engine: default design tokens.
+ *
+ * Loaded first on the pages the engine makes (the tree, the map and Stuart's page), before the site's own
+ * stylesheets, so a site that defines these keeps its own values. A site can also set any token, these or
+ * the engine's own (--pc-*, --fm-*, --st-*), in "theme" in site.config.json; the build writes those into a
+ * theme stylesheet that loads after the engine's.
+ */
+:root {
+    --gold: #FFD700;
+    --gold-dark: #B8860B;
+    --cream: #FDF8F0;
+    --ink: #1a1a2e;
+    --font-display: 'Cinzel', serif;
+    --font-body: 'Cormorant Garamond', serif;
+    --font-accent: 'EB Garamond', serif;
+}

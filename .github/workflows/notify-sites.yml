@@ -1,0 +1,42 @@
+# When channels.json changes on main (a release moved to canary, beta or stable), tell every site in
+# sites.json, so each one rebuilds with the version its channel now points to. A site whose channel did not
+# move rebuilds with the same engine and nothing changes on it.
+#
+# Sending needs a token that can reach the sites, kept in this repository's secrets as SITES_DISPATCH_TOKEN
+# (see docs/releasing.md). Without it this workflow says so and stops; each site can still be rebuilt by hand
+# from its own Actions tab.
+name: Tell the sites
+
+on:
+  push:
+    branches: [main]
+    paths: [channels.json, sites.json]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Send a rebuild request to each site
+        env:
+          TOKEN: ${{ secrets.SITES_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::notice::No SITES_DISPATCH_TOKEN secret, so no site was told. Rebuild each site from its Actions tab, or add the token (docs/releasing.md)."
+            exit 0
+          fi
+          channels="$(python3 -c 'import json; print(json.dumps(json.load(open("channels.json"))["channels"]))')"
+          failed=0
+          for repo in $(python3 -c 'import json; print(" ".join(s["repo"] for s in json.load(open("sites.json"))["sites"]))'); do
+            code=$(curl -s -o /tmp/out -w '%{http_code}' -X POST \
+              -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$repo/dispatches" \
+              -d "{\"event_type\": \"engine-release\", \"client_payload\": {\"channels\": $channels}}")
+            if [ "$code" = "204" ]; then echo "told $repo"; else echo "::warning::$repo answered $code: $(cat /tmp/out)"; failed=1; fi
+          done
+          exit $failed

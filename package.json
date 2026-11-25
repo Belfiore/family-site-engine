@@ -1,0 +1,14 @@
+{
+  "name": "family-site-engine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The shared engine behind the family history sites: the family tree, the family map and Stuart, the family archivist.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "python3 tests/test_build.py && node tests/check-sample.js",
+    "build:sample": "python3 build/build_site.py --site sample --out _site"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}

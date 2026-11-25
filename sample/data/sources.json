@@ -1,0 +1,108 @@
+{
+ "sources": [
+  {
+   "id": "census-1881-leeds",
+   "title": "1881 census, Park Row, Leeds",
+   "type": "census",
+   "repository": "Sample archive",
+   "date": "1881"
+  },
+  {
+   "id": "census-1901-leeds",
+   "title": "1901 census, Kirkgate, Leeds",
+   "type": "census",
+   "repository": "Sample archive",
+   "date": "1901"
+  },
+  {
+   "id": "census-1881-soho",
+   "title": "1881 census, Greek Street, Soho",
+   "type": "census",
+   "repository": "Sample archive",
+   "date": "1881"
+  },
+  {
+   "id": "census-1911-soho",
+   "title": "1911 census, Greek Street, Soho",
+   "type": "census",
+   "repository": "Sample archive",
+   "date": "1911"
+  },
+  {
+   "id": "marriage-hartley-briggs",
+   "title": "Marriage of Thomas Hartley and Mary Ann Briggs, Bradford, 1874",
+   "type": "parish register",
+   "repository": "Sample archive",
+   "date": "1874",
+   "file": "images/records/marriage-1874.png"
+  },
+  {
+   "id": "marriage-hartley-turner",
+   "title": "Marriage of William Hartley and Alice Turner, Leeds, 1900",
+   "type": "parish register",
+   "repository": "Sample archive",
+   "date": "1900"
+  },
+  {
+   "id": "marriage-hartley-moreau",
+   "title": "Marriage of Arthur Hartley and Marguerite Moreau, Soho, 1930",
+   "type": "civil registration",
+   "repository": "Sample archive",
+   "date": "1930"
+  },
+  {
+   "id": "baptism-william",
+   "title": "Baptism of William Hartley, Leeds, 1875",
+   "type": "parish register",
+   "repository": "Sample archive",
+   "date": "1875"
+  },
+  {
+   "id": "baptism-arthur",
+   "title": "Baptism of Arthur Hartley, Leeds, 1902",
+   "type": "parish register",
+   "repository": "Sample archive",
+   "date": "1902"
+  },
+  {
+   "id": "birth-marguerite",
+   "title": "Birth certificate of Marguerite Moreau, 1905",
+   "type": "civil registration",
+   "repository": "Sample archive",
+   "date": "1905"
+  },
+  {
+   "id": "passenger-list-1878",
+   "title": "Passenger list, Lord Warden, Calais to Dover, 1878",
+   "type": "passenger list",
+   "repository": "Sample archive",
+   "date": "1878"
+  },
+  {
+   "id": "passenger-list-1899",
+   "title": "Passenger list, Normandie, Le Havre to Southampton, 1899",
+   "type": "passenger list",
+   "repository": "Sample archive",
+   "date": "1899",
+   "file": "images/records/passenger-list-1899.png"
+  },
+  {
+   "id": "death-index",
+   "title": "Death index entries",
+   "type": "online index",
+   "repository": "Sample archive"
+  },
+  {
+   "id": "family-testimony",
+   "title": "What the family says",
+   "type": "family testimony",
+   "repository": "The family"
+  },
+  {
+   "id": "family-photographs",
+   "title": "The family photographs",
+   "type": "photograph",
+   "repository": "The family"
+  }
+ ]
+}

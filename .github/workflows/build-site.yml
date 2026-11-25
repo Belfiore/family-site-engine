@@ -1,0 +1,157 @@
+# Builds a family site with the engine, runs the site's own checks against the build, and publishes it to
+# GitHub Pages. Each site calls this from its own deploy workflow (see docs/adding-a-site.md):
+#
+#   jobs:
+#     site:
+#       uses: Belfiore/family-site-engine/.github/workflows/build-site.yml@v1
+#       with:
+#         site-tests: |
+#           node tests/verify-canvas.js
+#
+# Which engine is used: the version given for this run, else engine.version in site.config.json, else the
+# version the site's channel (engine.channel) points to in channels.json on the engine's main branch.
+# If the data check, the build or any of the site's checks fails, nothing is published and the live site
+# stays as it was.
+name: Build and publish a family site
+
+on:
+  workflow_call:
+    inputs:
+      site-dir:
+        description: The site's folder inside its repository (the folder with site.config.json).
+        type: string
+        default: '.'
+      engine-version:
+        description: Build with this engine version (1.2.0) instead of the site's channel, for a rollback or a trial.
+        type: string
+        default: ''
+      site-tests:
+        description: Commands that check the built site, one per line, run from the site folder (site-dir) with DIST set to the build.
+        type: string
+        default: ''
+      deploy:
+        description: Publish the build to GitHub Pages. False builds and checks only (for pull requests).
+        type: boolean
+        default: true
+      engine-repo:
+        description: Where the engine lives.
+        type: string
+        default: Belfiore/family-site-engine
+    outputs:
+      engine-version:
+        description: The engine version the site was built with.
+        value: ${{ jobs.build.outputs.engine-version }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      engine-version: ${{ steps.engine.outputs.version }}
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v4
+        with:
+          path: site
+
+      - name: Read the engine's release channels
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.engine-repo }}
+          ref: main
+          path: engine-channels
+          sparse-checkout: channels.json
+          sparse-checkout-cone-mode: false
+
+      - name: Choose the engine version
+        id: engine
+        env:
+          PIN: ${{ inputs.engine-version }}
+          SITE_DIR: site/${{ inputs.site-dir }}
+        run: |
+          python3 - <<'PY'
+          import json, os, re, sys
+          pin = os.environ.get('PIN', '').strip().lstrip('v')
+          with open(os.path.join(os.environ['SITE_DIR'], 'site.config.json'), encoding='utf-8') as f:
+              eng = json.load(f).get('engine') or {}
+          with open('engine-channels/channels.json', encoding='utf-8') as f:
+              channels = json.load(f)['channels']
+          if pin:
+              v, why = pin, 'chosen for this run'
+          elif eng.get('version'):
+              v, why = str(eng['version']).lstrip('v'), 'pinned in site.config.json'
+          else:
+              ch = eng.get('channel') or 'stable'
+              if ch not in channels:
+                  sys.exit('site.config.json asks for the "%s" channel, which channels.json does not have (%s)' % (ch, ', '.join(channels)))
+              v, why = channels[ch], 'the %s channel' % ch
+          if not re.match(r'^\d+\.\d+\.\d+$', v):
+              sys.exit('"%s" is not an engine version' % v)
+          print('Engine %s (%s)' % (v, why))
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f: f.write('version=%s\n' % v)
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f: f.write('Built with engine %s (%s).\n' % (v, why))
+          PY
+
+      - name: Check out the engine
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.engine-repo }}
+          ref: v${{ steps.engine.outputs.version }}
+          path: engine
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check the data and build the site
+        run: python3 engine/build/build_site.py --site "site/${{ inputs.site-dir }}" --out _site
+
+      - name: Set up Node for the site's checks
+        if: inputs.site-tests != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # at the top of the site's repository, so a check anywhere in it can load Playwright
+      - name: Install Playwright
+        if: inputs.site-tests != ''
+        working-directory: site
+        run: |
+          npm install --no-save --no-package-lock playwright@1.63.0
+          npx playwright install --with-deps chromium
+
+      - name: Check the built site
+        if: inputs.site-tests != ''
+        working-directory: site/${{ inputs.site-dir }}
+        env:
+          DIST: ${{ github.workspace }}/_site
+          SITE_TESTS: ${{ inputs.site-tests }}
+        run: |
+          set -e
+          while IFS= read -r cmd; do
+            [ -z "${cmd// }" ] && continue
+            echo "::group::$cmd"
+            bash -c "$cmd"
+            echo "::endgroup::"
+          done <<< "$SITE_TESTS"
+
+      - name: Set up Pages
+        if: inputs.deploy
+        uses: actions/configure-pages@v5
+
+      - name: Upload the built site
+        if: inputs.deploy
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    if: inputs.deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

@@ -1,0 +1,1480 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/Belfiore/family-site-engine/schema/family-data.schema.json",
+ "title": "Family site data, schema version 1",
+ "description": "The three data files of a family site: data/people.json, data/sources.json and, for a site with a map, data/places.json. Each file is checked against its definition here ($defs.peopleFile, $defs.sourcesFile, $defs.placesFile). See docs/data-format.md for the rules in words.",
+ "$defs": {
+  "personId": {
+   "type": "string",
+   "description": "The id of a person in people.json."
+  },
+  "confidence": {
+   "type": "string",
+   "enum": [
+    "confirmed",
+    "probable",
+    "family tradition",
+    "unverified"
+   ],
+   "description": "How sure the site is of this claim. confirmed: a record says it. probable: the records point to it but a certificate would make it firmer. family tradition: the family says it and no record has been found. unverified: not yet checked."
+  },
+  "event": {
+   "type": "object",
+   "properties": {
+    "date": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "pattern": "^(\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?)?$",
+     "description": "The date as far as it is known: YYYY, YYYY-MM or YYYY-MM-DD; empty or null when not known. Use display for how the site words it."
+    },
+    "display": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "How the site writes the date, e.g. \"about 1866\" or \"spring 1901 (registered)\"."
+    },
+    "dateQualifier": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "enum": [
+      "exact",
+      "about",
+      "before",
+      "after",
+      "uncertain",
+      "year",
+      "baptised",
+      "baptism",
+      null
+     ],
+     "description": "Optional: how exact the date is."
+    },
+    "place": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "placeId": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Id of a place in places.json (sites with a map)."
+    },
+    "confidence": {
+     "type": "string",
+     "enum": [
+      "confirmed",
+      "probable",
+      "family tradition",
+      "unverified"
+     ],
+     "description": "How sure the site is of this claim. confirmed: a record says it. probable: the records point to it but a certificate would make it firmer. family tradition: the family says it and no record has been found. unverified: not yet checked."
+    },
+    "note": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "sourceIds": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Ids of entries in sources.json that support this claim."
+    },
+    "alternates": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "display": {
+        "type": "string"
+       },
+       "date": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "pattern": "^(\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?)?$",
+        "description": "The date as far as it is known: YYYY, YYYY-MM or YYYY-MM-DD; empty or null when not known. Use display for how the site words it."
+       },
+       "note": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "sourceIds": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "Ids of entries in sources.json that support this claim."
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "display"
+      ]
+     },
+     "description": "Other dates the records give for the same event."
+    },
+    "age": {
+     "type": [
+      "integer",
+      "string",
+      "null"
+     ]
+    }
+   },
+   "additionalProperties": false,
+   "description": "A life event: birth, death or burial."
+  },
+  "person": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9][a-z0-9_-]*$",
+     "description": "A stable id: lower-case letters, digits and hyphens. Never reuse or rename one; pages link to it."
+    },
+    "displayName": {
+     "type": "string",
+     "description": "The name shown on the card and in headings."
+    },
+    "givenNames": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "surname": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Surname at birth, or the surname the site uses."
+    },
+    "disambiguator": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "A short line that tells this person apart: \"Reg, Pat's father\" or \"nee Bennett, Pat's mother\". Shown under the name."
+    },
+    "nameVariants": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "name": {
+        "type": "string"
+       },
+       "note": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "confidence": {
+        "type": "string",
+        "enum": [
+         "confirmed",
+         "probable",
+         "family tradition",
+         "unverified"
+        ],
+        "description": "How sure the site is of this claim. confirmed: a record says it. probable: the records point to it but a certificate would make it firmer. family tradition: the family says it and no record has been found. unverified: not yet checked."
+       },
+       "sourceIds": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "Ids of entries in sources.json that support this claim."
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "name"
+      ]
+     },
+     "description": "Other spellings and names the records use."
+    },
+    "nameUncertain": {
+     "type": "boolean",
+     "description": "The name itself is not certain."
+    },
+    "sex": {
+     "type": "string",
+     "enum": [
+      "M",
+      "F",
+      "U"
+     ],
+     "description": "M, F or U (unknown). Used for relationship words and couple order."
+    },
+    "isLiving": {
+     "type": "boolean",
+     "description": "The person is, or may be, alive. The engine shows \"Living\" and uses the present tense; it shows whatever else this record holds."
+    },
+    "placeholder": {
+     "type": "boolean",
+     "description": "A stand-in for someone not yet identified (\"Woman and girl, Camden Town\")."
+    },
+    "kin": {
+     "type": "boolean",
+     "description": "A relative whose exact link is not known; drawn in the kin box."
+    },
+    "isDirectLine": {
+     "type": "boolean",
+     "description": "On the root person's direct line of ancestry."
+    },
+    "generation": {
+     "type": "integer",
+     "description": "Row on the tree, 0 for the oldest generation shown."
+    },
+    "order": {
+     "type": [
+      "number",
+      "null"
+     ],
+     "description": "Layout hint: order among brothers and sisters, oldest first."
+    },
+    "layoutJoin": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Layout hint: id of the partner whose family this person is drawn in, when both have parents on the tree."
+    },
+    "uncertainBeside": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Layout hint: id of the person this one is drawn beside, joined by a dashed line, with no proven link."
+    },
+    "uncertainLink": {
+     "type": "boolean",
+     "description": "The link to the parents is not proven; the card is drawn dashed."
+    },
+    "region": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "A named group on the tree (\"orkney\"), used by tree.hiddenRegions and the framed regions in tree.regions."
+    },
+    "confidence": {
+     "type": "string",
+     "enum": [
+      "confirmed",
+      "probable",
+      "family tradition",
+      "unverified"
+     ],
+     "description": "How sure the site is of this claim. confirmed: a record says it. probable: the records point to it but a certificate would make it firmer. family tradition: the family says it and no record has been found. unverified: not yet checked."
+    },
+    "parentLinkConfidence": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "enum": [
+      "confirmed",
+      "probable",
+      "family tradition",
+      "unverified",
+      null
+     ],
+     "description": "How sure the link to the parents is; probable and unverified links are drawn dashed."
+    },
+    "parents": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/personId"
+     }
+    },
+    "children": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/personId"
+     }
+    },
+    "spouses": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/personId"
+       },
+       "relation": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "enum": [
+         "spouse",
+         "partner",
+         null
+        ],
+        "description": "partner for a couple who did not marry."
+       },
+       "order": {
+        "type": [
+         "number",
+         "null"
+        ]
+       },
+       "marriageDate": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "pattern": "^(\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?)?$",
+        "description": "The date as far as it is known: YYYY, YYYY-MM or YYYY-MM-DD; empty or null when not known. Use display for how the site words it."
+       },
+       "marriageDisplay": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "place": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "placeId": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "description": "Id of a place in places.json (sites with a map)."
+       },
+       "confidence": {
+        "type": "string",
+        "enum": [
+         "confirmed",
+         "probable",
+         "family tradition",
+         "unverified"
+        ],
+        "description": "How sure the site is of this claim. confirmed: a record says it. probable: the records point to it but a certificate would make it firmer. family tradition: the family says it and no record has been found. unverified: not yet checked."
+       },
+       "note": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "sourceIds": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "Ids of entries in sources.json that support this claim."
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "id"
+      ]
+     }
+    },
+    "birth": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/event"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "death": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/event"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "burial": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/event"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "residences": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "place": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "placeId": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "description": "Id of a place in places.json (sites with a map)."
+       },
+       "address": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "years": {
+        "type": [
+         "string",
+         "number",
+         "null"
+        ]
+       },
+       "confidence": {
+        "type": "string",
+        "enum": [
+         "confirmed",
+         "probable",
+         "family tradition",
+         "unverified"
+        ],
+        "description": "How sure the site is of this claim. confirmed: a record says it. probable: the records point to it but a certificate would make it firmer. family tradition: the family says it and no record has been found. unverified: not yet checked."
+       },
+       "note": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "sourceIds": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "Ids of entries in sources.json that support this claim."
+       }
+      },
+      "additionalProperties": false
+     }
+    },
+    "occupations": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "title": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "employer": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "place": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "placeId": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "description": "Id of a place in places.json (sites with a map)."
+       },
+       "years": {
+        "type": [
+         "string",
+         "number",
+         "null"
+        ]
+       },
+       "note": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "confidence": {
+        "type": "string",
+        "enum": [
+         "confirmed",
+         "probable",
+         "family tradition",
+         "unverified"
+        ],
+        "description": "How sure the site is of this claim. confirmed: a record says it. probable: the records point to it but a certificate would make it firmer. family tradition: the family says it and no record has been found. unverified: not yet checked."
+       },
+       "sourceIds": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "Ids of entries in sources.json that support this claim."
+       }
+      },
+      "additionalProperties": false
+     }
+    },
+    "immigration": {
+     "anyOf": [
+      {
+       "type": "object",
+       "properties": {
+        "date": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "pattern": "^(\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?)?$",
+         "description": "The date as far as it is known: YYYY, YYYY-MM or YYYY-MM-DD; empty or null when not known. Use display for how the site words it."
+        },
+        "port": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "ship": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "age": {
+         "type": [
+          "integer",
+          "string",
+          "null"
+         ]
+        },
+        "note": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "confidence": {
+         "type": "string",
+         "enum": [
+          "confirmed",
+          "probable",
+          "family tradition",
+          "unverified"
+         ],
+         "description": "How sure the site is of this claim. confirmed: a record says it. probable: the records point to it but a certificate would make it firmer. family tradition: the family says it and no record has been found. unverified: not yet checked."
+        },
+        "sourceIds": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         },
+         "description": "Ids of entries in sources.json that support this claim."
+        }
+       },
+       "additionalProperties": false
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "voyages": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "ship": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "from": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "to": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "fromPlaceId": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "description": "Id of a place in places.json (sites with a map)."
+       },
+       "toPlaceId": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "description": "Id of a place in places.json (sites with a map)."
+       },
+       "departureDate": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "pattern": "^(\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?)?$",
+        "description": "The date as far as it is known: YYYY, YYYY-MM or YYYY-MM-DD; empty or null when not known. Use display for how the site words it."
+       },
+       "arrivalDate": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "pattern": "^(\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?)?$",
+        "description": "The date as far as it is known: YYYY, YYYY-MM or YYYY-MM-DD; empty or null when not known. Use display for how the site words it."
+       },
+       "display": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "recordCrops": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "File names in images/records/."
+       },
+       "confidence": {
+        "type": "string",
+        "enum": [
+         "confirmed",
+         "probable",
+         "family tradition",
+         "unverified"
+        ],
+        "description": "How sure the site is of this claim. confirmed: a record says it. probable: the records point to it but a certificate would make it firmer. family tradition: the family says it and no record has been found. unverified: not yet checked."
+       },
+       "note": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "sourceIds": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "Ids of entries in sources.json that support this claim."
+       }
+      },
+      "additionalProperties": false
+     }
+    },
+    "facts": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "label": {
+        "type": "string"
+       },
+       "value": {
+        "type": [
+         "string",
+         "number"
+        ]
+       },
+       "confidence": {
+        "type": "string",
+        "enum": [
+         "confirmed",
+         "probable",
+         "family tradition",
+         "unverified"
+        ],
+        "description": "How sure the site is of this claim. confirmed: a record says it. probable: the records point to it but a certificate would make it firmer. family tradition: the family says it and no record has been found. unverified: not yet checked."
+       },
+       "sourceIds": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "Ids of entries in sources.json that support this claim."
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "label"
+      ]
+     }
+    },
+    "timeline": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "date": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "pattern": "^(\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?)?$",
+        "description": "The date as far as it is known: YYYY, YYYY-MM or YYYY-MM-DD; empty or null when not known. Use display for how the site words it."
+       },
+       "label": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "event": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "kind": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "enum": [
+         "life",
+         "context",
+         null
+        ]
+       },
+       "placeId": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "description": "Id of a place in places.json (sites with a map)."
+       },
+       "mapEvent": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "confidence": {
+        "type": "string",
+        "enum": [
+         "confirmed",
+         "probable",
+         "family tradition",
+         "unverified"
+        ],
+        "description": "How sure the site is of this claim. confirmed: a record says it. probable: the records point to it but a certificate would make it firmer. family tradition: the family says it and no record has been found. unverified: not yet checked."
+       },
+       "sourceIds": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "Ids of entries in sources.json that support this claim."
+       }
+      },
+      "additionalProperties": false
+     }
+    },
+    "media": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "type": {
+        "type": "string",
+        "enum": [
+         "photo",
+         "document",
+         "clipping",
+         "map",
+         "other"
+        ]
+       },
+       "file": {
+        "type": "string",
+        "description": "Path from the site root."
+       },
+       "thumb": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "original": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "description": "A larger or original scan."
+       },
+       "pdf": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "caption": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "alt": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "summary": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "transcription": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "translation": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "sourceId": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "type",
+       "file"
+      ]
+     }
+    },
+    "photo": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Picture for the card. With tree.cardPhotos \"best\", a card with no photo uses the best picture in media."
+    },
+    "portrait": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "A larger portrait for the profile."
+    },
+    "cardPlace": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "The short place line on the card."
+    },
+    "summary": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "One or two sentences: who this person was."
+    },
+    "story": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Markdown. Cite sources as [^source-id]; the id must be in sources.json."
+    },
+    "openQuestions": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "question": {
+        "type": "string"
+       },
+       "record": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "description": "The record that would answer it."
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "question"
+      ]
+     }
+    },
+    "relatedPages": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "title": {
+        "type": "string"
+       },
+       "url": {
+        "type": "string"
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "url"
+      ]
+     }
+    },
+    "layout": {
+     "type": "object",
+     "description": "Reserved for layout hints in later versions."
+    }
+   },
+   "additionalProperties": false,
+   "required": [
+    "id",
+    "displayName",
+    "sex",
+    "parents",
+    "children",
+    "spouses"
+   ],
+   "description": "A person on the tree."
+  },
+  "placeEvent": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string"
+    },
+    "type": {
+     "type": "string",
+     "enum": [
+      "born",
+      "baptised",
+      "lived",
+      "married",
+      "worked",
+      "served",
+      "sailed",
+      "civil case",
+      "photographed",
+      "celebrated",
+      "died",
+      "buried"
+     ]
+    },
+    "personIds": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/personId"
+     }
+    },
+    "date": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "dateStart": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "pattern": "^(\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?)?$",
+     "description": "The date as far as it is known: YYYY, YYYY-MM or YYYY-MM-DD; empty or null when not known. Use display for how the site words it."
+    },
+    "dateEnd": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "pattern": "^(\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?)?$",
+     "description": "The date as far as it is known: YYYY, YYYY-MM or YYYY-MM-DD; empty or null when not known. Use display for how the site words it."
+    },
+    "datePrecision": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "approximate": {
+     "type": "boolean"
+    },
+    "factRef": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Which people.json fact this event mirrors (\"person-id.birth\"); empty when places.json is the only source."
+    },
+    "alsoFactRefs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "pages": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "recordCrops": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "sourceIds": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Ids of entries in sources.json that support this claim."
+    },
+    "confidence": {
+     "type": "string",
+     "enum": [
+      "confirmed",
+      "probable",
+      "family tradition",
+      "unverified"
+     ],
+     "description": "How sure the site is of this claim. confirmed: a record says it. probable: the records point to it but a certificate would make it firmer. family tradition: the family says it and no record has been found. unverified: not yet checked."
+    },
+    "familyStatement": {
+     "type": "boolean"
+    },
+    "summary": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "note": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "voyageId": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "voyageEnd": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "enum": [
+      "departure",
+      "arrival",
+      null
+     ]
+    }
+   },
+   "additionalProperties": false,
+   "required": [
+    "id",
+    "type",
+    "personIds"
+   ],
+   "description": "Something that happened at this place."
+  },
+  "place": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9][a-z0-9_-]*$",
+     "description": "A stable id: lower-case letters, digits and hyphens. Never reuse or rename one; pages link to it."
+    },
+    "name": {
+     "type": "string"
+    },
+    "historicName": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "variants": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "kind": {
+     "type": "string",
+     "description": "home, church, town, port, workplace, cemetery, registration district ..."
+    },
+    "address": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "modernAddress": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "precision": {
+     "type": "string",
+     "description": "How exact the point is: address, building, street, parish, town, registration district, county, country."
+    },
+    "lat": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "lng": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "uncertaintyMetres": {
+     "type": [
+      "integer",
+      "number",
+      "null"
+     ]
+    },
+    "coordinateMethod": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "coordinatePrecision": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "coordinateSourceIds": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Ids of entries in sources.json that support this claim."
+    },
+    "drawAs": {
+     "type": "string",
+     "enum": [
+      "pin",
+      "halo",
+      "area"
+     ]
+    },
+    "inHomeRegion": {
+     "type": [
+      "boolean",
+      "null"
+     ],
+     "description": "Inside the site's home region (map.home). Older data says inEngland."
+    },
+    "inEngland": {
+     "type": [
+      "boolean",
+      "null"
+     ],
+     "description": "Older name for inHomeRegion; read when inHomeRegion is absent."
+    },
+    "country": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Optional: the country, for questions such as \"who went to Italy?\"."
+    },
+    "noProvenLink": {
+     "type": "boolean"
+    },
+    "standsToday": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "standsTodaySource": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "todayNote": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "status": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "significance": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "blurb": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "blurbSourceIds": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Ids of entries in sources.json that support this claim."
+    },
+    "title": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "boundary": {},
+    "historicMap": {},
+    "images": {
+     "type": "array"
+    },
+    "streetView": {
+     "anyOf": [
+      {
+       "type": "object"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "streetViewReason": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "events": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/placeEvent"
+     }
+    }
+   },
+   "additionalProperties": false,
+   "required": [
+    "id",
+    "name",
+    "events"
+   ],
+   "description": "A place on the map."
+  },
+  "source": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9][a-z0-9_-]*$",
+     "description": "A stable id: lower-case letters, digits and hyphens. Never reuse or rename one; pages link to it."
+    },
+    "title": {
+     "type": "string"
+    },
+    "type": {
+     "type": "string",
+     "description": "census, parish register, newspaper, photograph, family testimony, web ..."
+    },
+    "repository": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "date": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "url": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "file": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "note": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "earlierNote": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   },
+   "additionalProperties": false,
+   "required": [
+    "id",
+    "title",
+    "type"
+   ],
+   "description": "A record the site relies on."
+  },
+  "peopleFile": {
+   "type": "object",
+   "properties": {
+    "meta": {
+     "type": "object",
+     "properties": {
+      "schemaVersion": {
+       "type": "integer",
+       "const": 1
+      },
+      "title": {
+       "type": "string"
+      },
+      "updated": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "confidenceScale": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "note": {
+       "type": [
+        "string",
+        "null"
+       ]
+      }
+     },
+     "additionalProperties": true,
+     "required": [
+      "schemaVersion"
+     ],
+     "description": "About the data, not how it is shown. Settings for how the tree looks live in site.config.json."
+    },
+    "people": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/person"
+     }
+    }
+   },
+   "additionalProperties": false,
+   "required": [
+    "meta",
+    "people"
+   ]
+  },
+  "sourcesFile": {
+   "type": "object",
+   "properties": {
+    "sources": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/source"
+     }
+    }
+   },
+   "additionalProperties": true,
+   "required": [
+    "sources"
+   ]
+  },
+  "placesFile": {
+   "type": "object",
+   "properties": {
+    "meta": {
+     "type": "object"
+    },
+    "places": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/place"
+     }
+    }
+   },
+   "additionalProperties": false,
+   "required": [
+    "places"
+   ]
+  }
+ }
+}

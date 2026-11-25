@@ -1,0 +1,40 @@
+# The engine's own checks: the build, the data checker and the migration (Python), then the sample site in a
+# browser (Playwright). Runs on every push and pull request; a release is only made from a commit that passed.
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build, data checker and migration
+        run: python3 tests/test_build.py
+
+      - name: The sample site's data
+        run: python3 build/validate.py --site sample
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: The sample site in a browser
+        run: node tests/check-sample.js

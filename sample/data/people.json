@@ -1,0 +1,1550 @@
+{
+ "meta": {
+  "schemaVersion": 1,
+  "title": "Hartley & Moreau family (a made-up family for testing)",
+  "updated": "2026-11-25",
+  "confidenceScale": [
+   "confirmed",
+   "probable",
+   "family tradition",
+   "unverified"
+  ],
+  "note": "A made-up family used by the engine's tests and as an example. Nothing here is a real person."
+ },
+ "people": [
+  {
+   "id": "thomas-hartley",
+   "displayName": "Thomas Hartley",
+   "givenNames": "Thomas",
+   "surname": "Hartley",
+   "sex": "M",
+   "generation": 0,
+   "isLiving": false,
+   "isDirectLine": true,
+   "confidence": "confirmed",
+   "parents": [],
+   "children": [
+    "william-hartley",
+    "ellen-hartley",
+    "james-hartley"
+   ],
+   "spouses": [
+    {
+     "id": "mary-ann-briggs",
+     "order": 1,
+     "marriageDate": "1874-04-02",
+     "marriageDisplay": "2 April 1874",
+     "place": "Bradford, Yorkshire",
+     "placeId": "bradford",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "marriage-hartley-briggs"
+     ]
+    }
+   ],
+   "nameVariants": [],
+   "residences": [
+    {
+     "place": "Leeds",
+     "placeId": "leeds",
+     "address": "14 Park Row, Leeds",
+     "years": "1881",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "census-1881-leeds"
+     ]
+    }
+   ],
+   "occupations": [
+    {
+     "title": "Wool merchant",
+     "place": "Leeds",
+     "placeId": "leeds",
+     "years": "1871 to 1911",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "census-1881-leeds"
+     ]
+    }
+   ],
+   "facts": [],
+   "timeline": [],
+   "media": [
+    {
+     "id": "m-thomas",
+     "type": "photo",
+     "file": "images/people/thomas-hartley.png",
+     "thumb": "images/people/thomas-hartley.png",
+     "caption": "Thomas Hartley, about 1890",
+     "alt": "Thomas Hartley",
+     "sourceId": "family-photographs"
+    }
+   ],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "wool merchant, Arthur's grandfather",
+   "summary": "A wool merchant in Leeds.",
+   "story": "Thomas Hartley traded wool in Leeds for forty years.[^census-1881-leeds] He married Mary Ann Briggs of Bradford.[^marriage-hartley-briggs]",
+   "cardPlace": "Leeds",
+   "photo": "images/people/thomas-hartley.png",
+   "birth": {
+    "date": "1848",
+    "display": "about 1848",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "probable",
+    "sourceIds": [
+     "census-1881-leeds"
+    ],
+    "dateQualifier": "about"
+   },
+   "death": {
+    "date": "1912-03-02",
+    "display": "2 March 1912",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   }
+  },
+  {
+   "id": "mary-ann-briggs",
+   "displayName": "Mary Ann Hartley",
+   "givenNames": "Mary Ann",
+   "surname": "Briggs",
+   "sex": "F",
+   "generation": 0,
+   "isLiving": false,
+   "isDirectLine": true,
+   "confidence": "confirmed",
+   "parents": [],
+   "children": [
+    "william-hartley",
+    "ellen-hartley",
+    "james-hartley"
+   ],
+   "spouses": [
+    {
+     "id": "thomas-hartley",
+     "order": 1,
+     "marriageDate": "1874-04-02",
+     "marriageDisplay": "2 April 1874",
+     "place": "Bradford, Yorkshire",
+     "placeId": "bradford",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "marriage-hartley-briggs"
+     ]
+    }
+   ],
+   "nameVariants": [
+    {
+     "name": "Mary Ann Briggs",
+     "note": "maiden name",
+     "sourceIds": [
+      "marriage-hartley-briggs"
+     ]
+    }
+   ],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [
+    {
+     "id": "m-maryann",
+     "type": "photo",
+     "file": "images/people/mary-ann-briggs.png",
+     "thumb": "images/people/mary-ann-briggs.png",
+     "caption": "Mary Ann Hartley, portrait",
+     "alt": "Mary Ann Hartley",
+     "sourceId": "family-photographs"
+    },
+    {
+     "id": "m-maryann-doc",
+     "type": "document",
+     "file": "images/records/marriage-1874.png",
+     "thumb": "images/records/marriage-1874.png",
+     "caption": "Marriage register, 1874",
+     "alt": "Marriage register entry",
+     "sourceId": "marriage-hartley-briggs"
+    }
+   ],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "nee Briggs, Thomas's wife",
+   "summary": "Born in Bradford; married Thomas Hartley.",
+   "story": "Mary Ann Briggs was born in Bradford.[^census-1881-leeds]",
+   "cardPlace": "Leeds",
+   "photo": null,
+   "birth": {
+    "date": "1852",
+    "display": "1852",
+    "place": "Bradford, Yorkshire",
+    "placeId": "bradford",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "census-1881-leeds"
+    ]
+   },
+   "death": {
+    "date": "1920",
+    "display": "1920",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   }
+  },
+  {
+   "id": "george-turner",
+   "displayName": "George Turner",
+   "givenNames": "George",
+   "surname": "Turner",
+   "sex": "M",
+   "generation": 0,
+   "isLiving": false,
+   "isDirectLine": false,
+   "confidence": "confirmed",
+   "parents": [],
+   "children": [
+    "alice-turner"
+   ],
+   "spouses": [
+    {
+     "id": "sarah-turner",
+     "order": 1,
+     "marriageDate": "1874",
+     "marriageDisplay": "1874",
+     "place": "Leeds, Yorkshire",
+     "placeId": "leeds",
+     "confidence": "probable",
+     "sourceIds": [
+      "census-1881-leeds"
+     ]
+    }
+   ],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "printer, Alice's father",
+   "summary": "A printer.",
+   "story": "George Turner was a printer in Leeds.[^census-1881-leeds]",
+   "cardPlace": "Leeds",
+   "photo": null,
+   "birth": {
+    "date": "1850",
+    "display": "1850",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "census-1881-leeds"
+    ]
+   },
+   "death": {
+    "date": "1919",
+    "display": "1919",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   }
+  },
+  {
+   "id": "sarah-turner",
+   "displayName": "Sarah Turner",
+   "givenNames": "Sarah",
+   "surname": "Turner",
+   "sex": "F",
+   "generation": 0,
+   "isLiving": false,
+   "isDirectLine": false,
+   "confidence": "confirmed",
+   "parents": [],
+   "children": [
+    "alice-turner"
+   ],
+   "spouses": [
+    {
+     "id": "george-turner",
+     "order": 1,
+     "marriageDate": "1874",
+     "marriageDisplay": "1874",
+     "place": "Leeds, Yorkshire",
+     "placeId": "leeds",
+     "confidence": "probable",
+     "sourceIds": [
+      "census-1881-leeds"
+     ]
+    }
+   ],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "Alice's mother",
+   "summary": "George Turner's wife.",
+   "story": "Sarah Turner kept the house on Briggate.[^census-1881-leeds]",
+   "cardPlace": "Leeds",
+   "photo": null,
+   "birth": {
+    "date": "1853",
+    "display": "1853",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "census-1881-leeds"
+    ]
+   },
+   "death": {
+    "date": "1925",
+    "display": "1925",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   }
+  },
+  {
+   "id": "jean-baptiste-moreau",
+   "displayName": "Jean-Baptiste Moreau",
+   "givenNames": "Jean-Baptiste",
+   "surname": "Moreau",
+   "sex": "M",
+   "generation": 0,
+   "isLiving": false,
+   "isDirectLine": true,
+   "confidence": "confirmed",
+   "parents": [],
+   "children": [
+    "henri-moreau",
+    "claire-moreau"
+   ],
+   "spouses": [
+    {
+     "id": "louise-fabre",
+     "order": 1,
+     "marriageDate": "1877",
+     "marriageDisplay": "1877",
+     "place": "Lyon, France",
+     "placeId": "lyon",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "passenger-list-1878"
+     ]
+    }
+   ],
+   "nameVariants": [],
+   "residences": [
+    {
+     "place": "Lyon, France",
+     "placeId": "lyon",
+     "years": "before 1878",
+     "confidence": "probable",
+     "sourceIds": [
+      "passenger-list-1878"
+     ]
+    },
+    {
+     "place": "Soho, London",
+     "placeId": "soho",
+     "address": "9 Greek Street, Soho",
+     "years": "1881 to 1915",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "census-1881-soho"
+     ]
+    }
+   ],
+   "occupations": [
+    {
+     "title": "Silk weaver",
+     "place": "Soho, London",
+     "placeId": "soho",
+     "years": "1881",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "census-1881-soho"
+     ]
+    }
+   ],
+   "facts": [
+    {
+     "label": "Why he left Lyon",
+     "value": "The family says the silk trade in Lyon was failing. No record says why he left.",
+     "sourceIds": [
+      "family-testimony"
+     ],
+     "confidence": "family tradition"
+    }
+   ],
+   "timeline": [
+    {
+     "date": "1850",
+     "label": "Born 1850",
+     "event": "Born in Lyon.",
+     "sourceIds": [
+      "passenger-list-1878"
+     ],
+     "kind": "life",
+     "confidence": "confirmed",
+     "placeId": "lyon"
+    },
+    {
+     "date": "1878-05-04",
+     "label": "Came to England, 4 May 1878",
+     "event": "Crossed from Calais to Dover on the Lord Warden with Louise.",
+     "sourceIds": [
+      "passenger-list-1878"
+     ],
+     "kind": "life",
+     "confidence": "confirmed"
+    },
+    {
+     "date": "1881",
+     "label": "Census, 1881",
+     "event": "A silk weaver at 9 Greek Street, Soho.",
+     "sourceIds": [
+      "census-1881-soho"
+     ],
+     "kind": "life",
+     "confidence": "confirmed",
+     "placeId": "soho"
+    }
+   ],
+   "media": [],
+   "openQuestions": [
+    {
+     "question": "Was Pierre Moreau his cousin?",
+     "record": "A baptism in Lyon naming both fathers would settle it."
+    }
+   ],
+   "relatedPages": [
+    {
+     "title": "The Moreaus come to London",
+     "url": "moreau.html"
+    }
+   ],
+   "disambiguator": "silk weaver, came from Lyon",
+   "summary": "A silk weaver who came to London from Lyon.",
+   "story": "Jean-Baptiste Moreau was a silk weaver in Lyon.[^passenger-list-1878] He came to London in 1878.[^passenger-list-1878]",
+   "cardPlace": "Lyon, then London",
+   "photo": null,
+   "birth": {
+    "date": "1850",
+    "display": "1850",
+    "place": "Lyon, France",
+    "placeId": "lyon",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "passenger-list-1878"
+    ]
+   },
+   "death": {
+    "date": "1915",
+    "display": "1915",
+    "place": "Soho, London",
+    "placeId": "soho",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   },
+   "immigration": {
+    "date": "1878-05-04",
+    "port": "Dover",
+    "ship": "Lord Warden",
+    "age": 28,
+    "confidence": "confirmed",
+    "sourceIds": [
+     "passenger-list-1878"
+    ]
+   }
+  },
+  {
+   "id": "louise-fabre",
+   "displayName": "Louise Moreau",
+   "givenNames": "Louise",
+   "surname": "Fabre",
+   "sex": "F",
+   "generation": 0,
+   "isLiving": false,
+   "isDirectLine": true,
+   "confidence": "confirmed",
+   "parents": [],
+   "children": [
+    "henri-moreau",
+    "claire-moreau"
+   ],
+   "spouses": [
+    {
+     "id": "jean-baptiste-moreau",
+     "order": 1,
+     "marriageDate": "1877",
+     "marriageDisplay": "1877",
+     "place": "Lyon, France",
+     "placeId": "lyon",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "passenger-list-1878"
+     ]
+    }
+   ],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [
+    {
+     "title": "The Moreaus come to London",
+     "url": "moreau.html"
+    }
+   ],
+   "disambiguator": "nee Fabre",
+   "summary": "Came to London with Jean-Baptiste.",
+   "story": "Louise Fabre married Jean-Baptiste in Lyon.[^passenger-list-1878]",
+   "cardPlace": "Lyon, then London",
+   "photo": null,
+   "birth": {
+    "date": "1855",
+    "display": "1855",
+    "place": "Lyon, France",
+    "placeId": "lyon",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "passenger-list-1878"
+    ]
+   },
+   "death": {
+    "date": "1930",
+    "display": "1930",
+    "place": "Soho, London",
+    "placeId": "soho",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   }
+  },
+  {
+   "id": "auguste-de-moreau",
+   "displayName": "Count Auguste de Moreau",
+   "givenNames": "Auguste",
+   "surname": "de Moreau",
+   "sex": "M",
+   "generation": 0,
+   "isLiving": false,
+   "isDirectLine": false,
+   "confidence": "family tradition",
+   "parents": [],
+   "children": [
+    "pierre-moreau"
+   ],
+   "spouses": [],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "the family legend",
+   "summary": "The count the family says they descend from.",
+   "story": "The family says the Moreaus descend from a count.[^family-testimony] No record links them.",
+   "cardPlace": null,
+   "photo": null,
+   "birth": {
+    "date": "1790",
+    "display": "about 1790",
+    "place": "Paris, France",
+    "placeId": "paris",
+    "confidence": "family tradition",
+    "sourceIds": [
+     "family-testimony"
+    ],
+    "dateQualifier": "about"
+   },
+   "region": "legend"
+  },
+  {
+   "id": "pierre-moreau",
+   "displayName": "Pierre Moreau",
+   "givenNames": "Pierre",
+   "surname": "Moreau",
+   "sex": "M",
+   "generation": 1,
+   "isLiving": false,
+   "isDirectLine": false,
+   "confidence": "unverified",
+   "parents": [
+    "auguste-de-moreau"
+   ],
+   "children": [],
+   "spouses": [],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "perhaps Jean-Baptiste's cousin",
+   "summary": "Perhaps a cousin of Jean-Baptiste.",
+   "story": "A letter calls Pierre Moreau a cousin.[^family-testimony]",
+   "cardPlace": null,
+   "photo": null,
+   "birth": {
+    "date": "1848",
+    "display": "about 1848",
+    "place": "Lyon, France",
+    "placeId": "lyon",
+    "confidence": "family tradition",
+    "sourceIds": [
+     "family-testimony"
+    ],
+    "dateQualifier": "about"
+   },
+   "region": "legend"
+  },
+  {
+   "id": "william-hartley",
+   "displayName": "William Hartley",
+   "givenNames": "William",
+   "surname": "Hartley",
+   "sex": "M",
+   "generation": 1,
+   "isLiving": false,
+   "isDirectLine": true,
+   "confidence": "confirmed",
+   "parents": [
+    "thomas-hartley",
+    "mary-ann-briggs"
+   ],
+   "children": [
+    "arthur-hartley"
+   ],
+   "spouses": [
+    {
+     "id": "alice-turner",
+     "order": 1,
+     "marriageDate": "1900-08-11",
+     "marriageDisplay": "11 August 1900",
+     "place": "Leeds, Yorkshire",
+     "placeId": "leeds",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "marriage-hartley-turner"
+     ]
+    }
+   ],
+   "nameVariants": [],
+   "residences": [
+    {
+     "place": "Leeds",
+     "placeId": "leeds",
+     "address": "3 Kirkgate, Leeds",
+     "years": "1901",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "census-1901-leeds"
+     ]
+    }
+   ],
+   "occupations": [
+    {
+     "title": "Printer",
+     "employer": "George Turner",
+     "place": "Leeds",
+     "placeId": "leeds",
+     "years": "1901",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "census-1901-leeds"
+     ]
+    }
+   ],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "Will, Arthur's father",
+   "summary": "A printer, like his father-in-law.",
+   "story": "William Hartley, called Will, worked for George Turner as a printer.[^census-1901-leeds]",
+   "cardPlace": "Leeds",
+   "photo": null,
+   "birth": {
+    "date": "1875-06-10",
+    "display": "10 June 1875",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "baptism-william"
+    ]
+   },
+   "death": {
+    "date": "1940",
+    "display": "1940",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   },
+   "order": 1
+  },
+  {
+   "id": "ellen-hartley",
+   "displayName": "Ellen Hartley",
+   "givenNames": "Ellen",
+   "surname": "Hartley",
+   "sex": "F",
+   "generation": 1,
+   "isLiving": false,
+   "isDirectLine": false,
+   "confidence": "confirmed",
+   "parents": [
+    "thomas-hartley",
+    "mary-ann-briggs"
+   ],
+   "children": [],
+   "spouses": [],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "William's sister",
+   "summary": "William's sister.",
+   "story": "Ellen Hartley is probably Thomas and Mary Ann's daughter.[^census-1881-leeds]",
+   "cardPlace": "Leeds",
+   "photo": null,
+   "birth": {
+    "date": "1878",
+    "display": "1878",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "census-1881-leeds"
+    ]
+   },
+   "death": {
+    "date": "1950",
+    "display": "1950",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   },
+   "parentLinkConfidence": "probable",
+   "order": 2
+  },
+  {
+   "id": "james-hartley",
+   "displayName": "James Hartley",
+   "givenNames": "James",
+   "surname": "Hartley",
+   "sex": "M",
+   "generation": 1,
+   "isLiving": false,
+   "isDirectLine": false,
+   "confidence": "confirmed",
+   "parents": [
+    "thomas-hartley",
+    "mary-ann-briggs"
+   ],
+   "children": [],
+   "spouses": [],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "died in infancy",
+   "summary": "Died as a baby.",
+   "story": "James Hartley died aged one.[^death-index]",
+   "cardPlace": "Leeds",
+   "photo": null,
+   "birth": {
+    "date": "1880",
+    "display": "1880",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "census-1881-leeds"
+    ]
+   },
+   "death": {
+    "date": "1881",
+    "display": "1881",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   },
+   "order": 3
+  },
+  {
+   "id": "alice-turner",
+   "displayName": "Alice Hartley",
+   "givenNames": "Alice",
+   "surname": "Turner",
+   "sex": "F",
+   "generation": 1,
+   "isLiving": false,
+   "isDirectLine": true,
+   "confidence": "confirmed",
+   "parents": [
+    "george-turner",
+    "sarah-turner"
+   ],
+   "children": [
+    "arthur-hartley"
+   ],
+   "spouses": [
+    {
+     "id": "william-hartley",
+     "order": 1,
+     "marriageDate": "1900-08-11",
+     "marriageDisplay": "11 August 1900",
+     "place": "Leeds, Yorkshire",
+     "placeId": "leeds",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "marriage-hartley-turner"
+     ]
+    }
+   ],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "nee Turner, Arthur's mother",
+   "summary": "George and Sarah Turner's daughter.",
+   "story": "Alice Turner married William Hartley in 1900.[^marriage-hartley-turner]",
+   "cardPlace": "Leeds",
+   "photo": null,
+   "birth": {
+    "date": "1877",
+    "display": "1877",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "census-1881-leeds"
+    ]
+   },
+   "death": {
+    "date": "1945",
+    "display": "1945",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   }
+  },
+  {
+   "id": "henri-moreau",
+   "displayName": "Henri Moreau",
+   "givenNames": "Henri",
+   "surname": "Moreau",
+   "sex": "M",
+   "generation": 1,
+   "isLiving": false,
+   "isDirectLine": true,
+   "confidence": "confirmed",
+   "parents": [
+    "jean-baptiste-moreau",
+    "louise-fabre"
+   ],
+   "children": [
+    "marguerite-moreau"
+   ],
+   "spouses": [
+    {
+     "id": "edith-clarke",
+     "order": 1,
+     "marriageDate": "1903",
+     "marriageDisplay": "1903",
+     "place": "Southampton, Hampshire",
+     "placeId": "southampton",
+     "confidence": "family tradition",
+     "sourceIds": [
+      "family-testimony"
+     ]
+    }
+   ],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [
+    {
+     "title": "Tailor",
+     "place": "Soho, London",
+     "placeId": "soho",
+     "years": "1911",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "census-1911-soho"
+     ]
+    }
+   ],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [
+    {
+     "title": "The Moreaus come to London",
+     "url": "moreau.html"
+    }
+   ],
+   "disambiguator": "Margot's father",
+   "summary": "A tailor who went back to France for a time.",
+   "story": "Henri Moreau sailed from Le Havre to Southampton in 1899.[^passenger-list-1899]",
+   "cardPlace": "London",
+   "photo": null,
+   "birth": {
+    "date": "1879",
+    "display": "1879",
+    "place": "Soho, London",
+    "placeId": "soho",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "census-1881-soho"
+    ]
+   },
+   "death": {
+    "date": "1944",
+    "display": "1944",
+    "place": "Soho, London",
+    "placeId": "soho",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   },
+   "voyages": [
+    {
+     "id": "v-henri-1899",
+     "ship": "Normandie",
+     "from": "Le Havre",
+     "to": "Southampton",
+     "fromPlaceId": "le-havre",
+     "toPlaceId": "southampton",
+     "departureDate": "1899-09-01",
+     "arrivalDate": "1899-09-02",
+     "display": "sailed 1 September 1899, Le Havre to Southampton",
+     "recordCrops": [
+      "passenger-list-1899.png"
+     ],
+     "confidence": "confirmed",
+     "sourceIds": [
+      "passenger-list-1899"
+     ]
+    }
+   ],
+   "order": 1
+  },
+  {
+   "id": "claire-moreau",
+   "displayName": "Claire Moreau",
+   "givenNames": "Claire",
+   "surname": "Moreau",
+   "sex": "F",
+   "generation": 1,
+   "isLiving": false,
+   "isDirectLine": false,
+   "confidence": "confirmed",
+   "parents": [
+    "jean-baptiste-moreau",
+    "louise-fabre"
+   ],
+   "children": [],
+   "spouses": [],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "Henri's sister, went back to Lyon",
+   "summary": "Went back to Lyon.",
+   "story": "Claire Moreau went back to Lyon after the war.[^family-testimony]",
+   "cardPlace": "London, then Lyon",
+   "photo": null,
+   "birth": {
+    "date": "1882",
+    "display": "1882",
+    "place": "Soho, London",
+    "placeId": "soho",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "census-1881-soho"
+    ],
+    "alternates": [
+     {
+      "display": "1883",
+      "date": "1883",
+      "note": "census of 1891",
+      "sourceIds": [
+       "census-1881-soho"
+      ]
+     }
+    ]
+   },
+   "death": {
+    "date": "1960",
+    "display": "1960",
+    "place": "Lyon, France",
+    "placeId": "lyon",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   },
+   "order": 2
+  },
+  {
+   "id": "edith-clarke",
+   "displayName": "Edith Moreau",
+   "givenNames": "Edith",
+   "surname": "Clarke",
+   "sex": "F",
+   "generation": 1,
+   "isLiving": false,
+   "isDirectLine": true,
+   "confidence": "confirmed",
+   "parents": [],
+   "children": [
+    "marguerite-moreau"
+   ],
+   "spouses": [
+    {
+     "id": "henri-moreau",
+     "order": 1,
+     "marriageDate": "1903",
+     "marriageDisplay": "1903",
+     "place": "Southampton, Hampshire",
+     "placeId": "southampton",
+     "confidence": "family tradition",
+     "sourceIds": [
+      "family-testimony"
+     ]
+    }
+   ],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "nee Clarke, Margot's mother",
+   "summary": "From Southampton.",
+   "story": "Edith Clarke met Henri Moreau in Southampton.[^family-testimony]",
+   "cardPlace": "London",
+   "photo": null,
+   "birth": {
+    "date": "1883",
+    "display": "1883",
+    "place": "Southampton, Hampshire",
+    "placeId": "southampton",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "census-1911-soho"
+    ]
+   },
+   "death": {
+    "date": "1958",
+    "display": "1958",
+    "place": "Soho, London",
+    "placeId": "soho",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   }
+  },
+  {
+   "id": "arthur-hartley",
+   "displayName": "Arthur Hartley",
+   "givenNames": "Arthur",
+   "surname": "Hartley",
+   "sex": "M",
+   "generation": 2,
+   "isLiving": false,
+   "isDirectLine": true,
+   "confidence": "confirmed",
+   "parents": [
+    "william-hartley",
+    "alice-turner"
+   ],
+   "children": [
+    "peter-hartley",
+    "susan-hartley"
+   ],
+   "spouses": [
+    {
+     "id": "marguerite-moreau",
+     "order": 1,
+     "marriageDate": "1930-06-07",
+     "marriageDisplay": "7 June 1930",
+     "place": "Soho, London",
+     "placeId": "soho",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "marriage-hartley-moreau"
+     ]
+    }
+   ],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [
+    {
+     "title": "Schoolteacher",
+     "place": "Leeds",
+     "placeId": "leeds",
+     "years": "1925 to 1965",
+     "confidence": "family tradition",
+     "sourceIds": [
+      "family-testimony"
+     ]
+    }
+   ],
+   "facts": [
+    {
+     "label": "Called",
+     "value": "Grandpa Arthur",
+     "sourceIds": [
+      "family-testimony"
+     ],
+     "confidence": "family tradition"
+    }
+   ],
+   "timeline": [
+    {
+     "date": "1902-02-14",
+     "label": "Born 14 February 1902",
+     "event": "Born in Leeds.",
+     "sourceIds": [
+      "baptism-arthur"
+     ],
+     "kind": "life",
+     "confidence": "confirmed",
+     "placeId": "leeds"
+    },
+    {
+     "date": "1930-06-07",
+     "label": "Married 7 June 1930",
+     "event": "Married Marguerite Moreau in Soho.",
+     "sourceIds": [
+      "marriage-hartley-moreau"
+     ],
+     "kind": "life",
+     "confidence": "confirmed",
+     "placeId": "soho"
+    }
+   ],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "Grandpa Arthur",
+   "summary": "Grandpa Arthur, a schoolteacher.",
+   "story": "Arthur Hartley taught at a school in Leeds.[^family-testimony] He met Marguerite Moreau in London in 1929.[^family-testimony]",
+   "cardPlace": "Leeds",
+   "photo": "images/people/arthur-hartley.png",
+   "birth": {
+    "date": "1902-02-14",
+    "display": "14 February 1902",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "baptism-arthur"
+    ]
+   },
+   "death": {
+    "date": "1975",
+    "display": "1975",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   }
+  },
+  {
+   "id": "marguerite-moreau",
+   "displayName": "Marguerite Hartley",
+   "givenNames": "Marguerite",
+   "surname": "Moreau",
+   "sex": "F",
+   "generation": 2,
+   "isLiving": false,
+   "isDirectLine": true,
+   "confidence": "confirmed",
+   "parents": [
+    "henri-moreau",
+    "edith-clarke"
+   ],
+   "children": [
+    "peter-hartley",
+    "susan-hartley"
+   ],
+   "spouses": [
+    {
+     "id": "arthur-hartley",
+     "order": 1,
+     "marriageDate": "1930-06-07",
+     "marriageDisplay": "7 June 1930",
+     "place": "Soho, London",
+     "placeId": "soho",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "marriage-hartley-moreau"
+     ]
+    }
+   ],
+   "nameVariants": [
+    {
+     "name": "Margot",
+     "note": "what the family called her",
+     "sourceIds": [
+      "family-testimony"
+     ]
+    }
+   ],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [
+    {
+     "id": "m-margot",
+     "type": "photo",
+     "file": "images/people/marguerite-moreau.png",
+     "thumb": "images/people/marguerite-moreau.png",
+     "caption": "Margot in 1929",
+     "alt": "Marguerite Moreau",
+     "sourceId": "family-photographs"
+    }
+   ],
+   "openQuestions": [],
+   "relatedPages": [
+    {
+     "title": "The Moreaus come to London",
+     "url": "moreau.html"
+    }
+   ],
+   "disambiguator": "Grandma Margot",
+   "summary": "Grandma Margot, born in Soho.",
+   "story": "Marguerite Moreau, called Margot, was born in Soho.[^birth-marguerite]",
+   "cardPlace": "London, then Leeds",
+   "photo": null,
+   "birth": {
+    "date": "1905-07-21",
+    "display": "21 July 1905",
+    "place": "Soho, London",
+    "placeId": "soho",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "birth-marguerite"
+    ]
+   },
+   "death": {
+    "date": "1990",
+    "display": "1990",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   }
+  },
+  {
+   "id": "peter-hartley",
+   "displayName": "Peter Hartley",
+   "givenNames": "Peter",
+   "surname": "Hartley",
+   "sex": "M",
+   "generation": 3,
+   "isLiving": false,
+   "isDirectLine": true,
+   "confidence": "confirmed",
+   "parents": [
+    "arthur-hartley",
+    "marguerite-moreau"
+   ],
+   "children": [
+    "daniel-hartley"
+   ],
+   "spouses": [
+    {
+     "id": "janet-hartley",
+     "order": 1,
+     "marriageDate": null,
+     "marriageDisplay": null,
+     "place": null,
+     "placeId": null,
+     "confidence": "confirmed",
+     "sourceIds": []
+    }
+   ],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "Daniel's grandfather",
+   "summary": "Arthur and Margot's son.",
+   "story": "Peter Hartley was Arthur and Margot's son.[^family-testimony]",
+   "cardPlace": "Leeds",
+   "photo": null,
+   "birth": {
+    "date": "1935",
+    "display": "1935",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "family tradition",
+    "sourceIds": [
+     "family-testimony"
+    ]
+   },
+   "death": {
+    "date": "2010",
+    "display": "2010",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "death-index"
+    ]
+   },
+   "order": 1
+  },
+  {
+   "id": "susan-hartley",
+   "displayName": "Susan Hartley",
+   "givenNames": "Susan",
+   "surname": "Hartley",
+   "sex": "F",
+   "generation": 3,
+   "isLiving": true,
+   "isDirectLine": false,
+   "confidence": "confirmed",
+   "parents": [
+    "arthur-hartley",
+    "marguerite-moreau"
+   ],
+   "children": [
+    "kate-hartley"
+   ],
+   "spouses": [],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "Arthur and Margot's daughter",
+   "summary": "Arthur and Margot's daughter.",
+   "story": "Susan Hartley is Arthur and Margot's daughter.[^family-testimony]",
+   "cardPlace": null,
+   "photo": null,
+   "birth": {
+    "date": "1938",
+    "display": "1938",
+    "place": "Leeds, Yorkshire",
+    "placeId": "leeds",
+    "confidence": "family tradition",
+    "sourceIds": [
+     "family-testimony"
+    ]
+   },
+   "order": 2
+  },
+  {
+   "id": "janet-hartley",
+   "displayName": "Janet Hartley",
+   "givenNames": "Janet",
+   "surname": "Hartley",
+   "sex": "F",
+   "generation": 3,
+   "isLiving": true,
+   "isDirectLine": false,
+   "confidence": "confirmed",
+   "parents": [],
+   "children": [
+    "daniel-hartley"
+   ],
+   "spouses": [
+    {
+     "id": "peter-hartley",
+     "order": 1,
+     "marriageDate": null,
+     "marriageDisplay": null,
+     "place": null,
+     "placeId": null,
+     "confidence": "confirmed",
+     "sourceIds": []
+    }
+   ],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "Peter's wife",
+   "summary": "Peter's wife.",
+   "story": "Janet is Peter's wife.[^family-testimony]",
+   "cardPlace": null,
+   "photo": null
+  },
+  {
+   "id": "daniel-hartley",
+   "displayName": "Daniel Hartley",
+   "givenNames": "Daniel",
+   "surname": "Hartley",
+   "sex": "M",
+   "generation": 4,
+   "isLiving": true,
+   "isDirectLine": true,
+   "confidence": "confirmed",
+   "parents": [
+    "peter-hartley",
+    "janet-hartley"
+   ],
+   "children": [],
+   "spouses": [],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "Peter and Janet's son",
+   "summary": "Peter and Janet's son.",
+   "story": "Daniel is Peter and Janet's son.[^family-testimony]",
+   "cardPlace": null,
+   "photo": null
+  },
+  {
+   "id": "kate-hartley",
+   "displayName": "Kate Hartley",
+   "givenNames": "Kate",
+   "surname": "Hartley",
+   "sex": "F",
+   "generation": 4,
+   "isLiving": true,
+   "isDirectLine": false,
+   "confidence": "confirmed",
+   "parents": [
+    "susan-hartley"
+   ],
+   "children": [],
+   "spouses": [],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "Susan's daughter",
+   "summary": "Susan's daughter.",
+   "story": "Kate is Susan's daughter.[^family-testimony]",
+   "cardPlace": null,
+   "photo": null
+  },
+  {
+   "id": "unknown-sitter",
+   "displayName": "Woman in a studio portrait",
+   "givenNames": "Woman",
+   "surname": null,
+   "sex": "F",
+   "generation": 1,
+   "isLiving": false,
+   "isDirectLine": false,
+   "confidence": "unverified",
+   "parents": [],
+   "children": [],
+   "spouses": [],
+   "nameVariants": [],
+   "residences": [],
+   "occupations": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "disambiguator": "unnamed sitter in the oldest photograph",
+   "summary": "An unnamed woman in a studio portrait.",
+   "story": "Nobody knows who she is.[^family-photographs]",
+   "cardPlace": null,
+   "photo": null,
+   "placeholder": true,
+   "kin": true,
+   "uncertainBeside": "mary-ann-briggs"
+  }
+ ]
+}

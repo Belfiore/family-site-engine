@@ -1,0 +1,774 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/Belfiore/family-site-engine/schema/site-config.schema.json",
+ "title": "Family site settings (site.config.json), version 1",
+ "description": "Everything about how one family's site is presented. The family's facts live in data/; this file says how the engine shows them. See docs/site-config.md.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schemaVersion",
+  "site",
+  "nav"
+ ],
+ "properties": {
+  "$schema": {
+   "type": "string"
+  },
+  "$comment": {
+   "type": "string"
+  },
+  "schemaVersion": {
+   "type": "integer",
+   "const": 1
+  },
+  "engine": {
+   "type": "object",
+   "properties": {
+    "channel": {
+     "type": "string",
+     "enum": [
+      "stable",
+      "beta",
+      "canary"
+     ],
+     "description": "Which releases this site takes. Most sites: stable."
+    },
+    "version": {
+     "type": "string",
+     "pattern": "^\\d+\\.\\d+\\.\\d+$",
+     "description": "Pin this site to one engine version; overrides channel."
+    }
+   },
+   "additionalProperties": false,
+   "description": "Which engine this site is built with."
+  },
+  "site": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string",
+     "description": "Short name: the logo in the navigation bar and the end of page titles."
+    },
+    "familyName": {
+     "type": "string",
+     "description": "How Stuart names the family in a sentence: \"the FitzMaurice and Andrews families\"."
+    },
+    "lang": {
+     "type": "string",
+     "description": "Language tag for the pages, e.g. en-GB."
+    },
+    "description": {
+     "type": "string"
+    }
+   },
+   "additionalProperties": false,
+   "required": [
+    "name"
+   ]
+  },
+  "pages": {
+   "type": "object",
+   "properties": {
+    "home": {
+     "type": "string"
+    },
+    "tree": {
+     "anyOf": [
+      {
+       "type": "null"
+      },
+      {
+       "type": "boolean",
+       "const": false
+      },
+      {
+       "type": "string"
+      },
+      {
+       "type": "object",
+       "properties": {
+        "file": {
+         "type": "string"
+        },
+        "title": {
+         "type": "string"
+        },
+        "description": {
+         "type": "string"
+        },
+        "heading": {
+         "type": "string",
+         "description": "The heading at the top of the page, if not the engine's (\"The Family Tree\")."
+        },
+        "stylesheets": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "additionalProperties": false,
+       "description": "The family tree page, or null for none."
+      }
+     ],
+     "description": "The family tree page, or null for none."
+    },
+    "map": {
+     "anyOf": [
+      {
+       "type": "null"
+      },
+      {
+       "type": "boolean",
+       "const": false
+      },
+      {
+       "type": "string"
+      },
+      {
+       "type": "object",
+       "properties": {
+        "file": {
+         "type": "string"
+        },
+        "title": {
+         "type": "string"
+        },
+        "description": {
+         "type": "string"
+        },
+        "heading": {
+         "type": "string",
+         "description": "The heading at the top of the page, if not the engine's (\"The Family Tree\")."
+        },
+        "stylesheets": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "additionalProperties": false,
+       "description": "The family map page (needs data/places.json), or null."
+      }
+     ],
+     "description": "The family map page (needs data/places.json), or null."
+    },
+    "ask": {
+     "anyOf": [
+      {
+       "type": "null"
+      },
+      {
+       "type": "boolean",
+       "const": false
+      },
+      {
+       "type": "string"
+      },
+      {
+       "type": "object",
+       "properties": {
+        "file": {
+         "type": "string"
+        },
+        "title": {
+         "type": "string"
+        },
+        "description": {
+         "type": "string"
+        },
+        "heading": {
+         "type": "string",
+         "description": "The heading at the top of the page, if not the engine's (\"The Family Tree\")."
+        },
+        "stylesheets": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "additionalProperties": false,
+       "description": "Stuart's page, or null for no Stuart."
+      }
+     ],
+     "description": "Stuart's page, or null for no Stuart."
+    }
+   },
+   "additionalProperties": false,
+   "description": "The site's home page and the engine's pages. A page set to null is not made, and the engine leaves out every link to it."
+  },
+  "nav": {
+   "type": "array",
+   "description": "The navigation bar, in order. The same on every page.",
+   "items": {
+    "anyOf": [
+     {
+      "type": "object",
+      "properties": {
+       "href": {
+        "type": "string"
+       },
+       "label": {
+        "type": "string"
+       },
+       "match": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "Other pages that light up this link (story pages under Branches, say)."
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "href",
+       "label"
+      ]
+     },
+     {
+      "type": "object",
+      "properties": {
+       "comment": {
+        "type": "string"
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "comment"
+      ]
+     }
+    ]
+   }
+  },
+  "head": {
+   "type": "object",
+   "properties": {
+    "fonts": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "A stylesheet URL for web fonts (Google Fonts, say)."
+    },
+    "stylesheets": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "The site's own stylesheets for the engine's pages, unless a page lists its own."
+    }
+   },
+   "additionalProperties": false
+  },
+  "theme": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "string"
+   },
+   "description": "CSS custom properties for the engine's look: { \"--pc-accent\": \"#7b1f1f\" }. Written into site-theme.css, which loads after the engine's styles."
+  },
+  "data": {
+   "type": "object",
+   "properties": {
+    "dir": {
+     "type": "string",
+     "description": "Folder of people.json, sources.json and places.json. Default data."
+    }
+   },
+   "additionalProperties": false
+  },
+  "tree": {
+   "type": "object",
+   "properties": {
+    "rootPersonId": {
+     "type": "string",
+     "description": "Whose tree it is: the default viewpoint for relationships."
+    },
+    "familyLabel": {
+     "type": "string"
+    },
+    "directLineLabel": {
+     "type": "string",
+     "description": "Label for the direct line: \"Sebastian's direct line\"."
+    },
+    "generations": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "generation": {
+        "type": "integer"
+       },
+       "label": {
+        "type": "string"
+       },
+       "title": {
+        "type": "string"
+       },
+       "range": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "generation"
+      ]
+     },
+     "description": "Names for the generation rows."
+    },
+    "rootOrder": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Order of the oldest people across the tree, left to right."
+    },
+    "regions": {
+     "type": "array",
+     "description": "Framed groups on the tree whose link is unproven."
+    },
+    "regionKicker": {
+     "type": "string"
+    },
+    "kinAnchor": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "kinLabel": {
+     "type": "string"
+    },
+    "initialView": {
+     "type": "object"
+    },
+    "sides": {
+     "type": "object",
+     "properties": {
+      "left": {
+       "type": "string"
+      },
+      "right": {
+       "type": "string"
+      },
+      "leftLabel": {
+       "type": "string"
+      },
+      "rightLabel": {
+       "type": "string"
+      }
+     },
+     "additionalProperties": false,
+     "description": "Lay one partner's family on the left and the other's on the right: ids and labels."
+    },
+    "hiddenRegions": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Regions not drawn (people with this region stay in the data)."
+    },
+    "suspectedRelatives": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "string"
+     },
+     "description": "{ personId: besideId }: kept from a hidden region and drawn beside someone, with no proven link."
+    },
+    "cardPhotos": {
+     "type": "string",
+     "enum": [
+      "set",
+      "best"
+     ],
+     "description": "set: a card shows person.photo only. best: with no photo set, the best picture in the person's media."
+    },
+    "coupleBlocks": {
+     "type": "string",
+     "enum": [
+      "explicit",
+      "auto"
+     ],
+     "description": "explicit: a couple who both have parents on the tree are drawn together only when the data says so (layoutJoin). auto: always, in the family of the partner on the direct line, else the husband."
+    },
+    "legendNote": {
+     "type": "string",
+     "description": "A sentence added to the end of the key on the family tree, in the site's own words. HTML allowed: \"The <a href=\\\"old.html\\\">earlier tree</a> is still here.\""
+    },
+    "noscript": {
+     "type": "string",
+     "description": "What the tree page says to visitors without JavaScript after \"The interactive tree needs JavaScript.\", in the site's own words; HTML allowed. The default points to the home page."
+    }
+   },
+   "additionalProperties": false,
+   "description": "The family tree. Any key here also overrides the same key in the data's meta."
+  },
+  "map": {
+   "type": "object",
+   "properties": {
+    "maptilerKey": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Browser key for MapTiler (satellite and historic maps). Restrict it to the site's address in MapTiler."
+    },
+    "googleEmbedKey": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Browser key for Google Street View embeds. Restrict it to the site's address."
+    },
+    "home": {
+     "type": "object",
+     "properties": {
+      "name": {
+       "type": "string"
+      },
+      "bounds": {
+       "type": "array",
+       "description": "[[west, south], [east, north]]"
+      }
+     },
+     "additionalProperties": false,
+     "required": [
+      "name",
+      "bounds"
+     ],
+     "description": "The region the map frames first; places outside it are \"beyond\" it."
+    },
+    "historicMaps": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "enum": [
+      "uk-os",
+      null
+     ],
+     "description": "uk-os: Ordnance Survey maps from the National Library of Scotland (Great Britain). null: no Then style."
+    },
+    "branches": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "label": {
+        "type": "string"
+       },
+       "pages": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "people": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "regions": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "default": {
+        "type": "boolean"
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "label"
+      ]
+     }
+    },
+    "kinAnchors": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "name": {
+        "type": "string"
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "name"
+      ]
+     },
+     "description": "People the timeline relates others to: \"Pat's father\"."
+    },
+    "families": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "label": {
+        "type": "string"
+       },
+       "option": {
+        "type": "string"
+       },
+       "roots": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "label",
+       "roots"
+      ]
+     },
+     "description": "Choices in the map's Family filter."
+    },
+    "noscript": {
+     "type": "string"
+    }
+   },
+   "additionalProperties": false,
+   "description": "The family map."
+  },
+  "stuart": {
+   "type": "object",
+   "properties": {
+    "anchors": {
+     "type": "array",
+     "maxItems": 2,
+     "items": {
+      "type": "object",
+      "properties": {
+       "key": {
+        "type": "string"
+       },
+       "id": {
+        "type": "string"
+       },
+       "title": {
+        "type": "string"
+       },
+       "short": {
+        "type": "string"
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "title"
+      ]
+     },
+     "description": "The couple at the heart of the site, left-hand side first: Stuart relates people to them (\"Grandma Pat's grandfather\")."
+    },
+    "homeCountry": {
+     "type": "string",
+     "description": "For \"who was born abroad?\": the country that counts as home."
+    },
+    "pages": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "The story pages Stuart reads, in reading order."
+    },
+    "generalPages": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Pages about many people, not one (the home page, an index of branches)."
+    },
+    "examples": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "kind": {
+        "type": "string"
+       },
+       "q": {
+        "type": "string"
+       },
+       "needs": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "q"
+      ]
+     }
+    },
+    "helpExample": {
+     "type": "string"
+    },
+    "overviewSections": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "overviewFallback": {
+     "type": "string"
+    },
+    "overviewFollowups": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "warFollowups": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "stories": {
+     "type": "object",
+     "properties": {
+      "page": {
+       "type": "string"
+      },
+      "anchors": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      }
+     },
+     "additionalProperties": false
+    },
+    "photos": {
+     "type": "object",
+     "properties": {
+      "text": {
+       "type": "string"
+      },
+      "links": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "title": {
+          "type": "string"
+         },
+         "url": {
+          "type": "string"
+         }
+        },
+        "additionalProperties": false,
+        "required": [
+         "title",
+         "url"
+        ]
+       }
+      }
+     },
+     "additionalProperties": false
+    },
+    "wordlikeNames": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Surnames that are also everyday words (Field, Cousins)."
+    },
+    "familyNames": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Words for \"who were the ...\": fitzmaurices, andrews."
+    },
+    "nicknames": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    },
+    "skipClasses": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   },
+   "additionalProperties": false,
+   "description": "Stuart, the family archivist."
+  },
+  "widget": {
+   "type": "object",
+   "properties": {
+    "enabled": {
+     "type": "boolean"
+    },
+    "exclude": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Pages without Stuart's button."
+    },
+    "pages": {
+     "type": "object",
+     "description": "Per page: { \"x.html\": { \"compact\": true, \"avoid\": \".selector\" } }."
+    }
+   },
+   "additionalProperties": false,
+   "description": "The Ask Stuart button on the site's own pages."
+  },
+  "publish": {
+   "type": "object",
+   "properties": {
+    "exclude": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Files and folders not to publish (globs from the site root)."
+    }
+   },
+   "additionalProperties": false
+  },
+  "process": {
+   "type": "object",
+   "properties": {
+    "exclude": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Pages the build leaves exactly as they are."
+    }
+   },
+   "additionalProperties": false
+  }
+ }
+}

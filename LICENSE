@@ -1,0 +1,12 @@
+Copyright (c) 2026 Sebastian Belfiore. All rights reserved.
+
+This repository is public so that the family history sites built with it can use it. Making it public does
+not grant any licence. No part of it may be copied, modified, distributed or used to build any other site or
+product without written permission from the copyright holder.
+
+Third-party parts keep their own licences:
+  * engine/vendor/maplibre-gl-5.24.1/ is MapLibre GL JS, under the BSD 3-Clause licence in that folder;
+  * engine/fonts/ holds map glyphs made from Cormorant Garamond, under the SIL Open Font License
+    (engine/fonts/OFL.txt);
+  * engine/map-styles/ is built from OpenFreeMap's Positron style (MIT licence) and Natural Earth data
+    (public domain).

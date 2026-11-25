@@ -1,0 +1,64 @@
+"""Loading a site's settings (site.config.json) and filling in what the site leaves out.
+
+The settings are documented in docs/site-config.md and checked against schema/site-config.schema.json.
+"""
+import copy, json, os
+
+DEFAULTS = {
+    'schemaVersion': 1,
+    'engine': {'channel': 'stable'},
+    'site': {'name': '', 'familyName': 'this family', 'lang': 'en-GB', 'description': ''},
+    'pages': {'home': 'index.html', 'tree': None, 'map': None, 'ask': None},
+    'nav': [],
+    'head': {'fonts': None, 'stylesheets': []},
+    'theme': {},
+    'data': {'dir': 'data'},
+    'tree': {},
+    'map': {},
+    'stuart': {},
+    'widget': {'enabled': True, 'exclude': []},
+    'publish': {'exclude': []},
+    'process': {'exclude': []},
+}
+
+# what each engine page needs if the site says nothing about it
+PAGE_DEFAULTS = {
+    'tree': {'file': 'family-tree.html', 'title': 'Family Tree', 'description': 'An interactive family tree.'},
+    'map': {'file': 'map.html', 'title': 'Family Map', 'description': 'Where the family lived, married, worked and travelled, on a map and a timeline.'},
+    'ask': {'file': 'ask.html', 'title': 'Ask Stuart', 'description': 'Stuart, the family archivist, answers questions from the records on this site.'},
+}
+
+
+def merge(base, over):
+    out = copy.deepcopy(base)
+    for k, v in (over or {}).items():
+        if isinstance(v, dict) and isinstance(out.get(k), dict):
+            out[k] = merge(out[k], v)
+        else:
+            out[k] = copy.deepcopy(v)
+    return out
+
+
+def load(site_dir):
+    path = os.path.join(site_dir, 'site.config.json')
+    if not os.path.exists(path):
+        raise SystemExit('No site.config.json in %s. See docs/adding-a-site.md in the engine.' % site_dir)
+    with open(path, encoding='utf-8') as f:
+        raw = json.load(f)
+    cfg = merge(DEFAULTS, {k: v for k, v in raw.items() if not k.startswith('$')})
+    # pages: a file name, an object with a file, or null when the site does not have that page
+    pages = {'home': cfg['pages'].get('home') or 'index.html'}
+    for k in ('tree', 'map', 'ask'):
+        v = cfg['pages'].get(k)
+        if not v:
+            pages[k] = None
+            continue
+        if isinstance(v, str):
+            v = {'file': v}
+        pages[k] = merge(PAGE_DEFAULTS[k], v)
+    cfg['pages'] = pages
+    # the page names the engine scripts and Stuart's index use
+    cfg['_pages'] = {'home': pages['home'], 'tree': pages['tree'] and pages['tree']['file'],
+                     'map': pages['map'] and pages['map']['file'], 'ask': pages['ask'] and pages['ask']['file']}
+    cfg['_raw'] = raw
+    return cfg

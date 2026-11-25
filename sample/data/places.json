@@ -1,0 +1,497 @@
+{
+ "meta": {
+  "note": "Places for the made-up sample family."
+ },
+ "places": [
+  {
+   "id": "leeds",
+   "name": "Leeds, Yorkshire",
+   "historicName": "Leeds, Yorkshire",
+   "variants": [],
+   "kind": "town",
+   "address": "Leeds, Yorkshire",
+   "modernAddress": "Leeds, Yorkshire",
+   "precision": "town",
+   "lat": 53.7997,
+   "lng": -1.5492,
+   "uncertaintyMetres": 2000,
+   "coordinateMethod": "Made up for the sample family.",
+   "coordinatePrecision": "town",
+   "coordinateSourceIds": [],
+   "drawAs": "halo",
+   "inHomeRegion": true,
+   "noProvenLink": false,
+   "standsToday": "unknown",
+   "standsTodaySource": "",
+   "todayNote": "",
+   "status": "published",
+   "significance": "",
+   "blurb": null,
+   "blurbSourceIds": [],
+   "boundary": null,
+   "historicMap": null,
+   "images": [],
+   "streetView": null,
+   "streetViewReason": null,
+   "events": [
+    {
+     "id": "pe-leeds-born-william",
+     "type": "born",
+     "personIds": [
+      "william-hartley"
+     ],
+     "date": "1875",
+     "dateStart": "1875-06-10",
+     "dateEnd": "1875-06-10",
+     "datePrecision": "day",
+     "approximate": false,
+     "factRef": "william-hartley.birth",
+     "pages": [],
+     "recordCrops": [],
+     "sourceIds": [
+      "baptism-william"
+     ],
+     "confidence": "confirmed",
+     "familyStatement": false
+    },
+    {
+     "id": "pe-leeds-born-arthur",
+     "type": "born",
+     "personIds": [
+      "arthur-hartley"
+     ],
+     "date": "1902",
+     "dateStart": "1902-02-14",
+     "dateEnd": "1902-02-14",
+     "datePrecision": "day",
+     "approximate": false,
+     "factRef": "arthur-hartley.birth",
+     "pages": [],
+     "recordCrops": [],
+     "sourceIds": [
+      "baptism-arthur"
+     ],
+     "confidence": "confirmed",
+     "familyStatement": false
+    },
+    {
+     "id": "pe-leeds-lived-thomas",
+     "type": "lived",
+     "personIds": [
+      "thomas-hartley",
+      "mary-ann-briggs"
+     ],
+     "date": "1881",
+     "dateStart": "1881-01-01",
+     "dateEnd": "1881-12-31",
+     "datePrecision": "year",
+     "approximate": false,
+     "factRef": "",
+     "pages": [],
+     "recordCrops": [],
+     "sourceIds": [
+      "census-1881-leeds"
+     ],
+     "confidence": "confirmed",
+     "familyStatement": false,
+     "summary": "1881 census, Park Row, Leeds."
+    },
+    {
+     "id": "pe-leeds-married-william",
+     "type": "married",
+     "personIds": [
+      "william-hartley",
+      "alice-turner"
+     ],
+     "date": "1900",
+     "dateStart": "1900-08-11",
+     "dateEnd": "1900-08-11",
+     "datePrecision": "day",
+     "approximate": false,
+     "factRef": "",
+     "pages": [],
+     "recordCrops": [],
+     "sourceIds": [
+      "marriage-hartley-turner"
+     ],
+     "confidence": "confirmed",
+     "familyStatement": false
+    }
+   ],
+   "country": "England"
+  },
+  {
+   "id": "bradford",
+   "name": "Bradford, Yorkshire",
+   "historicName": "Bradford, Yorkshire",
+   "variants": [],
+   "kind": "town",
+   "address": "Bradford, Yorkshire",
+   "modernAddress": "Bradford, Yorkshire",
+   "precision": "town",
+   "lat": 53.796,
+   "lng": -1.7594,
+   "uncertaintyMetres": 2000,
+   "coordinateMethod": "Made up for the sample family.",
+   "coordinatePrecision": "town",
+   "coordinateSourceIds": [],
+   "drawAs": "halo",
+   "inHomeRegion": true,
+   "noProvenLink": false,
+   "standsToday": "unknown",
+   "standsTodaySource": "",
+   "todayNote": "",
+   "status": "published",
+   "significance": "",
+   "blurb": null,
+   "blurbSourceIds": [],
+   "boundary": null,
+   "historicMap": null,
+   "images": [],
+   "streetView": null,
+   "streetViewReason": null,
+   "events": [
+    {
+     "id": "pe-bradford-married-thomas",
+     "type": "married",
+     "personIds": [
+      "thomas-hartley",
+      "mary-ann-briggs"
+     ],
+     "date": "1874",
+     "dateStart": "1874-04-02",
+     "dateEnd": "1874-04-02",
+     "datePrecision": "day",
+     "approximate": false,
+     "factRef": "",
+     "pages": [],
+     "recordCrops": [],
+     "sourceIds": [
+      "marriage-hartley-briggs"
+     ],
+     "confidence": "confirmed",
+     "familyStatement": false
+    }
+   ],
+   "country": "England"
+  },
+  {
+   "id": "soho",
+   "name": "Greek Street, Soho, London",
+   "historicName": "Greek Street, Soho, London",
+   "variants": [],
+   "kind": "home",
+   "address": "Greek Street, Soho, London",
+   "modernAddress": "Greek Street, Soho, London",
+   "precision": "street",
+   "lat": 51.5136,
+   "lng": -0.1316,
+   "uncertaintyMetres": 200,
+   "coordinateMethod": "Made up for the sample family.",
+   "coordinatePrecision": "street",
+   "coordinateSourceIds": [],
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "noProvenLink": false,
+   "standsToday": "unknown",
+   "standsTodaySource": "",
+   "todayNote": "",
+   "status": "published",
+   "significance": "",
+   "blurb": null,
+   "blurbSourceIds": [],
+   "boundary": null,
+   "historicMap": null,
+   "images": [],
+   "streetView": null,
+   "streetViewReason": null,
+   "events": [
+    {
+     "id": "pe-soho-lived-moreau",
+     "type": "lived",
+     "personIds": [
+      "jean-baptiste-moreau",
+      "louise-fabre"
+     ],
+     "date": "1881",
+     "dateStart": "1881-01-01",
+     "dateEnd": "1881-12-31",
+     "datePrecision": "year",
+     "approximate": false,
+     "factRef": "",
+     "pages": [],
+     "recordCrops": [],
+     "sourceIds": [
+      "census-1881-soho"
+     ],
+     "confidence": "confirmed",
+     "familyStatement": false
+    },
+    {
+     "id": "pe-soho-born-margot",
+     "type": "born",
+     "personIds": [
+      "marguerite-moreau"
+     ],
+     "date": "1905",
+     "dateStart": "1905-07-21",
+     "dateEnd": "1905-07-21",
+     "datePrecision": "day",
+     "approximate": false,
+     "factRef": "marguerite-moreau.birth",
+     "pages": [],
+     "recordCrops": [],
+     "sourceIds": [
+      "birth-marguerite"
+     ],
+     "confidence": "confirmed",
+     "familyStatement": false
+    },
+    {
+     "id": "pe-soho-married-arthur",
+     "type": "married",
+     "personIds": [
+      "arthur-hartley",
+      "marguerite-moreau"
+     ],
+     "date": "1930",
+     "dateStart": "1930-06-07",
+     "dateEnd": "1930-06-07",
+     "datePrecision": "day",
+     "approximate": false,
+     "factRef": "",
+     "pages": [],
+     "recordCrops": [],
+     "sourceIds": [
+      "marriage-hartley-moreau"
+     ],
+     "confidence": "confirmed",
+     "familyStatement": false
+    }
+   ],
+   "country": "England"
+  },
+  {
+   "id": "southampton",
+   "name": "Southampton, Hampshire",
+   "historicName": "Southampton, Hampshire",
+   "variants": [],
+   "kind": "port",
+   "address": "Southampton, Hampshire",
+   "modernAddress": "Southampton, Hampshire",
+   "precision": "town",
+   "lat": 50.9097,
+   "lng": -1.4044,
+   "uncertaintyMetres": 2000,
+   "coordinateMethod": "Made up for the sample family.",
+   "coordinatePrecision": "town",
+   "coordinateSourceIds": [],
+   "drawAs": "halo",
+   "inHomeRegion": true,
+   "noProvenLink": false,
+   "standsToday": "unknown",
+   "standsTodaySource": "",
+   "todayNote": "",
+   "status": "published",
+   "significance": "",
+   "blurb": null,
+   "blurbSourceIds": [],
+   "boundary": null,
+   "historicMap": null,
+   "images": [],
+   "streetView": null,
+   "streetViewReason": null,
+   "events": [
+    {
+     "id": "pe-soton-sailed-henri",
+     "type": "sailed",
+     "personIds": [
+      "henri-moreau"
+     ],
+     "date": "1899",
+     "dateStart": "1899-09-02",
+     "dateEnd": "1899-09-02",
+     "datePrecision": "day",
+     "approximate": false,
+     "factRef": "",
+     "pages": [],
+     "recordCrops": [
+      "passenger-list-1899.png"
+     ],
+     "sourceIds": [
+      "passenger-list-1899"
+     ],
+     "confidence": "confirmed",
+     "familyStatement": false,
+     "voyageId": "v-henri-1899",
+     "voyageEnd": "arrival"
+    }
+   ],
+   "country": "England"
+  },
+  {
+   "id": "le-havre",
+   "name": "Le Havre, France",
+   "historicName": "Le Havre, France",
+   "variants": [],
+   "kind": "port",
+   "address": "Le Havre, France",
+   "modernAddress": "Le Havre, France",
+   "precision": "town",
+   "lat": 49.4944,
+   "lng": 0.1079,
+   "uncertaintyMetres": 2000,
+   "coordinateMethod": "Made up for the sample family.",
+   "coordinatePrecision": "town",
+   "coordinateSourceIds": [],
+   "drawAs": "halo",
+   "inHomeRegion": false,
+   "noProvenLink": false,
+   "standsToday": "unknown",
+   "standsTodaySource": "",
+   "todayNote": "",
+   "status": "published",
+   "significance": "",
+   "blurb": null,
+   "blurbSourceIds": [],
+   "boundary": null,
+   "historicMap": null,
+   "images": [],
+   "streetView": null,
+   "streetViewReason": null,
+   "events": [
+    {
+     "id": "pe-havre-sailed-henri",
+     "type": "sailed",
+     "personIds": [
+      "henri-moreau"
+     ],
+     "date": "1899",
+     "dateStart": "1899-09-01",
+     "dateEnd": "1899-09-01",
+     "datePrecision": "day",
+     "approximate": false,
+     "factRef": "",
+     "pages": [],
+     "recordCrops": [],
+     "sourceIds": [
+      "passenger-list-1899"
+     ],
+     "confidence": "confirmed",
+     "familyStatement": false,
+     "voyageId": "v-henri-1899",
+     "voyageEnd": "departure"
+    }
+   ],
+   "country": "France"
+  },
+  {
+   "id": "lyon",
+   "name": "Lyon, France",
+   "historicName": "Lyon, France",
+   "variants": [],
+   "kind": "town",
+   "address": "Lyon, France",
+   "modernAddress": "Lyon, France",
+   "precision": "town",
+   "lat": 45.764,
+   "lng": 4.8357,
+   "uncertaintyMetres": 2000,
+   "coordinateMethod": "Made up for the sample family.",
+   "coordinatePrecision": "town",
+   "coordinateSourceIds": [],
+   "drawAs": "halo",
+   "inHomeRegion": false,
+   "noProvenLink": false,
+   "standsToday": "unknown",
+   "standsTodaySource": "",
+   "todayNote": "",
+   "status": "published",
+   "significance": "",
+   "blurb": null,
+   "blurbSourceIds": [],
+   "boundary": null,
+   "historicMap": null,
+   "images": [],
+   "streetView": null,
+   "streetViewReason": null,
+   "events": [
+    {
+     "id": "pe-lyon-born-jb",
+     "type": "born",
+     "personIds": [
+      "jean-baptiste-moreau"
+     ],
+     "date": "1850",
+     "dateStart": "1850-01-01",
+     "dateEnd": "1850-12-31",
+     "datePrecision": "year",
+     "approximate": false,
+     "factRef": "jean-baptiste-moreau.birth",
+     "pages": [],
+     "recordCrops": [],
+     "sourceIds": [
+      "passenger-list-1878"
+     ],
+     "confidence": "confirmed",
+     "familyStatement": false
+    }
+   ],
+   "country": "France"
+  },
+  {
+   "id": "paris",
+   "name": "Paris, France",
+   "historicName": "Paris, France",
+   "variants": [],
+   "kind": "town",
+   "address": "Paris, France",
+   "modernAddress": "Paris, France",
+   "precision": "town",
+   "lat": 48.8566,
+   "lng": 2.3522,
+   "uncertaintyMetres": 2000,
+   "coordinateMethod": "Made up for the sample family.",
+   "coordinatePrecision": "town",
+   "coordinateSourceIds": [],
+   "drawAs": "halo",
+   "inHomeRegion": false,
+   "noProvenLink": false,
+   "standsToday": "unknown",
+   "standsTodaySource": "",
+   "todayNote": "",
+   "status": "published",
+   "significance": "",
+   "blurb": null,
+   "blurbSourceIds": [],
+   "boundary": null,
+   "historicMap": null,
+   "images": [],
+   "streetView": null,
+   "streetViewReason": null,
+   "events": [
+    {
+     "id": "pe-paris-born-auguste",
+     "type": "born",
+     "personIds": [
+      "auguste-de-moreau"
+     ],
+     "date": "about 1790",
+     "dateStart": "1785-01-01",
+     "dateEnd": "1795-12-31",
+     "datePrecision": "year",
+     "approximate": false,
+     "factRef": "",
+     "pages": [],
+     "recordCrops": [],
+     "sourceIds": [
+      "family-testimony"
+     ],
+     "confidence": "family tradition",
+     "familyStatement": true
+    }
+   ],
+   "country": "France"
+  }
+ ]
+}
