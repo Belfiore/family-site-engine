@@ -544,6 +544,10 @@
      },
      "description": "Choices in the map's Family filter."
     },
+    "emptyNote": {
+     "type": "string",
+     "description": "What the map says while places.json has no places, in the site's own words. Default: \"No places are on the map yet.\""
+    },
     "noscript": {
      "type": "string"
     }

@@ -851,6 +851,10 @@
     function initYears() {
         var ys = [];
         DATA.events.forEach(function (e) { if (e.dateStart && !e.orkney) { ys.push(yearOf(e.dateStart)); ys.push(yearOf(e.dateEnd)); } });
+        ys = ys.filter(function (y) { return y != null && !isNaN(y); });
+        // nothing dated on the map (a map with no places yet): no years to choose between, so no slider
+        $('yearsBox').hidden = !ys.length;
+        if (!ys.length) ys = [MIN_YEAR, MAX_YEAR];
         var lo = Math.floor(Math.min.apply(null, ys) / 10) * 10, hi = Math.ceil(Math.max.apply(null, ys) / 10) * 10;
         FM.yearBounds = [lo, hi];
         [$('yearFrom'), $('yearTo')].forEach(function (inp) { inp.min = lo; inp.max = hi; inp.step = 1; });
@@ -1258,7 +1262,7 @@
     }
     function setMode(id, opts) {
         opts = opts || {};
-        if (!modes[id]) id = 'explore';
+        if (!modes[id] || (FM.empty && id !== 'explore')) id = 'explore';
         if (id === S.mode && !opts.force) return;
         var prev = S.mode;
         if (modes[prev] && modes[prev].leave) modes[prev].leave();
@@ -1494,16 +1498,30 @@
         });
     }
 
+    // ================================================================== a map with no places yet
+    function emptyText() { return MAPC.emptyNote || 'No places are on the map yet.'; }
+    function showEmpty(st) {
+        $('fm').classList.add('is-empty');
+        ['personBox', 'listOpen', 'modeSwitch'].forEach(function (id) { if ($(id)) $(id).hidden = true; });
+        $('emptyText').textContent = emptyText();
+        $('emptyNote').hidden = false;
+        // nothing to open or follow: the map opens on the home region in Explore
+        st.place = null; st.person = null; st.mode = 'explore';
+    }
+
     function start() {
         var st = readURL();
         FM.data.load().then(function (d) {
             DATA = d; FM.DATA = d;
+            // no places at all yet: say so in the site's own words, and leave out what has nothing to work on
+            FM.empty = !Object.keys(d.places || {}).length;
+            if (FM.empty) showEmpty(st);
             S.style = st.style === 'atlas' || (st.style === 'then' && HISTORIC && CFG.MAPTILER_KEY) ? st.style : 'today';
             renderStyleSwitch();
             renderFamily(); renderKey(); initYears(); renderPersonBox(); bindUI();
             if (!hasWebGL() || !window.maplibregl) {
                 document.body.classList.add('no-webgl');
-                $('listHint').textContent = 'This device cannot draw the map, so here is every place and event as a list.';
+                $('listHint').textContent = FM.empty ? emptyText() : 'This device cannot draw the map, so here is every place and event as a list.';
                 ready = true;
                 openList();
                 FM.ready = true;

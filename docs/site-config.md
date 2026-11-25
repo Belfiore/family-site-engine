@@ -118,6 +118,7 @@ The family tree. Any key here also overrides the same key in `people.json` meta,
 | `branches` | Groups of places for the map's branch filter: `{ "id": "moreau", "label": "The Moreaus", "pages": ["moreau.html"], "people": [...], "regions": [...] }`. One has `"default": true` |
 | `kinAnchors` | People the timeline relates others to ("Margot's father"): `[{ "id": "marguerite-moreau", "name": "Margot" }]` |
 | `families` | The Family filter's choices: `{ "id": "margot", "label": "Margot's family", "option": "Margot's family (Moreau)", "roots": ["marguerite-moreau"] }`. Without any, the filter is hidden |
+| `emptyNote` | What the map says while `places.json` has no places, in the site's own words (default: "No places are on the map yet."). Until there are places the map shows this over the home region, and leaves out the years, Timeline, "View as list" and the person search |
 | `noscript` | Extra words for visitors without JavaScript; HTML allowed |
 
 ## stuart

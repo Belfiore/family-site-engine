@@ -246,6 +246,22 @@ class TestBuildChanges(unittest.TestCase):
         self.assertIn('"map": null', js)
         self.assertIn('"ask": null', js)
 
+    def test_a_map_with_no_places_yet(self):
+        # places.json with no places, while people.json still names places: one warning, and the build carries on
+        self.site.edit_json('data/places.json', lambda d: d.update(places=[]))
+        self.site.edit_json('site.config.json', lambda c: c['map'].update(emptyNote='The places are being collected.'))
+        cfg = sitecfg.load(self.site.dir)
+        self.assertEqual(validate.check_config(cfg)['errors'], [])
+        r = validate.validate_site(self.site.dir, cfg)
+        self.assertEqual(r['errors'], [])
+        place_warnings = [w for w in r['warnings'] if 'place' in w]
+        self.assertEqual(len(place_warnings), 1, place_warnings)
+        self.assertIn('places.json has no places yet', place_warnings[0])
+        code, log = run_build(self.site.dir, self.out)
+        self.assertEqual(code, 0, log)
+        self.assertIn('id="emptyNote"', read(os.path.join(self.out, 'map.html')))
+        self.assertIn('The places are being collected.', read(os.path.join(self.out, 'site-config.js')))
+
     def test_nav_to_a_page_that_is_off(self):
         self.site.edit_json('site.config.json', lambda c: c['pages'].update(map=None))
         code, log = run_build(self.site.dir, self.out)
