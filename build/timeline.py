@@ -44,7 +44,7 @@ def load_previous(arg):
        Returns (state or None, a few words on where it came from)."""
     if arg is None:
         raise TimelineError('this site has the Discovery Timeline on, but the build was not told what was published last, so it would '
-                            'forget every find. In a workflow, use build-site.yml from engine 1.1.0 or later (it fetches the live '
+                            'forget every find. In a workflow, use build-site.yml from engine 1.2.0 or later (it fetches the live '
                             'history). For a local trial, add --previous none.')
     if arg.strip().lower() == 'none':
         return None, 'first publication with the timeline on'
