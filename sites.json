@@ -2,6 +2,7 @@
  "$comment": "The sites built with this engine. When channels.json changes, each of these is told to rebuild (notify-sites.yml). Each site's channel is set in its own site.config.json.",
  "sites": [
   {"repo": "Belfiore/English-Family-History", "name": "FitzMaurice & Andrews", "channel": "canary"},
-  {"repo": "Belfiore/italian-belfiore-hertiage-lineage", "name": "Belfiore & Circelli", "channel": "stable"}
+  {"repo": "Belfiore/italian-belfiore-hertiage-lineage", "name": "Belfiore & Circelli", "channel": "stable"},
+  {"repo": "Belfiore/kohlmann-heritage", "name": "Kohlmann", "channel": "stable"}
  ]
 }
