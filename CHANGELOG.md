@@ -2,6 +2,15 @@
 
 Each release, newest first. A major version says what a site has to change.
 
+## 1.2.0
+
+- **Discovery Timeline, optional and off by default.** `"timeline": { "enabled": true }` adds `discoveries.html`, a page of what the family has newly learned, newest first, with a "new since your last visit" banner. The build compares the meaning of the data with what was published last time. No network and no model. A correction keeps the previous value and the updated value. A removal is not a discovery. A site that leaves the timeline off builds byte for byte as before.
+- **The history lives in the published site.** `discoveries/state.json` is the next build's baseline and `discoveries/history.json` is what the page shows. `build-site.yml` fetches the live history before the build, so a failed build cannot move the baseline, a rebuild does not list a find twice, and the first publication with the timeline on is a baseline rather than a flood. A missing or unreadable history stops the build.
+- **Privacy.** Living people and people in `tree.hiddenRegions` never become claims and are stored only as hashes. Every kept find is checked again on every build, so a person marked living later takes their finds with them.
+- **Researcher notes.** A `discovery` object on a record, or `data/discoveries.json`, can give `found`, `headline`, `findType`, `foundBy`, `source`, `confidence`, `image` and `changeNote`. `tools/backfill-discoveries.py` replays a site's git history into a suggestions file for review. It never changes the data. The history starts empty until a researcher approves those suggestions.
+- **Turning it on.** Move `build-site.yml` to `v1.2.0` in the site's `deploy.yml` and `check.yml`, grant `pages: write` to the deploy job, then set `timeline.enabled`. A site still on an older workflow that turns the timeline on gets a build error, not a page that forgets its history.
+- **Working rules.** `CLAUDE.md` at the root of the repo: how a site is built, how to preview a change, how a release is made, and the rules for engine work.
+
 ## 1.1.0
 
 - **Business associates on the map.** `map.associates` lists people who are not family but belong to the story, such as a firm's co-founder: `{ "label": "Business associate", "note": "Not family", "people": { associateId: familyPersonId } }`. They stay in a hidden region, so the tree leaves them off, and the map draws their places in slate green with a "Business associate. Not family" badge on the pin, the place panel, the person panel and the timeline cards. They are never drawn as family or as "no proven link". A Family filter keeps an associate's places when it includes the family member they are tied to. Two new colours, `--fm-assoc` and `--fm-assoc-bg`.
