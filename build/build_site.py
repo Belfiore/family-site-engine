@@ -18,13 +18,17 @@ Steps, in order (any failure stops the build and leaves the live site as it was)
   7. make the engine's pages (tree, map, Stuart) from the templates;
   8. bring the site's own pages in line: the navigation bar, the engine's files, Stuart's button;
   9. write engine-build.json, saying what was built from what.
+
+A site that turns on the Discovery Timeline (timeline.enabled) also gets, after step 4, the history of what has
+been found since it was published last (--previous says where that history is; see docs/discovery-timeline.md),
+and its page, made in step 7. A site that does not is built exactly as before.
 """
 import argparse, datetime, fnmatch, hashlib, json, os, shutil, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ENGINE_ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-import archive, pages, sitecfg, validate  # noqa: E402
+import archive, pages, sitecfg, timeline, validate  # noqa: E402
 
 ALWAYS_SKIP = {'.git', '.github', 'node_modules', '.DS_Store', '_site', 'site.config.json', '__pycache__'}
 
@@ -85,6 +89,9 @@ def main(argv=None):
     ap.add_argument('--site', default='.', help='the site folder (with site.config.json)')
     ap.add_argument('--out', default='_site', help='where to write the built site')
     ap.add_argument('--keep', action='store_true', help='do not empty --out first')
+    ap.add_argument('--previous', help='the site as last published (a folder holding discoveries/state.json, or the file), or "none" for the '
+                                       'first build with the Discovery Timeline on. Used only when timeline.enabled is true.')
+    ap.add_argument('--now', help='the time of this publication, like 2026-11-26T10:00:00Z (default: now). For tests.')
     args = ap.parse_args(argv)
     site, out = os.path.abspath(args.site), os.path.abspath(args.out)
     version = engine_version()
@@ -107,10 +114,27 @@ def main(argv=None):
     if os.path.exists(out) and not args.keep:
         shutil.rmtree(out)
     os.makedirs(out, exist_ok=True)
-    n = copy_site(site, out, (cfg.get('publish') or {}).get('exclude') or [])
+    exclude = list((cfg.get('publish') or {}).get('exclude') or [])
+    tl_on = bool(cfg['_pages'].get('timeline'))
+    if tl_on:      # the researcher's notes and the backfill script's suggestions are read here, never published as they are
+        exclude += [os.path.relpath(timeline.curated_path(site, cfg), site), 'discoveries.suggestions.json']
+    n = copy_site(site, out, exclude)
 
     # 4. the engine
-    shutil.copytree(os.path.join(ENGINE_ROOT, 'engine'), os.path.join(out, base), dirs_exist_ok=True)
+    # the timeline's files go only to a site that has the timeline, so any other site's build is as it was
+    shutil.copytree(os.path.join(ENGINE_ROOT, 'engine'), os.path.join(out, base), dirs_exist_ok=True,
+                    ignore=None if tl_on else shutil.ignore_patterns('timeline.css', 'timeline.js'))
+
+    # 4b. the Discovery Timeline: what is new since the last publication
+    tl_body, tl_info = None, None
+    if tl_on:
+        try:
+            tl_body, tl_info = timeline.run(site, cfg, out, args.previous, args.now, version)
+        except timeline.TimelineError as e:
+            print('error: Discovery Timeline: %s' % e)
+            print('The build stopped. The live site is as it was.')
+            return 1
+        for w in tl_info['warnings']: print('warning: Discovery Timeline:', w)
 
     # 5. Stuart's index
     kb_url, counts = None, None
@@ -137,13 +161,13 @@ def main(argv=None):
 
     # 7. the engine's pages
     made = []
-    for kind in ('tree', 'map', 'ask'):
+    for kind in ('tree', 'map', 'ask', 'timeline'):
         page = cfg['pages'].get(kind)
         if not page: continue
         with open(os.path.join(ENGINE_ROOT, 'templates', kind + '.html'), encoding='utf-8') as f:
             tpl = f.read()
         with open(os.path.join(out, page['file']), 'w', encoding='utf-8') as f:
-            f.write(pages.render_engine_page(kind, tpl, cfg, ctx))
+            f.write(pages.render_engine_page(kind, tpl, cfg, ctx, {'timelineBody': tl_body} if kind == 'timeline' else None))
         made.append(page['file'])
 
     # 8. the site's own pages
@@ -167,10 +191,16 @@ def main(argv=None):
             'site': (cfg.get('site') or {}).get('name'), 'channel': (cfg.get('engine') or {}).get('channel'),
             'enginePages': made, 'sitePages': processed, 'files': n, 'stuart': counts,
             'warnings': len(report['warnings'] + problems['warnings'])}
+    if tl_info:       # only a site with the timeline on has this key, so other sites' files are unchanged
+        info['timeline'] = {k: tl_info[k] for k in ('file', 'mode', 'new', 'entries', 'since')}
     with open(os.path.join(out, 'engine-build.json'), 'w', encoding='utf-8') as f: json.dump(info, f, indent=1)
     print('built %s with engine %s: %d files, engine pages %s, %d site pages%s' % (
         info['site'] or site, version, n, ', '.join(made) or 'none', len(processed),
         ', Stuart: %d people, %d sections' % (counts['people'], counts['sections']) if counts else ''))
+    if tl_info:
+        print('discovery timeline: %s; %d new find%s, %d in the history (%s)' % (
+            tl_info['mode'], tl_info['new'], '' if tl_info['new'] == 1 else 's', tl_info['entries'], tl_info['previous']))
+        for n_ in tl_info['notes']: print('note:', n_)
     return 0
 
 

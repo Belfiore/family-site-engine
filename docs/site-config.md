@@ -153,6 +153,21 @@ Stuart's button on the site's own pages (the engine's pages place it themselves)
 
 `compact` shows only Stuart's seal; `avoid` lists controls the button must keep clear of. There is no button when the site has no Stuart page.
 
+## timeline
+
+Optional. The Discovery Timeline: a page of what the family has newly learned, newest first. Off unless turned on; a site that leaves it off builds exactly as before. See [the Discovery Timeline](discovery-timeline.md) for how it works, what a site has to do to turn it on, and what it keeps.
+
+| Setting | Default | |
+| --- | --- | --- |
+| `enabled` | `false` | Make the page and its "Discoveries" navigation entry, and keep the history of finds between publications |
+| `file` | `discoveries.html` | The page's file name |
+
+```json
+"timeline": { "enabled": true }
+```
+
+A site that turns it on needs an engine release that has the timeline, `build-site.yml` from the same release in its `deploy.yml` and `check.yml`, and `pages: write` for the deploy job. The site must not already have a `discoveries.html` or a `discoveries/` folder (the build stops if it does).
+
 ## publish and process
 
 - `publish.exclude`: files and folders not to publish (globs from the site folder: `"drafts/"`, `"*.psd"`). `.git`, `.github`, `node_modules`, `_site` and `site.config.json` are never published.

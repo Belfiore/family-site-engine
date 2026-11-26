@@ -24,6 +24,9 @@ jobs:
       - name: Build, data checker and migration
         run: python3 tests/test_build.py
 
+      - name: The Discovery Timeline
+        run: python3 tests/test_discoveries.py
+
       - name: The sample site's data
         run: python3 build/validate.py --site sample
 
@@ -38,3 +41,6 @@ jobs:
 
       - name: The sample site in a browser
         run: node tests/check-sample.js
+
+      - name: The Discovery Timeline page in a browser
+        run: node tests/check-timeline.js
