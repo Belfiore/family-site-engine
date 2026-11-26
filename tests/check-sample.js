@@ -198,6 +198,13 @@ function serve() {
                      onTreeData: !!(D && D.associate['edwin-pratt']), label: wrap ? (wrap.getAttribute('aria-label') || '') : '', cls: wrap ? wrap.className : '' };
         });
         check(assoc.n === 1 && assoc.associate && assoc.onTreeData, 'a business associate (map.associates) is drawn on the map, marked as an associate and not as "no proven link"', JSON.stringify(assoc));
+        const names = await page.evaluate(() => {
+            const U = FM.data, ev = FM.DATA.events.find(e => e.placeId === 'bradford-print-shop');
+            return { pin: U.headline ? String(U.headline(ev, FM.DATA.people, FM.DATA.places)) : '', who: U.whoOf(['edwin-pratt'], FM.DATA.people),
+                     fallback: U.callName({ givenNames: 'Mary Ann', surname: 'Briggs' }), blank: U.callName({ givenNames: 'Mary Ann', knownAs: '  ' }) };
+        });
+        check(names.who === 'Edwin Pratt' && /Edwin Pratt/.test(names.pin) && !/John/.test(names.pin), 'labels use the name a person went by (knownAs), not the first given name', JSON.stringify(names));
+        check(names.fallback === 'Mary' && names.blank === 'Mary', 'without knownAs, labels fall back to the first given name', JSON.stringify(names));
         await page.evaluate(() => FM.openPlace ? FM.openPlace('bradford-print-shop') : null);
         await page.waitForTimeout(400);
         const badge = await page.evaluate(() => [...document.querySelectorAll('.badge--assoc')].map(b => b.textContent.trim()));

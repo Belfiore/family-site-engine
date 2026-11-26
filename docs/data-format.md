@@ -123,6 +123,7 @@ Generated from the schema. A field the schema does not list is kept and passed t
 | `id` | string | yes | A stable id: lower-case letters, digits and hyphens. Never reuse or rename one; pages link to it. |
 | `displayName` | string | yes | The name shown on the card and in headings. |
 | `givenNames` | string or null |  |  |
+| `knownAs` | string |  | Optional (engine 1.1.0). The name the person went by when it is not the first given name, e.g. "Bruno" for Max Bruno. Map pin labels, cards and sentences use it; otherwise they use the first given name. |
 | `surname` | string or null |  | Surname at birth, or the surname the site uses. |
 | `disambiguator` | string or null |  | A short line that tells this person apart: "Reg, Pat's father" or "nee Bennett, Pat's mother". Shown under the name. |
 | `nameVariants` | list of object |  | Other spellings and names the records use. |

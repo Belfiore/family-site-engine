@@ -348,7 +348,7 @@
         var f = e.fact || {}, pl = places[e.placeId] || {};
         var has = !!pl.name;
         var where = placePhrase(pl, e.type);
-        var who = (people[e.personIds[0]] || {}).givenNames || '';
+        var p0 = people[e.personIds[0]] || {}, who = String(p0.knownAs || '').trim() || p0.givenNames || '';
         var d = e.date || '';
         var ds = has ? stripPlace(d, pl) : d;
         var district = pl.kind === 'registration district';
@@ -364,7 +364,7 @@
                 return finish(ds ? 'Died ' + ds + ', ' + where : 'Died ' + where);
             case 'buried': return f.display ? finish('Buried: ' + f.display) : finish('Buried ' + where);
             case 'married':
-                var names = e.personIds.map(function (id) { return (people[id] || {}).givenNames; }).filter(Boolean);
+                var names = e.personIds.map(function (id) { var q = people[id] || {}; return String(q.knownAs || '').trim() || q.givenNames; }).filter(Boolean);
                 var lead = names.length > 1 ? names.join(' and ') + ' married' : (who ? who + ' married' : 'Married');
                 return district ? finish(lead + ', registered in the ' + districtName(pl), ds) : finish(lead + (where ? ' ' + where : ''), d);
             case 'lived': return finish('Lived' + (f.address ? ' at ' + f.address : (where ? ' ' + where : '')), d);
@@ -397,9 +397,16 @@
 
 
     // ---- who and what: "Edward FitzMaurice's home", "Robert and Mary Walter's wedding"
+    // The name a person went by: knownAs when the data gives one (a call name such as "Bruno" for
+    // Max Bruno), otherwise the first given name. Used for short labels on pins, cards and sentences.
+    function callName(p) {
+        if (!p) return '';
+        var k = String(p.knownAs || '').trim();
+        return k || String(p.givenNames || '').trim().split(/\s+/)[0];
+    }
     function personShort(p) {
         if (!p) return '';
-        var g = String(p.givenNames || '').trim().split(/\s+/)[0], sn = String(p.surname || '').trim();
+        var g = callName(p), sn = String(p.surname || '').trim();
         return g && sn ? g + ' ' + sn : p.displayName;
     }
     function whoOf(ids, people) {
@@ -408,7 +415,7 @@
         if (ps.length === 1) return personShort(ps[0]);
         var sn = ps[0].surname, same = ps.every(function (p) { return p.surname === sn; }) && sn;
         if (ps.length === 2) {
-            var a = String(ps[0].givenNames || '').split(/\s+/)[0], b = String(ps[1].givenNames || '').split(/\s+/)[0];
+            var a = callName(ps[0]), b = callName(ps[1]);
             return same ? a + ' and ' + b + ' ' + sn : personShort(ps[0]) + ' and ' + personShort(ps[1]);
         }
         return same ? 'the ' + sn + ' family' : personShort(ps[0]) + ' and ' + (ps.length - 1) + ' others';
@@ -496,7 +503,7 @@
     FM.data = {
         load: load, build: build, deriveDates: deriveDates, deriveFromText: deriveFromText, byDate: byDate, esc: esc,
         TYPE_ORDER: TYPE_ORDER, TYPE_LABEL: TYPE_LABEL, KEY_GROUPS: KEY_GROUPS, keyGroupOf: keyGroupOf, BRANCHES: BRANCHES,
-        districtName: districtName, getFact: getFact, personShort: personShort, whoOf: whoOf, headline: headline,
+        districtName: districtName, getFact: getFact, callName: callName, personShort: personShort, whoOf: whoOf, headline: headline,
         kinOf: kinOf, kinLine: kinLine
     };
 })();

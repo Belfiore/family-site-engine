@@ -224,6 +224,16 @@ class TestBuildChanges(unittest.TestCase):
         self.assertIn('nav[5] links to gallery.html, which the site does not have', errs)
         self.assertIn("tree.cardPhotos: 'all' is not one of", errs)
 
+    def test_known_as_is_a_name_and_not_unknown(self):
+        self.site.edit_json('data/people.json', lambda d: self.site.person(d, 'thomas-hartley').update(knownAs='Tom'))
+        cfg = sitecfg.load(self.site.dir)
+        r = validate.validate_site(self.site.dir, cfg)
+        self.assertEqual(r['errors'], [])
+        self.assertFalse(any('knownAs' in w for w in r['warnings']), r['warnings'])
+        self.site.edit_json('data/people.json', lambda d: self.site.person(d, 'thomas-hartley').update(knownAs=''))
+        errs = '\n'.join(validate.validate_site(self.site.dir, cfg)['errors'])
+        self.assertIn('knownAs', errs)
+
     def test_a_business_associate_must_stay_off_the_tree(self):
         def bad(c):
             c['map']['associates']['people']['arthur-hartley'] = 'marguerite-moreau'
