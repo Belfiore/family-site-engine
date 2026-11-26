@@ -367,7 +367,13 @@ class TestPrivacy(Chain):
         shutil.copytree(self.versions[0][1], src)
         cf = os.path.join(src, 'site.config.json')
         cfg = jload(cf)
-        cfg.setdefault('tree', {})['hiddenRegions'] = ['legend']
+        tree = cfg.setdefault('tree', {})
+        # legend is the region this case withholds. Keep every region the sample already hides:
+        # an associate's region has to stay in hiddenRegions, or the 1.1.0 check stops the build.
+        regions = list(tree.get('hiddenRegions') or [])
+        if 'legend' not in regions:
+            regions.append('legend')
+        tree['hiddenRegions'] = regions
         with open(cf, 'w', encoding='utf-8') as f: json.dump(cfg, f, indent=1)
         pf = os.path.join(src, 'data', 'people.json')
         doc = jload(pf)
@@ -375,8 +381,10 @@ class TestPrivacy(Chain):
             {'place': 'Lyon', 'placeId': 'lyon', 'address': '9 rue Neuve, Lyon', 'years': '1870', 'confidence': 'confirmed', 'sourceIds': ['family-testimony']})
         with open(pf, 'w', encoding='utf-8') as f: json.dump(doc, f, indent=1)
         o1, o2 = os.path.join(self.tmp, 'hid1'), os.path.join(self.tmp, 'hid2')
-        build(src, o1, 'none', '2026-11-02T10:00:00Z')
+        rc1, text1 = build(src, o1, 'none', '2026-11-02T10:00:00Z')
+        self.assertEqual(rc1, 0, text1)
         rc, text = build(src, o2, o1, '2026-11-03T10:00:00Z')
+        self.assertEqual(rc, 0, text)
         self.assertEqual(entries(o2), [])
         self.assertNotIn('Pierre', read(os.path.join(o2, 'discoveries.html')))
 
