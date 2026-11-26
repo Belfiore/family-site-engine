@@ -2,6 +2,13 @@
 
 Each release, newest first. A major version says what a site has to change.
 
+## 1.1.0
+
+- **"Who are you?"** The family tree now asks the reader who they are on their first visit, and again from the **You are** button in the header at any time. They type part of their name and pick themselves from the matches (living people first). From then on everything is said from where they stand: each card shows its relationship to them ("Great-grandfather", "2nd cousin"), their own card is marked **You**, the panel and the full story say "Your great-grandfather" with a **See how** link to the relationship finder, the search results say how each match is related to them, and the relationship finder speaks to them ("Joseph Belfiore is your grandfather. You are Joseph's grandson."). The choice is kept in the browser. **Just looking** shows the tree from its own person (`tree.rootPersonId`) for that visit.
+- **Stories follow the reader.** Stories are written from the tree's own person ("Robert, Seb's father"). For a reader who has said who they are, each "<root's name>'s <relationship>" becomes their own relationship to the same person ("Robert, your second cousin", or "Robert (you)" for Robert himself). A phrase is only changed when it is clear who it means: the one person who is that relation, or, when several are, the person whose story it is or the one named in the same sentence. Anything else, and anyone with no recorded link to the reader, keeps its original words. Nothing in the data changes.
+- **Replaces the "Relationships to" list** in the header, which only changed one line in the panel and was hidden on phones and narrow windows. The **You are** button shows on every screen size.
+- **For a site's checks:** a first visit now opens the picker over the tree. Checks that click the tree should close it first with `#whoSkip` ("Just looking"). `window.__tree` adds `setViewer(id)` and `personalize(text, personId)`.
+
 ## 1.0.1
 
 - **Stuart takes a site's own words.** `stuart.synonyms` in a site's settings adds words Stuart treats as alike when he searches the story pages (`{ "earl": ["orkney"] }`). The two words that only made sense for the FitzMaurice and Andrews family (Orkney, the Evening News) moved out of the engine into that site's settings.

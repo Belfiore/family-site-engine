@@ -93,7 +93,7 @@ The family tree. Any key here also overrides the same key in `people.json` meta,
 
 | Setting | What it does |
 | --- | --- |
-| `rootPersonId` | Whose tree it is: the default viewpoint for "how are they related" |
+| `rootPersonId` | Whose tree it is. Until a reader says who they are (the "Who are you?" picker), relationships are said from this person, and the stories' "<their name>'s <relationship>" phrases are what get turned to the reader once they do |
 | `familyLabel`, `directLineLabel` | Names used in the tree's headings and key ("Daniel's direct line") |
 | `generations` | Names for the rows: `{ "generation": 2, "label": "III", "title": "Arthur and Margot", "range": "1902 to 1905" }` |
 | `rootOrder` | The oldest people across the top, left to right |

@@ -162,6 +162,7 @@ def render_engine_page(kind, template, cfg, ctx):
         'nav': nav_html(cfg, page['file']),
         'scripts': '\n'.join(scripts),
         'directLineLabel': esc(tree.get('directLineLabel') or 'Direct line'),
+        'familyLabel': esc(tree.get('familyLabel') or (cfg.get('site') or {}).get('name') or 'The family tree'),
         'homePage': esc(cfg['_pages']['home']),
         'familyOptions': fams,
         'homeRegion': esc(home_region),

@@ -32,7 +32,7 @@
     // ------------------------------------------------------------ state
     var D = { people: [], byId: {}, sources: {}, meta: {} };
     var L = { pos: {}, blocks: [], unions: [], rows: {}, width: 0, height: 0, kinBox: null, regions: [], order: [] };
-    var S = { tx: 0, ty: 0, s: 1, sel: null, hover: null, viewpoint: null, anim: null, drawerFor: null, expanded: false };
+    var S = { tx: 0, ty: 0, s: 1, sel: null, hover: null, viewpoint: null, viewer: null, anim: null, drawerFor: null, expanded: false };
     var SITE = window.FamilySite || {};
     var PAGES = SITE.pages || {};
     var DATA_URL = SITE.data || { people: 'data/people.json', sources: 'data/sources.json' };
@@ -110,7 +110,7 @@
 
     function boot() {
         ['stage', 'viewport', 'world', 'bands', 'links', 'linksTop', 'cards', 'genrail', 'zoomOut', 'zoomIn', 'zoomPct', 'fit', 'centerSel',
-         'keyToggle', 'legend', 'minimap', 'tip', 'live', 'search', 'searchResults', 'viewpoint', 'drawer', 'drawerBody', 'drawerClose',
+         'keyToggle', 'legend', 'minimap', 'tip', 'live', 'search', 'searchResults', 'youBtn', 'youName', 'who', 'whoInput', 'whoResults', 'whoSkip', 'whoClose', 'drawer', 'drawerBody', 'drawerClose',
          'relLayer', 'relGlow', 'relLine', 'relStart', 'relRing', 'relEnd', 'relGrad', 'relBubble', 'relPop', 'drPrev', 'drNext', 'drPrevName', 'drNextName', 'drPos', 'drExpand', 'drRead', 'drReadTxt', 'drEscTxt',
          'lightbox', 'lbImg', 'lbStage', 'lbSide', 'lbStrip', 'lbTitle', 'lbIn', 'lbOut', 'lbReset', 'lbOpen', 'lbClose'].forEach(function (k) { el[k] = $(k); });
         el.app = $('app');
@@ -188,7 +188,7 @@
         renderCards();
         renderLinks();
         renderRail();
-        setupViewpoint();
+        setupViewer();
         bindCanvas();
         bindControls();
         bindSearch();
@@ -202,6 +202,7 @@
         window.addEventListener('resize', onResize);
         window.addEventListener('hashchange', route);
         route();
+        if (!S.viewer && !skippedWho()) openWho(false);
         document.documentElement.classList.add('tc-ready');
     }
 
@@ -497,10 +498,10 @@
         var foot = '<span class="ic' + (hasPhoto(p) ? ' on' : '') + '" data-ic="photo"></span>' +
                    '<span class="ic' + (hasDocs(p) ? ' on' : '') + '" data-ic="doc"></span>' +
                    '<span class="ic' + (hasStory(p) ? ' on' : '') + '" data-ic="story"></span>' +
-                   '<span class="c-you">VIEWPOINT</span>';
+                   '<span class="c-rel"></span><span class="c-you">YOU</span>';
         return '<div class="c-top"><div class="c-av" aria-hidden="true">' + av + '</div>' +
                '<div class="c-names"><div class="c-name">' + esc(p.displayName) + '</div>' +
-               '<div class="c-dis">' + esc(p.disambiguator || '') + '</div></div></div>' +
+               '<div class="c-dis">' + esc(personalize(p.disambiguator || '', p.id)) + '</div></div></div>' +
                '<div class="c-meta">' + (life ? '<div class="c-dates">' + esc(life) + '</div>' : p.isLiving ? '<div class="c-dates"><span class="c-living">Living</span></div>' : '') +
                (p.cardPlace ? '<div class="c-place">' + esc(p.cardPlace) + '</div>' : '') + '</div>' +
                '<div class="c-foot" aria-hidden="true">' + foot + '</div>' +
@@ -508,10 +509,11 @@
     }
     function cardLabel(p) {
         var parts = [p.displayName];
-        if (p.disambiguator) parts.push(p.disambiguator);
+        if (p.disambiguator) parts.push(personalize(p.disambiguator, p.id));
         var life = lifeLine(p); if (life) parts.push(life.replace('~', 'about ').replace('?', ' (unverified)'));
         if (p.isLiving) parts.push('living');
         if (p.isDirectLine) parts.push('on ' + directLabel());
+        if (S.viewer) { var yr = p.id === S.viewer ? 'you' : relationship(S.viewer, p.id); if (yr) parts.push(p.id === S.viewer ? 'this is you' : 'your ' + yr); }
         return parts.join(', ');
     }
     function renderCards() {
@@ -1029,7 +1031,7 @@
             list.innerHTML = items.length ? items.map(function (p, i) {
                 var v = (p.nameVariants || []).filter(function (x) { return norm(x.name).indexOf(nq) >= 0 && norm(p.displayName).indexOf(nq) < 0; })[0];
                 return '<li role="option" id="sr-' + i + '" data-id="' + esc(p.id) + '" aria-selected="' + (i === active) + '"><span class="r-name">' + esc(p.displayName) + '</span>' +
-                       '<span class="r-sub">' + esc(v ? 'Also recorded as ' + v.name : (p.disambiguator || '')) + '</span></li>';
+                       '<span class="r-sub">' + esc(v ? 'Also recorded as ' + v.name : searchSub(p)) + '</span></li>';
             }).join('') : '<li class="r-empty" role="option" aria-disabled="true">No one by that name or spelling yet</li>';
             list.hidden = false; input.setAttribute('aria-expanded', 'true');
             input.setAttribute('aria-activedescendant', active >= 0 ? 'sr-' + active : '');
@@ -1052,6 +1054,15 @@
         });
         list.addEventListener('pointerdown', function (e) { var li = e.target.closest('li[data-id]'); if (!li) return; e.preventDefault(); choose(+li.id.replace('sr-', '')); });
         input.addEventListener('blur', function () { setTimeout(function () { if (document.activeElement !== input) { list.hidden = true; input.setAttribute('aria-expanded', 'false'); if (!input.value) el.app.classList.remove('is-search'); } }, 150); });
+    }
+
+    function searchSub(p) {
+        if (S.viewer) {
+            if (p.id === S.viewer) return 'You';
+            var r = relationship(S.viewer, p.id);
+            if (r) return 'Your ' + prose(r) + (p.disambiguator && !/^your /i.test(personalize(p.disambiguator, p.id)) ? ' · ' + personalize(p.disambiguator, p.id) : '');
+        }
+        return personalize(p.disambiguator || '', p.id);
     }
 
     // =================================================================== KEYBOARD
@@ -1227,7 +1238,15 @@
     }
     function isPartner(a, b) { return ((D.byId[a] || {}).spouses || []).some(function (s) { return s.id === b && s.relation === 'partner'; }); }
     function spouseWord(a, p) { return isPartner(a, p.id) ? 'partner' : word(p, 'husband', 'wife', 'spouse'); }
-    function directLabel() { return D.meta.directLineLabel || 'Direct line'; }
+    // "Seb's direct line" reads "Your direct line" to Seb
+    function directLabel() {
+        var l = D.meta.directLineLabel || 'Direct line', root = D.byId[D.meta.rootPersonId];
+        if (S.viewer && root && S.viewer === root.id) {
+            var re = new RegExp('^(' + rootNames().map(reEsc).join('|') + ")['’]s\\s+", 'i');
+            if (re.test(l)) return 'Your ' + l.replace(re, '');
+        }
+        return l;
+    }
     function relationship(from, to) {
         if (!from || from === to) return null;
         return relInfo(from, to).label;
@@ -1539,15 +1558,22 @@
         var A = D.byId[info.a], B = D.byId[info.b];
         if (info.kind === 'none') return 'No recorded connection between ' + A.displayName + ' and ' + B.displayName + ' yet';
         if (info.kind === 'marriage') return B.displayName + ' and ' + A.displayName + ' are related by marriage';
+        if (A.id === S.viewer) return B.displayName + ' is your ' + info.label;
+        if (B.id === S.viewer) return 'You are ' + poss(shortName(A, B)) + ' ' + info.label;
         return B.displayName + ' is ' + poss(shortName(A, B)) + ' ' + info.label;
     }
     function relPopHTML(info, back, path) {
         var A = D.byId[info.a], B = D.byId[info.b], an = shortName(A, B), bn = shortName(B, A);
+        var meA = A.id === S.viewer, meB = B.id === S.viewer; // said to the reader when they are one of the two
         function av(p) { return '<span class="rp-av' + (p.isLiving ? ' is-living' : '') + '" aria-hidden="true">' + (p.photo ? '<img src="' + esc(p.photo) + '" alt="">' : esc(initials(p))) + '</span>'; }
         var main;
         if (info.kind === 'none') main = '<p class="rp-main" id="relPopTitle">No recorded connection between <b>' + esc(an) + '</b> and <b>' + esc(bn) + '</b> yet.</p>';
         else if (info.kind === 'marriage' && path && path.length === 3 && path[1].type === 'spouse' && path[2].type === 'spouse') main = '<p class="rp-main" id="relPopTitle"><b>' + esc(B.displayName) + '</b> and ' + esc(an) + ' were <em>both married to ' + esc(D.byId[path[1].id].displayName) + '</em>.</p>';
         else if (info.kind === 'marriage') main = '<p class="rp-main" id="relPopTitle"><b>' + esc(B.displayName) + '</b> and ' + esc(an) + ' are <em>related by marriage</em>.</p>';
+        else if (meA) main = '<p class="rp-main" id="relPopTitle"><b>' + esc(B.displayName) + '</b> is your <em>' + esc(info.label) + '</em>.</p>' +
+                    (back.label && back.kind !== 'marriage' ? '<p class="rp-rev">You are ' + esc(poss(bn)) + ' ' + esc(back.label) + '.</p>' : '');
+        else if (meB) main = '<p class="rp-main" id="relPopTitle"><b>You</b> are ' + esc(poss(an)) + ' <em>' + esc(info.label) + '</em>.</p>' +
+                    (back.label && back.kind !== 'marriage' ? '<p class="rp-rev">' + esc(an) + ' is your ' + esc(back.label) + '.</p>' : '');
         else main = '<p class="rp-main" id="relPopTitle"><b>' + esc(B.displayName) + '</b> is ' + esc(poss(an)) + ' <em>' + esc(info.label) + '</em>.</p>' +
                     (back.label && back.kind !== 'marriage' ? '<p class="rp-rev">' + esc(an) + ' is ' + esc(poss(bn)) + ' ' + esc(back.label) + '.</p>' : '');
         var anc = '';
@@ -1555,11 +1581,13 @@
             var names = info.commons.map(function (id) { return '<button type="button" class="rp-link" data-person="' + esc(id) + '">' + esc(D.byId[id].displayName) + '</button>'; }).join(' and ');
             var pl = info.commons.length > 1 ? 's' : '';
             var term = function (k) { return (k === 1 ? 'parent' : k === 2 ? 'grandparent' : k === 3 ? 'great-grandparent' : (k - 2) + '\u00d7 great-grandparent') + pl; };
-            var how = info.m === info.n ? cap(term(info.m)) + ' of both' : cap(term(info.m)) + ' of ' + an + ', ' + term(info.n) + ' of ' + bn;
+            var part = function (k, nm, me) { return me ? 'your ' + term(k) : term(k) + ' of ' + nm; };
+            var how = info.m === info.n ? cap(term(info.m)) + ' of both' : cap(part(info.m, an, meA)) + ', ' + part(info.n, bn, meB);
             anc = '<div class="rp-anc"><span class="rp-k">' + (info.commons.length > 1 ? 'Shared ancestors' : 'Shared ancestor') + '</span>' + names +
                   '<small>' + esc(how) + (info.half ? '. Different ' + (D.byId[info.commons[0]].sex === 'M' ? 'mothers' : 'fathers') + ', so a half relationship.' : '') + '</small></div>';
         } else if (info.kind === 'blood') {
-            anc = '<div class="rp-anc"><small>' + esc(info.m === 0 ? bn + ' descends from ' + an + ', ' + info.n + ' generation' + (info.n > 1 ? 's' : '') + ' down' : an + ' descends from ' + bn + ', ' + info.m + ' generation' + (info.m > 1 ? 's' : '') + ' down') + '</small></div>';
+            var desc = function (lo, hi, meLo, meHi, g) { return (meLo ? 'You descend' : lo + ' descends') + ' from ' + (meHi ? 'you' : hi) + ', ' + g + ' generation' + (g > 1 ? 's' : '') + ' down'; };
+            anc = '<div class="rp-anc"><small>' + esc(info.m === 0 ? desc(bn, an, meB, meA, info.n) : desc(an, bn, meA, meB, info.m)) + '</small></div>';
         } else if ((info.kind === 'inlaw' || info.kind === 'step') && info.via) {
             anc = '<div class="rp-anc"><span class="rp-k">Through marriage</span><button type="button" class="rp-link" data-person="' + esc(info.via) + '">' + esc(D.byId[info.via].displayName) + '</button></div>';
         }
@@ -1567,7 +1595,7 @@
         if (path && path.length > 1) {
             steps = path.map(function (s, i) {
                 var p = D.byId[s.id], w = '';
-                if (i > 0) { var prevP = D.byId[path[i - 1].id]; w = s.type === 'parent' ? word(p, 'father', 'mother', 'parent') : s.type === 'child' ? word(p, 'son', 'daughter', 'child') : spouseWord(prevP.id, p); w = poss(shortName(prevP)) + ' ' + w; }
+                if (i > 0) { var prevP = D.byId[path[i - 1].id]; w = s.type === 'parent' ? word(p, 'father', 'mother', 'parent') : s.type === 'child' ? word(p, 'son', 'daughter', 'child') : spouseWord(prevP.id, p); w = (prevP.id === S.viewer ? 'Your' : poss(shortName(prevP))) + ' ' + w; }
                 return '<li class="' + (i === 0 || i === path.length - 1 ? 'is-end' : '') + '">' + (w ? '<span class="rp-w">' + esc(w) + '</span>' : '') +
                        '<button type="button" data-person="' + esc(p.id) + '">' + av(p) + '<span>' + esc(p.displayName) + '</span></button></li>';
             }).join('');
@@ -1604,20 +1632,249 @@
         resetRelate();
         if (restoreFocus && cardEls[b]) cardEls[b].focus({ preventScroll: true });
     }
-    function setupViewpoint() {
-        var sel = el.viewpoint;
-        var people = D.people.slice().sort(function (a, b) { return a.generation - b.generation || L.pos[a.id].x - L.pos[b.id].x; });
-        sel.innerHTML = people.map(function (p) { return '<option value="' + esc(p.id) + '">' + esc(p.displayName) + '</option>'; }).join('');
-        var saved = null; try { saved = localStorage.getItem('tc_viewpoint'); } catch (_) {}
-        S.viewpoint = saved && D.byId[saved] ? saved : D.meta.rootPersonId;
-        sel.value = S.viewpoint;
-        markViewpoint();
-        sel.addEventListener('change', function () {
-            S.viewpoint = sel.value; try { localStorage.setItem('tc_viewpoint', S.viewpoint); } catch (_) {}
-            markViewpoint(); if (S.drawerFor) renderDrawer(S.drawerFor);
+    // =================================================================== WHO ARE YOU (the reader's place in the tree)
+    // The reader picks their own name once. Every relationship on the cards, in the panel and in the
+    // stories is then said from where they stand ("your great-grandfather"). The choice is kept in this
+    // browser; "Just looking" keeps the tree's own viewpoint (tree.rootPersonId) for this visit only.
+    var VKEY = 'tc_viewer', SKIPKEY = 'tc_viewer_skip';
+    function skippedWho() { try { return sessionStorage.getItem(SKIPKEY) === '1'; } catch (_) { return false; } }
+    function setupViewer() {
+        var saved = null; try { saved = localStorage.getItem(VKEY); } catch (_) {}
+        S.viewer = saved && D.byId[saved] ? saved : null;
+        S.viewpoint = S.viewer || D.meta.rootPersonId;
+        D.people.forEach(function (p) {
+            p._names = norm([p.displayName, p.givenNames, p.surname, p.shortName].concat((p.nameVariants || []).map(function (v) { return v.name; })).join(' | '));
         });
+        var root = D.byId[D.meta.rootPersonId];
+        el.whoSkip.textContent = root ? 'Just looking: show it as ' + poss(firstName(root)) + ' tree' : 'Just looking around';
+        el.youBtn.addEventListener('click', function () { openWho(true); });
+        bindWho();
+        applyViewer();
     }
-    function markViewpoint() { Object.keys(cardEls).forEach(function (k) { cardEls[k].classList.toggle('is-viewpoint', k === S.viewpoint); }); }
+    function setViewer(id, opts) {
+        opts = opts || {};
+        S.viewer = id && D.byId[id] ? id : null;
+        S.viewpoint = S.viewer || D.meta.rootPersonId;
+        try { if (S.viewer) { localStorage.setItem(VKEY, S.viewer); sessionStorage.removeItem(SKIPKEY); } else localStorage.removeItem(VKEY); } catch (_) {}
+        applyViewer();
+        if (S.drawerFor) renderDrawer(S.drawerFor);
+        var vp = D.byId[S.viewpoint];
+        if (vp) el.live.textContent = S.viewer ? 'Showing the family from ' + poss(vp.displayName) + ' place.' : 'Showing the family from ' + poss(vp.displayName) + ' place.';
+        if (opts.center && S.viewer && !S.drawerFor) {
+            centerOn(S.viewer, Math.max(S.s, 0.8), true);
+            setTimeout(function () { if (cardEls[S.viewer]) cardEls[S.viewer].focus({ preventScroll: true }); }, 60);
+        }
+    }
+    function applyViewer() {
+        var vp = S.viewer ? D.byId[S.viewer] : null;
+        el.youName.textContent = vp ? vp.displayName : 'Choose your name';
+        el.youBtn.classList.toggle('is-set', !!vp);
+        el.youBtn.setAttribute('aria-label', vp ? 'You are ' + vp.displayName + '. Change who you are' : 'Choose who you are');
+        el.app.classList.toggle('has-viewer', !!vp);
+        LBL = null;
+        Object.keys(cardEls).forEach(function (k) {
+            var c = cardEls[k], p = D.byId[k];
+            c.classList.toggle('is-viewpoint', k === S.viewer);
+            var r = c.querySelector('.c-rel'), rel = vp && k !== S.viewer ? relationship(S.viewer, k) : null;
+            var pd = personalize(p.disambiguator || '', k);
+            if (rel && saysRel(pd, rel)) rel = null; // the line under the name already says it
+            if (r) { r.textContent = rel ? cap(rel) : ''; r.title = rel ? 'Your ' + rel : ''; }
+            var dis = c.querySelector('.c-dis'); if (dis) dis.textContent = pd;
+            c.setAttribute('aria-label', cardLabel(p));
+        });
+        markLine();
+    }
+    // the reader's own line: everyone they descend from, drawn with a quiet mark on the card
+    function markLine() {
+        var line = S.viewer ? ancestors(S.viewer) : {};
+        Object.keys(cardEls).forEach(function (k) { cardEls[k].classList.toggle('is-yours', !!S.viewer && k !== S.viewer && k in line); });
+    }
+
+    var WHO = { items: [], active: -1, opener: null, required: false };
+    function openWho(byChoice) {
+        WHO.opener = byChoice ? el.youBtn : document.activeElement;
+        WHO.required = !byChoice;
+        el.whoClose.hidden = !S.viewer;
+        el.who.hidden = false;
+        el.app.classList.add('has-who');
+        el.whoInput.value = '';
+        renderWho('');
+        setTimeout(function () { el.whoInput.focus(); }, 30);
+    }
+    function closeWho(restore) {
+        if (el.who.hidden) return;
+        el.who.hidden = true;
+        el.app.classList.remove('has-who');
+        el.whoResults.hidden = true; el.whoInput.setAttribute('aria-expanded', 'false');
+        if (restore && WHO.opener && WHO.opener.focus && document.contains(WHO.opener)) WHO.opener.focus({ preventScroll: true });
+    }
+    function whoMatches(q) {
+        var nq = norm(q).trim(); if (!nq) return [];
+        var words = nq.split(/\s+/);
+        return D.people.filter(function (p) { return !p.placeholder && words.every(function (w) { return p._names.indexOf(w) >= 0; }); })
+            .map(function (p) {
+                var dn = norm(p.displayName), first = norm(firstName(p));
+                // the person reading is alive, so living people come first, then names that start with what was typed
+                var score = (p.isLiving ? 0 : 4) + (first.indexOf(words[0]) === 0 ? 0 : dn.indexOf(words[0]) === 0 ? 1 : (' ' + dn).indexOf(' ' + words[0]) >= 0 ? 2 : 3);
+                return { p: p, score: score };
+            })
+            .sort(function (a, b) { return a.score - b.score || a.p.displayName.localeCompare(b.p.displayName); })
+            .slice(0, 8).map(function (x) { return x.p; });
+    }
+    function renderWho(q) {
+        var list = el.whoResults, input = el.whoInput;
+        WHO.items = whoMatches(q);
+        WHO.active = WHO.items.length ? 0 : -1;
+        if (!q.trim()) { list.hidden = true; list.innerHTML = ''; input.setAttribute('aria-expanded', 'false'); input.setAttribute('aria-activedescendant', ''); return; }
+        var root = D.byId[D.meta.rootPersonId];
+        list.innerHTML = WHO.items.length ? WHO.items.map(function (p, i) {
+            var bits = [];
+            if (p.disambiguator) bits.push(p.disambiguator);
+            else if (root && p.id !== root.id) { var r = relationship(root.id, p.id); if (r) bits.push(poss(firstName(root)) + ' ' + r); }
+            var life = lifeLine(p); if (life) bits.push(life); else if (p.isLiving) bits.push('Living');
+            return '<li role="option" id="who-' + i + '" data-i="' + i + '" aria-selected="' + (i === WHO.active) + '">' +
+                   '<span class="w-av" aria-hidden="true">' + (photoOf(p) ? '<img src="' + esc(photoOf(p)) + '" alt="">' : esc(initials(p))) + '</span>' +
+                   '<span class="w-txt"><span class="w-name">' + esc(p.displayName) + '</span><span class="w-sub">' + esc(bits.join(' · ')) + '</span></span></li>';
+        }).join('') : '<li class="w-empty" role="option" aria-disabled="true">No one by that name on the tree yet. Try another spelling, or just look around.</li>';
+        list.hidden = false; input.setAttribute('aria-expanded', 'true');
+        input.setAttribute('aria-activedescendant', WHO.active >= 0 ? 'who-' + WHO.active : '');
+    }
+    function chooseWho(i) {
+        var p = WHO.items[i]; if (!p) return;
+        closeWho(false);
+        setViewer(p.id, { center: true });
+        if (S.drawerFor) keepDrawerFocus();
+    }
+    function bindWho() {
+        var input = el.whoInput, list = el.whoResults;
+        input.addEventListener('input', function () { renderWho(input.value); });
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault(); if (!WHO.items.length) return;
+                WHO.active = (WHO.active + (e.key === 'ArrowDown' ? 1 : -1) + WHO.items.length) % WHO.items.length;
+                Array.prototype.forEach.call(list.children, function (li, i) { li.setAttribute('aria-selected', i === WHO.active ? 'true' : 'false'); });
+                input.setAttribute('aria-activedescendant', 'who-' + WHO.active);
+                var a = list.children[WHO.active]; if (a && a.scrollIntoView) a.scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'Enter') { e.preventDefault(); chooseWho(WHO.active); }
+        });
+        list.addEventListener('pointerdown', function (e) { var li = e.target.closest('li[data-i]'); if (!li) return; e.preventDefault(); chooseWho(+li.dataset.i); });
+        el.whoSkip.addEventListener('click', function () {
+            try { sessionStorage.setItem(SKIPKEY, '1'); } catch (_) {}
+            closeWho(true);
+            if (S.viewer) setViewer(null);
+        });
+        el.whoClose.addEventListener('click', function () { closeWho(true); });
+        el.who.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                e.preventDefault(); e.stopPropagation();
+                if (input.value) { input.value = ''; renderWho(''); return; }
+                if (!S.viewer) { try { sessionStorage.setItem(SKIPKEY, '1'); } catch (_) {} }
+                closeWho(true);
+                return;
+            }
+            if (e.key === 'Tab') { // keep focus inside the dialog
+                var f = Array.prototype.filter.call(el.who.querySelectorAll('input, button'), function (n) { return !n.hidden && n.offsetParent !== null; });
+                if (!f.length) return;
+                var i = f.indexOf(document.activeElement);
+                if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+                else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+            }
+            e.stopPropagation(); // the canvas's own keys stay quiet while the dialog is open
+        });
+        el.who.addEventListener('pointerdown', function (e) { if (e.target === el.who && S.viewer) closeWho(true); });
+    }
+
+    // ---- stories said from where the reader stands
+    // The stories are written from the tree's own viewpoint: "Robert, Seb's father". For a reader who has
+    // said who they are, each "<root>'s <relationship>" is turned into their own relationship to the same
+    // person ("Robert, your grandfather"). A phrase is only changed when it is clear who it means: the one
+    // person who is that relation of the root, or, when several are, the person whose story it is or the
+    // one named in the same sentence. Anything else is left exactly as written.
+    var LBL = null;
+    function rootNames() {
+        var r = D.byId[D.meta.rootPersonId]; if (!r) return [];
+        return uniq([r.displayName, (r.givenNames || '').split(/\s+/)[0], firstName(r), r.shortName].filter(Boolean)).sort(function (a, b) { return b.length - a.length; });
+    }
+    function reEsc(x) { return String(x).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    var ORD = { '1st': 'first', '2nd': 'second', '3rd': 'third', '4th': 'fourth', '5th': 'fifth', '6th': 'sixth', '7th': 'seventh', '8th': 'eighth' };
+    function relKey(l) {
+        return String(l || '').toLowerCase().replace(/\b(\d+(?:st|nd|rd|th))\b/g, function (m) { return ORD[m] || m; })
+            .replace(/(\d+)× great-/g, function (_, n) { return new Array(+n + 1).join('great-'); }).replace(/\s+/g, ' ').trim();
+    }
+    function prose(l) { return relKey(l).replace(/\b(great-){3,}/g, function (m) { return (m.length / 6) + '× great-'; }); }
+    function labelMap() {
+        if (LBL) return LBL;
+        var root = D.meta.rootPersonId; LBL = { map: {}, max: 1, re: null };
+        if (!D.byId[root]) return LBL;
+        D.people.forEach(function (p) {
+            if (p.id === root) return;
+            var l = relationship(root, p.id); if (!l || /related by marriage/.test(l)) return;
+            var k = relKey(l); (LBL.map[k] = LBL.map[k] || []).push(p.id);
+            LBL.max = Math.max(LBL.max, k.split(' ').length);
+        });
+        var names = rootNames();
+        if (names.length) LBL.re = new RegExp('\\b(' + names.map(reEsc).join('|') + ")['’]s ", 'g');
+        return LBL;
+    }
+    function personalize(text, ctxId) {
+        if (!text || !S.viewer) return text || '';
+        var M = labelMap(); if (!M.re) return text;
+        var viewer = S.viewer, out = '', last = 0, m;
+        M.re.lastIndex = 0;
+        while ((m = M.re.exec(text))) {
+            var at = m.index, after = at + m[0].length;
+            var rest = text.slice(after), words = rest.match(/^[A-Za-z0-9×\-]+(?: [A-Za-z0-9×\-]+){0,7}/);
+            if (!words) continue;
+            var ws = words[0].split(' '), hit = null, len = 0;
+            for (var k = Math.min(ws.length, M.max); k >= 1; k--) {
+                var key = relKey(ws.slice(0, k).join(' '));
+                if (M.map[key]) { hit = M.map[key]; len = ws.slice(0, k).join(' ').length; break; }
+            }
+            if (!hit) continue;
+            var who = pickReferent(hit, text, at, ctxId);
+            if (!who) continue;
+            var said = sayFor(viewer, who); if (!said) continue;
+            var before = text.slice(last, at), phrase = said;
+            // "Robert, Seb's father" read by Robert himself: "Robert (you)"
+            if (who === viewer && /,\s*$/.test(before)) { before = before.replace(/,\s*$/, ''); phrase = ' (you)'; }
+            else if (atSentenceStart(text, at)) phrase = cap(phrase);
+            out += before + phrase;
+            last = after + len;
+            M.re.lastIndex = last;
+        }
+        return last ? out + text.slice(last) : text;
+    }
+    // true when a personalised line already names the reader's relationship ("Your aunt, née Belfiore")
+    function saysRel(line, rel) { var a = relKey(line), b = relKey('your ' + rel); return !!a && (a === b || a.indexOf(b + ',') === 0 || a.indexOf(b + ';') === 0); }
+    // the line under a name in the panel, unless it only repeats the "to you" line
+    function disLine(p) {
+        var d = personalize(p.disambiguator || '', p.id);
+        if (!d || !S.viewer) return d;
+        if (p.id === S.viewer && relKey(d) === 'you') return '';
+        var rel = p.id === S.viewer ? null : relationship(S.viewer, p.id);
+        return rel && relKey(d) === relKey('your ' + rel) ? '' : d;
+    }
+    function atSentenceStart(t, i) { var b = t.slice(0, i).replace(/[\s"“(*]+$/, ''); return !b || /[.!?:#\n]$/.test(b) || /^#+$/.test(b); }
+    function sentenceAround(t, i) {
+        var a = Math.max(t.lastIndexOf('. ', i), t.lastIndexOf('\n', i)), b = t.slice(i).search(/\.\s|\n/);
+        return t.slice(a < 0 ? 0 : a, b < 0 ? t.length : i + b);
+    }
+    function pickReferent(ids, text, at, ctxId) {
+        if (ids.length === 1) return ids[0];
+        if (ctxId && ids.indexOf(ctxId) >= 0) return ctxId;
+        var sent = sentenceAround(text, at), found = ids.filter(function (id) {
+            var p = D.byId[id], names = uniq([firstName(p), p.displayName, p.givenNames].filter(Boolean));
+            return names.some(function (n) { return new RegExp('\\b' + reEsc(n) + '\\b').test(sent); });
+        });
+        return found.length === 1 ? found[0] : null;
+    }
+    // what <who> is to the reader, as words that fit where "Seb's father" stood
+    function sayFor(viewer, who) {
+        if (who === viewer) return 'you';
+        var r = relInfo(viewer, who);
+        if (!r.label || r.kind === 'none' || r.kind === 'marriage') return null;
+        return 'your ' + prose(r.label);
+    }
 
     // =================================================================== DRAWER
     function bindDrawer() {
@@ -1632,6 +1889,14 @@
                 e.preventDefault();
                 var tg = document.getElementById(sc.dataset.scroll);
                 if (tg) { tg.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' }); tg.setAttribute('tabindex', '-1'); tg.focus({ preventScroll: true }); }
+                return;
+            }
+            if (e.target.closest('[data-who]')) { e.preventDefault(); openWho(true); return; }
+            if (e.target.closest('[data-rel-show]')) {
+                e.preventDefault();
+                var them = S.drawerFor;
+                if (S.expanded) setExpanded(false, false);
+                if (S.viewer && them && S.viewer !== them) showRelation(S.viewer, them);
                 return;
             }
             var go = e.target.closest('[data-go], [data-person]');
@@ -1758,8 +2023,6 @@
             if (places.length) life += '<dt>Lived</dt><dd>' + esc(places.join('; ')) + '</dd>';
         }
         if (p.isLiving && !life) life = '<dt>Status</dt><dd>Living</dd>';
-        var rel = relationship(S.viewpoint, id);
-        var vp = D.byId[S.viewpoint];
         var media = (p.media || []).map(function (m, i) {
             return '<button type="button" data-media="' + i + '" aria-label="Open ' + esc(m.caption) + '"><img src="' + esc(m.thumb) + '" alt="" loading="lazy"></button>';
         }).join('');
@@ -1768,14 +2031,27 @@
             hero + '<div class="dr-in">' +
             '<p class="dr-kicker">' + (p.isDirectLine ? esc(directLabel()) + ' · ' : '') + 'Generation ' + esc(genLabel(p.generation)) + '</p>' +
             '<h2 class="dr-name" id="drawerName">' + esc(p.displayName) + '</h2>' +
-            (p.disambiguator ? '<p class="dr-dis">' + esc(p.disambiguator) + '</p>' : '') +
+            (disLine(p) ? '<p class="dr-dis">' + esc(disLine(p)) + '</p>' : '') +
             (variants.length ? '<p class="dr-variants"><b>Also recorded as</b> ' + esc(variants.map(function (v) { return v.name; }).join(' · ')) + '</p>' : '') +
             '<dl class="dr-life">' + life + '</dl>' +
-            (rel ? '<p class="dr-rel"><span>Relationship to ' + esc(vp.givenNames || vp.displayName) + '</span>' + esc(cap(rel)) + '</p>' : '') +
-            '<p class="dr-summary">' + esc(p.summary) + '</p>' +
+            relToYou(p, 'dr-rel') +
+            '<p class="dr-summary">' + esc(personalize(p.summary, p.id)) + '</p>' +
             (media ? '<div class="dr-sec"><h3>Records and photographs</h3><div class="strip">' + media + '</div></div>' : '') +
             (fam ? '<div class="dr-sec"><h3>Family</h3><div class="chips">' + fam + '</div></div>' : '') +
             '</div>';
+    }
+    // the panel's line saying how this person is related to the reader (or, before they say who they are, to the tree's own person)
+    function relToYou(p, cls) {
+        var v = S.viewer ? D.byId[S.viewer] : null;
+        if (v) {
+            if (p.id === v.id) return '<p class="' + cls + ' is-you"><span>This is you</span>Everyone on the tree is shown from your place. <button type="button" class="rel-act" data-who>Not you?</button></p>';
+            var rel = relationship(v.id, p.id);
+            if (!rel) return '<p class="' + cls + ' is-none"><span>To you</span>No link to you is recorded yet. <button type="button" class="rel-act" data-who>Change who you are</button></p>';
+            return '<p class="' + cls + '"><span>To you</span>Your ' + esc(prose(rel)) + ' <button type="button" class="rel-act" data-rel-show>See how</button></p>';
+        }
+        var root = D.byId[D.meta.rootPersonId], r2 = root ? relationship(root.id, p.id) : null;
+        return '<p class="' + cls + ' is-ask">' + (r2 ? '<span>Relationship to ' + esc(root.givenNames || root.displayName) + '</span>' + esc(cap(r2)) + ' ' : '<span>Your family?</span>') +
+               '<button type="button" class="rel-act" data-who>' + (r2 ? 'How are they related to you?' : 'Tell us who you are') + '</button></p>';
     }
     function genLabel(g) { var x = (D.meta.generations || []).filter(function (r) { return r.generation === g; })[0]; return x ? x.label : String(g + 1); }
     function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
@@ -1887,11 +2163,10 @@
                      (p.isLiving ? '<span class="badge badge--living">Living</span>' : '') +
                      '<span class="badge">Generation ' + esc(genLabel(p.generation)) + '</span>' +
                      (p.confidence ? '<span class="badge ' + confClass(p.confidence) + '">Overall: ' + esc(p.confidence) + '</span>' : '');
-        var rel = relationship(S.viewpoint, p.id), vp = byId[S.viewpoint];
 
         // sections
         var secs = [];
-        secs.push(['pf-story', 'The story', '<div class="pf-story">' + md(p.story, num) + '</div>']);
+        secs.push(['pf-story', 'The story', '<div class="pf-story">' + md(personalize(p.story, p.id), num) + '</div>']);
 
         {
             var rows = [];
@@ -1974,10 +2249,10 @@
         return '<header class="pf-hero">' + hero + '<div>' +
                '<p class="pf-kicker">' + esc(p.isDirectLine ? directLabel() : (p.region && D.meta.regionKicker) || D.meta.familyLabel || D.meta.title) + '</p>' +
                '<h2 class="pf-name" id="drawerName" tabindex="-1">' + esc(p.displayName) + '</h2>' +
-               (p.disambiguator ? '<p class="pf-dis">' + esc(p.disambiguator) + '</p>' : '') +
+               (disLine(p) ? '<p class="pf-dis">' + esc(disLine(p)) + '</p>' : '') +
                (dates ? '<div class="pf-dates">' + dates + '</div>' : '') +
                (variants.length ? '<p class="pf-variants"><b>Also recorded as</b> ' + esc(variants.map(function (v) { return v.name; }).join(' · ')) + '</p>' : '') +
-               (rel ? '<p class="pf-variants"><b>Relationship to ' + esc(vp.givenNames || vp.displayName) + ':</b> ' + esc(rel) + '</p>' : '') +
+               relToYou(p, 'dr-rel pf-rel') +
                '<div class="pf-badges">' + badges + '</div>' +
                '</div></header>' + toc +
                secs.map(function (s) { return '<section class="pf-sec" id="' + s[0] + '" aria-labelledby="' + s[0] + '-h"><h3 id="' + s[0] + '-h">' + esc(s[1]) + '</h3>' + s[2] + '</section>'; }).join('') +
@@ -2079,5 +2354,5 @@
     }
 
     // expose for tests
-    window.__tree = { L: L, D: D, S: S, R: R, select: select, centerOn: centerOn, fitView: fitView, relInfo: relInfo, relPath: relPath, showRelation: showRelation, CW: CW, CH: CH };
+    window.__tree = { L: L, D: D, S: S, R: R, select: select, centerOn: centerOn, fitView: fitView, relInfo: relInfo, relPath: relPath, showRelation: showRelation, setViewer: setViewer, personalize: personalize, CW: CW, CH: CH };
 })();
