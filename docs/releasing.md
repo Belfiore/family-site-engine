@@ -37,6 +37,10 @@ Each site follows one channel (`engine.channel` in its `site.config.json`). A re
 
 Each site names the release whose build workflow it uses: `build-site.yml@v1.0.0` in its `deploy.yml` and `check.yml`. That file decides how a site is checked and published, so a change to it does not reach a site through its channel: when a release changes `build-site.yml`, update the tag in each site's two workflows by pull request, canary sites first. Keep the file small and its changes rare. Most releases leave it alone, and the version of the engine a site builds with still comes from its channel.
 
+A release that adds a step to `build-site.yml` (the Discovery Timeline's fetch of the live site's history is one) needs the tag moved in a site's two workflows before that site can use the feature. A site that has not moved its tag, or has not turned the feature on, is built as before. A site that turns the timeline on while still on an older workflow stops with an error that says what to do, rather than publishing a page that forgets its history.
+
+The Discovery Timeline's deploy workflow also needs `pages: write` for the job that calls `build-site.yml`, because the build asks GitHub for the site's Pages address. See [the Discovery Timeline](discovery-timeline.md#publishing-what-a-site-has-to-do).
+
 ### The token that tells the sites
 
 Sending a rebuild request to another repository needs a token. Create a fine-grained personal access token on GitHub (**Settings > Developer settings > Fine-grained tokens**) with:
@@ -57,7 +61,7 @@ A release that is in use is never deleted or re-tagged: a fix is a new release.
 
 ## Before a release, check
 
-- [ ] `python3 tests/test_build.py` and `node tests/check-sample.js` pass
+- [ ] `python3 tests/test_build.py`, `python3 tests/test_discoveries.py`, `node tests/check-sample.js` and `node tests/check-timeline.js` pass
 - [ ] `CHANGELOG.md` says what changed and, for a major version, what each site must do
 - [ ] `VERSION` and the tag agree
 - [ ] a site with real data was built with the change (`python3 build/build_site.py --site path/to/site`) and its own checks pass

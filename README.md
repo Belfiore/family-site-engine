@@ -31,11 +31,11 @@ The built site is a plain static site. Nothing in it loads code from anywhere el
 | --- | --- |
 | `engine/` | Everything the browser runs: `tree-canvas.js` (the family tree), `map-*.js` (the family map), `stuart.js` and `archive-*.js` (Stuart), `nav.js` and `nav.css` (the navigation bar), `records.js` (the lightbox), `tokens.css` (default colours and fonts), MapLibre, the map styles and the map fonts |
 | `templates/` | The family tree, map and Stuart pages, filled in from each site's settings |
-| `build/` | `build_site.py` (the build), `validate.py` (the data checker), `migrate.py` (brings older data up to date), `archive.py` (Stuart's index), `pages.py` and `sitecfg.py` |
+| `build/` | `build_site.py` (the build), `validate.py` (the data checker), `migrate.py` (brings older data up to date), `archive.py` (Stuart's index), `discoveries.py`, `timeline.py`, `timeline_page.py` and `previous_site.py` (the Discovery Timeline), `pages.py` and `sitecfg.py` |
 | `schema/` | `family-data.schema.json` (people, sources, places) and `site-config.schema.json` (a site's settings) |
 | `sample/` | A made-up family that the tests run against, and a starting point for a new site |
-| `tests/` | `test_build.py` (the build, the checker, the migration) and `check-sample.js` (the sample in a browser) |
-| `tools/` | Map fonts, map styles, Street View viewpoints |
+| `tests/` | `test_build.py` (the build, the checker, the migration), `test_discoveries.py` (the Discovery Timeline), `check-sample.js` (the sample in a browser) and `check-timeline.js` (the timeline page in a browser) |
+| `tools/` | Map fonts, map styles, Street View viewpoints, and `backfill-discoveries.py` (suggests Discovery Timeline entries from a site's git history) |
 | `docs/` | How to add a site, the data format, the settings, releases, and how the map and Stuart work |
 | `channels.json`, `sites.json` | Which engine version each release channel builds with, and which sites to tell when that changes |
 
@@ -50,8 +50,10 @@ To check your own changes:
 
 ```sh
 python3 tests/test_build.py          # the build, the data checker and the migration (Python only)
+python3 tests/test_discoveries.py    # the Discovery Timeline (Python only; the backfill tests need git)
 npm ci && npx playwright install chromium
 node tests/check-sample.js           # the sample site in a browser
+node tests/check-timeline.js         # the Discovery Timeline page in a browser
 ```
 
 ## Documentation
@@ -59,6 +61,7 @@ node tests/check-sample.js           # the sample site in a browser
 - [Adding a site](docs/adding-a-site.md): from an empty repository to a published site.
 - [The data format](docs/data-format.md): `people.json`, `sources.json` and `places.json`, and how they are checked.
 - [Site settings](docs/site-config.md): everything `site.config.json` can say.
+- [The Discovery Timeline](docs/discovery-timeline.md): an optional page of what the family has newly learned, and how it knows.
 - [Releases](docs/releasing.md): versions, channels, rolling out and rolling back.
 - [The family map](docs/map.md), [map keys](docs/map-keys.md) and [Stuart](docs/stuart.md): how they work inside.
 

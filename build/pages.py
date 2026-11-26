@@ -33,6 +33,9 @@ PAGE_ASSETS = {
             'widget': {'compact': True, 'avoid': '.maplibregl-ctrl-bottom-right, .fm-attrib, .fm-tl, .fm-chips, .fm-key, .fm-key-pill, .fm-note, .fm-edition, .fm-peek, .fm-panel, .fm-sheet, .fm-events'}},
     'ask': {'css': [], 'js': ['archive-kin.js', 'archive-dates.js', 'archive-search.js', 'archive-core.js', 'stuart.js'],
             'viewport': 'width=device-width, initial-scale=1.0', 'csp': True, 'widget': None},
+    'timeline': {'css': ['timeline.css'], 'js': ['timeline.js'],
+                 'viewport': 'width=device-width, initial-scale=1.0, viewport-fit=cover',
+                 'widget': {'compact': True}},
 }
 
 
@@ -132,7 +135,7 @@ def csp_for(cfg):
 
 
 # ------------------------------------------------------------------ the engine's own pages
-def render_engine_page(kind, template, cfg, ctx):
+def render_engine_page(kind, template, cfg, ctx, extra=None):
     page = cfg['pages'][kind]
     assets = PAGE_ASSETS[kind]
     head = []
@@ -167,11 +170,13 @@ def render_engine_page(kind, template, cfg, ctx):
         'homeRegion': esc(home_region),
         'mapNoscriptExtra': mp.get('noscript') or '',   # the site's own words; HTML allowed
         'legendNote': (' ' + tree['legendNote']) if tree.get('legendNote') else '',   # the site's own words; HTML allowed
-        'heading': esc(page.get('heading') or {'tree': 'The Family Tree', 'map': 'The Family Map', 'ask': 'Ask Stuart'}[kind]),
+        'heading': esc(page.get('heading') or {'tree': 'The Family Tree', 'map': 'The Family Map', 'ask': 'Ask Stuart'}.get(kind) or page.get('title')),
+        'timelineBody': '',
         'treeNoscript': tree.get('noscript') or ('The <a href="%s">home page</a> and the other pages work without it.' % esc(cfg['_pages']['home'])),
         # the key's row for framed groups, only on a tree that has them
         'legendRegions': '                <li><span class="lg-card lg-card--frame"></span>Group whose link to the family is unproven</li>\n' if tree.get('regions') else '',
     }
+    values.update(extra or {})      # what only one page has: the timeline's content, made by timeline.py
     out = template
     for k, v in values.items():
         out = out.replace('{{%s}}' % k, v)

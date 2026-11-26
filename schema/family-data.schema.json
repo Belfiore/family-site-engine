@@ -133,6 +133,9 @@
       "string",
       "null"
      ]
+    },
+    "discovery": {
+     "$ref": "#/$defs/discovery"
     }
    },
    "additionalProperties": false,
@@ -390,6 +393,9 @@
          "type": "string"
         },
         "description": "Ids of entries in sources.json that support this claim."
+       },
+       "discovery": {
+        "$ref": "#/$defs/discovery"
        }
       },
       "additionalProperties": false,
@@ -481,6 +487,9 @@
          "type": "string"
         },
         "description": "Ids of entries in sources.json that support this claim."
+       },
+       "discovery": {
+        "$ref": "#/$defs/discovery"
        }
       },
       "additionalProperties": false
@@ -545,6 +554,9 @@
          "type": "string"
         },
         "description": "Ids of entries in sources.json that support this claim."
+       },
+       "discovery": {
+        "$ref": "#/$defs/discovery"
        }
       },
       "additionalProperties": false
@@ -704,6 +716,9 @@
          "type": "string"
         },
         "description": "Ids of entries in sources.json that support this claim."
+       },
+       "discovery": {
+        "$ref": "#/$defs/discovery"
        }
       },
       "additionalProperties": false
@@ -739,6 +754,9 @@
          "type": "string"
         },
         "description": "Ids of entries in sources.json that support this claim."
+       },
+       "discovery": {
+        "$ref": "#/$defs/discovery"
        }
       },
       "additionalProperties": false,
@@ -812,6 +830,9 @@
          "type": "string"
         },
         "description": "Ids of entries in sources.json that support this claim."
+       },
+       "discovery": {
+        "$ref": "#/$defs/discovery"
        }
       },
       "additionalProperties": false
@@ -896,6 +917,9 @@
          "string",
          "null"
         ]
+       },
+       "discovery": {
+        "$ref": "#/$defs/discovery"
        }
       },
       "additionalProperties": false,
@@ -983,6 +1007,9 @@
     "layout": {
      "type": "object",
      "description": "Reserved for layout hints in later versions."
+    },
+    "discovery": {
+     "$ref": "#/$defs/discovery"
     }
    },
    "additionalProperties": false,
@@ -1129,6 +1156,9 @@
       "arrival",
       null
      ]
+    },
+    "discovery": {
+     "$ref": "#/$defs/discovery"
     }
    },
    "additionalProperties": false,
@@ -1327,6 +1357,9 @@
      "items": {
       "$ref": "#/$defs/placeEvent"
      }
+    },
+    "discovery": {
+     "$ref": "#/$defs/discovery"
     }
    },
    "additionalProperties": false,
@@ -1480,6 +1513,193 @@
    "required": [
     "places"
    ]
+  },
+  "discovery": {
+   "type": "object",
+   "description": "Optional provenance for a find, written by a researcher. Everything is optional; the engine detects finds by itself and these fields only improve or supplement what it writes. See docs/discovery-timeline.md.",
+   "properties": {
+    "found": {
+     "type": "string",
+     "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+     "description": "The date the discovery was made (YYYY-MM-DD). Without it the timeline uses the date the find was first published, which is not the same thing."
+    },
+    "headline": {
+     "type": "string",
+     "description": "A plain-English sentence saying what was found. Replaces the engine's own wording."
+    },
+    "findType": {
+     "type": "string",
+     "enum": [
+      "person",
+      "record",
+      "photo",
+      "correction",
+      "place",
+      "connection"
+     ],
+     "description": "New person, New record, New photo, Correction, New place or New connection."
+    },
+    "foundBy": {
+     "type": "string",
+     "description": "Who found it, in the site's own words: \"Sebastian\", \"Stuart - Italian\". Left out unless the researcher says."
+    },
+    "source": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "object",
+       "properties": {
+        "text": {
+         "type": "string"
+        },
+        "url": {
+         "type": [
+          "string",
+          "null"
+         ]
+        }
+       },
+       "required": [
+        "text"
+       ],
+       "additionalProperties": false
+      }
+     ],
+     "description": "The citation, as text or as { text, url }."
+    },
+    "confidence": {
+     "$ref": "#/$defs/confidence"
+    },
+    "image": {
+     "type": "string",
+     "description": "A photograph or record image for the find: a path in the site, or an https address."
+    },
+    "imageAlt": {
+     "type": "string",
+     "description": "What the image shows, for people who cannot see it."
+    },
+    "changeNote": {
+     "type": "string",
+     "description": "A sentence or two on why the find matters, or what was corrected and why."
+    }
+   },
+   "additionalProperties": false
+  },
+  "discoveriesFile": {
+   "type": "object",
+   "description": "data/discoveries.json (optional): finds written by hand, or approved from the backfill script's suggestions.",
+   "properties": {
+    "meta": {
+     "type": "object"
+    },
+    "discoveries": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "covers": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "The claims this find is about (their keys, as the backfill script writes them). When the engine also detects those claims it uses this entry's wording instead of writing a second find."
+       },
+       "personIds": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/personId"
+        }
+       },
+       "placeIds": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "review": {
+        "type": "object",
+        "description": "Written by the backfill script: why a suggestion needs a second look. Ignored by the build."
+       },
+       "found": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+        "description": "The date the discovery was made (YYYY-MM-DD). Without it the timeline uses the date the find was first published, which is not the same thing."
+       },
+       "headline": {
+        "type": "string",
+        "description": "A plain-English sentence saying what was found. Replaces the engine's own wording."
+       },
+       "findType": {
+        "type": "string",
+        "enum": [
+         "person",
+         "record",
+         "photo",
+         "correction",
+         "place",
+         "connection"
+        ],
+        "description": "New person, New record, New photo, Correction, New place or New connection."
+       },
+       "foundBy": {
+        "type": "string",
+        "description": "Who found it, in the site's own words: \"Sebastian\", \"Stuart - Italian\". Left out unless the researcher says."
+       },
+       "source": {
+        "anyOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "properties": {
+           "text": {
+            "type": "string"
+           },
+           "url": {
+            "type": [
+             "string",
+             "null"
+            ]
+           }
+          },
+          "required": [
+           "text"
+          ],
+          "additionalProperties": false
+         }
+        ],
+        "description": "The citation, as text or as { text, url }."
+       },
+       "confidence": {
+        "$ref": "#/$defs/confidence"
+       },
+       "image": {
+        "type": "string",
+        "description": "A photograph or record image for the find: a path in the site, or an https address."
+       },
+       "imageAlt": {
+        "type": "string",
+        "description": "What the image shows, for people who cannot see it."
+       },
+       "changeNote": {
+        "type": "string",
+        "description": "A sentence or two on why the find matters, or what was corrected and why."
+       }
+      },
+      "additionalProperties": false
+     }
+    }
+   },
+   "required": [
+    "discoveries"
+   ],
+   "additionalProperties": false
   }
  }
 }

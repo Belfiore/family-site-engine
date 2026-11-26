@@ -27,6 +27,9 @@ PAGE_DEFAULTS = {
     'map': {'file': 'map.html', 'title': 'Family Map', 'description': 'Where the family lived, married, worked and travelled, on a map and a timeline.'},
     'ask': {'file': 'ask.html', 'title': 'Ask Stuart', 'description': 'Stuart, the family archivist, answers questions from the records on this site.'},
 }
+# the Discovery Timeline is made only for a site that turns it on (timeline.enabled), so it is not in PAGE_DEFAULTS above
+TIMELINE_PAGE = {'file': 'discoveries.html', 'title': 'Discovery Timeline',
+                 'description': 'What the family has newly learned about its history, newest finds first.', 'label': 'Discoveries'}
 
 
 def merge(base, over):
@@ -60,5 +63,13 @@ def load(site_dir):
     # the page names the engine scripts and Stuart's index use
     cfg['_pages'] = {'home': pages['home'], 'tree': pages['tree'] and pages['tree']['file'],
                      'map': pages['map'] and pages['map']['file'], 'ask': pages['ask'] and pages['ask']['file']}
+    # the Discovery Timeline: only a site that turns it on gets the page, and a place in the navigation bar
+    # (unless the site has put a link to the page there already)
+    if (cfg.get('timeline') or {}).get('enabled'):
+        tl = cfg['timeline']
+        pages['timeline'] = merge({k: v for k, v in TIMELINE_PAGE.items() if k != 'label'}, {'file': tl['file']} if tl.get('file') else {})
+        cfg['_pages']['timeline'] = pages['timeline']['file']
+        if not any(isinstance(i, dict) and i.get('href') == pages['timeline']['file'] for i in cfg.get('nav') or []):
+            cfg['nav'] = list(cfg.get('nav') or []) + [{'label': TIMELINE_PAGE['label'], 'href': pages['timeline']['file']}]
     cfg['_raw'] = raw
     return cfg

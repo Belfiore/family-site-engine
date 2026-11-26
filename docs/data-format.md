@@ -254,6 +254,25 @@ Generated from the schema. A field the schema does not list is kept and passed t
 | `voyageId` | string or null |  |  |
 | `voyageEnd` | `departure`, `arrival` or null |  |  |
 
+## Notes for the Discovery Timeline
+
+Every record below can carry an optional `discovery` object, in which a researcher says in their own words what was found, when, by whom and from what. The engine writes a plain headline from the data when there is no note. The notes are only read when the site turns on the [Discovery Timeline](discovery-timeline.md); otherwise they are ignored.
+
+| Field | Meaning |
+| --- | --- |
+| `found` | Date it was found, `YYYY-MM-DD` |
+| `headline` | A plain-English sentence, replacing the engine's wording |
+| `findType` | `person`, `record`, `photo`, `correction`, `place` or `connection` |
+| `foundBy` | Who found it |
+| `source` | A string, or `{ "text", "url" }` |
+| `confidence` | One of the confidence levels above |
+| `image`, `imageAlt` | A picture of the find (a path in the site) and what it shows |
+| `changeNote` | One sentence on what changed |
+
+`discovery` is allowed on a person, an event, a place, a placeEvent, and on a person's `spouses`, `residences`, `occupations`, `voyages`, `facts`, `timeline` items and `media`. A note on a living person is ignored with a warning.
+
+Notes can also go in one file, `data/discoveries.json`: `{ "discoveries": [ { "id", "covers", "personIds", "placeIds", ...the fields above } ] }`. `covers` lists the claim keys a note is about, so that when the engine finds the same thing the note's wording is used and only one find is written. The file is read by the build and is not published.
+
 ## Checking
 
 `python3 build/validate.py --site path/to/site` runs the same checks as the build. Errors stop the build; warnings are printed and the build carries on.

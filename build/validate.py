@@ -13,7 +13,7 @@ Errors stop the build: a broken link between people, an id used twice, a missing
 type. Warnings do not: a field the schema does not know, a cited source that is missing, a missing image.
 Unknown fields are warnings so that tools adding new kinds of information do not break a site.
 """
-import argparse, json, os, re, sys
+import argparse, datetime, json, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ENGINE_ROOT = os.path.dirname(HERE)
@@ -208,7 +208,76 @@ def validate_site(site, cfg):
                 for o in e.get('personIds') or []:
                     if o not in by: errors.append('places.json %s: event %s names %s, who is not in people.json' % (pl.get('id'), e.get('id'), o))
     e2, w2 = check_settings_refs(site, cfg, by)
-    return {'errors': errors + e2, 'warnings': warnings + w2}
+    e3, w3 = check_timeline(site, cfg, ddir, pdoc, ldoc)
+    return {'errors': errors + e2 + e3, 'warnings': warnings + w2 + w3}
+
+
+DASHES = ('\u2014', '\u2013')
+
+
+def check_timeline(site, cfg, ddir, pdoc, ldoc):
+    """The Discovery Timeline's settings and the researcher's notes, only for a site that has it on (a site that does not
+    is checked exactly as before). Errors: what the build would overwrite, and notes that cannot be read. Warnings:
+    notes the page would not show as intended."""
+    errors, warnings = [], []
+    if not cfg['_pages'].get('timeline'): return errors, warnings
+    page = cfg['_pages']['timeline']
+    if os.path.exists(os.path.join(site, page)):
+        errors.append('timeline: the site already has %s, which the build would overwrite. Rename it, or set timeline.file' % page)
+    if os.path.exists(os.path.join(site, 'discoveries')):
+        errors.append('timeline: the site has a discoveries/ folder, where the build writes the history. Rename or remove it')
+    clash = [k for k, v in cfg['_pages'].items() if k not in ('home', 'timeline') and v == page]
+    if clash: errors.append('timeline.file is %s, which is also the %s page' % (page, clash[0]))
+    # researchers' notes
+    texts = []     # (where, text) to check for dashes and for living people
+
+    def note(d, where, living=False, shape=True):
+        if not isinstance(d, dict): return
+        if shape:       # notes in data/discoveries.json are checked as part of the whole file below
+            c = check_file(d, 'discovery', where)
+            errors.extend(c.errors); warnings.extend(c.warnings)
+        if living:
+            warnings.append('%s: a discovery note on someone who is living is ignored; the timeline never lists living people' % where)
+        for k in ('headline', 'changeNote', 'foundBy', 'imageAlt'):
+            if isinstance(d.get(k), str): texts.append(('%s.%s' % (where, k), d[k]))
+        src = d.get('source')
+        if isinstance(src, str): texts.append((where + '.source', src))
+        elif isinstance(src, dict) and isinstance(src.get('text'), str): texts.append((where + '.source.text', src['text']))
+        if re.match(r'^\d{4}-\d{2}-\d{2}$', d.get('found') or '') and d['found'] > datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d'):
+            warnings.append('%s.found is %s, which is in the future' % (where, d['found']))
+        img = d.get('image')
+        if img and not re.match(r'^(https?:)?//', img) and not os.path.exists(os.path.join(site, img)):
+            warnings.append('%s.image: %s is not in the site' % (where, img))
+
+    def walk(o, where, living):
+        if isinstance(o, dict):
+            if 'discovery' in o: note(o['discovery'], where + '.discovery', living)
+            for k, v in o.items():
+                if k != 'discovery': walk(v, '%s.%s' % (where, k), living)
+        elif isinstance(o, list):
+            for i, v in enumerate(o): walk(v, '%s[%d]' % (where, i), living)
+
+    for p in (pdoc or {}).get('people') or []:
+        if isinstance(p, dict):
+            walk(p, p.get('id') or '?', bool(p.get('isLiving') or p.get('living')))
+    for pl in (ldoc or {}).get('places') or []:
+        if isinstance(pl, dict): walk(pl, 'places.json %s' % pl.get('id'), False)
+    cpath = os.path.join(ddir, 'discoveries.json')
+    if os.path.exists(cpath):
+        try:
+            with open(cpath, encoding='utf-8') as f: doc = json.load(f)
+        except ValueError as e:
+            errors.append('data/discoveries.json is not valid JSON: %s' % e)
+            doc = None
+        if doc is not None:
+            c = check_file(doc, 'discoveriesFile', 'data/discoveries.json')
+            errors.extend(c.errors); warnings.extend(c.warnings)
+            for i, d in enumerate(doc.get('discoveries') or [] if isinstance(doc, dict) else []):
+                note(d, 'data/discoveries.json discoveries[%d]' % i, shape=False)
+    for where, t in texts:
+        if any(ch in t for ch in DASHES):
+            warnings.append('%s has a long dash; the site\'s house style does not use them (use a comma, a colon or a full stop)' % where)
+    return errors, warnings
 
 
 def local_page(href):
