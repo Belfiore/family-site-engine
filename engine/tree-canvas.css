@@ -229,16 +229,81 @@ body.canvas-body.lb-open { overflow: hidden; }
 .tc-results .r-name { font-family: var(--font-body); font-weight: 700; font-size: 1.02rem; color: var(--pc-ink); }
 .tc-results .r-sub { font-family: var(--font-accent); font-size: 0.82rem; color: var(--pc-muted); }
 .tc-results .r-empty { cursor: default; color: var(--pc-muted); font-family: var(--font-accent); font-style: italic; }
-.tc-viewpoint {
-    display: flex; flex-direction: column; gap: 2px; padding: 5px 10px 7px; border-radius: 8px;
+/* "You are": who the reader is; opens the "Who are you?" picker */
+.tc-you {
+    display: grid; grid-template-columns: auto 14px; grid-template-rows: auto auto; column-gap: 6px; align-items: center;
+    min-height: 40px; padding: 4px 10px 5px 12px; border-radius: 8px; cursor: pointer; text-align: left; font: inherit;
     background: rgba(253, 249, 240, 0.94); border: 1px solid rgba(200, 169, 122, 0.45); box-shadow: 0 2px 10px rgba(40, 28, 10, 0.06);
+    color: var(--pc-ink); max-width: 240px;
 }
-.tc-viewpoint label { font-family: var(--font-display); font-size: 0.6rem; letter-spacing: 1.4px; text-transform: uppercase; color: var(--pc-gold); }
-.tc-viewpoint select {
-    font-family: var(--font-accent); font-size: 0.92rem; color: var(--pc-ink); background: transparent;
-    border: none; padding: 0; max-width: 190px; cursor: pointer;
+.tc-you:hover { border-color: var(--pc-accent); }
+.tc-you:focus { outline: none; }
+.tc-you:focus-visible { outline: 2px solid var(--pc-focus); outline-offset: 2px; }
+.tc-you-k { grid-column: 1; font-family: var(--font-display); font-size: 0.6rem; letter-spacing: 1.4px; text-transform: uppercase; color: var(--pc-gold); line-height: 1.3; }
+.tc-you-n { grid-column: 1; font-family: var(--font-accent); font-size: 0.95rem; line-height: 1.2; color: var(--pc-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tc-you:not(.is-set) .tc-you-n { color: var(--pc-accent); font-style: italic; }
+.tc-you .i { grid-column: 2; grid-row: 1 / 3; width: 14px; height: 14px; color: var(--pc-muted); }
+
+/* the "Who are you?" picker */
+.who {
+    position: fixed; inset: 0; z-index: 400; display: grid; place-items: start center; padding: 12vh 16px 16px;
+    background: rgba(31, 29, 26, 0.42); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
 }
-.tc-viewpoint select:focus-visible { outline: 2px solid var(--pc-focus); outline-offset: 2px; }
+.who[hidden] { display: none; }
+.who-card {
+    width: min(480px, 100%); padding: 26px 26px 14px; border-radius: 12px;
+    background: var(--pc-paper); border: 1px solid var(--pc-rule); box-shadow: 0 24px 60px rgba(20, 14, 4, 0.32);
+}
+.who-kicker { font-family: var(--font-display); font-size: 0.62rem; letter-spacing: 1.6px; text-transform: uppercase; color: var(--pc-gold); margin: 0 0 6px; }
+.who-title { font-family: var(--font-display); font-size: 1.7rem; letter-spacing: 0.8px; color: var(--pc-title); margin: 0; line-height: 1.15; }
+.who-sub { font-family: var(--font-accent); font-size: 1.02rem; line-height: 1.45; color: var(--pc-muted); margin: 8px 0 16px; }
+.who-field { position: relative; }
+.who-field .i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); width: 19px; height: 19px; color: var(--pc-muted); }
+.who-field input {
+    width: 100%; height: 50px; padding: 0 14px 0 42px; border-radius: 9px; box-sizing: border-box;
+    border: 1px solid rgba(160, 130, 85, 0.7); background: #fff; font-family: var(--font-accent); font-size: 1.15rem; color: var(--pc-ink);
+}
+.who-field input::placeholder { color: #8d7a5c; font-style: italic; }
+.who-field input:focus { outline: none; border-color: var(--pc-accent); box-shadow: 0 0 0 3px rgba(var(--pc-accent-rgb), 0.18); }
+.who-results { list-style: none; margin: 8px 0 0; padding: 4px; max-height: 46vh; overflow: auto; border-radius: 9px; border: 1px solid var(--pc-rule); background: var(--pc-paper); }
+.who-results[hidden] { display: none; }
+.who-results li { display: flex; gap: 11px; align-items: center; padding: 8px 10px; border-radius: 7px; cursor: pointer; }
+.who-results li[aria-selected="true"], .who-results li:hover { background: rgba(var(--pc-accent-rgb), 0.09); }
+.w-av {
+    flex: none; width: 36px; height: 36px; border-radius: 50%; overflow: hidden; display: grid; place-items: center;
+    background: radial-gradient(circle at 35% 30%, var(--pc-accent-light), var(--pc-accent) 45%, var(--pc-accent-deep));
+    color: #f6e7b8; font-family: var(--font-display); font-size: 13px; font-weight: 600;
+}
+.w-av img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.25); }
+.w-txt { display: flex; flex-direction: column; min-width: 0; }
+.w-name { font-family: var(--font-body); font-weight: 700; font-size: 1.08rem; color: var(--pc-ink); line-height: 1.2; }
+.w-sub { font-family: var(--font-accent); font-size: 0.86rem; color: var(--pc-muted); line-height: 1.3; }
+.who-results .w-empty { cursor: default; color: var(--pc-muted); font-family: var(--font-accent); font-style: italic; line-height: 1.4; }
+.who-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; min-height: 34px; }
+.who-skip { background: none; border: none; padding: 6px 0; cursor: pointer; font-family: var(--font-accent); font-size: 0.95rem; color: var(--pc-muted); text-decoration: underline; text-underline-offset: 3px; }
+.who-skip:hover { color: var(--pc-accent); }
+.who-x { background: none; border: 1px solid var(--pc-rule); border-radius: 7px; width: 34px; height: 34px; display: grid; place-items: center; cursor: pointer; color: var(--pc-muted); }
+.who-x .i { width: 16px; height: 16px; }
+.who-skip:focus-visible, .who-x:focus-visible { outline: 2px solid var(--pc-focus); outline-offset: 2px; }
+
+/* each card's relationship to the reader */
+.c-rel {
+    margin-left: auto; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+    font-family: var(--font-display); font-size: 8.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--pc-muted); line-height: 13px;
+}
+.c-rel:empty { display: none; }
+.card.is-yours .c-rel { color: var(--pc-accent); font-weight: 600; }
+.card.is-viewpoint { border-color: var(--pc-gold); box-shadow: 0 0 0 2px rgba(138, 100, 16, 0.55), var(--pc-shadow-lift); }
+.card.is-viewpoint.is-selected { box-shadow: 0 0 0 2px var(--pc-accent), var(--pc-shadow-lift); }
+
+/* the panel's "to you" line */
+.rel-act {
+    background: none; border: none; padding: 0; margin-left: 4px; cursor: pointer; font: inherit; font-size: 0.9em;
+    color: var(--pc-accent); text-decoration: underline; text-underline-offset: 3px;
+}
+.rel-act:focus-visible { outline: 2px solid var(--pc-focus); outline-offset: 2px; }
+.dr-rel.is-none, .dr-rel.is-ask { background: rgba(138, 100, 16, 0.06); border-color: rgba(138, 100, 16, 0.2); color: var(--pc-ink-2); }
+.pf-rel { margin: 12px 0 4px; max-width: 520px; }
 
 /* ------------------------------------------------------------------ generation rail */
 .tc-genrail {
@@ -403,7 +468,7 @@ body.canvas-body.lb-open { overflow: hidden; }
 .tc.is-narrow .tc-sub { display: none; }
 .tc.is-narrow .tc-title { padding: 9px 13px; }
 .tc.is-narrow .tc-title h1 { font-size: 0.95rem; margin: 0; }
-.tc.is-narrow .tc-viewpoint { display: none; }
+.tc.is-narrow .tc-you { max-width: 170px; }
 .tc.is-narrow .tc-search input { width: 200px; }
 .tc.is-narrow { --rail-w: 44px; }
 .tc.is-narrow .gen-txt { display: none; }
@@ -634,7 +699,7 @@ body.canvas-body.lb-open { overflow: hidden; }
     }
     .tc-drawer.is-expanded { width: 88%; max-width: none; }
     .dr-article { padding: 0 24px 40px; }
-    .tc-viewpoint { display: none; }
+    .tc-you { max-width: 180px; }
 }
 @media (max-width: 768px) {
     :root { --pc-head-h: 54px; }
@@ -646,6 +711,10 @@ body.canvas-body.lb-open { overflow: hidden; }
     .tc-search { flex: 1; }
     .tc .tc-search input, .tc.is-narrow .tc-search input { width: 100%; }
     .tc-results { left: 0; right: 0; width: auto; }
+    .tc-you { max-width: 44%; }
+    .who { padding-top: max(76px, 9vh); }
+    .who-card { padding: 20px 18px 10px; }
+    .who-title { font-size: 1.45rem; }
     .tc { --rail-w: 30px; }
     .gen { padding: 0 2px 0 6px; }
     .gen-num { font-size: 0.8rem; min-width: 0; }

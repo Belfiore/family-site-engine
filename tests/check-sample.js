@@ -165,6 +165,29 @@ function serve() {
         check(beside(t.william, t.alice), 'coupleBlocks "auto": William and Alice are drawn as one couple');
         check(beside(t.arthur, t.margot), 'the couple at the centre are drawn side by side');
         check(!page.errors.length, 'no page errors', page.errors.join(' | '));
+
+        // "Who are you?": asked on a first visit; the answer turns the tree to the reader and is remembered
+        check(await page.isVisible('#who'), 'a first visit asks "Who are you?"');
+        await page.fill('#whoInput', 'kat'); await page.waitForTimeout(150);
+        const offered = await page.$$eval('#whoResults .w-name', l => l.map(x => x.textContent));
+        check(offered[0] === 'Kate Hartley', 'typing part of a name offers the person, living people first', offered.join(', '));
+        await page.keyboard.press('Enter'); await page.waitForTimeout(400);
+        const v = await page.evaluate(() => {
+            const t = window.__tree, card = id => document.querySelector('.card[data-id="' + id + '"]');
+            return {
+                open: !document.getElementById('who').hidden, you: document.getElementById('youName').textContent,
+                mine: card('kate-hartley').classList.contains('is-viewpoint'),
+                rel: card('arthur-hartley').querySelector('.c-rel').textContent, want: t.relInfo('kate-hartley', 'arthur-hartley').label,
+                dis: card('peter-hartley').querySelector('.c-dis').textContent,
+                story: t.personalize("Peter is Daniel's grandfather.", 'x')
+            };
+        });
+        check(!v.open && v.you === 'Kate Hartley' && v.mine, 'choosing a name closes the picker and marks your card', JSON.stringify(v));
+        check(v.rel.toLowerCase() === String(v.want).toLowerCase(), 'each card shows its relationship to you', v.rel + ' / ' + v.want);
+        check(/^your /i.test(v.dis) && /^Peter is your /.test(v.story), '"Daniel\'s grandfather" in the text is said from where you stand', v.dis + ' | ' + v.story);
+        await page.reload(); await page.waitForSelector('.card[data-id]'); await page.waitForTimeout(300);
+        check(!(await page.isVisible('#who')) && (await page.textContent('#youName')) === 'Kate Hartley', 'the choice is remembered on the next visit');
+        await page.evaluate(() => { localStorage.removeItem('tc_viewer'); });
         await page.goto(URL + 'family-tree.html#/person/susan-hartley');
         await page.waitForTimeout(1200);
         const prof = await page.evaluate(() => { const d = document.getElementById('drawer'); return d && !d.hidden ? d.textContent : ''; });
