@@ -33,9 +33,10 @@
             voyage = '<p class="ec-ship">' + glyph('sailed') + '<span>' + line + '</span></p>';
         }
         var first = e.personIds[0];
-        return '<article class="ec' + (e.noProvenLink ? ' is-orkney' : '') + (e.familyStatement ? ' is-family' : '') + '" data-event="' + esc(e.id) + '">' +
+        return '<article class="ec' + (e.noProvenLink ? ' is-orkney' : '') + (e.associate ? ' is-associate' : '') + (e.familyStatement ? ' is-family' : '') + '" data-event="' + esc(e.id) + '">' +
             '<p class="ec-top"><span class="ec-gl">' + glyph(e.type) + '</span><span class="ec-type">' + esc(FM.data.TYPE_LABEL[e.type]) + '</span><span class="ec-date">' + esc(U().dateLabel(e)) + '</span></p>' +
             (e.noProvenLink ? '<p class="ec-npl"><span class="badge badge--npl">No proven link to this family</span></p>' : '') +
+            (e.associate ? '<p class="ec-npl"><span class="badge badge--assoc">' + esc(D.associateLabel || 'Business associate') + '. ' + esc(D.associateNote || 'Not family') + '</span></p>' : '') +
             '<p class="ec-where">' + where + '</p>' + voyage +
             '<p class="ec-text">' + esc(e.summary) + (e.familyStatement && !/\(family/.test(e.summary) ? ' (family)' : '') + '</p>' +
             (people ? '<div class="ec-people">' + people + '</div>' : '') + media +

@@ -492,6 +492,39 @@
     }
    ],
    "country": "France"
+  },
+  {
+   "id": "bradford-print-shop",
+   "name": "The print shop, Bradford",
+   "historicName": "The print shop, Bradford",
+   "variants": [],
+   "kind": "workplace",
+   "address": "Bradford, Yorkshire",
+   "modernAddress": "Bradford, Yorkshire",
+   "precision": "town",
+   "lat": 53.7932,
+   "lng": -1.7521,
+   "uncertaintyMetres": 2000,
+   "coordinateMethod": "Made up for the sample family.",
+   "coordinatePrecision": "town",
+   "coordinateSourceIds": [],
+   "drawAs": "halo",
+   "inHomeRegion": true,
+   "noProvenLink": false,
+   "standsToday": "unknown",
+   "standsTodaySource": "",
+   "todayNote": "",
+   "status": "published",
+   "significance": "",
+   "blurb": null,
+   "blurbSourceIds": [],
+   "boundary": null,
+   "historicMap": null,
+   "images": [],
+   "streetView": null,
+   "streetViewReason": null,
+   "events": [],
+   "country": "England"
   }
  ]
 }

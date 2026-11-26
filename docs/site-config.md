@@ -80,7 +80,7 @@ Below 1,180 pixels the links fold into a menu button.
 | --- | --- |
 | `--gold`, `--gold-dark`, `--cream`, `--ink`, `--font-display`, `--font-body`, `--font-accent` | Shared: the navigation bar, and the defaults for the rest |
 | `--pc-bg`, `--pc-paper`, `--pc-ink`, `--pc-muted`, `--pc-accent`, `--pc-accent-deep`, `--pc-accent-light`, `--pc-accent-rgb`, `--pc-title`, `--pc-gold`, `--pc-rule`, `--pc-line`, `--pc-line-direct`, `--pc-focus`, and the rest at the top of `engine/tree-canvas.css` (badges for living people, tooltips, hovers, the confidence badges, the document viewer) | The family tree. The Belfiore & Circelli site's `theme` turns the whole tree green this way |
-| `--fm-bg`, `--fm-paper`, `--fm-ink`, `--fm-muted`, `--fm-accent`, `--fm-accent-deep`, `--fm-gold`, `--fm-rule` | The family map |
+| `--fm-bg`, `--fm-paper`, `--fm-ink`, `--fm-muted`, `--fm-accent`, `--fm-accent-deep`, `--fm-gold`, `--fm-rule`, `--fm-assoc`, `--fm-assoc-bg` | The family map |
 | `--st-ink`, `--st-paper`, `--st-cream`, `--st-wine`, `--st-gold`, `--st-sepia`, `--st-line`, `--st-display`, `--st-text` | Stuart |
 
 ## data
@@ -118,6 +118,7 @@ The family tree. Any key here also overrides the same key in `people.json` meta,
 | `branches` | Groups of places for the map's branch filter: `{ "id": "moreau", "label": "The Moreaus", "pages": ["moreau.html"], "people": [...], "regions": [...] }`. One has `"default": true` |
 | `kinAnchors` | People the timeline relates others to ("Margot's father"): `[{ "id": "marguerite-moreau", "name": "Margot" }]` |
 | `families` | The Family filter's choices: `{ "id": "margot", "label": "Margot's family", "option": "Margot's family (Moreau)", "roots": ["marguerite-moreau"] }`. Without any, the filter is hidden |
+| `associates` | People who are not family but belong to the story, such as a business partner: `{ "label": "Business associate", "note": "Not family", "people": { "edwin-pratt": "arthur-hartley" } }`. Each associate is in a hidden region (`tree.hiddenRegions`), so the tree leaves them off; the map draws their places in slate green with a "Business associate. Not family" badge, never as "no proven link". The second id is the family member they are tied to, so a Family filter that includes that person keeps the associate's places |
 | `noscript` | Extra words for visitors without JavaScript; HTML allowed |
 
 ## stuart

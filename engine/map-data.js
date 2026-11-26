@@ -143,6 +143,13 @@
     var BRANCHES = MAPC.branches && MAPC.branches.length ? MAPC.branches : [{ id: 'family', label: 'The family', pages: [], default: true }];
     var HIDDEN = {}; (TREEC.hiddenRegions || []).forEach(function (r) { HIDDEN[r] = true; });
     var KEEP = TREEC.suspectedRelatives || {};
+    // map.associates: people who are not family but belong to the story (a business partner, a firm's founder).
+    // They sit in a hidden region, so the tree leaves them off; the map draws their places, marked as
+    // associates and never as family. { label, note, people: { associateId: familyPersonId } }
+    var ASSOC = MAPC.associates || {};
+    var ASSOC_OF = ASSOC.people || {};
+    var ASSOC_LABEL = ASSOC.label || 'Business associate';
+    var ASSOC_NOTE = ASSOC.note || 'Not family';
 
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
@@ -154,17 +161,18 @@
     }
 
     function build(peopleDoc, placesDoc, sourcesDoc) {
-        var people = {}, living = {}, orkney = {}, placeholder = {};
+        var people = {}, living = {}, orkney = {}, placeholder = {}, associate = {};
         peopleDoc.people.forEach(function (p) {
             people[p.id] = p;
             if (p.isLiving) living[p.id] = true;
             if (p.region && HIDDEN[p.region]) orkney[p.id] = true;
             if (p.placeholder) placeholder[p.id] = true;
+            if (ASSOC_OF[p.id]) associate[p.id] = true;
         });
         var sources = {}; sourcesDoc.sources.forEach(function (s) { sources[s.id] = s; });
         var places = {}; placesDoc.places.forEach(function (p) { places[p.id] = p; });
         // people in a hidden region stay off the map, except the suspected relatives kept beside someone
-        function visible(pid) { return pid && people[pid] && (!orkney[pid] || KEEP[pid]); }
+        function visible(pid) { return pid && people[pid] && (!orkney[pid] || KEEP[pid] || associate[pid]); }
 
         // ---- events
         var events = [], byId = {}, byFactRef = {};
@@ -173,9 +181,10 @@
             ev.personIds = (ev.personIds || []).filter(visible);
             if (!ev.personIds.length && ev.type !== 'photographed') return;
             ev.group = keyGroupOf(ev.type);
-            var ork = !!(ev.personIds.length && ev.personIds.every(function (id) { return orkney[id]; })) || !!(places[ev.placeId] && places[ev.placeId].noProvenLink);
+            var asc = !!(ev.personIds.length && ev.personIds.every(function (id) { return associate[id]; }));
+            var ork = !asc && (!!(ev.personIds.length && ev.personIds.every(function (id) { return orkney[id]; })) || !!(places[ev.placeId] && places[ev.placeId].noProvenLink));
             if (ork && !ev.personIds.some(function (id) { return KEEP[id]; })) return;
-            ev.noProvenLink = ork; ev.orkney = false;
+            ev.noProvenLink = ork; ev.orkney = false; ev.associate = asc;
             events.push(ev); byId[ev.id] = ev;
             (ev.factRefs || []).forEach(function (r) { byFactRef[r] = ev; });
         }
@@ -321,6 +330,7 @@
         return {
             people: people, places: places, sources: sources, events: events, unplaced: unplaced, byId: byId, voyages: voyages,
             placeEvents: placeEvents, personEvents: personEvents, branchOf: branchOf, living: living, orkney: orkney,
+            associate: associate, associateOf: ASSOC_OF, associateLabel: ASSOC_LABEL, associateNote: ASSOC_NOTE,
             meta: { people: peopleDoc.meta, places: placesDoc.meta }, visible: visible
         };
     }
@@ -338,7 +348,7 @@
         var f = e.fact || {}, pl = places[e.placeId] || {};
         var has = !!pl.name;
         var where = placePhrase(pl, e.type);
-        var who = (people[e.personIds[0]] || {}).givenNames || '';
+        var p0 = people[e.personIds[0]] || {}, who = String(p0.knownAs || '').trim() || p0.givenNames || '';
         var d = e.date || '';
         var ds = has ? stripPlace(d, pl) : d;
         var district = pl.kind === 'registration district';
@@ -354,7 +364,7 @@
                 return finish(ds ? 'Died ' + ds + ', ' + where : 'Died ' + where);
             case 'buried': return f.display ? finish('Buried: ' + f.display) : finish('Buried ' + where);
             case 'married':
-                var names = e.personIds.map(function (id) { return (people[id] || {}).givenNames; }).filter(Boolean);
+                var names = e.personIds.map(function (id) { var q = people[id] || {}; return String(q.knownAs || '').trim() || q.givenNames; }).filter(Boolean);
                 var lead = names.length > 1 ? names.join(' and ') + ' married' : (who ? who + ' married' : 'Married');
                 return district ? finish(lead + ', registered in the ' + districtName(pl), ds) : finish(lead + (where ? ' ' + where : ''), d);
             case 'lived': return finish('Lived' + (f.address ? ' at ' + f.address : (where ? ' ' + where : '')), d);
@@ -387,9 +397,16 @@
 
 
     // ---- who and what: "Edward FitzMaurice's home", "Robert and Mary Walter's wedding"
+    // The name a person went by: knownAs when the data gives one (a call name such as "Bruno" for
+    // Max Bruno), otherwise the first given name. Used for short labels on pins, cards and sentences.
+    function callName(p) {
+        if (!p) return '';
+        var k = String(p.knownAs || '').trim();
+        return k || String(p.givenNames || '').trim().split(/\s+/)[0];
+    }
     function personShort(p) {
         if (!p) return '';
-        var g = String(p.givenNames || '').trim().split(/\s+/)[0], sn = String(p.surname || '').trim();
+        var g = callName(p), sn = String(p.surname || '').trim();
         return g && sn ? g + ' ' + sn : p.displayName;
     }
     function whoOf(ids, people) {
@@ -398,7 +415,7 @@
         if (ps.length === 1) return personShort(ps[0]);
         var sn = ps[0].surname, same = ps.every(function (p) { return p.surname === sn; }) && sn;
         if (ps.length === 2) {
-            var a = String(ps[0].givenNames || '').split(/\s+/)[0], b = String(ps[1].givenNames || '').split(/\s+/)[0];
+            var a = callName(ps[0]), b = callName(ps[1]);
             return same ? a + ' and ' + b + ' ' + sn : personShort(ps[0]) + ' and ' + personShort(ps[1]);
         }
         return same ? 'the ' + sn + ' family' : personShort(ps[0]) + ' and ' + (ps.length - 1) + ' others';
@@ -486,7 +503,7 @@
     FM.data = {
         load: load, build: build, deriveDates: deriveDates, deriveFromText: deriveFromText, byDate: byDate, esc: esc,
         TYPE_ORDER: TYPE_ORDER, TYPE_LABEL: TYPE_LABEL, KEY_GROUPS: KEY_GROUPS, keyGroupOf: keyGroupOf, BRANCHES: BRANCHES,
-        districtName: districtName, getFact: getFact, personShort: personShort, whoOf: whoOf, headline: headline,
+        districtName: districtName, getFact: getFact, callName: callName, personShort: personShort, whoOf: whoOf, headline: headline,
         kinOf: kinOf, kinLine: kinLine
     };
 })();

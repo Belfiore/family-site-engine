@@ -156,6 +156,11 @@
       "null"
      ]
     },
+    "knownAs": {
+     "type": "string",
+     "pattern": "\\S",
+     "description": "Optional. The name the person went by, when it is not the first given name (a German call name such as Bruno for Max Bruno, or a nickname). Map labels and sentences use it; the full names stay in givenNames."
+    },
     "surname": {
      "type": [
       "string",

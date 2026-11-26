@@ -156,6 +156,7 @@ function serve() {
         });
         check(t.gold === '#8a6a2f', 'the site\'s theme overrides the engine\'s colours', t.gold);
         check(t.n === 22, '22 people on the tree (everyone but the legend)', t.n);
+        check(!(await page.$('.card[data-id="edwin-pratt"]')), 'a business associate is not drawn on the tree');
         check(!t.legend && t.pierre, 'a hidden region is left off, and its suspected relative kept');
         check(t.pierreUncertain, 'the suspected relative is drawn as unproven');
         check(t.maryAnnPhoto && !t.henriPhoto, 'cardPhotos "best": a picture from the media shows when no photo is set');
@@ -188,7 +189,26 @@ function serve() {
         await page.click('#listOpen');
         await page.waitForTimeout(400);
         const places = await page.$$eval('#listView .lv-place h3', hs => hs.map(h => h.textContent.trim()));
-        check(places.length === 6 && !places.some(p => /Paris/.test(p)), 'the list has the 6 places, and not the legend\'s', places.join(' | '));
+        check(places.length === 7 && !places.some(p => /Paris/.test(p)), 'the list has the 7 places (one the business associate\'s), and not the legend\'s', places.join(' | '));
+        const assoc = await page.evaluate(() => {
+            const D = window.FM && FM.DATA;
+            const ev = D && D.events.filter(e => e.placeId === 'bradford-print-shop');
+            const wrap = [...document.querySelectorAll('.mk-wrap')].find(w => /print shop/i.test(w.getAttribute('aria-label') || w.textContent || ''));
+            return { n: ev ? ev.length : -1, associate: !!(ev && ev.length && ev.every(e => e.associate && !e.noProvenLink)),
+                     onTreeData: !!(D && D.associate['edwin-pratt']), label: wrap ? (wrap.getAttribute('aria-label') || '') : '', cls: wrap ? wrap.className : '' };
+        });
+        check(assoc.n === 1 && assoc.associate && assoc.onTreeData, 'a business associate (map.associates) is drawn on the map, marked as an associate and not as "no proven link"', JSON.stringify(assoc));
+        const names = await page.evaluate(() => {
+            const U = FM.data, ev = FM.DATA.events.find(e => e.placeId === 'bradford-print-shop');
+            return { pin: U.headline ? String(U.headline(ev, FM.DATA.people, FM.DATA.places)) : '', who: U.whoOf(['edwin-pratt'], FM.DATA.people),
+                     fallback: U.callName({ givenNames: 'Mary Ann', surname: 'Briggs' }), blank: U.callName({ givenNames: 'Mary Ann', knownAs: '  ' }) };
+        });
+        check(names.who === 'Edwin Pratt' && /Edwin Pratt/.test(names.pin) && !/John/.test(names.pin), 'labels use the name a person went by (knownAs), not the first given name', JSON.stringify(names));
+        check(names.fallback === 'Mary' && names.blank === 'Mary', 'without knownAs, labels fall back to the first given name', JSON.stringify(names));
+        await page.evaluate(() => FM.openPlace ? FM.openPlace('bradford-print-shop') : null);
+        await page.waitForTimeout(400);
+        const badge = await page.evaluate(() => [...document.querySelectorAll('.badge--assoc')].map(b => b.textContent.trim()));
+        check(badge.some(b => /Business associate\. Not family/.test(b)), 'the place panel says "Business associate. Not family"', badge.join(' | '));
         const susan = await page.$$eval('#listView .lv-people', xs => xs.some(x => /Susan Hartley/.test(x.textContent)));
         check(susan, 'living people are on the map like anyone else');
         check(!page.errors.length, 'no page errors', page.errors.join(' | '));

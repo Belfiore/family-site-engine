@@ -2,6 +2,12 @@
 
 Each release, newest first. A major version says what a site has to change.
 
+## 1.1.0
+
+- **Business associates on the map.** `map.associates` lists people who are not family but belong to the story, such as a firm's co-founder: `{ "label": "Business associate", "note": "Not family", "people": { associateId: familyPersonId } }`. They stay in a hidden region, so the tree leaves them off, and the map draws their places in slate green with a "Business associate. Not family" badge on the pin, the place panel, the person panel and the timeline cards. They are never drawn as family or as "no proven link". A Family filter keeps an associate's places when it includes the family member they are tied to. Two new colours, `--fm-assoc` and `--fm-assoc-bg`.
+- **Known-as names.** A person may have `knownAs`, the name they went by when it is not their first given name (a German call name such as Bruno for Max Bruno, or a nickname). Map pin labels, cards, timeline tips and sentences use it; without it they use the first given name as before, so no site has to change.
+- **New checks:** the data checker refuses an associate who is not in a hidden region, or who is also a suspected relative; the sample family has a made-up associate, and the browser checks that his print shop is on the map with the badge and that he is not on the tree; the sample associate is John Edwin Pratt, known as Edwin, and the map must call him Edwin Pratt; a blank `knownAs` is an error.
+
 ## 1.0.1
 
 - **Stuart takes a site's own words.** `stuart.synonyms` in a site's settings adds words Stuart treats as alike when he searches the story pages (`{ "earl": ["orkney"] }`). The two words that only made sense for the FitzMaurice and Andrews family (Orkney, the Evening News) moved out of the engine into that site's settings.

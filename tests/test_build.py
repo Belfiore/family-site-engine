@@ -224,6 +224,26 @@ class TestBuildChanges(unittest.TestCase):
         self.assertIn('nav[5] links to gallery.html, which the site does not have', errs)
         self.assertIn("tree.cardPhotos: 'all' is not one of", errs)
 
+    def test_known_as_is_a_name_and_not_unknown(self):
+        self.site.edit_json('data/people.json', lambda d: self.site.person(d, 'thomas-hartley').update(knownAs='Tom'))
+        cfg = sitecfg.load(self.site.dir)
+        r = validate.validate_site(self.site.dir, cfg)
+        self.assertEqual(r['errors'], [])
+        self.assertFalse(any('knownAs' in w for w in r['warnings']), r['warnings'])
+        self.site.edit_json('data/people.json', lambda d: self.site.person(d, 'thomas-hartley').update(knownAs=''))
+        errs = '\n'.join(validate.validate_site(self.site.dir, cfg)['errors'])
+        self.assertIn('knownAs', errs)
+
+    def test_a_business_associate_must_stay_off_the_tree(self):
+        def bad(c):
+            c['map']['associates']['people']['arthur-hartley'] = 'marguerite-moreau'
+            c['map']['associates']['people']['pierre-moreau'] = 'jean-baptiste-moreau'
+        self.site.edit_json('site.config.json', bad)
+        cfg = sitecfg.load(self.site.dir)
+        errs = '\n'.join(validate.check_config(cfg)['errors'] + validate.validate_site(self.site.dir, cfg)['errors'])
+        self.assertIn('map.associates.people: arthur-hartley must be in a hidden region', errs)
+        self.assertIn('map.associates.people: pierre-moreau is also a suspected relative', errs)
+
     def test_a_site_without_map_or_stuart(self):
         def off(c):
             c['pages']['map'] = None

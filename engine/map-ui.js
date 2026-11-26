@@ -153,7 +153,7 @@
         opts = opts || {};
         if (S.hidden[e.group]) return false;
         var fam = familySet();
-        if (fam && !e.personIds.some(function (id) { return fam[id]; })) return false;
+        if (fam && !e.personIds.some(function (id) { return fam[id] || (DATA.associateOf[id] && fam[DATA.associateOf[id]]); })) return false;
         if (e.orkney && !S.orkney) return false;
         if (!opts.ignoreYears && (S.from != null || S.to != null)) {
             if (e.dateStart) {
@@ -350,7 +350,7 @@
         var conf = best.length ? Math.min.apply(null, best) : 1;
         var confName = conf === 0 ? 'confirmed' : conf === 1 ? 'probable' : 'family tradition';
         if (evs.length && evs.every(function (e) { return e.familyStatement; })) confName = 'family tradition';
-        return { place: pl, events: evs, head: head, conf: confName, orkney: !!pl.noProvenLink || evs.every(function (e) { return e.orkney; }), types: Object.keys(types) };
+        return { place: pl, events: evs, head: head, conf: confName, orkney: !!pl.noProvenLink || evs.every(function (e) { return e.orkney; }), associate: !!evs.length && evs.every(function (e) { return e.associate; }), types: Object.keys(types) };
     }
     function currentItems() {
         var scope = scopeIds(), items = [];
@@ -464,25 +464,26 @@
             var n = members.reduce(function (a, m) { return a + m.events.length; }, 0);
             var allFaded = members.every(function (m) { return m.faded; });
             var anyOrk = members.every(function (m) { return m.orkney; });
+            var allAsc = members.every(function (m) { return m.associate; });
             var tlCur = members.some(function (m) { return m.tl && m.tl.current; });
             var tlPast = members.every(function (m) { return m.tl && m.tl.past; });
             var tlFut = members.every(function (m) { return m.tl && m.tl.future; });
             return {
-                anchor: 'center', cls: 'mk--cluster' + (allFaded ? ' is-faded' : '') + (anyOrk ? ' is-orkney' : '') + (tlCur ? ' is-current' : '') + (tlPast ? ' is-past' : '') + (tlFut ? ' is-future' : ''),
+                anchor: 'center', cls: 'mk--cluster' + (allFaded ? ' is-faded' : '') + (anyOrk ? ' is-orkney' : '') + (allAsc ? ' is-associate' : '') + (tlCur ? ' is-current' : '') + (tlPast ? ' is-past' : '') + (tlFut ? ' is-future' : ''),
                 inner: '<span class="mk-c"><span class="mk-n">' + members.length + '</span><span class="mk-sub">places</span></span>',
                 label: members.length + ' places close together, ' + n + ' events: ' + members.map(function (m) { return placeHeadline(m.events).text + ', ' + m.place.name; }).slice(0, 6).join('; ') + (members.length > 6 ? '; and more' : '') + '. Press Enter to zoom in.'
             };
         }
         var m = members[0], pl = m.place;
         var approx = pl.drawAs !== 'pin';
-        var cls = 'mk--pin' + (approx ? ' mk--approx' : '') + ' mk-conf--' + (m.conf === 'family tradition' ? 'family' : m.conf) + (m.faded ? ' is-faded' : '') + (m.orkney ? ' is-orkney' : '') + (S.place === pl.id ? ' is-selected' : '') +
+        var cls = 'mk--pin' + (approx ? ' mk--approx' : '') + ' mk-conf--' + (m.conf === 'family tradition' ? 'family' : m.conf) + (m.faded ? ' is-faded' : '') + (m.orkney ? ' is-orkney' : '') + (m.associate ? ' is-associate' : '') + (S.place === pl.id ? ' is-selected' : '') +
                   (m.tl ? (m.tl.current ? ' is-current' : '') + (m.tl.past ? ' is-past' : '') + (m.tl.future ? ' is-future' : '') : '');
         var count = m.events.length > 1 ? '<span class="mk-count" aria-hidden="true">' + m.events.length + '</span>' : '';
         var hd = placeHeadline(m.events);
         var shape = '<span class="mk-pin"><svg class="mk-pin-bg" viewBox="0 0 30 40" aria-hidden="true"><path d="M15 39C15 39 3 24.5 3 15a12 12 0 0 1 24 0c0 9.5-12 24-12 24z"/></svg>' + glyph(m.head, 'mk-gl') + '</span>';
         var tag = '<span class="mk-label" aria-hidden="true">' + esc(hd.text) + (hd.more ? ' <i>+' + hd.more + '</i>' : '') + '</span>';
         var label = hd.text + (hd.more ? ' and ' + hd.more + ' more' : '') + ', ' + pl.name + ', ' + spanOf(m.events) +
-                    (approx ? '. Somewhere in this area, not an exact address' : '') + (m.orkney ? '. No proven link to this family' : '') + '.';
+                    (approx ? '. Somewhere in this area, not an exact address' : '') + (m.orkney ? '. No proven link to this family' : '') + (m.associate ? '. ' + DATA.associateLabel + ', ' + DATA.associateNote.toLowerCase() : '') + '.';
         return { anchor: 'bottom', cls: cls, inner: shape + count + tag, label: label };
     }
     // the area chip's label: the name before its first comma, never cut mid-word
@@ -570,6 +571,7 @@
                 (approx ? '<p class="pk-approx">' + esc(approx) + '</p>' : '') +
                 (m.events.length > 1 ? '<ul class="pk-evs">' + rows + '</ul>' : '<p class="pk-line">' + esc(m.events[0].summary) + '</p>') +
                 (m.orkney ? '<p class="pk-badges"><span class="badge badge--npl">No proven link</span></p>' : '') +
+                (m.associate ? '<p class="pk-badges"><span class="badge badge--assoc">' + esc(DATA.associateLabel) + '. ' + esc(DATA.associateNote) + '</span></p>' : '') +
                 '<div class="pk-actions"><button type="button" class="fm-btn fm-btn--sm" data-open-place="' + esc(pl.id) + '">Open</button>' + (pl.streetView ? FM.sv.button(pl, { small: true }) : '') + '</div>';
             setAreaFocus(pl.drawAs !== 'pin' ? pl.id : null);
         }
@@ -697,7 +699,7 @@
         var num = {}; srcIds.forEach(function (s, i) { num[s] = i + 1; });
         var locIds = (pl.coordinateSourceIds || []).filter(function (s) { return DATA.sources[s]; });
         return '<article class="pn" data-place="' + esc(pl.id) + '">' + hero + then +
-            '<p class="pn-kicker">' + esc(kindLabel(pl)) + (sm.orkney ? ' · <span class="badge badge--npl">No proven link to this family</span>' : '') + '</p>' +
+            '<p class="pn-kicker">' + esc(kindLabel(pl)) + (sm.orkney ? ' · <span class="badge badge--npl">No proven link to this family</span>' : '') + (sm.associate ? ' · <span class="badge badge--assoc">' + esc(DATA.associateLabel) + '. ' + esc(DATA.associateNote) + '</span>' : '') + '</p>' +
             '<h2 class="pn-title" id="panelTitle" tabindex="-1">' + esc(pl.name) + '</h2>' +
             ((pl.historicName && pl.historicName !== pl.name) || (pl.variants || []).length ? '<p class="pn-also">Also written ' + esc([pl.historicName].concat(pl.variants || []).filter(function (v) { return v && v !== pl.name; }).join('; ')) + '</p>' : '') +
             (pl.blurb ? '<p class="pn-blurb">' + esc(pl.blurb) + fn(pl.blurbSourceIds, num) + '</p>' : '') +
@@ -736,7 +738,7 @@
         var people = e.personIds.filter(function (id) { return id !== opts.skipPerson; }).map(function (id) { var p = DATA.people[id]; return '<button type="button" class="chip" data-person="' + esc(id) + '">' + avatar(p, 'av--xs') + esc(p.displayName) + '</button>'; }).join('');
         var crops = (e.recordCrops || []).slice(0, 3).map(function (c) { return '<a class="record-link ev-crop" href="images/records/' + esc(c) + '"><img src="images/records/' + esc(c) + '" alt="' + esc(e.summary) + '" loading="lazy"></a>'; }).join('');
         var voyage = e.voyage ? '<span class="ev-ship">' + esc(e.voyage.ship) + ': ' + esc(e.voyage.display) + '</span>' : '';
-        return '<li class="ev ev--' + esc(e.type.replace(/\s+/g, '-')) + (e.familyStatement ? ' is-family' : '') + (e.orkney ? ' is-orkney' : '') + '" data-event="' + esc(e.id) + '">' +
+        return '<li class="ev ev--' + esc(e.type.replace(/\s+/g, '-')) + (e.familyStatement ? ' is-family' : '') + (e.orkney ? ' is-orkney' : '') + (e.associate ? ' is-associate' : '') + '" data-event="' + esc(e.id) + '">' +
             '<span class="ev-gl" title="' + esc(FM.data.TYPE_LABEL[e.type]) + '">' + glyph(e.type) + '</span>' +
             '<div class="ev-body"><p class="ev-date">' + esc(dateLabel(e)) + '</p>' +
             '<p class="ev-text">' + esc(e.summary) + (e.familyStatement && !/\(family/.test(e.summary) ? ' (family)' : '') + (num ? fn(e.sourceIds, num) : '') + '</p>' +
@@ -757,7 +759,7 @@
         var evs = (DATA.personEvents[id] || []).filter(function (e) { return !S.hidden[e.group]; }).slice().sort(lifeOrder);
         var placed = evs.filter(function (e) { return e.placeId; });
         var html = '<article class="pp">' +
-            '<div class="pp-head">' + avatar(p, 'av--lg') + '<div><p class="pn-kicker">' + (DATA.orkney[id] ? '<span class="badge badge--npl">No proven link to this family</span>' : 'Person') + '</p>' +
+            '<div class="pp-head">' + avatar(p, 'av--lg') + '<div><p class="pn-kicker">' + (DATA.associate[id] ? '<span class="badge badge--assoc">' + esc(DATA.associateLabel) + '. ' + esc(DATA.associateNote) + '</span>' : DATA.orkney[id] ? '<span class="badge badge--npl">No proven link to this family</span>' : 'Person') + '</p>' +
             '<h2 class="pn-title" id="panelTitle" tabindex="-1">' + esc(p.displayName) + '</h2>' + (p.disambiguator ? '<p class="pn-also">' + esc(p.disambiguator) + '</p>' : '') +
             '<p class="pp-years">' + esc(lifeYears(p)) + '</p></div></div>' +
             (p.summary ? '<p class="pn-blurb">' + esc(p.summary) + '</p>' : '') +
