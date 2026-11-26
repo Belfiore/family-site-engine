@@ -143,6 +143,13 @@
     var BRANCHES = MAPC.branches && MAPC.branches.length ? MAPC.branches : [{ id: 'family', label: 'The family', pages: [], default: true }];
     var HIDDEN = {}; (TREEC.hiddenRegions || []).forEach(function (r) { HIDDEN[r] = true; });
     var KEEP = TREEC.suspectedRelatives || {};
+    // map.associates: people who are not family but belong to the story (a business partner, a firm's founder).
+    // They sit in a hidden region, so the tree leaves them off; the map draws their places, marked as
+    // associates and never as family. { label, note, people: { associateId: familyPersonId } }
+    var ASSOC = MAPC.associates || {};
+    var ASSOC_OF = ASSOC.people || {};
+    var ASSOC_LABEL = ASSOC.label || 'Business associate';
+    var ASSOC_NOTE = ASSOC.note || 'Not family';
 
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
@@ -154,17 +161,18 @@
     }
 
     function build(peopleDoc, placesDoc, sourcesDoc) {
-        var people = {}, living = {}, orkney = {}, placeholder = {};
+        var people = {}, living = {}, orkney = {}, placeholder = {}, associate = {};
         peopleDoc.people.forEach(function (p) {
             people[p.id] = p;
             if (p.isLiving) living[p.id] = true;
             if (p.region && HIDDEN[p.region]) orkney[p.id] = true;
             if (p.placeholder) placeholder[p.id] = true;
+            if (ASSOC_OF[p.id]) associate[p.id] = true;
         });
         var sources = {}; sourcesDoc.sources.forEach(function (s) { sources[s.id] = s; });
         var places = {}; placesDoc.places.forEach(function (p) { places[p.id] = p; });
         // people in a hidden region stay off the map, except the suspected relatives kept beside someone
-        function visible(pid) { return pid && people[pid] && (!orkney[pid] || KEEP[pid]); }
+        function visible(pid) { return pid && people[pid] && (!orkney[pid] || KEEP[pid] || associate[pid]); }
 
         // ---- events
         var events = [], byId = {}, byFactRef = {};
@@ -173,9 +181,10 @@
             ev.personIds = (ev.personIds || []).filter(visible);
             if (!ev.personIds.length && ev.type !== 'photographed') return;
             ev.group = keyGroupOf(ev.type);
-            var ork = !!(ev.personIds.length && ev.personIds.every(function (id) { return orkney[id]; })) || !!(places[ev.placeId] && places[ev.placeId].noProvenLink);
+            var asc = !!(ev.personIds.length && ev.personIds.every(function (id) { return associate[id]; }));
+            var ork = !asc && (!!(ev.personIds.length && ev.personIds.every(function (id) { return orkney[id]; })) || !!(places[ev.placeId] && places[ev.placeId].noProvenLink));
             if (ork && !ev.personIds.some(function (id) { return KEEP[id]; })) return;
-            ev.noProvenLink = ork; ev.orkney = false;
+            ev.noProvenLink = ork; ev.orkney = false; ev.associate = asc;
             events.push(ev); byId[ev.id] = ev;
             (ev.factRefs || []).forEach(function (r) { byFactRef[r] = ev; });
         }
@@ -321,6 +330,7 @@
         return {
             people: people, places: places, sources: sources, events: events, unplaced: unplaced, byId: byId, voyages: voyages,
             placeEvents: placeEvents, personEvents: personEvents, branchOf: branchOf, living: living, orkney: orkney,
+            associate: associate, associateOf: ASSOC_OF, associateLabel: ASSOC_LABEL, associateNote: ASSOC_NOTE,
             meta: { people: peopleDoc.meta, places: placesDoc.meta }, visible: visible
         };
     }

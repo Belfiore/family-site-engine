@@ -38,7 +38,7 @@
   ],
   "rootOrder": ["thomas-hartley", "george-turner", "jean-baptiste-moreau"],
   "sides": {"left": "arthur-hartley", "right": "marguerite-moreau", "leftLabel": "Grandpa Arthur's family", "rightLabel": "Grandma Margot's family"},
-  "hiddenRegions": ["legend"],
+  "hiddenRegions": ["legend", "associates"],
   "suspectedRelatives": {"pierre-moreau": "jean-baptiste-moreau"},
   "cardPhotos": "best",
   "coupleBlocks": "auto"
@@ -52,6 +52,7 @@
    {"id": "hartley", "label": "The Hartleys", "people": ["thomas-hartley", "mary-ann-briggs", "william-hartley", "alice-turner", "arthur-hartley"], "default": true},
    {"id": "moreau", "label": "The Moreaus", "pages": ["moreau.html"], "people": ["jean-baptiste-moreau", "louise-fabre", "henri-moreau", "marguerite-moreau"]}
   ],
+  "associates": {"label": "Business associate", "note": "Not family", "people": {"edwin-pratt": "arthur-hartley"}},
   "kinAnchors": [{"id": "marguerite-moreau", "name": "Margot"}, {"id": "arthur-hartley", "name": "Arthur"}],
   "families": [
    {"id": "arthur", "label": "Arthur's family", "option": "Arthur's family (Hartley)", "roots": ["arthur-hartley"]},

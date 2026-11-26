@@ -248,6 +248,14 @@ def check_settings_refs(site, cfg, by):
     for k, v in (tree.get('suspectedRelatives') or {}).items():
         person(k, 'tree.suspectedRelatives')
         person(v, 'tree.suspectedRelatives.%s' % k)
+    hidden = set(tree.get('hiddenRegions') or [])
+    for k, v in ((mp.get('associates') or {}).get('people') or {}).items():
+        person(k, 'map.associates.people')
+        person(v, 'map.associates.people.%s' % k)
+        if k in by and by[k].get('region') not in hidden:
+            errors.append('map.associates.people: %s must be in a hidden region (tree.hiddenRegions), so the tree does not draw a business associate as family' % k)
+        if k in (tree.get('suspectedRelatives') or {}):
+            errors.append('map.associates.people: %s is also a suspected relative; a person is one or the other' % k)
     for i, a in enumerate(st.get('anchors') or []):
         person(a.get('id'), 'stuart.anchors[%d]' % i)
     for i, a in enumerate(mp.get('kinAnchors') or []):

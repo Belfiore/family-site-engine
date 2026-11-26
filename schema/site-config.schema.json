@@ -546,6 +546,31 @@
     },
     "noscript": {
      "type": "string"
+    },
+    "associates": {
+     "type": "object",
+     "properties": {
+      "label": {
+       "type": "string",
+       "description": "The badge, e.g. \"Business associate\"."
+      },
+      "note": {
+       "type": "string",
+       "description": "Said after the label, e.g. \"Not family\"."
+      },
+      "people": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "string"
+       },
+       "description": "{ associateId: familyPersonId }. The associate must be in a hidden region (tree.hiddenRegions), so the tree leaves them off; the family person is who they are tied to, so a Family filter that includes that person keeps the associate's places."
+      }
+     },
+     "additionalProperties": false,
+     "required": [
+      "people"
+     ],
+     "description": "People who are not family but belong to the story, such as a business partner. Their places are drawn on the map with an associate badge, never as family, and they are not on the tree."
     }
    },
    "additionalProperties": false,

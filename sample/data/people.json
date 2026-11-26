@@ -1545,6 +1545,47 @@
    "placeholder": true,
    "kin": true,
    "uncertainBeside": "mary-ann-briggs"
+  },
+  {
+   "id": "edwin-pratt",
+   "displayName": "Edwin Pratt",
+   "givenNames": "Edwin",
+   "surname": "Pratt",
+   "sex": "M",
+   "generation": 2,
+   "isLiving": false,
+   "isDirectLine": false,
+   "confidence": "probable",
+   "parents": [],
+   "children": [],
+   "spouses": [],
+   "nameVariants": [],
+   "residences": [],
+   "facts": [],
+   "timeline": [],
+   "media": [],
+   "openQuestions": [],
+   "relatedPages": [],
+   "occupations": [
+    {
+     "title": "Printer, Arthur's partner in a print shop",
+     "place": "Bradford",
+     "placeId": "bradford-print-shop",
+     "years": "1930 to 1935",
+     "confidence": "probable",
+     "sourceIds": [
+      "family-testimony"
+     ]
+    }
+   ],
+   "disambiguator": "Arthur's business partner, not family",
+   "summary": "Arthur Hartley's partner in a print shop. Not family.",
+   "story": "Edwin Pratt ran a print shop with Arthur Hartley.[^family-testimony]",
+   "cardPlace": null,
+   "photo": null,
+   "birth": null,
+   "death": null,
+   "region": "associates"
   }
  ]
 }
