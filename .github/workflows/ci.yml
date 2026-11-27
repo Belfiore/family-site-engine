@@ -44,3 +44,6 @@ jobs:
 
       - name: The Discovery Timeline page in a browser
         run: node tests/check-timeline.js
+
+      - name: The site chat in a browser
+        run: node tests/check-chat.js

@@ -1,6 +1,6 @@
 # Family site engine
 
-The shared engine behind the family history sites: the family tree, the family map, Stuart (the family archivist) and the navigation bar. Each family's site keeps its own data, photographs, stories and look in its own repository; this repository holds the code they all run, and the build that puts the two together.
+The shared engine behind the family history sites: the family tree, the family map, Stuart (the family archivist), an optional chat and the navigation bar. Each family's site keeps its own data, photographs, stories and look in its own repository; this repository holds the code they all run, and the build that puts the two together.
 
 A fix or a new feature made here reaches every site through a release, without anyone copying files between repositories.
 
@@ -19,23 +19,24 @@ A fix or a new feature made here reaches every site through a release, without a
                  1. pick the engine version (the site's channel, or a pin)
                  2. check the data against the schema and against itself
                  3. build: site files + engine/<version>/ + pages + Stuart's index
+                    (and the chat index, when the site turns the chat on)
                  4. run the site's own checks on the build
                  5. publish to GitHub Pages (only if every step passed)
 ```
 
-The built site is a plain static site. Nothing in it loads code from anywhere else at run time, so a copy of it keeps working on its own, on GitHub Pages or any other static host.
+The built site is a plain static site. Nothing in it loads code from anywhere else at run time, so a copy of it keeps working on its own, on GitHub Pages or any other static host. The optional chat is the one part that talks to a service: it sends a question and the passages it found on the site to an address the site sets, and it does not load code from there. A site that leaves the chat off does not call out at all.
 
 ## What is here
 
 | Folder | What it holds |
 | --- | --- |
-| `engine/` | Everything the browser runs: `tree-canvas.js` (the family tree), `map-*.js` (the family map), `stuart.js` and `archive-*.js` (Stuart), `nav.js` and `nav.css` (the navigation bar), `records.js` (the lightbox), `tokens.css` (default colours and fonts), MapLibre, the map styles and the map fonts |
+| `engine/` | Everything the browser runs: `tree-canvas.js` (the family tree), `map-*.js` (the family map), `stuart.js` and `archive-*.js` (Stuart), `chat.js` (the optional chat), `nav.js` and `nav.css` (the navigation bar), `records.js` (the lightbox), `tokens.css` (default colours and fonts), MapLibre, the map styles and the map fonts |
 | `templates/` | The family tree, map and Stuart pages, filled in from each site's settings |
-| `build/` | `build_site.py` (the build), `validate.py` (the data checker), `migrate.py` (brings older data up to date), `archive.py` (Stuart's index), `discoveries.py`, `timeline.py`, `timeline_page.py` and `previous_site.py` (the Discovery Timeline), `pages.py` and `sitecfg.py` |
+| `build/` | `build_site.py` (the build), `validate.py` (the data checker), `migrate.py` (brings older data up to date), `archive.py` (Stuart's index), `chat_index.py` (the chat's index), `discoveries.py`, `timeline.py`, `timeline_page.py` and `previous_site.py` (the Discovery Timeline), `pages.py` and `sitecfg.py` |
 | `schema/` | `family-data.schema.json` (people, sources, places) and `site-config.schema.json` (a site's settings) |
 | `sample/` | A made-up family that the tests run against, and a starting point for a new site |
 | `tests/` | `test_build.py` (the build, the checker, the migration), `test_discoveries.py` (the Discovery Timeline), `check-sample.js` (the sample in a browser) and `check-timeline.js` (the timeline page in a browser) |
-| `tools/` | Map fonts, map styles, Street View viewpoints, and `backfill-discoveries.py` (suggests Discovery Timeline entries from a site's git history) |
+| `tools/` | Map fonts, map styles, Street View viewpoints, `backfill-discoveries.py` (suggests Discovery Timeline entries from a site's git history), and `chat-proxy.py` (a small answer service for the chat) |
 | `docs/` | How to add a site, the data format, the settings, releases, and how the map and Stuart work |
 | `channels.json`, `sites.json` | Which engine version each release channel builds with, and which sites to tell when that changes |
 
@@ -63,7 +64,7 @@ node tests/check-timeline.js         # the Discovery Timeline page in a browser
 - [Site settings](docs/site-config.md): everything `site.config.json` can say.
 - [The Discovery Timeline](docs/discovery-timeline.md): an optional page of what the family has newly learned, and how it knows.
 - [Releases](docs/releasing.md): versions, channels, rolling out and rolling back.
-- [The family map](docs/map.md), [map keys](docs/map-keys.md) and [Stuart](docs/stuart.md): how they work inside.
+- [The family map](docs/map.md), [map keys](docs/map-keys.md), [Stuart](docs/stuart.md) and [the site chat](docs/chat.md): how they work inside.
 
 ## Licence
 

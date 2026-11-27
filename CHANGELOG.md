@@ -2,6 +2,10 @@
 
 Each release, newest first. A major version says what a site has to change.
 
+## Unreleased
+
+- **Site chat, optional and off by default.** `"chat": { "enabled": true, "name": "Guide", "greeting": "...", "endpoint": "https://..." }` adds a button on every page. The build writes `chat/index.json` from the site's own pages and data. The browser picks the passages that share words with the question and sends only those to the site's endpoint. There is no embedding, and the build does not call a model. The key stays on the endpoint (`tools/chat-proxy.py`). A site that leaves the chat off is built as before: no script, no stylesheet, no index.
+
 ## 1.2.0
 
 - **Discovery Timeline, optional and off by default.** `"timeline": { "enabled": true }` adds `discoveries.html`, a page of what the family has newly learned, newest first, with a "new since your last visit" banner. The build compares the meaning of the data with what was published last time. No network and no model. A correction keeps the previous value and the updated value. A removal is not a discovery. A site that leaves the timeline off builds byte for byte as before.

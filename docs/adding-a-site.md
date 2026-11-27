@@ -22,7 +22,7 @@ No engine file goes in the site. If the site's pages came from before the engine
 
 ## 2. The settings
 
-Copy `sample/site.config.json` and change it for the family. At the least: `site.name`, `site.familyName`, `nav`, and which pages the site has (`pages.tree`, `pages.map`, `pages.ask`, each a file name or `null`). Set `engine.channel` to `stable` unless the site is meant to try releases early.
+Copy `sample/site.config.json` and change it for the family. At the least: `site.name`, `site.familyName`, `nav`, and which pages the site has (`pages.tree`, `pages.map`, `pages.ask`, each a file name or `null`). Set `engine.channel` to `stable` unless the site is meant to try releases early. The chat button is off until the site sets `chat.enabled` and an endpoint of its own: see [the site chat](chat.md).
 
 ## 3. The data
 
