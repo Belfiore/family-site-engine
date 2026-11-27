@@ -1,0 +1,234 @@
+# Releases the engine by itself when a pull request is merged to main, and moves every site onto the release.
+#
+#   1. plan      works out which merged pull requests the release holds and how big the bump is
+#                (patch; minor if a pull request has the "minor" label; major if it has "major").
+#   2. tests     the full Checks workflow, and a test build of every site in sites.json. Nothing below runs unless
+#                every one of them passes.
+#   3. release   bumps VERSION, adds the CHANGELOG.md entry, commits to main, tags vX.Y.Z and makes the GitHub
+#                release with notes from the merged pull requests.
+#   4. channels  moves canary, beta and stable to the new version and tells every site (engine-release).
+#                A major release is published but held: its sites have to change first, so no channel moves.
+#   5. verify    waits for each site's build and checks its live address answers 200. If any site fails, the
+#                channels go back to the versions they had, the sites are told again, and an issue is opened.
+#
+# The commits this workflow makes start with "[auto-release]" and end with "[skip ci]", and a push that only changes VERSION,
+# CHANGELOG.md or channels.json is never a release, so it cannot start itself again.
+# A pull request labelled "no-release" does not make a release (if every pull request since the last release has it).
+#
+# Needs the secret RELEASE_TOKEN (SITES_DISPATCH_TOKEN is used if there is no RELEASE_TOKEN). See docs/releasing.md.
+name: Auto release
+
+on:
+  push:
+    branches: [main]
+
+# One release at a time. A merge that lands while one is running waits; the run after it releases everything
+# since the last tag, so no pull request is missed.
+concurrency:
+  group: auto-release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    # The workflow's own commits and the bot never start a release.
+    if: ${{ !startsWith(github.event.head_commit.message, '[auto-release]') && github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.plan.outputs.release }}
+      level: ${{ steps.plan.outputs.level }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: There is a token that can push and tell the sites
+        env:
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.SITES_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$RELEASE_TOKEN" ]; then
+            echo "::error::Add a RELEASE_TOKEN secret (docs/releasing.md). Without it the release cannot push to main or tell the sites, so it would stop half way."
+            exit 1
+          fi
+
+      - name: Decide whether this push makes a release
+        id: plan
+        env:
+          TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          BEFORE: ${{ github.event.before }}
+          ACTOR: ${{ github.actor }}
+          HEAD_MESSAGE: ${{ github.event.head_commit.message }}
+        run: python3 tools/autorelease.py plan
+
+      - name: The sites to test
+        id: matrix
+        run: python3 tools/autorelease.py matrix
+
+      - name: Keep the pull request list for the release
+        if: steps.plan.outputs.release == 'true'
+        uses: actions/upload-artifact@v5
+        with:
+          name: release-prs
+          path: release-prs.json
+
+  tests:
+    needs: plan
+    if: needs.plan.outputs.release == 'true'
+    uses: ./.github/workflows/ci.yml
+
+  sites:
+    needs: plan
+    if: needs.plan.outputs.release == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    name: Test build, ${{ matrix.name }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: engine
+
+      - uses: actions/checkout@v5
+        with:
+          repository: ${{ matrix.repo }}
+          path: site
+          token: ${{ secrets.RELEASE_TOKEN || secrets.SITES_DISPATCH_TOKEN || github.token }}
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      # A site may keep its files in a sub-folder (its deploy.yml sets site-dir). Find it, or take "dir" from sites.json.
+      - name: Find the site's folder
+        id: dir
+        env:
+          SITE_ROOT: site
+          SITE_DIR_HINT: ${{ matrix.dir }}
+        run: python3 engine/tools/autorelease.py sitedir
+
+      # --previous none: this is a trial build of the site's data with the engine as it stands on main, not a publication.
+      - name: Build the site with this engine
+        env:
+          SITE_DIR: ${{ steps.dir.outputs.dir }}
+        run: python3 engine/build/build_site.py --site "site${SITE_DIR:+/$SITE_DIR}" --out "$RUNNER_TEMP/_site" --previous none
+
+  release:
+    needs: [plan, tests, sites]
+    if: needs.plan.outputs.release == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+      issues: write
+    env:
+      PUSH_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.SITES_DISPATCH_TOKEN }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN || secrets.SITES_DISPATCH_TOKEN }}
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - uses: actions/download-artifact@v5
+        with:
+          name: release-prs
+
+      - name: Main has not moved since the tests ran
+        id: fresh
+        run: |
+          git fetch origin main
+          if [ "$(git rev-parse origin/main)" != "$GITHUB_SHA" ]; then
+            echo "::notice::main has moved on since this run started. The run for the newer commit releases everything since the last tag."
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump VERSION and write the CHANGELOG entry
+        id: prepare
+        if: steps.fresh.outputs.stale != 'true'
+        env:
+          LEVEL: ${{ needs.plan.outputs.level }}
+        run: python3 tools/autorelease.py prepare
+
+      - name: Commit and tag the release
+        if: steps.fresh.outputs.stale != 'true'
+        env:
+          VERSION: ${{ steps.prepare.outputs.version }}
+        run: |
+          git config user.name "family-site-engine release"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add VERSION CHANGELOG.md
+          git commit -m "[auto-release] Release v$VERSION [skip ci]"
+          git push origin HEAD:main
+          gh release create "v$VERSION" --target "$(git rev-parse HEAD)" --title "v$VERSION" --notes-file release-notes.md
+
+      - name: Move the channels
+        id: channels
+        if: steps.fresh.outputs.stale != 'true'
+        env:
+          VERSION: ${{ steps.prepare.outputs.version }}
+          LEVEL: ${{ needs.plan.outputs.level }}
+        run: |
+          python3 tools/autorelease.py channels
+          if ! git diff --quiet channels.json; then
+            git add channels.json
+            git commit -m "[auto-release] Move the channels to v$VERSION [skip ci]"
+            git push origin HEAD:main
+          fi
+
+      - name: A major release is held
+        if: steps.fresh.outputs.stale != 'true' && steps.channels.outputs.moved == 'false'
+        env:
+          VERSION: ${{ steps.prepare.outputs.version }}
+        run: |
+          gh issue create --title "v$VERSION is published but no site has it yet (major release)" \
+            --body "A major release needs changes in the sites, so no channel was moved and no site was told. Read the CHANGELOG entry for v$VERSION, prepare each site, then move the channels in channels.json by hand."
+
+      # If a site cannot be told, the check below finds that no build started there and the release is rolled back.
+      - name: Tell the sites
+        id: dispatch
+        continue-on-error: true
+        if: steps.fresh.outputs.stale != 'true' && steps.channels.outputs.moved == 'true'
+        env:
+          TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.SITES_DISPATCH_TOKEN }}
+        run: python3 tools/autorelease.py dispatch
+
+      - name: Check every site built and answers 200
+        id: verify
+        if: steps.fresh.outputs.stale != 'true' && steps.channels.outputs.moved == 'true'
+        env:
+          TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.SITES_DISPATCH_TOKEN }}
+          SINCE: ${{ steps.dispatch.outputs.at }}
+        run: python3 tools/autorelease.py verify
+
+      - name: Roll back, tell the sites again, open an issue
+        id: rollback
+        if: always() && steps.verify.outputs.ok == 'false'
+        env:
+          TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.SITES_DISPATCH_TOKEN }}
+          VERSION: ${{ steps.prepare.outputs.version }}
+          PREVIOUS: ${{ steps.channels.outputs.previous }}
+        run: |
+          python3 tools/autorelease.py rollback
+          git add channels.json
+          git commit -m "[auto-release] Put the channels back after v$VERSION failed [skip ci]"
+          git push origin HEAD:main
+          python3 tools/autorelease.py dispatch
+          ROLLED_BACK=true python3 tools/autorelease.py issue
+          gh issue create --title "v$VERSION did not come up on every site" --body-file issue.md
+          echo "::error::v$VERSION failed on at least one site. The channels are back at their previous versions."
+          exit 1

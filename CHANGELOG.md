@@ -2,6 +2,12 @@
 
 Each release, newest first. A major version says what a site has to change.
 
+## 1.2.1
+
+- Register the Vigliotti site on the stable channel (#9) by @Belfiore
+- Release automatically when a pull request is merged to main (#11) by @Belfiore
+- Find a site folder in the release test build (#14) by @Belfiore
+
 ## 1.2.0
 
 - **Discovery Timeline, optional and off by default.** `"timeline": { "enabled": true }` adds `discoveries.html`, a page of what the family has newly learned, newest first, with a "new since your last visit" banner. The build compares the meaning of the data with what was published last time. No network and no model. A correction keeps the previous value and the updated value. A removal is not a discovery. A site that leaves the timeline off builds byte for byte as before.

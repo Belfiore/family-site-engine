@@ -27,6 +27,9 @@ jobs:
       - name: The Discovery Timeline
         run: python3 tests/test_discoveries.py
 
+      - name: The automatic release
+        run: python3 tests/test_autorelease.py
+
       - name: The sample site's data
         run: python3 build/validate.py --site sample
 

@@ -14,7 +14,7 @@ Family history sites, built from the records.
 
 ## What it is
 
-This repository is the engine. A family keeps its own data, photographs and stories in its own repository. The engine checks that data, builds a static site, and GitHub Pages publishes it. A fix made here reaches every site through a release. Nobody copies engine files from one repository to another.
+This repository is the engine. A family keeps its own data, photographs and stories in its own repository. The engine checks that data, builds a static site, and GitHub Pages publishes it. A fix made here reaches every site through a release: merging a pull request to `main` makes that release and rebuilds the sites. See [Releases](docs/releasing.md). Nobody copies engine files from one repository to another.
 
 Stuart is the genealogist on top of the engine. He is a Grok Bot: he researches with the records, labels how sure each claim is, writes a headline for every new find, and stages the update as a pull request. The owner approves it before the site changes. On the published site, a visitor can ask Stuart questions from those same records.
 
@@ -202,37 +202,33 @@ The made-up family in `sample/` is a complete site to copy. The longer version o
 
    If the site's files live in a folder of the repository rather than at the top, add `site-dir: that-folder`. A push to `main` checks the data, builds the site, runs the site's own checks if you list them under `site-tests`, and publishes. If any step fails, nothing is published and the live site stays as it was.
 
-5. **Add the repository to [`sites.json`](sites.json)** in this repository, by pull request, so a channel move tells it to rebuild:
+5. **Add the repository to [`sites.json`](sites.json)** in this repository, by pull request, so a release tells it to rebuild:
 
    ```json
    { "repo": "OWNER/new-family-site", "name": "The family name", "channel": "stable" }
    ```
 
-   The token that sends those messages has to be able to reach the new repository. See [Releases](docs/releasing.md).
+   A site whose files sit in one sub-folder is found on its own. If the repository has more than one `site.config.json`, set `"dir"` to the folder that holds the one to build. The token that sends the rebuild has to be able to reach the new repository. See [Releases](docs/releasing.md).
 
 6. **Set up Stuart.** For the researcher, use the Grok Bot template when it is published. Until then the link is `STUART_TEMPLATE_LINK`. For the Ask Stuart page on the site, set `pages.ask` and fill in `stuart` (anchors, the story pages he may read, and a few example questions).
 
 ## How updates work
 
-A change to the engine does not reach a site the moment it is merged. It waits for a release, then moves one channel at a time.
+Merging a pull request to `main` makes the release. The [Release workflow](.github/workflows/auto-release.yml) checks the engine and every site in [`sites.json`](sites.json), raises the version, moves `canary`, `beta` and `stable` together, and tells each site to rebuild. GitHub Pages updates when that site's build passes and its home page answers. If a site fails, the channels go back to the previous version and the sites rebuild on it. A major release is published, but the channels stay where they are until the sites are ready, because a site has to change something first.
 
 ```mermaid
 flowchart TD
-  merge[A change is merged to main]
-  release[A release is tagged vX.Y.Z]
-  channels[channels.json moves canary, then beta, then stable]
-  tell[Tell the sites sends engine-release]
-  rebuild[Each site runs build-site.yml]
-  live[GitHub Pages updates when the checks pass]
-  merge --> release --> channels --> tell --> rebuild --> live
+  merge[A pull request is merged to main]
+  checks[The release workflow checks the engine and every site]
+  release[It tags the release and moves the channels]
+  rebuild[Each site rebuilds]
+  live[GitHub Pages updates when the site answers]
+  merge --> checks --> release --> rebuild --> live
 ```
 
-1. The change lands on `main` with an entry in `CHANGELOG.md` and a new `VERSION`.
-2. A person publishes the GitHub release and tags it `vX.Y.Z`. The release workflow checks that the tag and `VERSION` agree. No site changes yet.
-3. `canary` in `channels.json` moves to that version. [Tell the sites](.github/workflows/notify-sites.yml) sends an `engine-release` dispatch to every repository in `sites.json`. Canary sites build with the new engine. The others rebuild with the version they already had.
-4. After canary looks right, `beta` moves, then `stable`.
+No label on the pull request means a patch. `minor` is something new, `major` is a change a site has to act on, and `no-release` publishes nothing. Do not edit `VERSION`, `CHANGELOG.md` or `channels.json` in the pull request: the release writes those. A release can still be tagged by hand, and moving a channel by hand still tells the sites through [Tell the sites](.github/workflows/notify-sites.yml).
 
-A site can also be rebuilt by hand from its own Actions tab, with an engine version filled in, which is how one site is rolled back for a single run. A release that is in use is never deleted or re-tagged. The full process is in [Releases](docs/releasing.md).
+A site can be rebuilt once from its own Actions tab, with an engine version filled in. A release that is in use is never deleted or re-tagged. The full process, including what GitHub has to have set up, is in [Releases](docs/releasing.md).
 
 ## Privacy
 
@@ -240,7 +236,7 @@ A living person is published with a name and a relationship, and marked as livin
 
 The Discovery Timeline is stricter. A living person never becomes a find, never appears in a headline, and is stored only as a hash. People in `tree.hiddenRegions` are withheld the same way. See [the Discovery Timeline](docs/discovery-timeline.md).
 
-Never commit a key, a token or a password. Map keys, if a site uses them, stay in that site's settings and are restricted to the site's address. The token that tells sites to rebuild (`SITES_DISPATCH_TOKEN`) is a GitHub Actions secret on this repository, not a file.
+Never commit a key, a token or a password. Map keys, if a site uses them, stay in that site's settings and are restricted to the site's address. The token that publishes a release and tells sites to rebuild (`RELEASE_TOKEN`, or `SITES_DISPATCH_TOKEN` when that is the one set) is a GitHub Actions secret on this repository, not a file.
 
 ## Project structure
 
@@ -251,7 +247,7 @@ build/             build_site.py, validate.py, and the Discovery Timeline
 schema/            family-data.schema.json, site-config.schema.json
 sample/            a made-up family, used by the tests and as a starter site
 tests/             build tests and browser checks
-tools/             map fonts, map styles, backfill-discoveries.py
+tools/             map fonts, map styles, the automatic release, backfill-discoveries.py
 docs/              adding a site, the data format, settings, releases, Stuart, the map
 channels.json      which engine version each channel builds with
 sites.json         which sites to tell when a channel moves
@@ -259,15 +255,16 @@ sites.json         which sites to tell when a channel moves
 
 ## Contributing
 
-Open a pull request. Do not push to `main`, and do not tag a release. The maintainer merges, then publishes the release and moves the channels.
+Open a pull request. Do not push to `main`. Merging to `main` makes the release and rebuilds the sites, as described in [Releases](docs/releasing.md). Do not edit `VERSION`, `CHANGELOG.md` or `channels.json` in the pull request, and do not tag a release yourself.
 
-A change has to leave a site that does not use the new feature building and looking as it does today. New settings are optional, and the default matches current behaviour. Do not rename or remove a setting, a data field, or a page a site already has. That would be a major version, and it is the maintainer's decision.
+A change has to leave a site that does not use the new feature building and looking as it does today. New settings are optional, and the default matches current behaviour. Do not rename or remove a setting, a data field, or a page a site already has. That would be a major version: label the pull request `major`, and say in the description what each site must do.
 
 Use the made-up family in `sample/` for tests, fixtures and examples. Do not add a real living person's name, dates, places or photographs. Keep visitor-facing text free of long dashes.
 
 ```sh
 python3 tests/test_build.py
 python3 tests/test_discoveries.py
+python3 tests/test_autorelease.py
 python3 build/validate.py --site sample
 npm ci && npx playwright install chromium
 node tests/check-sample.js
