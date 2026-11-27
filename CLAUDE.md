@@ -4,7 +4,7 @@ The shared engine behind three public family history sites. Each site keeps its 
 
 ## Rules for all engine work
 
-1. **Never push to main and never tag or publish a release.** Work on a branch, open a PR, stop. The maintainer merges and releases.
+1. **Never push to main and never tag or publish a release by hand.** Work on a branch, open a PR, stop. The maintainer merges, and the automatic release (`auto-release.yml`) does the rest. Do not edit `VERSION`, `CHANGELOG.md` or `channels.json` in a PR.
 2. **Every change must be backward compatible.** A release reaches all three sites at once. A site that does not use a new feature must build and look exactly as it does today. New settings must be optional, with a default that reproduces current behavior. Do not rename or remove settings, data fields, CSS custom properties, file names or page structure in a minor or patch release. If a site has to change something, that is a major version and needs the maintainer's decision.
 3. **Never put living people's details on any public page or map.** The engine does not redact living people by itself (since 1.0.0 they are shown like anyone else, marked as living on the tree). So never add output, example data, tests, fixtures or docs that contain a real living person's name, dates, places or photos. Use the made-up `sample/` family for anything new.
 4. **Never commit secrets or API keys.** That includes MapTiler and Google keys, `SITES_DISPATCH_TOKEN`, and tokens in test output. Keys belong in a site's own settings and in GitHub secrets, never here.
@@ -24,7 +24,7 @@ The shared engine behind three public family history sites. Each site keeps its 
 | `channels.json` | Which engine version each channel (canary, beta, stable) builds with |
 | `sites.json` | Sites to notify when `channels.json` changes |
 | `VERSION`, `CHANGELOG.md` | Current version and release notes |
-| `.github/workflows/` | `ci.yml`, `build-site.yml`, `release.yml`, `notify-sites.yml` |
+| `.github/workflows/` | `ci.yml`, `build-site.yml`, `auto-release.yml`, `release.yml`, `notify-sites.yml` |
 
 ## How a site is built
 
@@ -46,17 +46,21 @@ Because the workflow is pinned by tag in each site's `deploy.yml` and `check.yml
 
 ## Releases
 
-Versions: patch is a fix, minor is something new that needs no site change, major needs site changes (spelled out in CHANGELOG). Full process in `docs/releasing.md`. The maintainer does these steps:
+Versions: patch is a fix, minor is something new that needs no site change, major needs site changes (spelled out in the PR description, which becomes the release note). Full process in `docs/releasing.md`.
 
-1. Change on a branch, PR, **Checks** (`ci.yml`) passes.
-2. Add the CHANGELOG entry and set `VERSION`. Merge.
-3. Publish a GitHub release with new tag `vX.Y.Z` on `main`. `release.yml` re-runs checks, verifies tag equals `VERSION`, puts the CHANGELOG notes on the release. No site changes yet.
-4. Move `canary` in `channels.json` on `main`. `notify-sites.yml` sends an `engine-release` `repository_dispatch` to every repo in `sites.json` (needs the `SITES_DISPATCH_TOKEN` secret; without it nothing is sent and sites rebuild manually). Each site's workflow rebuilds with whatever its channel now points to.
-5. Check the canary site, then move `beta`, then `stable`.
+A merge to `main` releases by itself (`auto-release.yml`, logic in `tools/autorelease.py`, tests in `tests/test_autorelease.py`):
 
-Sites today: English-Family-History (FitzMaurice) is on canary; italian-belfiore-hertiage-lineage (Belfiore) and kohlmann-heritage (Kohlmann) are on stable. A release in use is never deleted or re-tagged; a fix is a new release. Rollback is a channel move in `channels.json`, a per-run `engine-version` input, or an `engine.version` pin in one site.
+1. Full checks and a test build of every site in `sites.json`. Any failure stops everything.
+2. `VERSION` is bumped (patch by default; the PR label `minor` or `major` raises it; the label `no-release` skips the release), `CHANGELOG.md` gets the merged PRs, tag `vX.Y.Z` and a GitHub release are made.
+3. `canary`, `beta` and `stable` in `channels.json` move to the new version. A major release is published but holds the channels and opens an issue.
+4. Every site in `sites.json` gets the `engine-release` dispatch.
+5. Each site's build and live URL (`200`) are checked. On any failure the channels go back to the previous versions, the sites are dispatched again and an issue lists the failures.
 
-Claude's part ends at the PR. If `gh` is not signed in, push nothing: leave the commits on the branch and give the maintainer a bundle and the exact commands. Do not edit `channels.json` or `sites.json` in a feature PR, and do not bump `VERSION` unless the maintainer asks for it in that PR.
+The workflow's own commits carry `[auto-release] [skip ci]` and the workflow ignores them, so it cannot loop. It needs the `RELEASE_TOKEN` secret (a fine-grained token that can push to `main` and read and dispatch the sites); without it the first step fails with a message and nothing changes. Do not remove the `[auto-release]` guard, the `concurrency` block or the stale-main check from the workflow: `tests/test_autorelease.py` reads the file to make sure they stay.
+
+Sites today: English-Family-History (FitzMaurice) is on canary; italian-belfiore-hertiage-lineage (Belfiore) and kohlmann-heritage (Kohlmann) are on stable. A release in use is never deleted or re-tagged; a fix is a new release. Rollback is a channel move in `channels.json` (done automatically after a failed release), a per-run `engine-version` input, or an `engine.version` pin in one site.
+
+Claude's part ends at the PR. If `gh` is not signed in, push nothing: leave the commits on the branch and give the maintainer a bundle and the exact commands. Do not edit `channels.json`, `sites.json`, `CHANGELOG.md` or `VERSION` in a feature PR; the release does that.
 
 ## Checks
 
