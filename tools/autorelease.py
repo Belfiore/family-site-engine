@@ -13,7 +13,7 @@ Standard library only. Subcommands (each reads its settings from the environment
     prepare   write the new VERSION and the CHANGELOG.md entry, and the release notes
     channels  move canary, beta and stable to the new version (never for a major release)
     dispatch  send the engine-release request to every site
-    verify    wait for each site's build and check its live address answers 200
+    verify    wait for each site's build and check its live address answers 200 (a protected site: that it refuses a visitor with no password)
     rollback  put the channels back to the versions they had, and tell the sites again
     issue     write the text of the issue that reports a failure
 """
@@ -125,6 +125,11 @@ def sites_from(doc):
         site = {'repo': s['repo'], 'name': s.get('name') or s['repo'], 'channel': s.get('channel', 'stable')}
         if s.get('dir'):
             site['dir'] = s['dir']
+        # a protected site (access.enabled in its site.config.json) is on Cloudflare Pages and asks for a password,
+        # so it has an address of its own and is checked for being closed, not for answering 200
+        if s.get('protected'):
+            site['protected'] = True
+            site['url'] = s.get('url') or ''
         out.append(site)
     return out
 
@@ -250,6 +255,41 @@ def answers_200(url, fetch=None):
         return 0
 
 
+def answers_closed(url, fetch=None):
+    """GET a protected site's address with no cookie. Returns (status, has the gate's header). fetch(url) may give
+    either that pair or just a status code (no header then), for tests."""
+    if fetch:
+        r = fetch(url)
+        return r if isinstance(r, tuple) else (r, False)
+    req = urllib.request.Request(url, headers={'User-Agent': 'family-site-engine-autorelease', 'Cache-Control': 'no-cache'})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return r.status, bool(r.headers.get('X-Family-Gate'))
+    except urllib.error.HTTPError as e:
+        return e.code, bool(e.headers.get('X-Family-Gate'))
+    except (urllib.error.URLError, OSError):
+        return 0, False
+
+
+def check_protected(site, fetch=None):
+    """(ok, why) for a protected site: the address must refuse a visitor with no password, and the gate must be what says so.
+    A site that answers 200 is open and that is the failure this exists to catch."""
+    url = (site.get('url') or '').strip()
+    if not url:
+        return False, 'it is protected but sites.json gives no url for it'
+    base = url if url.endswith('/') else url + '/'
+    status, gate = answers_closed(base, fetch)
+    if status == 401 and gate:
+        # a data file too, so a site that serves its front page closed but its data open is caught
+        s2, _ = answers_closed(base + 'data/people.json', fetch)
+        if s2 == 200:
+            return False, 'built, but %sdata/people.json answers 200 with no password: the site is open' % base
+        return True, 'built, and %s asks for the password (401 from the gate)' % base
+    if status == 200:
+        return False, 'built, but %s answers 200 with no password: the site is open' % base
+    return False, 'built, but %s answered %s%s instead of 401 from the gate' % (base, status, '' if gate else ' with no gate header')
+
+
 def dispatch(api, sites, channels):
     """Send engine-release to every site. Returns [(repo, status code)]."""
     out = []
@@ -263,6 +303,7 @@ def verify_sites(api, sites, since, timeout=2400, appear=600, poll=30, fetch=Non
     """Wait for each site's build and check its address. Returns [{'repo', 'ok', 'why'}], one per site."""
     start = now()
     results = {}
+    by_repo = {s['repo']: s for s in sites}
     pending = {s['repo'] for s in sites}
     stamp = since.strftime('%Y-%m-%dT%H:%M:%SZ')
     while pending:
@@ -277,6 +318,9 @@ def verify_sites(api, sites, since, timeout=2400, appear=600, poll=30, fetch=Non
                 continue
             if state != 'ok':
                 results[repo] = {'repo': repo, 'ok': False, 'why': note}
+            elif by_repo[repo].get('protected'):
+                good, why = check_protected(by_repo[repo], fetch)
+                results[repo] = {'repo': repo, 'ok': good, 'why': why}
             else:
                 url = live_url(api, repo)
                 status = answers_200(url, fetch)

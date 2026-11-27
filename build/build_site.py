@@ -28,7 +28,7 @@ import argparse, datetime, fnmatch, hashlib, json, os, shutil, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ENGINE_ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-import archive, pages, sitecfg, timeline, validate  # noqa: E402
+import access, archive, pages, sitecfg, timeline, validate  # noqa: E402
 
 ALWAYS_SKIP = {'.git', '.github', 'node_modules', '.DS_Store', '_site', 'site.config.json', '__pycache__'}
 
@@ -72,7 +72,7 @@ def browser_settings(cfg, version, base, data_urls, kb_url):
     """What the engine's scripts read in the browser, as window.FamilySite."""
     site = cfg.get('site') or {}
     st = cfg.get('stuart') or {}
-    return {
+    out = {
         'engine': {'version': version, 'base': base},
         'site': {'name': site.get('name'), 'familyName': site.get('familyName'), 'lang': site.get('lang')},
         'pages': cfg['_pages'],
@@ -82,6 +82,12 @@ def browser_settings(cfg, version, base, data_urls, kb_url):
         'map': cfg.get('map') or {},
         'stuart': {'anchors': st.get('anchors') or []},
     }
+    # only a site that turns these on has the keys, so every other site's settings file is as it was
+    if cfg.get('_visitor'):
+        out['visitor'] = access.browser_visitor(cfg['_visitor'])
+    if cfg.get('_access'):
+        out['access'] = {'logout': '/__gate/logout'}
+    return out
 
 
 def main(argv=None):
@@ -104,7 +110,10 @@ def main(argv=None):
     report = validate.validate_site(site, cfg)
     for w in report['warnings'] + problems['warnings']:
         print('warning:', w)
-    errors = report['errors'] + problems['errors']
+    feats = validate.check_features(site, cfg)
+    for w in feats['warnings']:
+        print('warning:', w)
+    errors = report['errors'] + problems['errors'] + feats['errors']
     if errors:
         for e in errors: print('error:', e)
         print('The build stopped: %d problem%s to fix (see docs/data-format.md).' % (len(errors), '' if len(errors) == 1 else 's'))
@@ -122,8 +131,10 @@ def main(argv=None):
 
     # 4. the engine
     # the timeline's files go only to a site that has the timeline, so any other site's build is as it was
+    # (likewise the visitor files go only to a site that turns visitor.enabled on)
+    not_sent = ([] if tl_on else ['timeline.css', 'timeline.js']) + ([] if cfg.get('_visitor') else ['visitor.js', 'visitor.css', 'visitor-match.js'])
     shutil.copytree(os.path.join(ENGINE_ROOT, 'engine'), os.path.join(out, base), dirs_exist_ok=True,
-                    ignore=None if tl_on else shutil.ignore_patterns('timeline.css', 'timeline.js'))
+                    ignore=shutil.ignore_patterns(*not_sent) if not_sent else None)
 
     # 4b. the Discovery Timeline: what is new since the last publication
     tl_body, tl_info = None, None
@@ -186,11 +197,24 @@ def main(argv=None):
             f.write(pages.process_site_page(src, name, cfg, ctx, opts))
         processed.append(name)
 
+    # 8b. private access: the worker that keeps everything behind the family password (only when access.enabled)
+    gate = None
+    if cfg.get('_access'):
+        for clash in ('_worker.js', '_routes.json'):
+            if os.path.exists(os.path.join(out, clash)):
+                print('error: the site has a file called %s, which the access gate needs for itself. Rename it.' % clash)
+                return 1
+        gate = access.build(out, cfg)
+
     # 9. what was built
     info = {'engine': version, 'built': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
             'site': (cfg.get('site') or {}).get('name'), 'channel': (cfg.get('engine') or {}).get('channel'),
             'enginePages': made, 'sitePages': processed, 'files': n, 'stuart': counts,
             'warnings': len(report['warnings'] + problems['warnings'])}
+    if gate:          # likewise only a protected site
+        info['access'] = gate
+    if cfg.get('_visitor'):
+        info['visitor'] = True
     if tl_info:       # only a site with the timeline on has this key, so other sites' files are unchanged
         info['timeline'] = {k: tl_info[k] for k in ('file', 'mode', 'new', 'entries', 'since')}
     with open(os.path.join(out, 'engine-build.json'), 'w', encoding='utf-8') as f: json.dump(info, f, indent=1)
@@ -201,6 +225,8 @@ def main(argv=None):
         print('discovery timeline: %s; %d new find%s, %d in the history (%s)' % (
             tl_info['mode'], tl_info['new'], '' if tl_info['new'] == 1 else 's', tl_info['entries'], tl_info['previous']))
         for n_ in tl_info['notes']: print('note:', n_)
+    if gate:
+        print('private access: _worker.js written for Cloudflare Pages project %s (set the SITE_PASSWORD secret; see docs/access.md)' % gate['project'])
     return 0
 
 

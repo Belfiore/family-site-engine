@@ -792,6 +792,7 @@
         var cx = a.left + (a.w - a.left - a.right) / 2;
         var mid = ps.reduce(function (t, q) { return t + q.x + CW / 2; }, 0) / ps.length;
         S.s = s; S.tx = cx - mid * s; S.ty = top + 14 - (L.genY[g0] - 8) * s; apply();
+        if (S.visitorId) centerVisitor(false);
     }
     function onResize() { syncHeader(); syncNarrow(); apply(); positionRelPop(); }
 
@@ -1609,15 +1610,43 @@
         var people = D.people.slice().sort(function (a, b) { return a.generation - b.generation || L.pos[a.id].x - L.pos[b.id].x; });
         sel.innerHTML = people.map(function (p) { return '<option value="' + esc(p.id) + '">' + esc(p.displayName) + '</option>'; }).join('');
         var saved = null; try { saved = localStorage.getItem('tc_viewpoint'); } catch (_) {}
-        S.viewpoint = saved && D.byId[saved] ? saved : D.meta.rootPersonId;
+        S.visitorId = visitorId();       // who the visitor said they are (visitor.enabled), if they are on this tree
+        S.viewpoint = S.visitorId || (saved && D.byId[saved] ? saved : D.meta.rootPersonId);
         sel.value = S.viewpoint;
         markViewpoint();
         sel.addEventListener('change', function () {
-            S.viewpoint = sel.value; try { localStorage.setItem('tc_viewpoint', S.viewpoint); } catch (_) {}
+            S.viewpoint = sel.value; if (!S.visitorId) { try { localStorage.setItem('tc_viewpoint', S.viewpoint); } catch (_) {} }
             markViewpoint(); if (S.drawerFor) renderDrawer(S.drawerFor);
         });
+        window.addEventListener('familyvisitor:change', onVisitorChange);
     }
-    function markViewpoint() { Object.keys(cardEls).forEach(function (k) { cardEls[k].classList.toggle('is-viewpoint', k === S.viewpoint); }); }
+    // =================================================================== THE VISITOR (visitor.enabled)
+    // The tree opens centred on the person the visitor said they are, and that person is the viewpoint for
+    // "how are we related". Nothing is hidden or locked: the whole tree is still there to move around.
+    // A site without visitor.enabled has no window.FamilyVisitor, so none of this does anything.
+    function visitorId() {
+        var v = window.FamilyVisitor, id = v && v.id && v.id();
+        return id && D.byId[id] ? id : null;
+    }
+    function centerVisitor(animate) { centerOn(S.visitorId, isMobile() ? 0.65 : 0.7, animate); }
+    function onVisitorChange() {
+        S.visitorId = visitorId();
+        var saved = null; try { saved = localStorage.getItem('tc_viewpoint'); } catch (_) {}
+        S.viewpoint = S.visitorId || (saved && D.byId[saved] ? saved : D.meta.rootPersonId);
+        el.viewpoint.value = S.viewpoint;
+        markViewpoint();
+        if (S.drawerFor) renderDrawer(S.drawerFor);
+        if (/#\/person\//.test(location.hash)) return;   // a link to someone stays where it points
+        if (S.visitorId) centerVisitor(true); else initialView();
+    }
+    function markViewpoint() {
+        Object.keys(cardEls).forEach(function (k) {
+            var on = k === S.viewpoint;
+            cardEls[k].classList.toggle('is-viewpoint', on);
+            var y = on && cardEls[k].querySelector('.c-you');
+            if (y) y.textContent = S.visitorId && k === S.visitorId ? 'YOU' : 'VIEWPOINT';
+        });
+    }
 
     // =================================================================== DRAWER
     function bindDrawer() {

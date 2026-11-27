@@ -181,6 +181,50 @@ class TestJudgingTheSites(unittest.TestCase):
         self.assertFalse(res[0]['ok'])
         self.assertIn('403', res[0]['why'])
 
+    PROTECTED = [{'repo': 'o/a', 'name': 'A', 'channel': 'stable'},
+                 {'repo': 'o/p', 'name': 'P', 'channel': 'stable', 'protected': True, 'url': 'https://p.pages.dev'}]
+
+    def verify_protected(self, fetch):
+        sleep, now = self.clock()
+        return A.verify_sites(self.api({'o/a': self.good(), 'o/p': self.good()}), self.PROTECTED, self.SINCE, fetch=fetch, sleep=sleep, now=now)
+
+    def test_a_protected_site_passes_when_the_gate_answers_401(self):
+        seen = []
+        def fetch(url):
+            seen.append(url)
+            return (401, True) if url.startswith('https://p.pages.dev') else 200
+        res = self.verify_protected(fetch)
+        self.assertEqual([r['ok'] for r in res], [True, True])
+        self.assertIn('asks for the password', res[1]['why'])
+        self.assertIn('https://p.pages.dev/data/people.json', seen, 'its data is looked at too')
+        self.assertNotIn('github.io', ' '.join(seen), 'a protected site is not looked for on GitHub Pages')
+
+    def test_a_protected_site_that_answers_200_is_open_and_fails(self):
+        res = self.verify_protected(lambda url: 200)
+        self.assertFalse(res[1]['ok'])
+        self.assertIn('the site is open', res[1]['why'])
+
+    def test_a_protected_site_with_open_data_fails_even_if_the_front_page_is_closed(self):
+        res = self.verify_protected(lambda url: 200 if url.endswith('people.json') else (401, True))
+        self.assertFalse(res[1]['ok'])
+        self.assertIn('data/people.json', res[1]['why'])
+
+    def test_a_401_that_is_not_the_gates_fails(self):
+        res = self.verify_protected(lambda url: 401 if 'pages.dev' in url else 200)
+        self.assertFalse(res[1]['ok'])
+        self.assertIn('no gate header', res[1]['why'])
+
+    def test_a_protected_site_with_no_address_fails_and_says_why(self):
+        ok, why = A.check_protected({'repo': 'o/p', 'protected': True})
+        self.assertFalse(ok)
+        self.assertIn('no url', why)
+
+    def test_protected_and_url_reach_the_matrix_and_are_otherwise_left_out(self):
+        m = A.sites_from({'sites': [{'repo': 'o/a'}, {'repo': 'o/p', 'protected': True, 'url': 'https://p.pages.dev/'}]})
+        self.assertNotIn('protected', m[0])
+        self.assertNotIn('url', m[0])
+        self.assertEqual((m[1]['protected'], m[1]['url']), (True, 'https://p.pages.dev/'))
+
     def test_dispatch_sends_the_channels_to_every_site(self):
         api = FakeApi({('POST', '/repos/'): (204, None)})
         out = A.dispatch(api, self.SITES, {'canary': '1.2.1', 'beta': '1.2.1', 'stable': '1.2.1'})

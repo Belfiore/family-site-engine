@@ -356,6 +356,13 @@ def check_config(cfg):
     return {'errors': c.errors, 'warnings': c.warnings + warnings}
 
 
+def check_features(site, cfg):
+    """The settings of the optional features that need more than the schema (private access, visitor identity)."""
+    import access
+    errors, warnings = access.check(cfg, site)
+    return {'errors': errors, 'warnings': warnings}
+
+
 def main(argv=None):
     sys.path.insert(0, HERE)
     import sitecfg
@@ -366,7 +373,8 @@ def main(argv=None):
     cfg = sitecfg.load(os.path.abspath(args.site))
     a = check_config(cfg)
     b = validate_site(os.path.abspath(args.site), cfg)
-    errs, warns = a['errors'] + b['errors'], a['warnings'] + b['warnings']
+    f = check_features(os.path.abspath(args.site), cfg)
+    errs, warns = a['errors'] + b['errors'] + f['errors'], a['warnings'] + b['warnings'] + f['warnings']
     if not args.quiet:
         for w in warns: print('warning:', w)
     for e in errs: print('error:', e)

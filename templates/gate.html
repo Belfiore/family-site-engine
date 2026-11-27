@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="color-scheme" content="dark">
+    <title>{{title}}</title>
+{{fonts}}    <style>
+{{vars}}
+        :root { --g-ink: var(--ink, #1a1a2e); --g-cream: var(--cream, #FDF8F0); --g-gold: var(--gold, #FFD700); --g-gold-dark: var(--gold-dark, #B8860B);
+                --g-display: var(--font-display, 'Cinzel', Georgia, serif); --g-body: var(--font-body, 'Cormorant Garamond', Georgia, serif); }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; min-height: 100%; }
+        body { background: var(--g-ink); color: var(--g-cream); font-family: var(--g-body); font-size: 1.15rem; line-height: 1.5;
+               display: flex; min-height: 100vh; min-height: 100dvh; align-items: center; justify-content: center; padding: 2rem 1.25rem; -webkit-font-smoothing: antialiased; }
+        body::before { content: ""; position: fixed; inset: 0; pointer-events: none;
+                       background: radial-gradient(ellipse at 50% 38%, rgba(255, 255, 255, .055), transparent 62%); }
+        main { position: relative; width: 100%; max-width: 30rem; text-align: center; }
+        .g-kicker { margin: 0 0 1.1rem; font-family: var(--g-display); font-size: .78rem; letter-spacing: .32em; text-transform: uppercase; color: var(--g-gold); }
+        .g-word { margin: 0; font-family: var(--g-display); font-weight: 500; font-size: clamp(2rem, 8.5vw, 3.1rem); line-height: 1.12; letter-spacing: .04em; color: var(--g-cream); text-wrap: balance; }
+        .g-tree { display: block; width: 11rem; height: 4.6rem; margin: 1.6rem auto 1.9rem; overflow: visible; }
+        .g-tree path { fill: none; stroke: var(--g-gold); stroke-width: 1.1; stroke-linecap: round; stroke-opacity: .85; }
+        .g-tree circle { fill: var(--g-ink); stroke: var(--g-gold); stroke-width: 1.1; }
+        .g-img { display: block; width: 100%; max-height: 11rem; object-fit: cover; margin: 0 0 1.6rem; border-radius: 2px; opacity: .88; }
+        form { margin: 0 auto; max-width: 20rem; text-align: left; }
+        label { display: block; margin: 0 0 .35rem; font-family: var(--g-display); font-size: .72rem; letter-spacing: .26em; text-transform: uppercase; color: rgba(253, 248, 240, .72); }
+        .g-row { display: flex; align-items: center; gap: .5rem; border-bottom: 1px solid rgba(253, 248, 240, .45); transition: border-color .2s; }
+        .g-row:focus-within { border-color: var(--g-gold); }
+        input[type=password], input[type=text] { flex: 1; min-width: 0; padding: .55rem 0; border: 0; background: transparent; color: var(--g-cream); font: inherit; font-size: 1.3rem; letter-spacing: .03em; outline: none; }
+        .g-show { border: 0; background: none; color: rgba(253, 248, 240, .72); font: inherit; font-size: .9rem; padding: .5rem .25rem; min-height: 2.75rem; cursor: pointer; text-decoration: underline; text-underline-offset: .2em; }
+        .g-enter { display: block; width: 100%; min-height: 2.9rem; margin: 1.3rem 0 0; padding: .8rem 1rem; border: 1px solid var(--g-gold); background: transparent; color: var(--g-gold); border-radius: 2px;
+                   font-family: var(--g-display); font-size: .82rem; letter-spacing: .3em; text-transform: uppercase; cursor: pointer; transition: background .2s, color .2s; }
+        .g-enter:hover, .g-enter:focus-visible { background: var(--g-gold); color: var(--g-ink); outline: none; }
+        .g-enter[disabled] { opacity: .6; cursor: default; }
+        .g-msg { min-height: 1.6em; margin: .8rem 0 0; font-size: 1rem; color: #f3c7a6; text-align: center; }
+        .g-hint { margin: .6rem auto 0; max-width: 22rem; font-size: 1rem; color: rgba(253, 248, 240, .62); }
+        :focus-visible { outline: 2px solid var(--g-gold); outline-offset: 3px; }
+        noscript p { margin: 1.4rem 0 0; color: #f3c7a6; }
+
+        /* the entrance: the name arrives, a small family tree draws itself, then the field appears. Any key or tap skips it. */
+        @keyframes g-rise { from { opacity: 0; transform: translateY(.6rem); letter-spacing: .12em; } to { opacity: 1; transform: none; letter-spacing: .04em; } }
+        @keyframes g-fade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes g-draw { to { stroke-dashoffset: 0; } }
+        .g-kicker { animation: g-fade .9s .05s both; }
+        .g-word { animation: g-rise 1.15s .15s cubic-bezier(.2, .7, .2, 1) both; }
+        .g-tree path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: g-draw 1.5s .45s ease-out forwards; }
+        .g-tree circle { animation: g-fade .5s 1.5s both; }
+        .g-img { animation: g-fade 1s .3s both; }
+        form, .g-hint { animation: g-fade .8s 1.35s both; }
+        .g-skip *, .g-skip *::before { animation-duration: .001s !important; animation-delay: 0s !important; }
+        .g-open main { opacity: 0; transform: scale(.985); transition: opacity .45s ease, transform .45s ease; }
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
+            .g-tree path { stroke-dasharray: none; stroke-dashoffset: 0; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <p class="g-kicker">{{kicker}}</p>
+    <h1 class="g-word">{{wordmark}}</h1>
+{{image}}    <svg class="g-tree" viewBox="0 0 176 74" aria-hidden="true" focusable="false">
+        <path pathLength="1" d="M88 70 V40 M88 40 C88 28 44 36 44 22 M88 40 C88 28 132 36 132 22 M44 22 C44 14 24 16 24 6 M44 22 C44 14 64 16 64 6 M132 22 C132 14 112 16 112 6 M132 22 C132 14 152 16 152 6"></path>
+        <circle cx="88" cy="70" r="3.4"></circle><circle cx="44" cy="22" r="3"></circle><circle cx="132" cy="22" r="3"></circle>
+        <circle cx="24" cy="6" r="2.6"></circle><circle cx="64" cy="6" r="2.6"></circle><circle cx="112" cy="6" r="2.6"></circle><circle cx="152" cy="6" r="2.6"></circle>
+    </svg>
+    <form id="gate" method="post" action="/__gate/login" autocomplete="on">
+        <label for="pw">{{prompt}}</label>
+        <div class="g-row">
+            <input id="pw" name="password" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" required autofocus>
+            <button type="button" class="g-show" id="show" aria-pressed="false">Show</button>
+        </div>
+        <button class="g-enter" id="go" type="submit">{{button}}</button>
+        <p class="g-msg" id="msg" role="status" aria-live="polite"></p>
+    </form>
+{{hint}}    <noscript><p>This private archive needs JavaScript switched on to take the password.</p></noscript>
+</main>
+<script>
+{{script}}
+</script>
+</body>
+</html>
