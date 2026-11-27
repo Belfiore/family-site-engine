@@ -4,6 +4,7 @@
   {"repo": "Belfiore/English-Family-History", "name": "FitzMaurice & Andrews", "channel": "canary"},
   {"repo": "Belfiore/italian-belfiore-hertiage-lineage", "name": "Belfiore & Circelli", "channel": "stable"},
   {"repo": "Belfiore/kohlmann-heritage", "name": "Kohlmann", "channel": "stable"},
-  {"repo": "Belfiore/Vigliotti-Heritage", "name": "Vigliotti", "channel": "stable"}
+  {"repo": "Belfiore/Vigliotti-Heritage", "name": "Vigliotti", "channel": "stable"},
+  {"repo": "Belfiore/crosby-heritage", "name": "Crosby", "channel": "stable"}
  ]
 }
