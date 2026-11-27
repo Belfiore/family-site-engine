@@ -30,6 +30,9 @@ jobs:
       - name: The automatic release
         run: python3 tests/test_autorelease.py
 
+      - name: Page switches, Stories, Records and Research, the settings page and the pages schema
+        run: python3 tests/test_pages.py
+
       - name: The sample site's data
         run: python3 build/validate.py --site sample
 
@@ -47,3 +50,9 @@ jobs:
 
       - name: The Discovery Timeline page in a browser
         run: node tests/check-timeline.js
+
+      - name: The settings page, editing the settings file
+        run: node tests/check-admin-edit.js
+
+      - name: The settings page in a browser, against a pretend GitHub
+        run: node tests/check-admin.js

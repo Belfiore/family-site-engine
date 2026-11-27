@@ -70,7 +70,55 @@
    "type": "object",
    "properties": {
     "home": {
-     "type": "string"
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "boolean",
+       "const": true
+      }
+     ],
+     "description": "The home page's file name (default index.html). The home page cannot be turned off, so false is not allowed."
+    },
+    "stories": {
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "object",
+       "properties": {
+        "enabled": {
+         "type": "boolean",
+         "description": "false turns the page off without losing its other settings. Missing means true."
+        },
+        "file": {
+         "type": "string",
+         "description": "The page's file name."
+        },
+        "title": {
+         "type": "string"
+        },
+        "description": {
+         "type": "string"
+        },
+        "heading": {
+         "type": "string",
+         "description": "The heading at the top of the page, if not the engine's."
+        },
+        "stylesheets": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "additionalProperties": false,
+       "description": "The Stories page."
+      }
+     ],
+     "description": "Stories: Markdown files in content/stories/. true or a settings object turns the page on; false turns it off. Missing means on, and the page appears once the site has a story."
     },
     "tree": {
      "anyOf": [
@@ -78,8 +126,7 @@
        "type": "null"
       },
       {
-       "type": "boolean",
-       "const": false
+       "type": "boolean"
       },
       {
        "type": "string"
@@ -87,8 +134,13 @@
       {
        "type": "object",
        "properties": {
+        "enabled": {
+         "type": "boolean",
+         "description": "false turns the page off without losing its other settings. Missing means true."
+        },
         "file": {
-         "type": "string"
+         "type": "string",
+         "description": "The page's file name."
         },
         "title": {
          "type": "string"
@@ -98,7 +150,7 @@
         },
         "heading": {
          "type": "string",
-         "description": "The heading at the top of the page, if not the engine's (\"The Family Tree\")."
+         "description": "The heading at the top of the page, if not the engine's."
         },
         "stylesheets": {
          "type": "array",
@@ -108,10 +160,10 @@
         }
        },
        "additionalProperties": false,
-       "description": "The family tree page, or null for none."
+       "description": "The family tree page."
       }
      ],
-     "description": "The family tree page, or null for none."
+     "description": "The family tree page: true, a file name, an object, or false to turn it off. null or missing means the site has no tree page."
     },
     "map": {
      "anyOf": [
@@ -119,8 +171,7 @@
        "type": "null"
       },
       {
-       "type": "boolean",
-       "const": false
+       "type": "boolean"
       },
       {
        "type": "string"
@@ -128,8 +179,13 @@
       {
        "type": "object",
        "properties": {
+        "enabled": {
+         "type": "boolean",
+         "description": "false turns the page off without losing its other settings. Missing means true."
+        },
         "file": {
-         "type": "string"
+         "type": "string",
+         "description": "The page's file name."
         },
         "title": {
          "type": "string"
@@ -139,7 +195,7 @@
         },
         "heading": {
          "type": "string",
-         "description": "The heading at the top of the page, if not the engine's (\"The Family Tree\")."
+         "description": "The heading at the top of the page, if not the engine's."
         },
         "stylesheets": {
          "type": "array",
@@ -149,10 +205,53 @@
         }
        },
        "additionalProperties": false,
-       "description": "The family map page (needs data/places.json), or null."
+       "description": "The family map page (needs data/places.json)."
       }
      ],
-     "description": "The family map page (needs data/places.json), or null."
+     "description": "The family map page (needs data/places.json): true, a file name, an object, or false to turn it off. null or missing means no map page."
+    },
+    "records": {
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "object",
+       "properties": {
+        "enabled": {
+         "type": "boolean",
+         "description": "false turns the page off without losing its other settings. Missing means true."
+        },
+        "file": {
+         "type": "string",
+         "description": "The page's file name."
+        },
+        "title": {
+         "type": "string"
+        },
+        "description": {
+         "type": "string"
+        },
+        "heading": {
+         "type": "string",
+         "description": "The heading at the top of the page, if not the engine's."
+        },
+        "stylesheets": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "additionalProperties": false,
+       "description": "The Records and Research page."
+      }
+     ],
+     "description": "Records and Research: the records the site relies on, from data/sources.json. true or a settings object turns it on; false turns it off. Missing means off, so a site that already has its own page for its sources is not changed."
+    },
+    "discoveries": {
+     "type": "boolean",
+     "description": "The Discovery Timeline page. When this is set it decides; when it is missing, timeline.enabled decides (the older setting, still read). See docs/discovery-timeline.md."
     },
     "ask": {
      "anyOf": [
@@ -160,8 +259,7 @@
        "type": "null"
       },
       {
-       "type": "boolean",
-       "const": false
+       "type": "boolean"
       },
       {
        "type": "string"
@@ -169,8 +267,13 @@
       {
        "type": "object",
        "properties": {
+        "enabled": {
+         "type": "boolean",
+         "description": "false turns the page off without losing its other settings. Missing means true."
+        },
         "file": {
-         "type": "string"
+         "type": "string",
+         "description": "The page's file name."
         },
         "title": {
          "type": "string"
@@ -180,7 +283,7 @@
         },
         "heading": {
          "type": "string",
-         "description": "The heading at the top of the page, if not the engine's (\"The Family Tree\")."
+         "description": "The heading at the top of the page, if not the engine's."
         },
         "stylesheets": {
          "type": "array",
@@ -190,14 +293,14 @@
         }
        },
        "additionalProperties": false,
-       "description": "Stuart's page, or null for no Stuart."
+       "description": "Stuart's page."
       }
      ],
-     "description": "Stuart's page, or null for no Stuart."
+     "description": "Stuart's page: true, a file name, an object, or false to turn it off. null or missing means no Stuart."
     }
    },
    "additionalProperties": false,
-   "description": "The site's home page and the engine's pages. A page set to null is not made, and the engine leaves out every link to it."
+   "description": "The site's home page and which of the standard pages it has. A page that is turned off is not built, is left out of the navigation bar, and nothing links to it."
   },
   "nav": {
    "type": "array",
@@ -810,7 +913,7 @@
    "properties": {
     "enabled": {
      "type": "boolean",
-     "description": "Turn on the Discovery Timeline (default false). When this is false the site is built exactly as before. When it is true the build makes the page and a navigation entry, and keeps the history of finds between publications. See docs/discovery-timeline.md."
+     "description": "Turn on the Discovery Timeline (default false). pages.discoveries, when it is set, decides instead; this older setting is still read when pages.discoveries is missing. When the timeline is off the site is built exactly as before. See docs/discovery-timeline.md."
     },
     "file": {
      "type": "string",
@@ -820,6 +923,30 @@
    },
    "additionalProperties": false,
    "description": "The Discovery Timeline: a page of what the family has newly learned, with the history kept by the build between publications. See docs/discovery-timeline.md."
+  },
+  "admin": {
+   "type": "object",
+   "properties": {
+    "enabled": {
+     "type": "boolean",
+     "description": "Make the settings page at /admin/ (default false). When this is false the site is built exactly as before. See docs/admin.md."
+    },
+    "repo": {
+     "type": "string",
+     "pattern": "^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$",
+     "description": "The site's GitHub repository, owner/name. Default: the repository the build runs in."
+    },
+    "branch": {
+     "type": "string",
+     "description": "The branch the settings are saved to. Default: the repository's default branch."
+    },
+    "configPath": {
+     "type": "string",
+     "description": "Where site.config.json is in the repository when the site is in a sub-folder. Default site.config.json."
+    }
+   },
+   "additionalProperties": false,
+   "description": "The settings page at /admin/: a static page where people with write access to the repository change the page switches, the site's title and tagline and the engine channel. See docs/admin.md."
   }
  }
 }

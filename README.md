@@ -30,11 +30,11 @@ The built site is a plain static site. Nothing in it loads code from anywhere el
 | Folder | What it holds |
 | --- | --- |
 | `engine/` | Everything the browser runs: `tree-canvas.js` (the family tree), `map-*.js` (the family map), `stuart.js` and `archive-*.js` (Stuart), `nav.js` and `nav.css` (the navigation bar), `records.js` (the lightbox), `tokens.css` (default colours and fonts), MapLibre, the map styles and the map fonts |
-| `templates/` | The family tree, map and Stuart pages, filled in from each site's settings |
-| `build/` | `build_site.py` (the build), `validate.py` (the data checker), `migrate.py` (brings older data up to date), `archive.py` (Stuart's index), `discoveries.py`, `timeline.py`, `timeline_page.py` and `previous_site.py` (the Discovery Timeline), `pages.py` and `sitecfg.py` |
+| `templates/` | The family tree, map, Stuart, Stories, Records and Research, Discovery Timeline and settings pages, filled in from each site's settings |
+| `build/` | `build_site.py` (the build), `validate.py` (the data checker), `migrate.py` (brings older data up to date), `archive.py` (Stuart's index), `discoveries.py`, `timeline.py`, `timeline_page.py` and `previous_site.py` (the Discovery Timeline), `stories.py`, `markdown.py` and `records_page.py` (the Stories and Records and Research pages), `admin_page.py` (the settings page), `pages.py` and `sitecfg.py` |
 | `schema/` | `family-data.schema.json` (people, sources, places) and `site-config.schema.json` (a site's settings) |
 | `sample/` | A made-up family that the tests run against, and a starting point for a new site |
-| `tests/` | `test_build.py` (the build, the checker, the migration), `test_discoveries.py` (the Discovery Timeline), `check-sample.js` (the sample in a browser) and `check-timeline.js` (the timeline page in a browser) |
+| `tests/` | `test_build.py` (the build, the checker, the migration), `test_discoveries.py` (the Discovery Timeline), `test_pages.py` (page switches, Stories, Records and Research, the settings page), `test_autorelease.py` (the automatic release), `check-sample.js` (the sample in a browser), `check-timeline.js` (the timeline page in a browser), and `check-admin-edit.js` and `check-admin.js` (the settings page) |
 | `tools/` | Map fonts, map styles, Street View viewpoints, and `backfill-discoveries.py` (suggests Discovery Timeline entries from a site's git history) |
 | `docs/` | How to add a site, the data format, the settings, releases, and how the map and Stuart work |
 | `channels.json`, `sites.json` | Which engine version each release channel builds with, and which sites to tell when that changes |
@@ -55,13 +55,18 @@ npm ci && npx playwright install chromium
 python3 tests/test_autorelease.py    # the automatic release (no GitHub needed)
 node tests/check-sample.js           # the sample site in a browser
 node tests/check-timeline.js         # the Discovery Timeline page in a browser
+python3 tests/test_pages.py          # page switches, Stories, Records and Research, the settings page, the pages schema
+node tests/check-admin-edit.js       # how the settings page edits site.config.json
+node tests/check-admin.js            # the settings page in a browser, against a pretend GitHub
 ```
 
 ## Documentation
 
 - [Adding a site](docs/adding-a-site.md): from an empty repository to a published site.
 - [The data format](docs/data-format.md): `people.json`, `sources.json` and `places.json`, and how they are checked.
-- [Site settings](docs/site-config.md): everything `site.config.json` can say.
+- [Site settings](docs/site-config.md): everything `site.config.json` can say, including which pages a site has.
+- [Stories](docs/stories.md): a page of stories, articles and essays written as Markdown.
+- [The settings page](docs/admin.md): switch pages on and off and change the title from `/admin/`, with a GitHub token.
 - [The Discovery Timeline](docs/discovery-timeline.md): an optional page of what the family has newly learned, and how it knows.
 - [Releases](docs/releasing.md): the automatic release on merge, labels, versions, channels, rolling back, and the GitHub settings it needs.
 - [The family map](docs/map.md), [map keys](docs/map-keys.md) and [Stuart](docs/stuart.md): how they work inside.

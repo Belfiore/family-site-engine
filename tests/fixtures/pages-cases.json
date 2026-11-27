@@ -1,0 +1,246 @@
+[
+ {
+  "name": "nothing about pages",
+  "config": {},
+  "on": {
+   "stories": true,
+   "tree": false,
+   "map": false,
+   "records": false,
+   "discoveries": false
+  }
+ },
+ {
+  "name": "empty pages block",
+  "config": {
+   "pages": {}
+  },
+  "on": {
+   "stories": true,
+   "tree": false,
+   "map": false,
+   "records": false,
+   "discoveries": false
+  }
+ },
+ {
+  "name": "everything true",
+  "config": {
+   "pages": {
+    "stories": true,
+    "tree": true,
+    "map": true,
+    "records": true,
+    "discoveries": true
+   }
+  },
+  "on": {
+   "stories": true,
+   "tree": true,
+   "map": true,
+   "records": true,
+   "discoveries": true
+  }
+ },
+ {
+  "name": "everything false",
+  "config": {
+   "pages": {
+    "stories": false,
+    "tree": false,
+    "map": false,
+    "records": false,
+    "discoveries": false
+   }
+  },
+  "on": {
+   "stories": false,
+   "tree": false,
+   "map": false,
+   "records": false,
+   "discoveries": false
+  }
+ },
+ {
+  "name": "file names and objects (how the live sites write them)",
+  "config": {
+   "pages": {
+    "home": "index.html",
+    "tree": {
+     "file": "tree-canvas.html",
+     "title": "x"
+    },
+    "map": "map.html"
+   }
+  },
+  "on": {
+   "stories": true,
+   "tree": true,
+   "map": true,
+   "records": false,
+   "discoveries": false
+  }
+ },
+ {
+  "name": "object switched off",
+  "config": {
+   "pages": {
+    "tree": {
+     "file": "family-tree.html",
+     "enabled": false
+    },
+    "map": {
+     "enabled": false
+    }
+   }
+  },
+  "on": {
+   "stories": true,
+   "tree": false,
+   "map": false,
+   "records": false,
+   "discoveries": false
+  }
+ },
+ {
+  "name": "object with enabled true",
+  "config": {
+   "pages": {
+    "tree": {
+     "enabled": true
+    },
+    "stories": {
+     "title": "Our stories"
+    },
+    "records": {
+     "enabled": true
+    }
+   }
+  },
+  "on": {
+   "stories": true,
+   "tree": true,
+   "map": false,
+   "records": true,
+   "discoveries": false
+  }
+ },
+ {
+  "name": "stories object switched off",
+  "config": {
+   "pages": {
+    "stories": {
+     "enabled": false,
+     "title": "x"
+    }
+   }
+  },
+  "on": {
+   "stories": false,
+   "tree": false,
+   "map": false,
+   "records": false,
+   "discoveries": false
+  }
+ },
+ {
+  "name": "null, empty string and empty object all mean no page",
+  "config": {
+   "pages": {
+    "tree": null,
+    "map": "",
+    "ask": {},
+    "stories": null,
+    "records": null
+   }
+  },
+  "on": {
+   "stories": true,
+   "tree": false,
+   "map": false,
+   "records": false,
+   "discoveries": false
+  }
+ },
+ {
+  "name": "the older timeline.enabled still turns discoveries on",
+  "config": {
+   "timeline": {
+    "enabled": true
+   }
+  },
+  "on": {
+   "stories": true,
+   "tree": false,
+   "map": false,
+   "records": false,
+   "discoveries": true
+  }
+ },
+ {
+  "name": "pages.discoveries false beats timeline.enabled",
+  "config": {
+   "timeline": {
+    "enabled": true
+   },
+   "pages": {
+    "discoveries": false
+   }
+  },
+  "on": {
+   "stories": true,
+   "tree": false,
+   "map": false,
+   "records": false,
+   "discoveries": false
+  }
+ },
+ {
+  "name": "pages.discoveries true beats timeline.enabled false",
+  "config": {
+   "timeline": {
+    "enabled": false
+   },
+   "pages": {
+    "discoveries": true
+   }
+  },
+  "on": {
+   "stories": true,
+   "tree": false,
+   "map": false,
+   "records": false,
+   "discoveries": true
+  }
+ },
+ {
+  "name": "pages.discoveries true with no timeline block",
+  "config": {
+   "pages": {
+    "discoveries": true
+   }
+  },
+  "on": {
+   "stories": true,
+   "tree": false,
+   "map": false,
+   "records": false,
+   "discoveries": true
+  }
+ },
+ {
+  "name": "timeline block without enabled",
+  "config": {
+   "timeline": {
+    "file": "finds.html"
+   }
+  },
+  "on": {
+   "stories": true,
+   "tree": false,
+   "map": false,
+   "records": false,
+   "discoveries": false
+  }
+ }
+]

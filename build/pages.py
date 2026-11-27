@@ -36,6 +36,11 @@ PAGE_ASSETS = {
     'timeline': {'css': ['timeline.css'], 'js': ['timeline.js'],
                  'viewport': 'width=device-width, initial-scale=1.0, viewport-fit=cover',
                  'widget': {'compact': True}},
+    # Stories and Records and Research: pages made from the site's own files, with no script of their own
+    'stories': {'css': ['content-pages.css'], 'js': [], 'viewport': 'width=device-width, initial-scale=1.0, viewport-fit=cover',
+                'widget': {'compact': True}},
+    'records': {'css': ['content-pages.css'], 'js': [], 'viewport': 'width=device-width, initial-scale=1.0, viewport-fit=cover',
+                'widget': {'compact': True}},
 }
 
 
@@ -162,7 +167,7 @@ def render_engine_page(kind, template, cfg, ctx, extra=None):
         'title': esc(page.get('title')),
         'description': esc(page.get('description')),
         'head': ''.join('    %s\n' % h for h in head),
-        'nav': nav_html(cfg, page['file']),
+        'nav': nav_html(cfg, (extra or {}).get('_active') or page['file']),
         'scripts': '\n'.join(scripts),
         'directLineLabel': esc(tree.get('directLineLabel') or 'Direct line'),
         'homePage': esc(cfg['_pages']['home']),
@@ -172,11 +177,12 @@ def render_engine_page(kind, template, cfg, ctx, extra=None):
         'legendNote': (' ' + tree['legendNote']) if tree.get('legendNote') else '',   # the site's own words; HTML allowed
         'heading': esc(page.get('heading') or {'tree': 'The Family Tree', 'map': 'The Family Map', 'ask': 'Ask Stuart'}.get(kind) or page.get('title')),
         'timelineBody': '',
+        'pageBody': '',
         'treeNoscript': tree.get('noscript') or ('The <a href="%s">home page</a> and the other pages work without it.' % esc(cfg['_pages']['home'])),
         # the key's row for framed groups, only on a tree that has them
         'legendRegions': '                <li><span class="lg-card lg-card--frame"></span>Group whose link to the family is unproven</li>\n' if tree.get('regions') else '',
     }
-    values.update(extra or {})      # what only one page has: the timeline's content, made by timeline.py
+    values.update({k: v for k, v in (extra or {}).items() if not k.startswith('_')})   # what only one page has: the timeline's content, made by timeline.py
     out = template
     for k, v in values.items():
         out = out.replace('{{%s}}' % k, v)
@@ -196,6 +202,15 @@ def bare(url):
     return u if '/' not in u else None
 
 
+def unlink_off_pages(src, off_files):
+    """A link in the page's own words to a page that is switched off is shown as plain text, so nothing leads to a page
+    that is not there. Only links to those pages are touched, and only on a site that has turned a page off."""
+    if not off_files: return src
+    names = '|'.join(re.escape(f) for f in sorted(off_files))
+    anchor = re.compile(r'<a\b[^>]*?\bhref\s*=\s*(?:"(?:%s)(?:[#?][^"]*)?"|\'(?:%s)(?:[#?][^\']*)?\')[^>]*>(.*?)</a>' % (names, names), re.S | re.I)
+    return anchor.sub(lambda m: m.group(1), src)
+
+
 def process_site_page(src, filename, cfg, ctx, widget_opts):
     changed = []
     m = NAV_RE.search(src)
@@ -203,6 +218,7 @@ def process_site_page(src, filename, cfg, ctx, widget_opts):
         active = active_for(cfg, filename, m.group(0))
         src = src[:m.start()] + nav_html(cfg, active) + src[m.end():]
         changed.append('nav')
+    src = unlink_off_pages(src, cfg.get('_off_files'))
     widget_attrs = None
 
     def fix_link(mm):
@@ -240,3 +256,35 @@ def process_site_page(src, filename, cfg, ctx, widget_opts):
     if j >= 0:
         src = src[:j] + '\n'.join(tail) + '\n' + src[j:]
     return src
+
+
+# ------------------------------------------------------------------ the sitemap
+def clean_sitemap(out, off_files, admin_on, stories_off):
+    """Take every entry for a page that is turned off (and for /admin/) out of a sitemap.xml the site keeps itself.
+    A site without a sitemap, or with no page off and no /admin/, is left exactly as it was. Returns what was removed."""
+    path = os.path.join(out, 'sitemap.xml')
+    if not os.path.exists(path) or not (off_files or admin_on or stories_off): return []
+    with open(path, encoding='utf-8') as f:
+        text = f.read()
+    removed = []
+
+    def gone(loc):
+        p = urlparse(loc.strip()).path.rstrip('/') if '://' in loc else loc.strip().split('#')[0].split('?')[0].rstrip('/')
+        name = p.rsplit('/', 1)[-1]
+        if admin_on and (p.endswith('/admin') or p.endswith('/admin/index.html')): return True
+        if name in off_files and not os.path.exists(os.path.join(out, name)): return True
+        if stories_off and re.match(r'^story-[a-z0-9-]+\.html$', name) and not os.path.exists(os.path.join(out, name)): return True
+        return False
+
+    def keep(m):
+        loc = re.search(r'<loc>\s*([^<]+?)\s*</loc>', m.group(0))
+        if loc and gone(html.unescape(loc.group(1))):
+            removed.append(html.unescape(loc.group(1)))
+            return ''
+        return m.group(0)
+
+    new = re.sub(r'[ \t]*<url>.*?</url>[ \t]*\n?', keep, text, flags=re.S)
+    if new != text:
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(new)
+    return removed
