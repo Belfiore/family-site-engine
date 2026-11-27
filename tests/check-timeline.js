@@ -117,19 +117,26 @@ function serve() {
         await page.context().close();
     }
 
-    // ---------------------------------------------------------------- one link per find, links that go somewhere exact
-    section('Finds: one link at most, never on the headline');
+    // ---------------------------------------------------------------- links: one action per find, source addresses, pictures
+    section('Finds: one action link at most, never on the headline; sources and pictures are links');
     {
         const page = await open();
-        const bad = await page.$$eval('.tl-card', cs => cs.filter(c => c.querySelectorAll('a').length > 1).map(c => c.id));
-        check(!bad.length, 'no find has more than one link', bad.join(', '));
+        const bad = await page.$$eval('.tl-card', cs => cs.filter(c => c.querySelectorAll('a.tl-action').length > 1).map(c => c.id));
+        check(!bad.length, 'no find has more than one link into the tree or the map', bad.join(', '));
         const headlineLinks = await page.locator('.tl-headline a, a .tl-headline').count();
         check(headlineLinks === 0, 'no headline is a link');
-        const links = await page.$$eval('.tl-card a', as => as.map(a => a.getAttribute('href') + '|' + a.textContent.trim()));
-        check(links.every(l => /^(family-tree\.html#\/person\/[a-z0-9-]+|map\.html\?(place|person)=[a-z0-9-]+)\|(See it in the tree|Show on the map)$/.test(l)), 'every link is to one person or place, in words that say where', links.find(l => !/^(family-tree|map)/.test(l)));
-        const thumbs = await page.$$eval('.tl-card', cs => cs.map(c => ({ img: !!c.querySelector('img'), cls: c.classList.contains('tl-has-thumb'), alt: (c.querySelector('img') || {}).alt })));
+        const links = await page.$$eval('.tl-card a.tl-action', as => as.map(a => a.getAttribute('href') + '|' + a.textContent.trim()));
+        check(links.every(l => /^(family-tree\.html#\/person\/[a-z0-9-]+|map\.html\?(place|person)=[a-z0-9-]+)\|(See it in the tree|Show on the map)$/.test(l)), 'every such link is to one person or place, in words that say where', links.find(l => !/^(family-tree|map)\.html/.test(l)));
+        const other = await page.$$eval('.tl-card a:not(.tl-action):not(.tl-thumb-link):not(.tl-source)', as => as.length);
+        const inSource = await page.$$eval('.tl-card .tl-source a', as => as.length);
+        check(other === inSource, 'the only other links are a source and a picture');
+        // a source address opens in a new tab, and cannot reach back into this page
+        const src = await page.$$eval('.tl-card a.tl-source, .tl-card .tl-source a', as => as.map(a => ({ href: a.getAttribute('href'), target: a.target, rel: a.rel })));
+        check(src.length > 0 && src.every(a => /^https?:\/\//.test(a.href) && a.target === '_blank' && /noopener/.test(a.rel)), 'a source address is a link that opens in a new tab with rel=noopener', JSON.stringify(src.filter(a => a.target !== '_blank')));
+        const thumbs = await page.$$eval('.tl-card', cs => cs.map(c => ({ img: !!c.querySelector('img'), cls: c.classList.contains('tl-has-thumb'), alt: (c.querySelector('img') || {}).alt, link: !!c.querySelector('a.tl-thumb-link img') })));
         check(thumbs.every(t => t.img === t.cls), 'a picture only where a find has one');
         check(thumbs.filter(t => t.img).every(t => t.alt && t.alt.length > 3), 'each picture says what it shows');
+        check(thumbs.filter(t => t.img).every(t => t.link), 'each picture is a link to the full-size image');
         // pictures below the fold are loaded lazily: ask for them all, wait, then look
         const broken = await page.$$eval('.tl-thumb', async is => {
             is.forEach(i => { i.loading = 'eager'; });
@@ -137,6 +144,49 @@ function serve() {
             return is.filter(i => !i.complete || i.naturalWidth === 0).length;
         });
         check(broken === 0, 'every picture loads');
+        await page.context().close();
+    }
+
+    section('A picture opens full size');
+    {
+        const page = await open();
+        const n = await page.locator('a.tl-thumb-link').count();
+        if (!n) { check(!MADE_UP, 'there is a picture to open'); }
+        else {
+            const link = page.locator('a.tl-thumb-link:visible').first();
+            await link.scrollIntoViewIfNeeded();
+            const href = await link.getAttribute('href');
+            const popups = [];
+            page.context().on('page', p => popups.push(p));
+            await link.click();
+            const box = page.locator('.record-lightbox');
+            check(await box.count() === 1, 'a click opens the lightbox (and no new tab)', String(await box.count()));
+            check(popups.length === 0, 'the click does not also open a tab');
+            const big = await box.locator('img').getAttribute('src');
+            check(big === href, 'the lightbox shows the full-size file the link names', big + ' vs ' + href);
+            await page.waitForFunction(() => { const i = document.querySelector('.record-lightbox img'); return i && i.complete && i.naturalWidth > 0; });
+            const fits = await box.locator('img').evaluate(i => { const r = i.getBoundingClientRect(); return r.width <= innerWidth && r.height <= innerHeight; });
+            check(fits, 'the full-size picture fits on the screen');
+            check(await box.getAttribute('role') === 'dialog' && await box.getAttribute('aria-modal') === 'true', 'the lightbox is a modal dialog for a screen reader');
+            await page.keyboard.press('Escape');
+            check(await page.locator('.record-lightbox').count() === 0, 'Escape closes it');
+            check(await link.evaluate(a => document.activeElement === a), 'focus goes back to the picture');
+            await link.click();
+            await page.locator('.record-lightbox').click();
+            check(await page.locator('.record-lightbox').count() === 0, 'a click closes it');
+            // a modified click keeps its normal meaning: it opens the picture in its own tab
+            await link.click({ modifiers: ['Control'] });
+            check(await page.locator('.record-lightbox').count() === 0, 'a ctrl-click does not open the lightbox');
+            check(!page.errors.length, 'no page errors', page.errors.join(' | '));
+        }
+        await page.context().close();
+    }
+
+    section('Confidence is not on the page, and is still in the data');
+    {
+        const page = await open();
+        check(await page.locator('.tl-conf').count() === 0, 'no find shows Confirmed, Probable, Family tradition or Unverified');
+        if (MADE_UP) check(HISTORY.some(e => e.confidence), 'the history still has each find\'s confidence');
         await page.context().close();
     }
 

@@ -74,6 +74,22 @@ Living people are never part of the timeline. The engine has one definition of a
 - a researcher's note on a living person's record is ignored, with a warning;
 - a find is never linked to a place that only withheld people were at.
 
+### Showing some hidden regions on the timeline
+
+A hidden region can hold people the site wants to talk about without drawing them on the tree: a lead that is not yet proven, a business associate. `timeline.showRegions` names the hidden regions whose **deceased** people may be finds on the page:
+
+```json
+"tree": { "hiddenRegions": ["legend", "associates"] },
+"timeline": { "enabled": true, "showRegions": ["associates"] }
+```
+
+- Only the named regions change. Any other hidden region stays withheld exactly as above.
+- A living person is withheld in every region, named or not.
+- The tree, the map and Stuart are untouched. The setting does not bring anyone back onto them.
+- A find about a person in a shown region has no "See it in the tree" or "Show on the map" link, because there is nothing for it to open. Its picture, source and words are shown like any other find.
+- Turning a region on does not flood the page. The people already in the data become the baseline, as when someone stops being living. Finds made after that appear as usual. Taking the setting off again withholds them and removes their finds on the next build.
+- **This publishes names, headlines and sources of those people** on the page and in `state.json` and `history.json`. Name a region only when the site is happy for that to be public. `build/validate.py` warns if a named region is not in `tree.hiddenRegions` or has nobody in it.
+
 The page links to the family tree and the map only for a person or place that is public. It does not load pictures of withheld people, because their claims never exist.
 
 The engine publishes `people.json` as it always has (the tree and the map read it). The timeline neither changes that nor makes it worse; see "Limits" below.
@@ -82,7 +98,9 @@ The engine publishes `people.json` as it always has (the tree and the map read i
 
 - **Days, newest first.** Each day has a header (`Thursday, 26 November 2026`) and a computed summary (`4 new finds across The Hartleys and The Moreaus.`, or `4 new finds.` on a site with one family line). The summary is written again for what is showing when a filter is on.
 - **Cards.** Each find has a type label and icon (New person, New record, New photo, Correction, New place, New connection), the headline, who found it and the source and confidence when they are known, and a thumbnail only if the find has a picture. A correction shows both the previous and the updated value. A find that was later corrected or withdrawn says so ("This find has since been corrected.").
-- **The headline is never a link.** A card has at most **one** link, to one specific person or place: "See it in the tree" or "Show on the map".
+- **The headline is never a link.** A card has at most one link into the site, to one specific person or place: "See it in the tree" or "Show on the map". A find about someone in a shown region (see Privacy) has none.
+- **Sources and pictures.** A web address in a find's source is a link that opens in a new tab (`target="_blank"`, `rel="noopener"`). If the note gives a `source.url`, the whole source text links to it; otherwise each `http` or `https` address inside the text does, without trailing punctuation. Anything else stays plain text. A thumbnail opens the full-size image in the engine's lightbox (Escape or a click closes it; a modified click opens the file in its own tab). Where the record has a separate full-size file, that is what opens.
+- **Confidence is not shown.** The Confirmed, Probable, Family tradition and Unverified labels are kept in `history.json` but not drawn. Set `timeline.showConfidence` to `true` to show them.
 - **Busy days fold.** A day with more than 6 finds shows the first 5 with "Show all N finds". The banner's jump button and a link to one find (`#find-<id>`) open a folded day.
 - **Filters** by family line (the site's `map.branches`, assigned the way the map assigns people) and by type, in a collapsed bar that says when one is on.
 - **Since your last visit.** The browser remembers the last visit in `localStorage` (no cookie, nothing is sent anywhere). A returning visitor sees "7 new finds since your last visit on 12 Nov." with a button that jumps to the first one; new finds are marked "New" and stay marked for the whole visit, including a reload. A first-time visitor sees no banner. Blocking `localStorage` just turns the banner off.

@@ -220,6 +220,17 @@ def check_timeline(site, cfg, ddir, pdoc, ldoc):
     is checked exactly as before). Errors: what the build would overwrite, and notes that cannot be read. Warnings:
     notes the page would not show as intended."""
     errors, warnings = [], []
+    shown = (cfg.get('timeline') or {}).get('showRegions') or []
+    if shown and not cfg['_pages'].get('timeline'):
+        warnings.append('timeline.showRegions has no effect while the timeline is off (timeline.enabled)')
+    if shown and cfg['_pages'].get('timeline'):
+        hidden = set((cfg.get('tree') or {}).get('hiddenRegions') or [])
+        used = {p.get('region') for p in (pdoc or {}).get('people') or [] if isinstance(p, dict)}
+        for r in shown:
+            if r not in hidden:
+                warnings.append('timeline.showRegions: %r is not in tree.hiddenRegions, so its people are not withheld and there is nothing to show' % r)
+            elif r not in used:
+                warnings.append('timeline.showRegions: no one in the data has the region %r' % r)
     if not cfg['_pages'].get('timeline'): return errors, warnings
     page = cfg['_pages']['timeline']
     if os.path.exists(os.path.join(site, page)):

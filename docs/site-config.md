@@ -99,6 +99,7 @@ The family tree. Any key here also overrides the same key in `people.json` meta,
 | `rootOrder` | The oldest people across the top, left to right |
 | `sides` | `{ "left": "arthur-hartley", "right": "marguerite-moreau", "leftLabel": "...", "rightLabel": "..." }`: one partner's family on the left and the other's on the right, so their lines never cross. Their children are drawn on the right |
 | `hiddenRegions` | Regions (from each person's `region`) that are not drawn on the tree or the map, and that Stuart does not know. The people stay in the data |
+| `showConfidence` | `true` shows the confidence badges in a person's panel: "Overall", the Confidence column of the facts table, and the note on uncertain timeline entries. Default `false`: they are not drawn, and the data keeps them. The cards' dotted outline for unproven people and the key are not affected |
 | `suspectedRelatives` | `{ "pierre-moreau": "jean-baptiste-moreau" }`: someone kept from a hidden region and drawn beside another person, with no proven link |
 | `regions`, `regionKicker` | Framed groups on the tree whose link to the family is unproven |
 | `kinAnchor`, `kinLabel` | The kin box: relatives whose exact link is not known, drawn beside this person |
@@ -165,6 +166,13 @@ Optional. The Discovery Timeline: a page of what the family has newly learned, n
 ```json
 "timeline": { "enabled": true }
 ```
+
+Other settings, all optional:
+
+| Key | Meaning |
+| --- | --- |
+| `showRegions` | Hidden regions (`tree.hiddenRegions`) whose deceased people may be finds on the page, with no link to the tree or the map. Living people stay withheld. Default none. See [the Discovery Timeline](discovery-timeline.md#showing-some-hidden-regions-on-the-timeline) |
+| `showConfidence` | `true` shows each find's confidence label (Confirmed, Probable, Family tradition, Unverified). Default `false`: the data keeps it, the page does not draw it |
 
 A site that turns it on needs an engine release that has the timeline, `build-site.yml` from the same release in its `deploy.yml` and `check.yml`, and `pages: write` for the deploy job. The site must not already have a `discoveries.html` or a `discoveries/` folder (the build stops if it does).
 

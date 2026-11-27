@@ -373,6 +373,10 @@
      },
      "description": "Regions not drawn (people with this region stay in the data)."
     },
+    "showConfidence": {
+     "type": "boolean",
+     "description": "Show visitors the confidence badges in a person's panel: Overall, and Confirmed, Probable or Unverified beside each fact (default false). The confidence stays in the data either way."
+    },
     "suspectedRelatives": {
      "type": "object",
      "additionalProperties": {
@@ -901,6 +905,17 @@
      "type": "string",
      "pattern": "^[A-Za-z0-9._-]+\\.html$",
      "description": "The file name of the page. Default discoveries.html."
+    },
+    "showRegions": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Hidden regions (from tree.hiddenRegions) whose people may be named on the timeline, such as leads or associates. They stay off the tree, and their finds have no link to it. Living people are never shown. Default none. See docs/discovery-timeline.md."
+    },
+    "showConfidence": {
+     "type": "boolean",
+     "description": "Show each find's confidence (Confirmed, Probable, Family tradition, Unverified) on the page (default false). The confidence is kept in the history either way."
     }
    },
    "additionalProperties": false,

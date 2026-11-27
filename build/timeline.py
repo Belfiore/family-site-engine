@@ -98,7 +98,7 @@ def run(site, cfg, out, previous_arg, now_arg, version):
     hist = D.public_history(state, snap)
     write_json(os.path.join(out, STATE_REL), state)
     write_json(os.path.join(out, HISTORY_REL), hist)
-    body = timeline_page.render_body(hist['entries'], hist['lines'], cfg, cfg['_pages'], since=hist.get('since'))
+    body = timeline_page.render_body(hist['entries'], hist['lines'], cfg, cfg['_pages'], since=hist.get('since'), full_of=snap.full_of)
     info = {'file': cfg['_pages']['timeline'], 'mode': report['mode'], 'new': report['new'], 'entries': len(hist['entries']),
             'since': hist.get('since'), 'previous': how, 'warnings': snap.warnings, 'notes': report['notes']}
     return body, info

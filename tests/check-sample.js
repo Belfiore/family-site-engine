@@ -173,6 +173,46 @@ function serve() {
         await page.context().close();
     }
 
+    section('Family tree: confidence badges are off by default, and a site can turn them on');
+    {
+        const panel = async (page, id) => {
+            await page.goto(URL + 'family-tree.html#/person/' + id);
+            await page.waitForSelector('#drawer:not([hidden]) .facts');
+            return page.evaluate(() => {
+                const d = document.getElementById('drawer');
+                return {
+                    overall: /Overall:/.test(d.textContent),
+                    tags: d.querySelectorAll('.conf-tag, td.conf').length,
+                    header: [...d.querySelectorAll('.facts thead th')].map(th => th.textContent),
+                    cols: Math.max(...[...d.querySelectorAll('.facts tbody tr')].map(r => r.children.length)),
+                    notes: d.querySelectorAll('.tline .t-note').length
+                };
+            });
+        };
+        let page = await open('family-tree.html');
+        let d = await panel(page, 'arthur-hartley');
+        check(!d.overall, 'the panel has no "Overall:" badge by default');
+        check(d.tags === 0 && !d.header.includes('Confidence') && d.cols === 3, 'no Confidence column in the facts table by default', JSON.stringify(d));
+        check(d.notes === 0, 'no confidence notes in the timeline by default');
+        check(!page.errors.length, 'no page errors', page.errors.join(' | '));
+        await page.context().close();
+
+        // the same page with the site setting on (the setting is read from site-config.js, so add it there)
+        const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+        await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, r => r.abort());
+        await ctx.route(/site-config\.js/, async r => {
+            const resp = await r.fetch();
+            await r.fulfill({ response: resp, body: (await resp.text()) + '\nwindow.FamilySite.tree = Object.assign({}, window.FamilySite.tree, { showConfidence: true });\n' });
+        });
+        page = await ctx.newPage();
+        page.errors = [];
+        page.on('pageerror', e => page.errors.push(e.message));
+        d = await panel(page, 'arthur-hartley');
+        check(d.overall && d.tags > 0 && d.header.includes('Confidence') && d.cols === 4, 'with tree.showConfidence the badge, the column and the header come back', JSON.stringify(d));
+        check(!page.errors.length, 'no page errors with it on', page.errors.join(' | '));
+        await ctx.close();
+    }
+
     section('Family map');
     {
         const page = await open('map.html');
