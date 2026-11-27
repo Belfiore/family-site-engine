@@ -10,7 +10,7 @@ import copy, json, os, re, shutil, subprocess, sys, tempfile, unittest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SAMPLE = os.path.join(ROOT, 'sample')
 sys.path.insert(0, os.path.join(ROOT, 'build'))
-import build_site, migrate, sitecfg, validate  # noqa: E402
+import build_site, chat_index, migrate, sitecfg, validate  # noqa: E402
 
 VERSION = open(os.path.join(ROOT, 'VERSION')).read().strip()
 BASE = 'engine/%s/' % VERSION
@@ -163,6 +163,16 @@ class TestBuiltSample(unittest.TestCase):
         self.assertEqual(kb['site']['anchors'][0]['id'], 'arthur-hartley')
         self.assertEqual(len(kb['examples']), 4, 'the four starter questions in the settings')
         self.assertGreaterEqual(len(kb['sections']), 8)
+
+    def test_the_sample_has_no_chat(self):
+        # the chat is off unless a site turns it on, and then the build matches a build from before it
+        self.assertFalse(os.path.exists(os.path.join(self.out, BASE, 'chat.js')))
+        self.assertFalse(os.path.exists(os.path.join(self.out, BASE, 'chat.css')))
+        self.assertFalse(os.path.exists(os.path.join(self.out, 'chat')))
+        self.assertNotIn('chat', jload(os.path.join(self.out, 'engine-build.json')))
+        for name, html in self.pages.items():
+            self.assertNotIn('chat.js', html, name)
+            self.assertNotIn('chat.css', html, name)
 
 
 def pages_engine_names():
@@ -404,6 +414,84 @@ if (typeof module !== 'undefined') module.exports = FAMILY_DATA;
         import jsdata
         with self.assertRaises(ValueError):
             jsdata.read_assignment("const FAMILY_DATA = { people: fetchPeople() };")
+
+
+class TestChat(unittest.TestCase):
+    """The optional chat: off adds nothing, on reads the site and refuses a key in the address."""
+
+    def test_which_addresses_can_be_published(self):
+        self.assertTrue(chat_index.endpoint_ok('https://answers.example/chat'))
+        self.assertTrue(chat_index.endpoint_ok('http://127.0.0.1:8765/chat'))
+        self.assertTrue(chat_index.endpoint_ok('http://localhost:8765/chat'))
+        self.assertFalse(chat_index.endpoint_ok('http://example.com/chat'))
+        self.assertFalse(chat_index.endpoint_ok('https://example.com/chat?key=abc'))
+        self.assertFalse(chat_index.endpoint_ok('https://user:pass@example.com/chat'))
+        self.assertFalse(chat_index.endpoint_ok(''))
+
+    def test_chat_needs_an_endpoint_and_leaves_the_last_build(self):
+        tmp = tempfile.mkdtemp()
+        try:
+            site, out = SampleCopy(tmp), os.path.join(tmp, '_site')
+            os.makedirs(out)
+            with open(os.path.join(out, 'marker'), 'w') as f: f.write('kept')
+            site.edit_json('site.config.json', lambda c: c.update(chat={'enabled': True}))
+            code, log = run_build(site.dir, out)
+            self.assertEqual(code, 1)
+            self.assertIn('chat.endpoint', log)
+            self.assertTrue(os.path.exists(os.path.join(out, 'marker')))
+            site.edit_json('site.config.json', lambda c: c.update(chat={'enabled': True, 'endpoint': 'http://example.com/chat'}))
+            code, log = run_build(site.dir, out)
+            self.assertEqual(code, 1)
+            self.assertIn('chat.endpoint', log)
+            self.assertTrue(os.path.exists(os.path.join(out, 'marker')))
+        finally:
+            shutil.rmtree(tmp)
+
+    def test_chat_on_writes_an_index_and_a_button(self):
+        tmp = tempfile.mkdtemp()
+        try:
+            site, out = SampleCopy(tmp), os.path.join(tmp, '_site')
+            site.edit_json('site.config.json', lambda c: c.update(chat={
+                'enabled': True, 'name': 'Guide', 'endpoint': 'http://127.0.0.1:9/chat',
+                'greeting': 'Hello from the sample.'}))
+            code, log = run_build(site.dir, out)
+            self.assertEqual(code, 0, log)
+            self.assertIn('chat: ', log)
+            idx = jload(os.path.join(out, 'chat', 'index.json'))
+            self.assertEqual(idx['name'], 'Guide')
+            self.assertEqual(idx['greeting'], 'Hello from the sample.')
+            self.assertEqual(idx['endpoint'], 'http://127.0.0.1:9/chat')
+            ids = {p['id'] for p in idx['passages']}
+            self.assertIn('person:thomas-hartley', ids)
+            self.assertIn('person:pierre-moreau', ids, 'a suspected relative stays, as on the tree')
+            self.assertIn('person:daniel-hartley', ids, 'a living person stays, as on the tree')
+            self.assertNotIn('person:auguste-de-moreau', ids, 'a hidden region is left out of the data')
+            self.assertNotIn('person:edwin-pratt', ids, 'an associate in a hidden region is left out of the data')
+            blob = json.dumps(idx)
+            self.assertIn('Park Row', blob)
+            self.assertNotIn('Edwin Pratt', blob)
+            self.assertTrue(any(p['url'] == 'index.html#h-arthur' for p in idx['passages']))
+            self.assertTrue(any(p['url'] == 'moreau.html#m-lyon' for p in idx['passages']))
+            daniel = next(p for p in idx['passages'] if p['id'] == 'person:daniel-hartley')
+            self.assertIn('living', daniel['text'].lower())
+            self.assertFalse(DASHES.search(blob))
+            info = jload(os.path.join(out, 'engine-build.json'))
+            self.assertEqual(info['chat']['passages'], len(idx['passages']))
+            self.assertTrue(os.path.exists(os.path.join(out, BASE, 'chat.js')))
+            for name in os.listdir(out):
+                if not name.endswith('.html'): continue
+                html = read(os.path.join(out, name))
+                self.assertEqual(html.count('chat.js'), 1, name)
+                self.assertIn('data-chat="chat/index.json?v=', html)
+                sheets = re.findall(r'<link rel="stylesheet" href="([^"]+)"', html[:html.lower().index('</head>')])
+                self.assertEqual(sheets[-1], BASE + 'nav.css', name)
+                self.assertLess(html.index(BASE + 'chat.css'), html.index(BASE + 'nav.css'), name)
+            ask = read(os.path.join(out, 'ask.html'))
+            self.assertIn("connect-src 'self' http://127.0.0.1:9", ask)
+            home = read(os.path.join(out, 'index.html'))
+            self.assertNotIn('Content-Security-Policy', home)
+        finally:
+            shutil.rmtree(tmp)
 
 
 class TestHousekeeping(unittest.TestCase):

@@ -15,9 +15,11 @@ Steps, in order (any failure stops the build and leaves the live site as it was)
   4. copy the engine's files to engine/<version>/;
   5. build Stuart's index, if the site has Stuart;
   6. write the site settings for the browser (site-config.js) and the theme;
-  7. make the engine's pages (tree, map, Stuart) from the templates;
-  8. bring the site's own pages in line: the navigation bar, the engine's files, Stuart's button;
-  9. write engine-build.json, saying what was built from what.
+  7. build the chat index, if the site turns the chat on (chat/index.json);
+  8. make the engine's pages (tree, map, Stuart) from the templates;
+  9. bring the site's own pages in line: the navigation bar, the engine's files, Stuart's button,
+     and the chat button when the site turns the chat on;
+  10. write engine-build.json, saying what was built from what.
 
 A site that turns on the Discovery Timeline (timeline.enabled) also gets, after step 4, the history of what has
 been found since it was published last (--previous says where that history is; see docs/discovery-timeline.md),
@@ -28,7 +30,7 @@ import argparse, datetime, fnmatch, hashlib, json, os, shutil, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ENGINE_ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-import archive, pages, sitecfg, timeline, validate  # noqa: E402
+import archive, chat_index, pages, sitecfg, timeline, validate  # noqa: E402
 
 ALWAYS_SKIP = {'.git', '.github', 'node_modules', '.DS_Store', '_site', 'site.config.json', '__pycache__'}
 
@@ -44,6 +46,16 @@ def short_hash(path):
         for chunk in iter(lambda: f.read(1 << 16), b''):
             h.update(chunk)
     return h.hexdigest()[:10]
+
+
+def engine_ignore(timeline_on, chat_on):
+    """Files a site does not use are not copied, so its build stays as it was."""
+    skip = []
+    if not timeline_on:
+        skip += ['timeline.css', 'timeline.js']
+    if not chat_on:
+        skip += ['chat.css', 'chat.js']
+    return shutil.ignore_patterns(*skip) if skip else None
 
 
 def skipped(rel, patterns):
@@ -105,6 +117,9 @@ def main(argv=None):
     for w in report['warnings'] + problems['warnings']:
         print('warning:', w)
     errors = report['errors'] + problems['errors']
+    chat_problem = chat_index.problem(site, cfg)
+    if chat_problem:
+        errors.append(chat_problem)
     if errors:
         for e in errors: print('error:', e)
         print('The build stopped: %d problem%s to fix (see docs/data-format.md).' % (len(errors), '' if len(errors) == 1 else 's'))
@@ -121,9 +136,10 @@ def main(argv=None):
     n = copy_site(site, out, exclude)
 
     # 4. the engine
-    # the timeline's files go only to a site that has the timeline, so any other site's build is as it was
+    # the timeline's files, and the chat's, go only to a site that turned that feature on
+    chat_on = bool((cfg.get('chat') or {}).get('enabled'))
     shutil.copytree(os.path.join(ENGINE_ROOT, 'engine'), os.path.join(out, base), dirs_exist_ok=True,
-                    ignore=None if tl_on else shutil.ignore_patterns('timeline.css', 'timeline.js'))
+                    ignore=engine_ignore(tl_on, chat_on))
 
     # 4b. the Discovery Timeline: what is new since the last publication
     tl_body, tl_info = None, None
@@ -159,7 +175,13 @@ def main(argv=None):
         with open(os.path.join(out, 'site-theme.css'), 'w', encoding='utf-8') as f: f.write(css)
         ctx['theme'] = 'site-theme.css?v=%s' % short_hash(os.path.join(out, 'site-theme.css'))
 
-    # 7. the engine's pages
+    # 7. the chat index, only when the site turns the chat on
+    chat_info = None
+    if chat_on:
+        chat_info = chat_index.build(site, cfg, out)
+        ctx['chat'] = 'chat/index.json?v=%s' % short_hash(os.path.join(out, 'chat', 'index.json'))
+
+    # 8. the engine's pages
     made = []
     for kind in ('tree', 'map', 'ask', 'timeline'):
         page = cfg['pages'].get(kind)
@@ -170,7 +192,7 @@ def main(argv=None):
             f.write(pages.render_engine_page(kind, tpl, cfg, ctx, {'timelineBody': tl_body} if kind == 'timeline' else None))
         made.append(page['file'])
 
-    # 8. the site's own pages
+    # 9. the site's own pages
     widget = cfg.get('widget') or {}
     excluded = set((cfg.get('process') or {}).get('exclude') or [])
     processed = []
@@ -186,17 +208,20 @@ def main(argv=None):
             f.write(pages.process_site_page(src, name, cfg, ctx, opts))
         processed.append(name)
 
-    # 9. what was built
+    # 10. what was built
     info = {'engine': version, 'built': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
             'site': (cfg.get('site') or {}).get('name'), 'channel': (cfg.get('engine') or {}).get('channel'),
             'enginePages': made, 'sitePages': processed, 'files': n, 'stuart': counts,
             'warnings': len(report['warnings'] + problems['warnings'])}
+    if chat_info:     # only a site with the chat on has this key, so other sites' files are unchanged
+        info['chat'] = {'passages': chat_info['passages']}
     if tl_info:       # only a site with the timeline on has this key, so other sites' files are unchanged
         info['timeline'] = {k: tl_info[k] for k in ('file', 'mode', 'new', 'entries', 'since')}
     with open(os.path.join(out, 'engine-build.json'), 'w', encoding='utf-8') as f: json.dump(info, f, indent=1)
-    print('built %s with engine %s: %d files, engine pages %s, %d site pages%s' % (
+    print('built %s with engine %s: %d files, engine pages %s, %d site pages%s%s' % (
         info['site'] or site, version, n, ', '.join(made) or 'none', len(processed),
-        ', Stuart: %d people, %d sections' % (counts['people'], counts['sections']) if counts else ''))
+        ', Stuart: %d people, %d sections' % (counts['people'], counts['sections']) if counts else '',
+        ', chat: %d passages' % chat_info['passages'] if chat_info else ''))
     if tl_info:
         print('discovery timeline: %s; %d new find%s, %d in the history (%s)' % (
             tl_info['mode'], tl_info['new'], '' if tl_info['new'] == 1 else 's', tl_info['entries'], tl_info['previous']))

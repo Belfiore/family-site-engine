@@ -1,0 +1,90 @@
+/* The site chat: a button and a small window. Colours are its own, so it matches on any page.
+   It sits above Stuart's button when that button is on the page. */
+.sc-launch, .sc-panel {
+    --sc-ink: #1a1a2e;
+    --sc-cream: #fdf8f0;
+    --sc-paper: #f8f1e4;
+    --sc-wine: #7d1d1d;
+    --sc-line: #dccfb4;
+    --sc-text: 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+    --sc-display: 'Cinzel', Georgia, serif;
+}
+.sc [hidden] { display: none !important; }
+.sc-sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.sc-icon { width: 22px; height: 22px; display: block; flex: 0 0 auto; }
+
+.sc-launch {
+    position: fixed; z-index: 1100; right: 22px; bottom: 22px;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    max-width: calc(100vw - 32px);
+    padding: 0.45rem 1rem 0.45rem 0.7rem;
+    border-radius: 999px; border: 1px solid rgba(212, 175, 55, .75);
+    background: var(--sc-ink); color: #f6ead0;
+    font-family: var(--sc-display); font-size: 0.95rem; letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: 0 16px 32px -16px rgba(10, 10, 25, .75);
+}
+.sc-launch-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sc-launch:hover { transform: translateY(-2px); }
+.sc-launch:focus-visible, .sc-panel :focus-visible { outline: 3px solid #b8860b; outline-offset: 2px; }
+
+.sc-panel {
+    position: fixed; z-index: 1300; right: 22px; bottom: 22px;
+    display: flex; flex-direction: column;
+    width: min(380px, calc(100vw - 44px));
+    height: min(520px, calc(100vh - 120px));
+    background: var(--sc-cream); color: var(--sc-ink);
+    border: 1px solid var(--sc-line); border-radius: 18px;
+    box-shadow: 0 24px 48px -24px rgba(10, 10, 25, .7);
+    font-family: var(--sc-text); font-size: 1.05rem; line-height: 1.45;
+    overflow: hidden;
+}
+.sc-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
+    padding: 0.7rem 0.7rem 0.55rem 1rem;
+    border-bottom: 1px solid var(--sc-line);
+    background: #fff;
+}
+.sc-head h2 { margin: 0; font-family: var(--sc-display); font-size: 1rem; font-weight: 600; letter-spacing: 0.04em; color: var(--sc-wine); }
+.sc-close {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border: 0; border-radius: 999px;
+    background: transparent; color: var(--sc-ink); cursor: pointer;
+}
+.sc-close:hover { background: var(--sc-paper); }
+.sc-note { margin: 0; padding: 0.4rem 1rem 0; font-size: 0.92rem; color: #6b4a2b; }
+.sc-log { flex: 1 1 auto; overflow: auto; padding: 0.8rem 1rem 0.4rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.sc-msg { display: flex; flex-direction: column; gap: 0.15rem; max-width: 100%; }
+.sc-who { margin: 0; font-family: var(--sc-display); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: #6b4a2b; }
+.sc-body p { margin: 0; }
+.sc-body p + p { margin-top: 0.45rem; }
+.sc-msg--me { align-items: flex-end; }
+.sc-msg--me .sc-body { background: var(--sc-wine); color: #fbf3e6; border-radius: 14px 14px 4px 14px; padding: 0.45rem 0.75rem; max-width: 90%; }
+.sc-msg--bot .sc-body { background: #fff; border: 1px solid var(--sc-line); border-radius: 4px 14px 14px 14px; padding: 0.5rem 0.75rem; }
+.sc-msg--wait .sc-body { color: #6b4a2b; font-style: italic; }
+.sc-from { margin-top: 0.55rem; font-size: 0.92rem; }
+.sc-from p { font-family: var(--sc-display); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; color: #6b4a2b; }
+.sc-from ul { margin: 0.2rem 0 0; padding: 0; list-style: none; }
+.sc-from li + li { margin-top: 0.15rem; }
+.sc-from a { color: var(--sc-wine); }
+.sc-form { display: flex; gap: 0.4rem; padding: 0.7rem; border-top: 1px solid var(--sc-line); background: #fff; }
+.sc-input {
+    flex: 1 1 auto; min-width: 0;
+    font: inherit; font-size: 1rem; color: var(--sc-ink);
+    border: 1px solid var(--sc-line); border-radius: 999px;
+    padding: 0.45rem 0.8rem; background: var(--sc-cream);
+}
+.sc-send {
+    flex: 0 0 auto; font-family: var(--sc-display); font-size: 0.85rem; letter-spacing: 0.04em;
+    color: #f6ead0; background: var(--sc-wine); border: 0; border-radius: 999px;
+    padding: 0.45rem 0.9rem; min-height: 40px; cursor: pointer;
+}
+.sc-send:disabled, .sc-input:disabled { opacity: 0.55; cursor: default; }
+
+@media (max-width: 640px) {
+    .sc-panel { border-radius: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .sc-launch, .sc-panel { transition: none; }
+    .sc-launch:hover { transform: none; }
+}

@@ -153,6 +153,29 @@ Stuart's button on the site's own pages (the engine's pages place it themselves)
 
 `compact` shows only Stuart's seal; `avoid` lists controls the button must keep clear of. There is no button when the site has no Stuart page.
 
+## chat
+
+Optional. A button that answers questions from the pages and records on this site. Off unless turned on; a site that leaves it off builds exactly as before. See [the site chat](chat.md).
+
+| Setting | Default | |
+| --- | --- | --- |
+| `enabled` | `false` | Add the button, the stylesheet and `chat/index.json` |
+| `name` | `Guide` | The name on the button and in the window |
+| `greeting` | a sentence that says answers come only from this site | The first message |
+| `placeholder` | `Ask about this family` | The hint in the question box |
+| `endpoint` | none, and required when `enabled` is true | The site's own answer service, an `https` address. The key stays there |
+| `pages` | every HTML page at the top of the site | Story pages to read. An empty list reads none of them |
+| `skipClasses` | none extra | Classes of page furniture to leave out |
+
+```json
+"chat": {
+  "enabled": true,
+  "name": "Guide",
+  "greeting": "Ask a question about this family. I answer only from the pages and records on this site.",
+  "endpoint": "https://answers.example.com/chat"
+}
+```
+
 ## timeline
 
 Optional. The Discovery Timeline: a page of what the family has newly learned, newest first. Off unless turned on; a site that leaves it off builds exactly as before. See [the Discovery Timeline](discovery-timeline.md) for how it works, what a site has to do to turn it on, and what it keeps.

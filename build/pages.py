@@ -1,7 +1,8 @@
 """Pages: the navigation bar, the engine's own pages (tree, map, Stuart) and the site's own pages.
 
-The engine owns three things on every page: the navigation bar, the engine's stylesheets and scripts, and
-Stuart's button. Everything else in a site's own pages is left exactly as the site wrote it.
+The engine owns the navigation bar, the engine's stylesheets and scripts, and Stuart's button.
+A site that turns the chat on also gets the chat's stylesheet and button. Everything else in a
+site's own pages is left exactly as the site wrote it.
 
 On the site's own pages the build:
   * replaces the <nav class="main-nav"> block with the bar from site.config.json "nav", keeping which link
@@ -90,6 +91,14 @@ def stuart_on(cfg):
     return bool(cfg['_pages'].get('ask'))
 
 
+def chat_on(cfg):
+    return bool((cfg.get('chat') or {}).get('enabled'))
+
+
+def chat_tag(ctx):
+    return '<script src="%schat.js" data-chat="%s" defer></script>' % (ctx['base'], esc(ctx['chat']))
+
+
 def widget_tag(ctx, opts):
     if opts is None: return ''
     attrs = ' data-widget'
@@ -99,9 +108,10 @@ def widget_tag(ctx, opts):
 
 
 def tail_css(cfg, ctx):
-    """Stuart's stylesheet, the theme and the bar's stylesheet, in that order, at the end of the head."""
+    """Stuart's stylesheet, the chat's (only when the site turns it on), the theme and the bar, in that order."""
     out = []
     if stuart_on(cfg): out.append('<link rel="stylesheet" href="%sstuart.css">' % ctx['base'])
+    if chat_on(cfg): out.append('<link rel="stylesheet" href="%schat.css">' % ctx['base'])
     if ctx.get('theme'): out.append('<link rel="stylesheet" href="%s">' % ctx['theme'])
     out.append('<link rel="stylesheet" href="%snav.css">' % ctx['base'])
     return out
@@ -129,9 +139,16 @@ def csp_for(cfg):
         host = '%s://%s' % (urlparse(fonts).scheme or 'https', urlparse(fonts).netloc)
         style_hosts.append(host)
         font_hosts.append('https://fonts.gstatic.com' if 'fonts.googleapis.com' in host else host)
+    connect = "'self'"
+    # the chat calls the site's own answer service; a site that leaves the chat off keeps connect-src 'self'
+    chat = cfg.get('chat') or {}
+    if chat.get('enabled') and chat.get('endpoint'):
+        u = urlparse(chat['endpoint'])
+        if u.scheme and u.netloc:
+            connect += ' %s://%s' % (u.scheme, u.netloc)
     return ("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'%s; font-src 'self'%s; img-src 'self' data:; "
-            "connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'") % (
-        ''.join(' ' + h for h in style_hosts), ''.join(' ' + h for h in font_hosts))
+            "connect-src %s; object-src 'none'; base-uri 'self'; form-action 'self'") % (
+        ''.join(' ' + h for h in style_hosts), ''.join(' ' + h for h in font_hosts), connect)
 
 
 # ------------------------------------------------------------------ the engine's own pages
@@ -150,6 +167,8 @@ def render_engine_page(kind, template, cfg, ctx, extra=None):
     scripts = settings_scripts(ctx) + ['<script src="%s%s"></script>' % (ctx['base'], j) for j in assets['js']]
     if stuart_on(cfg) and cfg['widget'].get('enabled', True) and assets.get('widget'):
         scripts.append(widget_tag(ctx, assets['widget']))
+    if ctx.get('chat'):
+        scripts.append(chat_tag(ctx))
     tree = cfg.get('tree') or {}
     mp = cfg.get('map') or {}
     home_region = (mp.get('home') or {}).get('name') or 'the home region'
@@ -236,6 +255,8 @@ def process_site_page(src, filename, cfg, ctx, widget_opts):
             a = re.search(r'data-avoid="([^"]*)"', widget_attrs)
             if a: opts.setdefault('avoid', html.unescape(a.group(1)))
         tail.append(widget_tag(ctx, opts))
+    if ctx.get('chat'):
+        tail.append(chat_tag(ctx))
     j = src.lower().rfind('</body>')
     if j >= 0:
         src = src[:j] + '\n'.join(tail) + '\n' + src[j:]

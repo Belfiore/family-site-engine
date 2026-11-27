@@ -820,6 +820,47 @@
    },
    "additionalProperties": false,
    "description": "The Discovery Timeline: a page of what the family has newly learned, with the history kept by the build between publications. See docs/discovery-timeline.md."
+  },
+  "chat": {
+   "type": "object",
+   "properties": {
+    "enabled": {
+     "type": "boolean",
+     "description": "Turn on the site chat (default false). When this is false the site is built exactly as before."
+    },
+    "name": {
+     "type": "string",
+     "description": "The name on the button and in the window. Default: Guide."
+    },
+    "greeting": {
+     "type": "string",
+     "description": "The first message. The default says the chat answers only from this site."
+    },
+    "placeholder": {
+     "type": "string",
+     "description": "The hint in the question box. Default: Ask about this family."
+    },
+    "endpoint": {
+     "type": "string",
+     "description": "The site's own answer service. Required when enabled. An https address, with no user, password or query. The browser sends the question and the passages it found. The key stays on that service. http://127.0.0.1 and http://localhost are allowed for a local check."
+    },
+    "pages": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Story pages to read. When omitted, every HTML page at the top of the site is read. An empty list reads none of them (the data is still read)."
+    },
+    "skipClasses": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Classes of page furniture the chat should not read, added to the engine's own list."
+    }
+   },
+   "additionalProperties": false,
+   "description": "An optional chat button. It answers from the site's own pages and records at the time of the question, through an endpoint the site runs. See docs/chat.md."
   }
  }
 }
