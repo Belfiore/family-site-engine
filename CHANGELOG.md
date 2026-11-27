@@ -2,6 +2,10 @@
 
 Each release, newest first. A major version says what a site has to change.
 
+## 1.2.2
+
+- Show Stuart and the live sites on the GitHub landing page (#13) by @Belfiore
+
 ## 1.2.1
 
 - Register the Vigliotti site on the stable channel (#9) by @Belfiore
