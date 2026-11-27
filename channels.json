@@ -1,8 +1,8 @@
 {
  "$comment": "Which engine version each release channel builds with. A site picks its channel in site.config.json (engine.channel). Move a channel by changing its version here on main; notify-sites.yml then tells the sites. See docs/releasing.md.",
  "channels": {
-  "canary": "1.2.0",
-  "beta": "1.2.0",
-  "stable": "1.2.0"
+  "canary": "1.2.1",
+  "beta": "1.2.1",
+  "stable": "1.2.1"
  }
 }
