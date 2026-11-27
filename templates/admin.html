@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <title>Site settings | {{siteName}}</title>
+    <link rel="stylesheet" href="{{base}}tokens.css">
+{{theme}}    <link rel="stylesheet" href="{{base}}admin.css">
+</head>
+<body class="ad-body">
+<a class="ad-skip" href="#ad-main">Skip to the settings</a>
+<header class="ad-top">
+    <div class="ad-top-in">
+        <a class="ad-back" href="{{backHref}}">Back to {{siteName}}</a>
+        <p class="ad-eyebrow">Site settings</p>
+    </div>
+</header>
+<main class="ad-main" id="ad-main">
+    <h1>Site settings</h1>
+    <p class="ad-lede">Switch pages on and off and change the site's title, tagline and engine channel. Saving commits <code>site.config.json</code> to the site's GitHub repository, and the site rebuilds by itself.</p>
+    <noscript><p class="ad-warn">This page needs JavaScript. Without it, edit <code>site.config.json</code> in the repository by hand.</p></noscript>
+    <div id="ad-app" class="ad-app" hidden></div>
+</main>
+<script type="application/json" id="ad-data">{{data}}</script>
+<script src="{{base}}admin.js"></script>
+</body>
+</html>

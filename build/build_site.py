@@ -28,7 +28,7 @@ import argparse, datetime, fnmatch, hashlib, json, os, shutil, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ENGINE_ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-import archive, pages, sitecfg, timeline, validate  # noqa: E402
+import admin_page, archive, pages, records_page, sitecfg, stories, timeline, validate  # noqa: E402
 
 ALWAYS_SKIP = {'.git', '.github', 'node_modules', '.DS_Store', '_site', 'site.config.json', '__pycache__'}
 
@@ -116,14 +116,19 @@ def main(argv=None):
     os.makedirs(out, exist_ok=True)
     exclude = list((cfg.get('publish') or {}).get('exclude') or [])
     tl_on = bool(cfg['_pages'].get('timeline'))
+    # the Markdown of the stories (and any draft) is read here and published as pages, never as the files themselves
+    exclude.append(sitecfg.STORIES_DIR.replace(os.sep, '/'))
     if tl_on:      # the researcher's notes and the backfill script's suggestions are read here, never published as they are
         exclude += [os.path.relpath(timeline.curated_path(site, cfg), site), 'discoveries.suggestions.json']
     n = copy_site(site, out, exclude)
 
     # 4. the engine
-    # the timeline's files go only to a site that has the timeline, so any other site's build is as it was
+    # the files of a feature go only to a site that has it, so any other site's build is as it was
+    skip = [] if tl_on else ['timeline.css', 'timeline.js']
+    if not (cfg['pages'].get('stories') or cfg['pages'].get('records')): skip.append('content-pages.css')
+    if not cfg.get('_admin'): skip += ['admin.js', 'admin.css']
     shutil.copytree(os.path.join(ENGINE_ROOT, 'engine'), os.path.join(out, base), dirs_exist_ok=True,
-                    ignore=None if tl_on else shutil.ignore_patterns('timeline.css', 'timeline.js'))
+                    ignore=shutil.ignore_patterns(*skip) if skip else None)
 
     # 4b. the Discovery Timeline: what is new since the last publication
     tl_body, tl_info = None, None
@@ -161,14 +166,26 @@ def main(argv=None):
 
     # 7. the engine's pages
     made = []
-    for kind in ('tree', 'map', 'ask', 'timeline'):
+    for kind in ('tree', 'map', 'ask', 'timeline', 'stories', 'records'):
         page = cfg['pages'].get(kind)
         if not page: continue
         with open(os.path.join(ENGINE_ROOT, 'templates', kind + '.html'), encoding='utf-8') as f:
             tpl = f.read()
+        if kind == 'stories':          # the list and one page for each story
+            made += stories.build(site, out, cfg, ctx, tpl, pages.render_engine_page)
+            continue
+        extra = {'timelineBody': tl_body} if kind == 'timeline' else {'pageBody': records_page.body(site, cfg)} if kind == 'records' else None
         with open(os.path.join(out, page['file']), 'w', encoding='utf-8') as f:
-            f.write(pages.render_engine_page(kind, tpl, cfg, ctx, {'timelineBody': tl_body} if kind == 'timeline' else None))
+            f.write(pages.render_engine_page(kind, tpl, cfg, ctx, extra))
         made.append(page['file'])
+
+    # 7b. the settings page, only for a site that turns it on: /admin/, outside the navigation bar and the search index
+    if cfg.get('_admin'):
+        with open(os.path.join(ENGINE_ROOT, 'templates', 'admin.html'), encoding='utf-8') as f:
+            tpl = f.read()
+        os.makedirs(os.path.join(out, 'admin'), exist_ok=True)
+        with open(os.path.join(out, 'admin', 'index.html'), 'w', encoding='utf-8') as f:
+            f.write(admin_page.render(tpl, cfg, ctx, version))
 
     # 8. the site's own pages
     widget = cfg.get('widget') or {}
@@ -185,6 +202,10 @@ def main(argv=None):
         with open(path, 'w', encoding='utf-8') as f:
             f.write(pages.process_site_page(src, name, cfg, ctx, opts))
         processed.append(name)
+
+    # 8b. a sitemap the site keeps itself: no entry for a page that is off, and none for /admin/
+    removed = pages.clean_sitemap(out, cfg.get('_off_files') or {}, bool(cfg.get('_admin')), cfg['pages'].get('stories') is None)
+    for r in removed: print('note: sitemap.xml: removed the entry for %s' % r)
 
     # 9. what was built
     info = {'engine': version, 'built': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
