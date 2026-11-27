@@ -2,7 +2,7 @@
 
 The shared engine behind the family history sites: the family tree, the family map, Stuart (the family archivist) and the navigation bar. Each family's site keeps its own data, photographs, stories and look in its own repository; this repository holds the code they all run, and the build that puts the two together.
 
-A fix or a new feature made here reaches every site through a release, without anyone copying files between repositories.
+A fix or a new feature made here reaches every site through a release, without anyone copying files between repositories. Merging a pull request to `main` makes the release by itself: it checks the engine and every site, raises the version, moves the channels, tells the sites to rebuild, and rolls back if a site fails. See [Releases](docs/releasing.md).
 
 ## How it fits together
 
@@ -52,6 +52,7 @@ To check your own changes:
 python3 tests/test_build.py          # the build, the data checker and the migration (Python only)
 python3 tests/test_discoveries.py    # the Discovery Timeline (Python only; the backfill tests need git)
 npm ci && npx playwright install chromium
+python3 tests/test_autorelease.py    # the automatic release (no GitHub needed)
 node tests/check-sample.js           # the sample site in a browser
 node tests/check-timeline.js         # the Discovery Timeline page in a browser
 ```
@@ -62,7 +63,7 @@ node tests/check-timeline.js         # the Discovery Timeline page in a browser
 - [The data format](docs/data-format.md): `people.json`, `sources.json` and `places.json`, and how they are checked.
 - [Site settings](docs/site-config.md): everything `site.config.json` can say.
 - [The Discovery Timeline](docs/discovery-timeline.md): an optional page of what the family has newly learned, and how it knows.
-- [Releases](docs/releasing.md): versions, channels, rolling out and rolling back.
+- [Releases](docs/releasing.md): the automatic release on merge, labels, versions, channels, rolling back, and the GitHub settings it needs.
 - [The family map](docs/map.md), [map keys](docs/map-keys.md) and [Stuart](docs/stuart.md): how they work inside.
 
 ## Licence
