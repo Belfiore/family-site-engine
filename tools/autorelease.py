@@ -9,6 +9,7 @@ Standard library only. Subcommands (each reads its settings from the environment
 
     plan      decide whether this push to main makes a release, and of what size
     matrix    the sites in sites.json, as the build matrix of the workflow
+    sitedir   find the folder of a checked out site that holds site.config.json
     prepare   write the new VERSION and the CHANGELOG.md entry, and the release notes
     channels  move canary, beta and stable to the new version (never for a major release)
     dispatch  send the engine-release request to every site
@@ -119,7 +120,47 @@ def move_channels(text, version, level):
 
 
 def sites_from(doc):
-    return [{'repo': s['repo'], 'name': s.get('name') or s['repo'], 'channel': s.get('channel', 'stable')} for s in doc['sites']]
+    out = []
+    for s in doc['sites']:
+        site = {'repo': s['repo'], 'name': s.get('name') or s['repo'], 'channel': s.get('channel', 'stable')}
+        if s.get('dir'):
+            site['dir'] = s['dir']
+        out.append(site)
+    return out
+
+
+def find_site_dir(root, hint=''):
+    """The folder of a checked out site repository that holds site.config.json, as a path under `root` ('' for the root).
+
+    A site whose files live in a sub-folder (its deploy.yml sets site-dir) is found without being told: the one folder
+    within two levels that holds the file. `hint` (the optional "dir" of a site in sites.json) wins when given.
+    Raises ValueError when there is none, or more than one and no hint."""
+    def has(d):
+        return os.path.isfile(os.path.join(root, d, 'site.config.json'))
+    hint = (hint or '').strip().strip('/')
+    if hint:
+        if '..' in hint.split('/'):
+            raise ValueError('the dir %r must stay inside the site' % hint)
+        if not has(hint):
+            raise ValueError('no site.config.json in %r of the site' % hint)
+        return hint
+    if has(''):
+        return ''
+    found = []
+    for a in sorted(os.listdir(root)):
+        if a.startswith('.') or a == 'node_modules' or not os.path.isdir(os.path.join(root, a)):
+            continue
+        if has(a):
+            found.append(a)
+            continue
+        for b in sorted(os.listdir(os.path.join(root, a))):
+            if not b.startswith('.') and b != 'node_modules' and os.path.isdir(os.path.join(root, a, b)) and has(a + '/' + b):
+                found.append(a + '/' + b)
+    if len(found) == 1:
+        return found[0]
+    if not found:
+        raise ValueError('no site.config.json in the site, at its top or within two folders')
+    raise ValueError('more than one site.config.json (%s): set "dir" for this site in sites.json' % ', '.join(found))
 
 
 def when(ts):
@@ -323,6 +364,15 @@ def cmd_matrix(env, api):
     return 0
 
 
+def cmd_sitedir(env, api):
+    try:
+        output(dir=find_site_dir(env['SITE_ROOT'], env.get('SITE_DIR_HINT', '')))
+    except ValueError as e:
+        print('::error::%s' % e)
+        return 1
+    return 0
+
+
 def cmd_prepare(env, api):
     level = env['LEVEL']
     prs = json.loads(read('release-prs.json')) if os.path.exists('release-prs.json') else []
@@ -379,7 +429,7 @@ def cmd_issue(env, api):
     return 0
 
 
-COMMANDS = {'plan': cmd_plan, 'matrix': cmd_matrix, 'prepare': cmd_prepare, 'channels': cmd_channels,
+COMMANDS = {'plan': cmd_plan, 'matrix': cmd_matrix, 'sitedir': cmd_sitedir, 'prepare': cmd_prepare, 'channels': cmd_channels,
             'dispatch': cmd_dispatch, 'verify': cmd_verify, 'rollback': cmd_rollback, 'issue': cmd_issue}
 
 

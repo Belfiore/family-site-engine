@@ -347,6 +347,49 @@ class TestTheSteps(unittest.TestCase):
         m = json.loads(self.outputs()['matrix'])
         self.assertEqual([s['repo'] for s in m['include']], ['o/a', 'o/b'])
 
+    def test_a_dir_in_sites_json_reaches_the_matrix_and_is_otherwise_left_out(self):
+        doc = {'sites': [{'repo': 'o/a', 'name': 'A'}, {'repo': 'o/b', 'name': 'B', 'dir': 'Folder'}]}
+        m = A.sites_from(doc)
+        self.assertNotIn('dir', m[0])
+        self.assertEqual(m[1]['dir'], 'Folder')
+
+    def test_the_sites_folder_is_found(self):
+        import tempfile
+        def site(*parts):
+            d = tempfile.mkdtemp()
+            for p in parts:
+                path = os.path.join(d, p)
+                os.makedirs(os.path.dirname(path) or d, exist_ok=True)
+                open(path, 'w').write('{}')
+            return d
+        self.assertEqual(A.find_site_dir(site('site.config.json')), '')
+        self.assertEqual(A.find_site_dir(site('Italian-Family-History/site.config.json', 'README.md')), 'Italian-Family-History')
+        self.assertEqual(A.find_site_dir(site('a/b/site.config.json')), 'a/b')
+        self.assertEqual(A.find_site_dir(site('site.config.json', 'sub/site.config.json')), '', 'the top wins')
+        two = site('x/site.config.json', 'y/site.config.json')
+        self.assertEqual(A.find_site_dir(two, 'y'), 'y', 'dir from sites.json wins')
+        with self.assertRaises(ValueError):
+            A.find_site_dir(two)
+        with self.assertRaises(ValueError):
+            A.find_site_dir(site('README.md'))
+        with self.assertRaises(ValueError):
+            A.find_site_dir(two, '../x')
+        with self.assertRaises(ValueError):
+            A.find_site_dir(two, 'nope')
+        self.assertEqual(A.find_site_dir(site('node_modules/p/site.config.json', 'real/site.config.json')), 'real')
+
+    def test_sitedir_step_writes_the_folder_and_fails_with_a_message(self):
+        import tempfile
+        d = tempfile.mkdtemp()
+        os.makedirs(os.path.join(d, 'F'))
+        open(os.path.join(d, 'F', 'site.config.json'), 'w').write('{}')
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(A.main(['sitedir'], {'SITE_ROOT': d}, FakeApi()), 0)
+        self.assertEqual(self.outputs()['dir'], 'F')
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            self.assertEqual(A.main(['sitedir'], {'SITE_ROOT': tempfile.mkdtemp()}, FakeApi()), 1)
+        self.assertIn('no site.config.json', out.getvalue())
+
     def test_verify_step_writes_the_failures_and_the_issue(self):
         calls = {'n': 0}
         def runs(url, body):
@@ -379,6 +422,10 @@ class TestTheWorkflowFile(unittest.TestCase):
         self.assertRegex(self.text, r'on:\n  push:\n    branches: \[main\]')
         self.assertNotIn('pull_request', self.text)
 
+    def test_the_site_test_build_uses_the_sites_folder(self):
+        self.assertIn('autorelease.py sitedir', self.text)
+        self.assertIn('--site "site${SITE_DIR:+/$SITE_DIR}"', self.text)
+
     def test_it_cannot_loop(self):
         self.assertIn("!startsWith(github.event.head_commit.message, '[auto-release]')", self.text)
         self.assertIn("github.actor != 'github-actions[bot]'", self.text)
@@ -395,7 +442,7 @@ class TestTheWorkflowFile(unittest.TestCase):
         self.assertIn('needs: [plan, tests, sites]', self.release)
         self.assertIn('uses: ./.github/workflows/ci.yml', self.text)
         self.assertIn('fail-fast: false', self.text)
-        self.assertIn('build_site.py --site site', self.text)
+        self.assertIn('build_site.py --site "site${SITE_DIR:+/$SITE_DIR}"', self.text)
 
     def test_only_the_release_job_can_write(self):
         before_release = self.text[:self.text.index('\n  release:')]
