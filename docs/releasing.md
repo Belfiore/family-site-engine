@@ -29,7 +29,7 @@ A release happens by itself when a pull request is merged to `main`. Nobody tags
 1. Make the change on a branch, with checks, and open a pull request. The **Checks** workflow runs on it.
 2. Put a label on the pull request if the release is bigger than a fix: `minor` for something new, `major` for a change a site has to act on. No label means a patch. `no-release` means this merge changes nothing a site builds (a typo in the docs, say) and makes no release. Do not edit `VERSION`, `CHANGELOG.md` or `channels.json` in the pull request; the release does it.
 3. Merge. The **Release** workflow (`auto-release.yml`) then does this, in order, and stops at the first failure:
-   1. Runs the full checks (`ci.yml`) and a test build of every site in `sites.json`. If anything fails, nothing is released and nothing changes.
+   1. Runs the full checks (`ci.yml`) and a test build of every site in `sites.json` (a site that keeps its files in a sub-folder is found by itself; add `"dir": "Folder"` to its entry in `sites.json` only if there is more than one `site.config.json`). If anything fails, nothing is released and nothing changes.
    2. Works out the new version from the labels of every pull request merged since the last release (the biggest label wins), raises `VERSION`, adds the merged pull requests to `CHANGELOG.md`, tags `vX.Y.Z` and creates the GitHub release with the same notes.
    3. Moves `canary`, `beta` and `stable` in `channels.json` to the new version. A major release is the exception: it is published, but the channels stay where they are and the workflow opens an issue, because a site has to change something first. Move the channels yourself once the sites are ready.
    4. Sends every site in `sites.json` the `engine-release` rebuild request.

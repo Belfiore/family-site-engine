@@ -108,9 +108,19 @@ jobs:
         with:
           python-version: '3.12'
 
+      # A site may keep its files in a sub-folder (its deploy.yml sets site-dir). Find it, or take "dir" from sites.json.
+      - name: Find the site's folder
+        id: dir
+        env:
+          SITE_ROOT: site
+          SITE_DIR_HINT: ${{ matrix.dir }}
+        run: python3 engine/tools/autorelease.py sitedir
+
       # --previous none: this is a trial build of the site's data with the engine as it stands on main, not a publication.
       - name: Build the site with this engine
-        run: python3 engine/build/build_site.py --site site --out "$RUNNER_TEMP/_site" --previous none
+        env:
+          SITE_DIR: ${{ steps.dir.outputs.dir }}
+        run: python3 engine/build/build_site.py --site "site${SITE_DIR:+/$SITE_DIR}" --out "$RUNNER_TEMP/_site" --previous none
 
   release:
     needs: [plan, tests, sites]
