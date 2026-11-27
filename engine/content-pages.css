@@ -1,0 +1,82 @@
+/* The Stories page, a story, and the Records and Research page.
+ *
+ * Loaded after the site's own stylesheets and before the theme, only on the pages the build makes for these. Every
+ * colour and font comes from the tokens the other engine pages use (--ink, --cream, --gold, --font-*), so a site's
+ * theme restyles them as it restyles the rest. Nothing here depends on the site's own styles.
+ */
+.cp-body {
+    --cp-ink: var(--ink, #1a1a2e);
+    --cp-muted: color-mix(in srgb, var(--cp-ink) 64%, transparent);
+    --cp-paper: var(--cream, #fdf8f0);
+    --cp-card: color-mix(in srgb, #ffffff 72%, var(--cp-paper));
+    --cp-accent: var(--gold-dark, #8a6a2f);
+    --cp-line: color-mix(in srgb, var(--cp-accent) 26%, var(--cp-paper));
+    margin: 0;
+    background: var(--cp-paper);
+    color: var(--cp-ink);
+    font-family: var(--font-body, Georgia, serif);
+    font-size: 1.125rem;
+    line-height: 1.65;
+}
+.cp-skip { position: absolute; left: 1rem; top: -4rem; z-index: 3000; background: var(--cp-accent); color: #fff; padding: .5rem .9rem; border-radius: 6px; text-decoration: none; }
+.cp-skip:focus { top: .6rem; outline: 3px solid var(--gold, #d4af37); outline-offset: 2px; }
+.cp-body *, .cp-body *::before, .cp-body *::after { box-sizing: border-box; }
+.cp-body .main-nav { position: sticky; top: 0; }
+.cp-page { max-width: 62rem; margin: 0 auto; padding: 2.6rem 1.25rem 4rem; }
+.cp-head h1 { font-family: var(--font-display, Georgia, serif); font-weight: 600; font-size: clamp(1.9rem, 4.5vw, 2.8rem); line-height: 1.15; margin: 0 0 .5rem; letter-spacing: .01em; }
+.cp-kicker { margin: 0 0 .4rem; font-size: .95rem; letter-spacing: .08em; text-transform: uppercase; }
+.cp-kicker a, .cp-more a, .cp-tags a, .cp-text a, .cp-records a, .cp-card h2 a { color: var(--cp-accent); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+.cp-card h2 a { color: inherit; text-decoration: none; }
+.cp-card h2 a:hover, .cp-card h2 a:focus-visible { text-decoration: underline; }
+.cp-meta { margin: 0 0 .6rem; color: var(--cp-muted); font-size: 1rem; }
+.cp-empty, .cp-intro { color: var(--cp-muted); }
+.cp-tags { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; margin: .6rem 0 1.6rem; padding: 0; font-size: .95rem; }
+.cp-tags li { border: 1px solid var(--cp-line); border-radius: 999px; padding: .05rem .75rem; background: var(--cp-card); }
+.cp-tags a { text-decoration: none; }
+
+/* the list of stories */
+.cp-cards { list-style: none; margin: 2rem 0 0; padding: 0; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); }
+.cp-card { background: var(--cp-card); border: 1px solid var(--cp-line); border-radius: .6rem; overflow: hidden; display: flex; flex-direction: column; }
+.cp-card-cover { display: block; aspect-ratio: 3 / 2; background: var(--cp-line); }
+.cp-card-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cp-card-text { padding: 1rem 1.1rem 1.2rem; }
+.cp-card h2 { font-family: var(--font-display, Georgia, serif); font-size: 1.25rem; line-height: 1.25; margin: 0 0 .35rem; font-weight: 600; }
+.cp-summary { margin: 0; font-size: 1rem; }
+
+/* a story */
+.cp-story { max-width: 42rem; margin: 0 auto; }
+.cp-cover { margin: 1.5rem 0; }
+.cp-cover img { width: 100%; height: auto; border-radius: .5rem; display: block; }
+.cp-text h2, .cp-text h3, .cp-text h4 { font-family: var(--font-display, Georgia, serif); line-height: 1.25; margin: 2rem 0 .6rem; font-weight: 600; }
+.cp-text p, .cp-text ul, .cp-text ol { margin: 0 0 1.1rem; }
+.cp-text img { max-width: 100%; height: auto; border-radius: .4rem; }
+.cp-text blockquote { margin: 1.4rem 0; padding: .1rem 1.2rem; border-left: 3px solid var(--cp-accent); color: var(--cp-muted); font-style: italic; }
+.cp-text hr { border: 0; border-top: 1px solid var(--cp-line); margin: 2rem 0; }
+.cp-text pre { overflow-x: auto; background: var(--cp-card); border: 1px solid var(--cp-line); padding: .8rem 1rem; border-radius: .4rem; font-size: .95rem; }
+.cp-text code { font-size: .95em; }
+.cp-more { display: grid; gap: .75rem; margin: 3rem auto 0; max-width: 42rem; padding-top: 1.2rem; border-top: 1px solid var(--cp-line); grid-template-columns: 1fr 1fr; }
+.cp-more a { display: block; text-decoration: none; }
+.cp-more small { display: block; color: var(--cp-muted); font-size: .85rem; letter-spacing: .06em; text-transform: uppercase; }
+.cp-older { text-align: right; grid-column: 2; }
+.cp-newer { grid-column: 1; }
+.cp-all { grid-column: 1 / -1; text-align: center; }
+
+/* records and research */
+.cp-group { margin: 2.4rem 0 0; }
+.cp-group h2 { font-family: var(--font-display, Georgia, serif); font-size: 1.4rem; margin: 0 0 .6rem; padding-bottom: .3rem; border-bottom: 1px solid var(--cp-line); font-weight: 600; }
+.cp-count { color: var(--cp-muted); font-size: .9rem; font-weight: 400; margin-left: .3rem; }
+.cp-records { list-style: none; margin: 0; padding: 0; }
+.cp-records li { padding: .55rem 0; border-bottom: 1px solid color-mix(in srgb, var(--cp-line) 55%, transparent); }
+.cp-rec-title { font-weight: 600; }
+.cp-rec-where, .cp-rec-note { display: block; color: var(--cp-muted); font-size: .98rem; }
+.cp-q-who { font-weight: 600; }
+
+@media (max-width: 40rem) {
+    .cp-body { font-size: 1.05rem; }
+    .cp-more { grid-template-columns: 1fr; }
+    .cp-older, .cp-newer, .cp-all { grid-column: 1; text-align: left; }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .cp-card { transition: box-shadow .15s ease; }
+    .cp-card:hover { box-shadow: 0 4px 16px color-mix(in srgb, var(--cp-ink) 14%, transparent); }
+}

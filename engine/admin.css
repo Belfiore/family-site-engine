@@ -1,0 +1,68 @@
+/* The settings page (/admin/). Plain and self-contained: it uses the site's colour tokens (--ink, --cream, --gold-dark)
+   but none of the site's own styles, so it looks the same on every site and cannot be broken by one. */
+.ad-body {
+    --ad-ink: var(--ink, #1a1a2e);
+    --ad-muted: color-mix(in srgb, var(--ad-ink) 66%, transparent);
+    --ad-paper: var(--cream, #fdf8f0);
+    --ad-card: color-mix(in srgb, #ffffff 80%, var(--ad-paper));
+    --ad-accent: var(--gold-dark, #8a6a2f);
+    --ad-line: color-mix(in srgb, var(--ad-accent) 30%, var(--ad-paper));
+    --ad-ok: #1f6b3a;
+    --ad-bad: #a12626;
+    margin: 0;
+    background: var(--ad-paper);
+    color: var(--ad-ink);
+    font: 1rem/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.ad-body *, .ad-body *::before, .ad-body *::after { box-sizing: border-box; }
+.ad-skip { position: absolute; left: 1rem; top: -4rem; background: var(--ad-accent); color: #fff; padding: .5rem .9rem; border-radius: 6px; z-index: 10; }
+.ad-skip:focus { top: .6rem; }
+.ad-top { border-bottom: 1px solid var(--ad-line); background: var(--ad-card); }
+.ad-top-in { max-width: 44rem; margin: 0 auto; padding: .8rem 1.25rem; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+.ad-back { color: var(--ad-accent); }
+.ad-eyebrow { margin: 0; color: var(--ad-muted); font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; }
+.ad-main { max-width: 44rem; margin: 0 auto; padding: 1.8rem 1.25rem 4rem; }
+.ad-main h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .4rem; }
+.ad-lede { margin: 0 0 1.6rem; color: var(--ad-muted); }
+.ad-card { background: var(--ad-card); border: 1px solid var(--ad-line); border-radius: .6rem; padding: 1.1rem 1.25rem 1.3rem; margin: 0 0 1.2rem; }
+.ad-card h2 { font-size: 1.15rem; margin: 0 0 .7rem; }
+.ad-body code { font-size: .92em; background: color-mix(in srgb, var(--ad-ink) 7%, transparent); padding: .05rem .3rem; border-radius: 4px; }
+.ad-body a { color: var(--ad-accent); }
+.ad-body label { display: block; font-weight: 600; margin: .8rem 0 .25rem; }
+.ad-body input[type="text"], .ad-body input[type="password"], .ad-body select {
+    width: 100%; font: inherit; padding: .55rem .7rem; border: 1px solid color-mix(in srgb, var(--ad-ink) 35%, transparent); border-radius: .4rem; background: #fff; color: var(--ad-ink);
+}
+.ad-body input:disabled, .ad-body select:disabled { background: color-mix(in srgb, var(--ad-ink) 6%, #fff); color: var(--ad-muted); }
+.ad-body :focus-visible { outline: 3px solid var(--ad-accent); outline-offset: 2px; }
+.ad-btn { font: inherit; font-weight: 600; margin-top: .8rem; padding: .55rem 1.1rem; border-radius: .4rem; border: 1px solid var(--ad-accent); background: #fff; color: var(--ad-accent); cursor: pointer; }
+.ad-btn:hover:not(:disabled) { background: color-mix(in srgb, var(--ad-accent) 10%, #fff); }
+.ad-btn-main { background: var(--ad-accent); color: #fff; }
+.ad-btn-main:hover:not(:disabled) { background: color-mix(in srgb, var(--ad-accent) 85%, #000); }
+.ad-btn-quiet { border-color: transparent; text-decoration: underline; background: transparent; }
+.ad-btn:disabled { opacity: .5; cursor: not-allowed; }
+.ad-actions { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+.ad-ro { padding: .6rem .8rem; border-left: 4px solid var(--ad-accent); background: color-mix(in srgb, var(--ad-accent) 10%, transparent); margin: .5rem 0; }
+.ad-ro-note, .ad-help, .ad-note { color: var(--ad-muted); font-size: .92rem; }
+.ad-note { display: block; font-weight: 400; }
+.ad-ok { color: var(--ad-ok); font-weight: 600; margin: .3rem 0; }
+.ad-error { color: var(--ad-bad); font-weight: 600; margin: .8rem 0 0; }
+.ad-out { min-height: 1.5rem; margin: .2rem 0 1rem; }
+.ad-out.ad-error { color: var(--ad-bad); }
+.ad-out.ad-ok { color: var(--ad-ok); }
+.ad-set { border: 0; margin: 0; padding: 0; }
+.ad-set legend { font-weight: 700; padding: 0; margin-bottom: .3rem; }
+.ad-row { display: flex; align-items: flex-start; gap: .8rem; padding: .55rem 0; border-bottom: 1px solid color-mix(in srgb, var(--ad-line) 60%, transparent); }
+.ad-row label { margin: 0; flex: 1; font-weight: 600; cursor: pointer; }
+.ad-name { display: block; }
+/* a switch: a checkbox drawn as a track and a knob */
+.ad-row input[role="switch"] { appearance: none; -webkit-appearance: none; flex: none; width: 2.9rem; height: 1.6rem; border-radius: 999px; margin: .1rem 0 0; position: relative; cursor: pointer;
+    background: color-mix(in srgb, var(--ad-ink) 28%, #fff); border: 1px solid color-mix(in srgb, var(--ad-ink) 30%, transparent); transition: background .15s ease; }
+.ad-row input[role="switch"]::after { content: ""; position: absolute; top: .12rem; left: .15rem; width: 1.25rem; height: 1.25rem; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.35); transition: transform .15s ease; }
+.ad-row input[role="switch"]:checked { background: var(--ad-ok); border-color: var(--ad-ok); }
+.ad-row input[role="switch"]:checked::after { transform: translateX(1.3rem); }
+.ad-row input[role="switch"]:disabled { opacity: .55; cursor: not-allowed; }
+.ad-changes { margin: .4rem 0 .2rem; padding-left: 1.2rem; }
+.ad-changes li { margin: .25rem 0; }
+.ad-review { border-color: var(--ad-accent); border-width: 2px; }
+.ad-warn { padding: .6rem .8rem; border-left: 4px solid var(--ad-bad); background: color-mix(in srgb, var(--ad-bad) 8%, transparent); }
+@media (prefers-reduced-motion: reduce) { .ad-row input[role="switch"], .ad-row input[role="switch"]::after { transition: none; } }

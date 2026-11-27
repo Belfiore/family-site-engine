@@ -35,6 +35,8 @@ jobs:
 
       - name: Languages
         run: python3 tests/test_i18n.py
+      - name: Page switches, Stories, Records and Research, the settings page and the pages schema
+        run: python3 tests/test_pages.py
 
       - name: The sample site's data
         run: python3 build/validate.py --site sample
@@ -68,3 +70,8 @@ jobs:
 
       - name: The map's relationships and source preview in a browser
         run: node tests/check-map-relations.js
+      - name: The settings page, editing the settings file
+        run: node tests/check-admin-edit.js
+
+      - name: The settings page in a browser, against a pretend GitHub
+        run: node tests/check-admin.js

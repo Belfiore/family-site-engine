@@ -35,7 +35,7 @@ Each site's `deploy.yml` calls `build-site.yml@vX.Y.Z` (a reusable workflow, pin
 2. Picks the engine version: the `engine-version` input for that run, else `engine.version` in `site.config.json`, else the version its `engine.channel` points to (default `stable`).
 3. Checks out this repo at tag `v<version>`.
 4. Runs `build/build_site.py --site <site> --out _site`. This validates settings and data against the schemas and runs cross-checks, copies the site, copies `engine/` to `_site/engine/<version>/`, builds the tree, map and Stuart pages from templates, normalizes the site's pages (one nav bar, engine files, Stuart button) and writes Stuart's index. Any error stops the build.
-4b. When `timeline.enabled` is true, first reads the live site's `discoveries/state.json` (`build/previous_site.py`) and passes it as `--previous previous`. Without that history the build stops.
+4b. When the Discovery Timeline is on (`pages.discoveries`, or `timeline.enabled` when that is not set), first reads the live site's `discoveries/state.json` (`build/previous_site.py`) and passes it as `--previous previous`. Without that history the build stops.
 5. Runs the site's own checks (`site-tests`, with `DIST` set to the build).
 6. Publishes to GitHub Pages only if all of that passed. On pull requests it runs with `deploy: false`.
 
@@ -43,7 +43,7 @@ Because the workflow is pinned by tag in each site's `deploy.yml` and `check.yml
 
 ## Site settings
 
-`site.config.json` is validated against `schema/site-config.schema.json` (`additionalProperties: false` nearly everywhere). Required: `schemaVersion` (const 1), `site` (with `name`), `nav`. Top-level sections: `engine` (`channel` of stable, beta or canary, or `version` pin which overrides the channel), `site`, `pages` (home, tree, map, ask), `nav`, `head`, `theme` (CSS custom properties written to `site-theme.css`), `data`, `tree`, `map`, `stuart`, `widget`, `publish`, `process`. Document every new key in `docs/site-config.md` and add it to the schema. A new key must be optional.
+`site.config.json` is validated against `schema/site-config.schema.json` (`additionalProperties: false` nearly everywhere). Required: `schemaVersion` (const 1), `site` (with `name`), `nav`. Top-level sections: `engine` (`channel` of stable, beta or canary, or `version` pin which overrides the channel), `site`, `pages` (home, stories, tree, map, records, discoveries, ask; see Page toggles below), `admin`, `nav`, `head`, `theme` (CSS custom properties written to `site-theme.css`), `data`, `tree`, `map`, `stuart`, `widget`, `publish`, `process`. Document every new key in `docs/site-config.md` and add it to the schema. A new key must be optional.
 
 ## Releases
 
@@ -80,6 +80,9 @@ node tests/check-visitor.js             # SHOTS=dir saves screenshots
 node tests/check-access.js              # SHOTS=dir for screenshots, VIDEO=dir for recordings of the first visit
 node tests/check-i18n.js                # the switcher, German dates, translated fields; SHOTS=dir for screenshots
 node tests/check-map-relations.js       # the map's Relationships to, no Street View message, source card and drawer; SHOTS=dir
+python3 tests/test_pages.py
+node tests/check-admin-edit.js
+node tests/check-admin.js               # SHOTS=dir saves screenshots of /admin and a nav with pages off
 ```
 
 ## Previewing an engine change against a real site
@@ -122,7 +125,7 @@ Repeat for the Italian and Kohlmann sites when they are checked out. Any differe
 
 ## The Discovery Timeline
 
-Optional (`timeline.enabled`, default false). Full design in `docs/discovery-timeline.md`. What to keep true when changing it:
+Optional (`pages.discoveries`, or the older `timeline.enabled`; default off). Full design in `docs/discovery-timeline.md`. What to keep true when changing it:
 
 - **A site that has it off must build byte for byte as before.** The page, the navigation entry, `timeline.css` and `timeline.js`, the `timeline` key of `engine-build.json` and the `discoveries/` files exist only when it is on. `tests/test_discoveries.py` compares a build with and without the engine's change. Do the same `diff -r` on a real site (see the backward compatibility check above).
 - **The history is the published site.** `discoveries/state.json` (internal) and `discoveries/history.json` (the page's view) are written by every publication and fetched from the live site by the next one. Do not add a second store. A failed build publishes nothing, so it cannot move the baseline.
@@ -164,6 +167,18 @@ Optional (`language`, default English only). Full design in `docs/languages.md`.
 - **One choice.** "Relationships to" is one person id in `localStorage` `tc_viewpoint`, read and written through `FamilyKinship.viewpoint`. A visitor's own answer (`visitor.enabled`) overrides it and is never written to it. Nothing chosen means the map adds nothing.
 - **Sources show only what they hold.** `source-preview.js` makes no link, thumbnail or summary the source does not have. A source with neither `file` nor `url` is plain text. See `docs/source-preview.md`.
 - **A place without Street View says nothing.** No message, no empty button.
+## Page toggles, Stories and the settings page
+
+Docs: `docs/site-config.md#pages`, `docs/stories.md`, `docs/admin.md`. What to keep true when changing them:
+
+- **One door for "is this page on".** `build/sitecfg.py` (`page_state`, `load`) decides, and everything else (nav, sitemap, Stuart's index, the tree's map link, validation, the settings page) reads `cfg['_pages']`, `cfg['_off_files']` and `cfg['_toggles']`. Do not test `pages.x` anywhere else.
+- **A missing key keeps its old meaning.** `tree`, `map` and `ask` are made only when set; `stories` appears only when `content/stories/*.md` exists (or the key is `true`); `records` is opt-in; `discoveries` follows `timeline.enabled` unless `pages.discoveries` is a boolean. A site that changes nothing must build byte for byte as before. New engine files (`content-pages.css`, `admin.js`, `admin.css`, the timeline files) are copied only when the page is on. Do the `diff -r` on the real sites (see above) after touching any of this.
+- **Off means gone.** Not built, not in the nav, not in the sitemap, not in Stuart's index, not linked from the engine's pages; links in the site's own pages become plain text with a warning. `home` cannot be off.
+- **`content/stories/` is never published** (the Markdown and drafts stay in the repo). The Markdown renderer (`build/markdown.py`) escapes everything and allows only http, https, mailto, relative and `#` links. Do not add raw HTML.
+- **Story tags go through the privacy rule.** Living people and people in a hidden region get no tag (`stories.taggable`). Add the case to `tests/test_pages.py` when changing it.
+- **The settings page is static and opt-in** (`admin.enabled`). `noindex`, no nav, no sitemap, no Stuart. The token lives only in `sessionStorage` and goes only to `api.github.com` in an `Authorization` header; never log it, never put it in a URL, never commit one. The CSP in `templates/admin.html` allows no other host. Saving edits `site.config.json` in place and `verify()` refuses any change outside the settings the page owns.
+- **The switch rules exist twice** (`build/sitecfg.py`, `engine/admin.js`). `tests/fixtures/pages-cases.json` is the shared set of cases; add a case there whenever the rules change, and both test suites must pass.
+- **The pages block has a schema** (`schema/pages.schema.json`, also inlined in `site-config.schema.json`); keep them in step. CI runs the page tests.
 
 ## Style
 
