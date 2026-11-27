@@ -2,7 +2,7 @@
 
 Family history sites, built from the records.
 
-![Banner: Stuart Genealogy Research Engine. Family history sites, built from the records.](docs/images/banner.png)
+![Portrait of Edward beside the title Stuart Genealogy Research Engine.](docs/images/banner.png)
 
 [![Release](https://img.shields.io/github/v/release/Belfiore/family-site-engine?label=release&color=8a6a2f)](https://github.com/Belfiore/family-site-engine/releases/latest)
 [![Checks](https://github.com/Belfiore/family-site-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/Belfiore/family-site-engine/actions/workflows/ci.yml)
