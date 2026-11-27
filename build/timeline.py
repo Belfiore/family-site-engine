@@ -12,6 +12,7 @@ What goes into the built site:
 import datetime, json, os, sys
 
 import discoveries as D
+import i18n
 import timeline_page
 
 STATE_REL = os.path.join('discoveries', 'state.json')
@@ -98,7 +99,13 @@ def run(site, cfg, out, previous_arg, now_arg, version):
     hist = D.public_history(state, snap)
     write_json(os.path.join(out, STATE_REL), state)
     write_json(os.path.join(out, HISTORY_REL), hist)
-    body = timeline_page.render_body(hist['entries'], hist['lines'], cfg, cfg['_pages'], since=hist.get('since'), full_of=snap.full_of)
+    st = i18n.settings(cfg)
+    body = timeline_page.render_body(hist['entries'], hist['lines'], cfg, cfg['_pages'], since=hist.get('since'), full_of=snap.full_of, lang=st['default'])
+    # a site whose visitors can choose a language gets the page in each of the others too, kept inert in a <template> that the script swaps in
+    for lang in st['available'] if st['switcher'] else []:
+        if lang == st['default']: continue
+        other = timeline_page.render_body(hist['entries'], hist['lines'], cfg, cfg['_pages'], since=hist.get('since'), full_of=snap.full_of, lang=lang)
+        body += '\n<template id="tl-lang-%s" data-lang="%s">\n%s\n</template>' % (lang, lang, other)
     info = {'file': cfg['_pages']['timeline'], 'mode': report['mode'], 'new': report['new'], 'entries': len(hist['entries']),
             'since': hist.get('since'), 'previous': how, 'warnings': snap.warnings, 'notes': report['notes']}
     return body, info

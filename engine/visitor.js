@@ -1,3 +1,4 @@
+/* @i18n visitor */
 /* Who is visiting: "Who are you?", remembered on this device, and a small context other parts of the site can read.
    Loaded, with visitor-match.js and visitor.css, only on a site that turns visitor.enabled on (docs/visitor.md).
 
@@ -17,7 +18,7 @@
    and the same news as a "familyvisitor:change" event on window. */
 (function () {
     'use strict';
-    var doc = document, html = doc.documentElement;
+    var doc = document, html = doc.documentElement, I = window.FamilyI18n;
     var script = doc.currentScript;
     var ROOT = '/';
     try { if (script && script.src) ROOT = new URL('../../', script.src).pathname; } catch (_) {}
@@ -52,7 +53,7 @@
                 keep = tree.suspectedRelatives || {};
                 if (!url) return ok([]);
                 fetch(new URL(url, location.origin + ROOT).href, { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : { people: [] }; })
-                    .then(function (d) { ok((d && d.people) || []); }, function () { ok([]); });
+                    .then(function (d) { ok(((d && I.localize(d)) && d.people) || []); }, function () { ok([]); });
             }
             if (window.FamilySite) go(); else doc.addEventListener('DOMContentLoaded', go);
         });
@@ -72,7 +73,7 @@
         var bits = [];
         if (p.disambiguator) bits.push(p.disambiguator);
         var y = birthYear(p);
-        if (y) bits.push('born ' + y);
+        if (y) bits.push(I.t('visitor.born', { year: y }));
         return bits.join(', ');
     }
     // a photo only where the site allows it: living people's pictures need visitor.livingPhotos
@@ -106,6 +107,11 @@
     });
 
     // ------------------------------------------------------------------ small helpers
+    // a setting the site left alone shows the engine's words in the visitor's language; one the site wrote is shown as written
+    function setting(cfg, name, key) {
+        var v = I.pick(cfg, name);
+        return (!v || v === I.en(key)) ? I.t(key) : v;
+    }
     function el(tag, attrs, kids) {
         var n = doc.createElement(tag);
         Object.keys(attrs || {}).forEach(function (k) { if (k === 'text') n.textContent = attrs[k]; else n.setAttribute(k, attrs[k]); });
@@ -164,17 +170,17 @@
             function pick() {
                 stage.textContent = ''; stage.className = 'fv-stage fv-pick';
                 var input = el('input', { type: 'text', id: 'fv-input', class: 'fv-input', role: 'combobox', 'aria-expanded': 'true', 'aria-controls': 'fv-list', 'aria-autocomplete': 'list',
-                    'aria-label': 'Your name', placeholder: 'Start typing your name', autocomplete: 'off', autocapitalize: 'words', spellcheck: 'false', enterkeyhint: 'search' });
-                var list = el('ul', { class: 'fv-list', id: 'fv-list', role: 'listbox', 'aria-label': 'Matching family members' });
+                    'aria-label': I.t('visitor.yourName'), placeholder: I.t('visitor.placeholder'), autocomplete: 'off', autocapitalize: 'words', spellcheck: 'false', enterkeyhint: 'search' });
+                var list = el('ul', { class: 'fv-list', id: 'fv-list', role: 'listbox', 'aria-label': I.t('visitor.matching') });
                 var live = el('p', { class: 'fv-live', role: 'status', 'aria-live': 'polite' });
-                stage.appendChild(el('h2', { id: 'fv-title', class: 'fv-title', text: cfg.question || 'Who are you?' }));
-                stage.appendChild(el('p', { class: 'fv-lead', text: cfg.lead || '' }));
+                stage.appendChild(el('h2', { id: 'fv-title', class: 'fv-title', text: setting(cfg, 'question', 'visitor.question') }));
+                stage.appendChild(el('p', { class: 'fv-lead', text: setting(cfg, 'lead', 'visitor.lead') }));
                 stage.appendChild(input); stage.appendChild(list); stage.appendChild(live);
                 var foot = el('div', { class: 'fv-foot' });
-                var skipBtn = el('button', { type: 'button', class: 'fv-quiet', text: cfg.skipLabel || 'Continue without choosing' });
+                var skipBtn = el('button', { type: 'button', class: 'fv-quiet', text: setting(cfg, 'skipLabel', 'visitor.skip') });
                 skipBtn.addEventListener('click', function () { skip(); close(); });
                 foot.appendChild(skipBtn);
-                if (!first) { var cancel = el('button', { type: 'button', class: 'fv-quiet', text: 'Cancel' }); cancel.addEventListener('click', function () { close(); }); foot.appendChild(cancel); }
+                if (!first) { var cancel = el('button', { type: 'button', class: 'fv-quiet', text: I.t('visitor.cancel') }); cancel.addEventListener('click', function () { close(); }); foot.appendChild(cancel); }
                 stage.appendChild(foot);
 
                 function draw() {
@@ -189,7 +195,7 @@
                         li.appendChild(photo ? el('img', { class: 'fv-face', src: photo, alt: '', loading: 'lazy' }) : el('span', { class: 'fv-face fv-face--none', 'aria-hidden': 'true', text: (firstName(p) || '?').charAt(0).toUpperCase() }));
                         var t = el('span', { class: 'fv-opt-text' });
                         t.appendChild(el('span', { class: 'fv-opt-name', text: p.displayName }));
-                        if (r.via) t.appendChild(el('span', { class: 'fv-opt-via', text: r.via.text + (r.via.note ? ' (' + r.via.note + ')' : '') }));
+                        if (r.via) t.appendChild(el('span', { class: 'fv-opt-via', text: r.via.text + (r.via.kind === 'birth' ? ' (' + I.t('visitor.nameAtBirth') + ')' : r.via.note ? ' (' + r.via.note + ')' : '') }));
                         var c = context(p); if (c) t.appendChild(el('span', { class: 'fv-opt-ctx', text: c }));
                         li.appendChild(t);
                         li.addEventListener('mousedown', function (e) { e.preventDefault(); });
@@ -197,7 +203,7 @@
                         list.appendChild(li);
                     });
                     if (rows[active]) input.setAttribute('aria-activedescendant', 'fv-opt-' + active); else input.removeAttribute('aria-activedescendant');
-                    live.textContent = !q.trim() ? '' : rows.length ? rows.length + (rows.length === 1 ? ' match' : ' matches') : 'No one by that name. You can carry on without choosing.';
+                    live.textContent = !q.trim() ? '' : rows.length ? I.n('visitor.match', rows.length) : I.t('visitor.none');
                     live.classList.toggle('is-none', !!q.trim() && !rows.length);
                 }
                 input.addEventListener('input', function () { active = 0; draw(); });
@@ -213,16 +219,16 @@
                 chosen = p;
                 stage.textContent = ''; stage.className = 'fv-stage fv-confirm';
                 var photo = photoOf(p);
-                stage.appendChild(el('p', { class: 'fv-lead', text: 'Is this you?' }));
+                stage.appendChild(el('p', { class: 'fv-lead', text: I.t('visitor.isThis') }));
                 stage.appendChild(photo ? el('img', { class: 'fv-face fv-face--big', src: photo, alt: '' }) : el('span', { class: 'fv-face fv-face--big fv-face--none', 'aria-hidden': 'true', text: (firstName(p) || '?').charAt(0).toUpperCase() }));
                 stage.appendChild(el('h2', { id: 'fv-title', class: 'fv-title', text: p.displayName }));
                 var c = context(p); if (c) stage.appendChild(el('p', { class: 'fv-ctx', text: c }));
-                var yes = el('button', { type: 'button', class: 'fv-btn', text: 'Yes, that is me' });
-                var no = el('button', { type: 'button', class: 'fv-quiet', text: 'No, go back' });
+                var yes = el('button', { type: 'button', class: 'fv-btn', text: I.t('visitor.yes') });
+                var no = el('button', { type: 'button', class: 'fv-quiet', text: I.t('visitor.no') });
                 yes.addEventListener('click', function () { choose(p); });
                 no.addEventListener('click', pick);
                 stage.appendChild(el('div', { class: 'fv-actions' }, [yes, no]));
-                stage.appendChild(el('p', { class: 'fv-fine', text: 'This only decides where the family tree starts. It stays on this device and is not a login.' }));
+                stage.appendChild(el('p', { class: 'fv-fine', text: I.t('visitor.fine') }));
                 setTimeout(function () { try { yes.focus({ preventScroll: true }); } catch (_) {} }, 30);
             }
 
@@ -231,7 +237,7 @@
                 if (REDUCE || cfg.welcome === false) { emit('set'); close(); return; }
                 stage.textContent = ''; stage.className = 'fv-stage fv-welcome';
                 stage.appendChild(treeMark());
-                stage.appendChild(el('p', { class: 'fv-lead', text: 'Welcome' }));
+                stage.appendChild(el('p', { class: 'fv-lead', text: I.t('visitor.welcome') }));
                 stage.appendChild(el('h2', { id: 'fv-title', class: 'fv-title', text: firstName(p) }));
                 var done = false;
                 function end() { if (done) return; done = true; doc.removeEventListener('keydown', end); root && root.removeEventListener('click', end); emit('set'); close(); }
@@ -250,14 +256,14 @@
     function paintChip() {
         if (!chip) return;
         who().then(function (p) {
-            var label = p ? firstName(p) : 'Who are you?';
+            var label = p ? firstName(p) : I.t('visitor.chip');
             chip.querySelector('.fv-chip-text').textContent = label;
             chip.classList.toggle('is-quiet', !p);
-            chip.setAttribute('aria-label', p ? 'You: ' + p.displayName + '. Change or forget.' : 'Say who you are');
+            chip.setAttribute('aria-label', p ? I.t('visitor.chipAria', { name: p.displayName }) : I.t('visitor.chipAriaNone'));
             if (menu) {
-                menu.querySelector('.fv-menu-line').textContent = p ? 'Viewing the family as ' + p.displayName + '.' : 'You have not said who you are.';
+                menu.querySelector('.fv-menu-line').textContent = p ? I.t('visitor.viewing', { name: p.displayName }) : I.t('visitor.notSaid');
                 menu.querySelector('[data-act=forget]').hidden = !rec;
-                menu.querySelector('[data-act=change]').textContent = p ? 'Not you? Choose someone else' : 'Choose who you are';
+                menu.querySelector('[data-act=change]').textContent = p ? I.t('visitor.notYou') : I.t('visitor.choose');
             }
         });
     }
@@ -266,12 +272,12 @@
         if (!host || chip) return;
         var access = (window.FamilySite || {}).access;
         chip = el('button', { type: 'button', class: 'fv-chip', 'aria-haspopup': 'true', 'aria-expanded': 'false' }, [el('span', { class: 'fv-chip-dot', 'aria-hidden': 'true' }), el('span', { class: 'fv-chip-text' })]);
-        menu = el('div', { class: 'fv-menu', role: 'group', 'aria-label': 'Who you are', hidden: '' });
+        menu = el('div', { class: 'fv-menu', role: 'group', 'aria-label': I.t('visitor.group'), hidden: '' });
         menu.appendChild(el('p', { class: 'fv-menu-line' }));
         menu.appendChild(el('button', { type: 'button', 'data-act': 'change', class: 'fv-menu-btn' }));
-        menu.appendChild(el('button', { type: 'button', 'data-act': 'forget', class: 'fv-menu-btn', text: 'Forget me on this device' }));
-        if (access && access.logout) menu.appendChild(el('button', { type: 'button', 'data-act': 'lock', class: 'fv-menu-btn', text: 'Lock this device' }));
-        menu.appendChild(el('p', { class: 'fv-menu-fine', text: 'Only used to start the tree from your place in the family. Kept on this device, never sent anywhere, and not a login.' }));
+        menu.appendChild(el('button', { type: 'button', 'data-act': 'forget', class: 'fv-menu-btn', text: I.t('visitor.forget') }));
+        if (access && access.logout) menu.appendChild(el('button', { type: 'button', 'data-act': 'lock', class: 'fv-menu-btn', text: I.t('visitor.lock') }));
+        menu.appendChild(el('p', { class: 'fv-menu-fine', text: I.t('visitor.menuFine') }));
         var wrap = el('div', { class: 'fv-wrap' }, [chip]);
         var toggle = host.querySelector('.nav-toggle');
         host.insertBefore(wrap, toggle || null);

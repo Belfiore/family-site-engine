@@ -216,6 +216,19 @@ Optional. "Who are you?": the visitor says who they are, the device remembers it
 "visitor": { "enabled": true }
 ```
 
+## language
+
+```json
+"language": { "default": "en", "available": ["en", "de"] }
+```
+
+Optional. Without it the site is English only and builds exactly as before.
+
+- `default`: the language of the site until a visitor chooses another: `en` (the default) or `de`.
+- `available`: the languages a visitor can choose from (default: only `default`). With more than one, the navigation bar shows an `EN | DE` switcher; the choice is kept in the visitor's browser and sets `<html lang>`.
+
+Words a site writes itself take a language ending (`label_de`, `title_de`, `name_de`) and so does research text in the data (`story_de`); the original is used where the German is missing. See [languages](languages.md) for what is translated, what stays English and how to add a language.
+
 ## publish and process
 
 - `publish.exclude`: files and folders not to publish (globs from the site folder: `"drafts/"`, `"*.psd"`). `.git`, `.github`, `node_modules`, `_site` and `site.config.json` are never published.

@@ -191,7 +191,19 @@ def branch_lines(cfg, people):
                      for r in p.get('relatedPages') or []]
             pick_ = next((b for b in branches if b is not default and not (b.get('regions') or []) and any(pg in (b.get('pages') or []) for pg in pages)), None)
         out[p['id']] = (pick_ or default)['id']
-    return out, [{'id': b['id'], 'label': b.get('label') or b['id']} for b in branches], default['id']
+    return out, [dict({'id': b['id'], 'label': b.get('label') or b['id']}, **tr_of(b, ('label',), 'tr')) for b in branches], default['id']
+
+
+def tr_of(d, fields, key='tr'):
+    """The site's words in other languages: label_de beside label becomes {'tr': {'de': {'label': ...}}}. Nothing for a site that has none."""
+    import i18n
+    tr = {}
+    for lang in i18n.languages():
+        if lang == 'en': continue
+        for f in fields:
+            v = (d or {}).get('%s_%s' % (f, lang))
+            if isinstance(v, str) and v.strip(): tr.setdefault(lang, {})[f] = v.strip()
+    return {key: tr} if tr else {}
 
 
 def build_snapshot(site, cfg, people_doc, sources_doc, places_doc, curated_doc, file_id=None):
@@ -950,6 +962,7 @@ def apply_status(entries, changes, new_entries, day):
 
 def text_fields(e):
     out = [e.get('headline'), e.get('changeNote'), (e.get('source') or {}).get('text'), e.get('foundBy')]
+    out += [v for t in (e.get('tr') or {}).values() for v in t.values()]       # the same finds in other languages are checked the same way
     out += [x for ch in e.get('change') or [] for x in (ch.get('field'), ch.get('from'), ch.get('to'))]
     return ' '.join(str(x) for x in out if x)
 
@@ -972,6 +985,7 @@ def overlay(entries, snap, now):
     for e in entries:
         base = e.pop('auto', None)
         if base: e.update(base)
+        e.pop('tr', None)         # translations come from the notes, as the notes are today
     by_atom = {}
     for e in sorted(entries, key=lambda e: (e.get('found') or '', e['id'])):
         if e.get('origin') == 'manual': continue
@@ -1011,6 +1025,10 @@ def overlay(entries, snap, now):
         if d.get('image'): fields['image'] = d['image']
         if d.get('imageAlt'): fields['imageAlt'] = d['imageAlt']
         if (d.get('changeNote') or '').strip(): fields['changeNote'] = d['changeNote'].strip()
+        tr = tr_of(d, ('headline', 'changeNote', 'foundBy', 'imageAlt', 'sourceText'))
+        if isinstance(src, dict):         # source: { "text": "...", "text_de": "..." }
+            for lang, v in tr_of(src, ('text',)).get('tr', {}).items(): tr.setdefault('tr', {}).setdefault(lang, {})['sourceText'] = v['text']
+        if tr: target['tr'] = tr['tr']
         if fields:
             target['auto'] = {**target.get('auto', {}), **{k: target.get(k) for k in fields if k not in target.get('auto', {})}}
             target.update(fields)
@@ -1091,7 +1109,7 @@ def off_tree(e, snap):
 
 
 PUBLIC_FIELDS = ('id', 'found', 'foundIs', 'published', 'type', 'headline', 'foundBy', 'source', 'confidence', 'image', 'imageAlt',
-                 'changeNote', 'status', 'statusDate', 'change', 'lines', 'personIds', 'placeIds', 'focus')
+                 'changeNote', 'status', 'statusDate', 'change', 'lines', 'personIds', 'placeIds', 'focus', 'tr')
 
 
 def public_history(state, snap):

@@ -13,6 +13,8 @@ Cloudflare Pages project; this module only builds the code that checks it.
 """
 import base64, hashlib, html, json, os, re
 
+import i18n
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ENGINE_ROOT = os.path.dirname(HERE)
 DASHES = (chr(0x2014), chr(0x2013))
@@ -57,6 +59,8 @@ def visitor_settings(raw):
         return None
     out = dict(VISITOR_DEFAULTS)
     out.update({k: v_ for k, v_ in v.items() if k in VISITOR_DEFAULTS})
+    # question_de beside question: the same words in another language (docs/languages.md)
+    out.update({k: v_ for k, v_ in v.items() if isinstance(v_, str) and k.rpartition('_')[0] in ('question', 'lead', 'skipLabel') and k.rpartition('_')[2] in i18n.languages()})
     return out
 
 
@@ -77,6 +81,9 @@ def check(cfg, site):
                 block, ' and the site is NOT password protected' if block == 'access' else ''))
         for k, v in b.items():
             # a misspelt setting must not quietly leave a site open or without its question, so these are errors, not warnings
+            base_, _, lang_ = k.rpartition('_')
+            if base_ in known[block] and lang_ in i18n.languages() and isinstance(known[block][base_], str):
+                continue                  # kicker_de beside kicker: the same words in another language (docs/languages.md)
             if k not in known[block] and not SECRETISH.search(k):
                 errors.append('%s.%s: not a setting (see docs/site-config.md). A misspelt "enabled" would leave the feature off.' % (block, k))
             if SECRETISH.search(k) and k not in ('cookieDays',):
@@ -126,27 +133,61 @@ def entrance_page(cfg, a):
     with open(os.path.join(ENGINE_ROOT, 'templates', 'gate.js'), encoding='utf-8') as f:
         script = f.read().strip()
     site = cfg.get('site') or {}
+    if i18n.settings(cfg)['active']:     # the gate's own words, for the languages the site has (a site without a language setting gets the script as it is)
+        stx = i18n.settings(cfg)
+        langs = ['en'] + [l for l in dict.fromkeys([stx['default']] + stx['available']) if l != 'en']
+        words_ = {l: {k: v for k, v in i18n.load(l).items() if k.startswith('gate.') or k.startswith('lang.')} for l in langs}
+        script = 'var GATE_I18N = %s;\n%s' % (json.dumps({'default': stx['default'], 'available': stx['available'], 'words': words_}, ensure_ascii=False, separators=(',', ':')), script)
+    st = i18n.settings(cfg)
+    lang = st['default']
+    raw_a = (cfg.get('_raw') or {}).get('access') or {}
+
+    def words(field, key=None):
+        """(text, attributes) for one of the entrance's words. The site's own words are shown as written, with its other
+        languages beside them; the engine's own default words come from the dictionary."""
+        mine = raw_a.get(field)
+        if key and (not mine or mine == ACCESS_DEFAULTS[field]):
+            return (i18n.t(lang, key), ' data-i18n="%s"' % key if st['switcher'] else '') if st['active'] else (ACCESS_DEFAULTS[field], '')
+        text = a[field] if field in a else mine
+        if not st['active']:
+            return text, ''
+        shown = raw_a.get('%s_%s' % (field, lang)) or text if lang != 'en' else text
+        other = {l: raw_a['%s_%s' % (field, l)] for l in st['available'] if l != lang and raw_a.get('%s_%s' % (field, l))}
+        if lang != 'en' and 'en' in st['available'] and shown != text: other.setdefault('en', text)
+        attr = (" data-site-words='%s'" % html.escape(json.dumps(other, ensure_ascii=False), quote=True).replace("'", '&#x27;')) if (other and st['switcher']) else ''
+        return shown, attr
     name = a['wordmark'] or site.get('name') or 'Family archive'
     fonts_html, style_host, font_host = _fonts(cfg)
     theme = cfg.get('theme') or {}
     vars_css = '        :root {\n%s        }' % ''.join(
         '            %s: %s;\n' % (k if k.startswith('--') else '--' + k, str(v).replace('<', '\\3c ')) for k, v in theme.items()) if theme else ''
     image = ('    <img class="g-img" src="/%s" alt="">\n' % html.escape(a['entranceImage'], quote=True)) if a['entranceImage'] else ''
-    hint = ('    <p class="g-hint">%s</p>\n' % html.escape(a['hint'])) if a['hint'] else ''
+    hint_text, hint_attr = words('hint')
+    hint = ('    <p class="g-hint"%s>%s</p>\n' % (hint_attr, html.escape(hint_text))) if hint_text else ''
+    kicker, kicker_attr = words('kicker', 'gate.kicker')
+    prompt, prompt_attr = words('prompt', 'gate.prompt')
+    button, button_attr = words('button', 'gate.button')
+    lang_switch = ''
+    if st['switcher']:       # the visitor can choose here too, before the password: engine/gate.js draws the buttons into this
+        lang_switch = '    <div class="g-lang" id="glang" role="group" aria-label="%s" hidden></div>\n' % html.escape(i18n.t(lang, 'gate.language'))
     values = {
-        'lang': html.escape(site.get('lang') or 'en-GB'),
+        'lang': html.escape((site.get('lang') or 'en-GB') if lang == 'en' else lang),
         'title': html.escape(name),
         'fonts': fonts_html,
         'vars': vars_css,
-        'kicker': html.escape(a['kicker']),
+        'kicker': html.escape(kicker),
+        'kickerAttr': kicker_attr,
+        'promptAttr': prompt_attr,
+        'buttonAttr': button_attr,
+        'langSwitch': lang_switch,
         'wordmark': html.escape(name),
         'image': image,
-        'prompt': html.escape(a['prompt']),
-        'button': html.escape(a['button']),
+        'prompt': html.escape(prompt),
+        'button': html.escape(button),
         'hint': hint,
         'script': script,
     }
-    out = tpl
+    out = i18n.template(tpl, cfg)
     for k, v in values.items():
         out = out.replace('{{%s}}' % k, v)
     left = re.findall(r'\{\{[a-zA-Z]+\}\}', out)
@@ -183,4 +224,6 @@ def build(out, cfg):
 
 def browser_visitor(v):
     """What engine/visitor.js reads (window.FamilySite.visitor)."""
-    return {k: v[k] for k in ('question', 'lead', 'skipLabel', 'welcome', 'livingPhotos', 'scope')}
+    out = {k: v[k] for k in ('question', 'lead', 'skipLabel', 'welcome', 'livingPhotos', 'scope')}
+    out.update({k: v_ for k, v_ in v.items() if k not in out and k not in VISITOR_DEFAULTS})       # the same words in other languages
+    return out

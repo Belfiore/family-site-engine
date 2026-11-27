@@ -5,15 +5,13 @@ browser: the "since your last visit" banner, the filters, and the "show all" but
 """
 import datetime, html, json, re
 
+import i18n
+
 COLLAPSE_OVER = 6      # a day with more finds than this shows only the first few
 COLLAPSE_SHOWN = 5
-WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-CONF_LABEL = {'confirmed': 'Confirmed', 'probable': 'Probable', 'family tradition': 'Family tradition', 'unverified': 'Unverified'}
-TYPE_LABELS = {'person': 'New person', 'record': 'New record', 'photo': 'New photo', 'correction': 'Correction',
-               'place': 'New place', 'connection': 'New connection'}
-STATUS_TEXT = {'corrected': 'This find has since been corrected.', 'revised': 'Part of this find has since been withdrawn.',
-               'withdrawn': 'This find has since been withdrawn.'}
+TYPES = ('person', 'record', 'photo', 'correction', 'place', 'connection')
+CONFS = ('confirmed', 'probable', 'family tradition', 'unverified')
+STATUSES = ('corrected', 'revised', 'withdrawn')
 
 ICONS = {
     'person': '<circle cx="8" cy="5.2" r="2.7"/><path d="M2.6 14c.5-2.9 2.6-4.4 5.4-4.4s4.9 1.5 5.4 4.4"/>',
@@ -29,14 +27,20 @@ def esc(s):
     return html.escape(str(s if s is not None else ''), quote=True)
 
 
-def long_date(iso):
+def long_date(iso, lang='en'):
     d = datetime.date.fromisoformat(iso)
-    return '%s, %d %s %d' % (WEEKDAYS[d.weekday()], d.day, MONTHS[d.month - 1], d.year)
+    return i18n.date_text(lang, d.year, d.month, d.day, weekday=(d.weekday() + 1) % 7)
 
 
-def long_date_plain(iso):
+def long_date_plain(iso, lang='en'):
     d = datetime.date.fromisoformat(iso)
-    return '%d %s %d' % (d.day, MONTHS[d.month - 1], d.year)
+    return i18n.date_text(lang, d.year, d.month, d.day)
+
+
+def say(e, lang, field):
+    """A find's words in this language: the researcher's translation if there is one, else the words as written."""
+    tr = ((e.get('tr') or {}).get(lang) or {}) if lang != 'en' else {}
+    return tr.get(field) or e.get(field)
 
 
 def safe_url(u, allow_relative=True):
@@ -57,7 +61,7 @@ def trim_url(u):
     return u
 
 
-def source_html(src):
+def source_html(src, lang='en'):
     """The source of a find. A web address, whether the find names one (source.url) or the source's own words contain one, is
     a link that opens in a new tab. Anything else is plain text."""
     text = src.get('text') or ''
@@ -75,64 +79,69 @@ def source_html(src):
     return '<span class="tl-source">%s</span>' % ''.join(out)
 
 
-def count_phrase(n):
-    return '%d new find%s' % (n, '' if n == 1 else 's')
+def count_phrase(n, lang='en'):
+    return i18n.plural(lang, 'timeline.newFinds', n)
 
 
-def join_and(xs):
-    return xs[0] if len(xs) == 1 else ', '.join(xs[:-1]) + ' and ' + xs[-1]
+def line_label(l, lang='en'):
+    """A family line's name in this language: the site's `label_de` beside the `label` of the map branch."""
+    return ((l.get('tr') or {}).get(lang) or l['label']) if lang != 'en' else l['label']
 
 
-def day_summary(entries, line_labels, many_lines):
+def day_summary(entries, line_labels, many_lines, lang='en'):
     """'4 new finds across The Hartleys and The Moreaus.' The same rule is in engine/timeline.js, which rewrites the
     sentence when a filter is on."""
     n = len(entries)
-    used = [l['label'] for l in line_labels if any(l['id'] in (e.get('lines') or []) for e in entries)]
-    if many_lines and len(used) >= 2: return '%s across %s.' % (count_phrase(n), join_and(used))
-    if many_lines and len(used) == 1: return '%s in %s.' % (count_phrase(n), used[0])
-    return '%s.' % count_phrase(n)
+    used = [line_label(l, lang) for l in line_labels if any(l['id'] in (e.get('lines') or []) for e in entries)]
+    count = count_phrase(n, lang)
+    if many_lines and len(used) >= 2: return i18n.t(lang, 'timeline.summaryAcross', count=count, lines=i18n.list_text(lang, used))
+    if many_lines and len(used) == 1: return i18n.t(lang, 'timeline.summaryIn', count=count, line=used[0])
+    return i18n.t(lang, 'timeline.summaryPlain', count=count)
 
 
-def action_for(e, pages):
+def action_for(e, pages, lang='en'):
     """One quiet link to the exact person or place, or none. Never a generic page."""
     if e.get('offTree'): return None        # about someone (or a place) the tree and the map leave out: nothing there to open
     tree, mp = pages.get('tree'), pages.get('map')
     pids, pls = e.get('personIds') or [], e.get('placeIds') or []
     focus = e.get('focus') if e.get('focus') in pids else (pids[0] if pids else None)
     if e.get('type') == 'place' and pls and mp:
-        return {'label': 'Show on the map', 'href': '%s?place=%s' % (mp, pls[0])}
+        return {'label': i18n.t(lang, 'timeline.showOnMap'), 'href': '%s?place=%s' % (mp, pls[0])}
     if focus and tree:
-        return {'label': 'See it in the tree', 'href': '%s#/person/%s' % (tree, focus)}
+        return {'label': i18n.t(lang, 'timeline.seeInTree'), 'href': '%s#/person/%s' % (tree, focus)}
     if focus and mp:
-        return {'label': 'Show on the map', 'href': '%s?person=%s' % (mp, focus)}
+        return {'label': i18n.t(lang, 'timeline.showOnMap'), 'href': '%s?person=%s' % (mp, focus)}
     if pls and mp:
-        return {'label': 'Show on the map', 'href': '%s?place=%s' % (mp, pls[0])}
+        return {'label': i18n.t(lang, 'timeline.showOnMap'), 'href': '%s?place=%s' % (mp, pls[0])}
     return None
 
 
-def card(e, pages, show_conf=False, full_of=None):
+def card(e, pages, show_conf=False, full_of=None, lang='en'):
     """show_conf: timeline.showConfidence. full_of: a thumbnail's path -> the full-size file, so the picture can open large."""
-    t = e.get('type') if e.get('type') in TYPE_LABELS else 'record'
-    action = action_for(e, pages)
-    src = e.get('source') or {}
+    t = e.get('type') if e.get('type') in TYPES else 'record'
+    action = action_for(e, pages, lang)
+    src = dict(e.get('source') or {})
+    if src.get('text') and lang != 'en':
+        src['text'] = say(e, lang, 'sourceText') or src['text']
     meta = []
     if src.get('text'):
         meta.append(source_html(src))
-    if show_conf and e.get('confidence') in CONF_LABEL:
-        meta.append('<span class="tl-conf" data-conf="%s">%s</span>' % (esc(e['confidence']), CONF_LABEL[e['confidence']]))
-    if e.get('foundBy'):
-        meta.append('<span class="tl-by">Found by %s</span>' % esc(e['foundBy']))
+    if show_conf and e.get('confidence') in CONFS:
+        meta.append('<span class="tl-conf" data-conf="%s">%s</span>' % (esc(e['confidence']), esc(i18n.t(lang, 'timeline.conf.' + e['confidence']))))
+    if say(e, lang, 'foundBy'):
+        meta.append('<span class="tl-by">%s</span>' % esc(i18n.t(lang, 'timeline.foundBy', name=say(e, lang, 'foundBy'))))
+    headline = say(e, lang, 'headline')
     body = ['<p class="tl-type"><svg class="tl-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" '
-            'stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">%s</svg><span>%s</span></p>' % (ICONS[t], TYPE_LABELS[t]),
-            '<h3 class="tl-headline">%s</h3>' % esc(e.get('headline'))]
-    if e.get('changeNote'):
-        body.append('<p class="tl-context">%s</p>' % esc(e['changeNote']))
-    head = (e.get('headline') or '')
+            'stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">%s</svg><span>%s</span></p>' % (ICONS[t], esc(i18n.t(lang, 'timeline.type.' + t))),
+            '<h3 class="tl-headline">%s</h3>' % esc(headline)]
+    if say(e, lang, 'changeNote'):
+        body.append('<p class="tl-context">%s</p>' % esc(say(e, lang, 'changeNote')))
+    head = (e.get('headline') or '') + ' ' + (headline or '')
     was = [c for c in (e.get('change') or []) if c.get('from') and c['from'] not in head][:2]
     if was:
-        body.append('<p class="tl-was">Previously %s.</p>' % esc('; '.join('%s: %s' % (c['field'], c['from']) for c in was)))
-    if e.get('status') in STATUS_TEXT:
-        body.append('<p class="tl-status">%s</p>' % STATUS_TEXT[e['status']])
+        body.append('<p class="tl-was">%s</p>' % esc(i18n.t(lang, 'timeline.previously', changes='; '.join('%s: %s' % (c['field'], c['from']) for c in was))))
+    if e.get('status') in STATUSES:
+        body.append('<p class="tl-status">%s</p>' % esc(i18n.t(lang, 'timeline.status.' + e['status'])))
     if meta:
         body.append('<p class="tl-meta">%s</p>' % '<span class="tl-dot" aria-hidden="true"> &middot; </span>'.join(meta))
     if action:
@@ -141,61 +150,64 @@ def card(e, pages, show_conf=False, full_of=None):
     thumb = ''
     if img:
         full = safe_url((full_of or {}).get(e.get('image'))) or img
-        alt = e.get('imageAlt') or ''
+        alt = say(e, lang, 'imageAlt') or ''
         # the engine's own lightbox (records.js) opens it on a click; with no script, or a middle click, it opens in a new tab
         thumb = ('<a class="record-link tl-thumb-link" href="%s"%s aria-label="%s"><img class="tl-thumb" src="%s" alt="%s" loading="lazy" decoding="async"></a>' % (
-            esc(full), NEW_TAB, esc('View full size: ' + alt if alt else 'View the full-size image'), esc(img), esc(alt)))
+            esc(full), NEW_TAB, esc(i18n.t(lang, 'timeline.viewFull', alt=alt) if alt else i18n.t(lang, 'timeline.viewFullNoAlt')), esc(img), esc(alt)))
     return ('<li class="tl-card%s" id="find-%s" data-type="%s" data-lines="%s" data-published="%s" data-status="%s">'
             '<div class="tl-card-text">%s</div>%s</li>') % (
         ' tl-has-thumb' if thumb else '', esc(e['id']), t, esc(' '.join(e.get('lines') or [])), esc(e.get('published') or ''),
         esc(e.get('status') or 'current'), '\n'.join(body), thumb)
 
 
-def render_body(entries, line_labels, cfg, pages, since=None, full_of=None):
-    """The page's content: heading, banner, filters, and a section for each day with finds."""
+def render_body(entries, line_labels, cfg, pages, since=None, full_of=None, lang='en'):
+    """The page's content: heading, banner, filters, and a section for each day with finds, in one language."""
+    T = lambda key, **kw: esc(i18n.t(lang, key, **kw))
     show_conf = bool((cfg.get('timeline') or {}).get('showConfidence'))
     many_lines = len([l for l in line_labels if any(l['id'] in (e.get('lines') or []) for e in entries)]) >= 2
     days = {}
     for e in entries: days.setdefault(e['found'], []).append(e)
+    names = {l['id']: line_label(l, lang) for l in line_labels}
     parts = ['<div class="tl-root" data-collapse-over="%d" data-collapse-shown="%d" data-lines="%s">' % (
-        COLLAPSE_OVER, COLLAPSE_SHOWN, esc(json.dumps({l['id']: l['label'] for l in line_labels}, ensure_ascii=False))),
-        '<header class="tl-head"><h1>Discovery Timeline</h1>'
-        '<p class="tl-lede">What the family has learned about its history, newest finds first.</p>%s</header>' % (
-            ('<p class="tl-since">This timeline began on %s. What the family knew before then is not listed.</p>' % esc(long_date_plain(since))) if since else ''),
+        COLLAPSE_OVER, COLLAPSE_SHOWN, esc(json.dumps(names, ensure_ascii=False))),
+        '<header class="tl-head"><h1>%s</h1>'
+        '<p class="tl-lede">%s</p>%s</header>' % (
+            T('timeline.heading'), T('timeline.lede'),
+            ('<p class="tl-since">%s</p>' % T('timeline.since', date=long_date_plain(since, lang))) if since else ''),
         '<div class="tl-banner" id="tlBanner" role="status" hidden><p class="tl-banner-text" id="tlBannerText"></p>'
-        '<button type="button" class="tl-banner-go" id="tlJump">Jump to the first new find</button></div>']
+        '<button type="button" class="tl-banner-go" id="tlJump">%s</button></div>' % T('timeline.jump')]
     # filters (shown by the script; they do nothing without it)
-    types = [t for t in TYPE_LABELS if any(e.get('type') == t for e in entries)]
+    types = [t for t in TYPES if any(e.get('type') == t for e in entries)]
     fl = []
     if many_lines:
-        fl.append('<fieldset class="tl-fset"><legend>Family line</legend><div class="tl-chips" data-filter="line">'
-                  '<button type="button" class="tl-chip" data-value="" aria-pressed="true">All lines</button>%s</div></fieldset>' % ''.join(
-                      '<button type="button" class="tl-chip" data-value="%s" aria-pressed="false">%s</button>' % (esc(l['id']), esc(l['label']))
-                      for l in line_labels if any(l['id'] in (e.get('lines') or []) for e in entries)))
+        fl.append('<fieldset class="tl-fset"><legend>%s</legend><div class="tl-chips" data-filter="line">'
+                  '<button type="button" class="tl-chip" data-value="" aria-pressed="true">%s</button>%s</div></fieldset>' % (T('timeline.familyLine'), T('timeline.allLines'), ''.join(
+                      '<button type="button" class="tl-chip" data-value="%s" aria-pressed="false">%s</button>' % (esc(l['id']), esc(names[l['id']]))
+                      for l in line_labels if any(l['id'] in (e.get('lines') or []) for e in entries))))
     if len(types) > 1:
-        fl.append('<fieldset class="tl-fset"><legend>Type of find</legend><div class="tl-chips" data-filter="type">'
-                  '<button type="button" class="tl-chip" data-value="" aria-pressed="true">All types</button>%s</div></fieldset>' % ''.join(
-                      '<button type="button" class="tl-chip" data-value="%s" aria-pressed="false">%s</button>' % (t, TYPE_LABELS[t]) for t in types))
+        fl.append('<fieldset class="tl-fset"><legend>%s</legend><div class="tl-chips" data-filter="type">'
+                  '<button type="button" class="tl-chip" data-value="" aria-pressed="true">%s</button>%s</div></fieldset>' % (T('timeline.typeOfFind'), T('timeline.allTypes'), ''.join(
+                      '<button type="button" class="tl-chip" data-value="%s" aria-pressed="false">%s</button>' % (t, T('timeline.type.' + t)) for t in types)))
     if fl:
-        parts.append('<details class="tl-filters" id="tlFilters" hidden><summary>Filter finds</summary>%s</details>' % ''.join(fl))
-    parts.append('<p class="tl-empty" id="tlEmpty" hidden>No finds match these filters.</p>')
+        parts.append('<details class="tl-filters" id="tlFilters" hidden><summary>%s</summary>%s</details>' % (T('timeline.filter'), ''.join(fl)))
+    parts.append('<p class="tl-empty" id="tlEmpty" hidden>%s</p>' % T('timeline.noMatch'))
     if not entries:
-        parts.append('<p class="tl-none">Nothing has been found since the timeline began. New finds will appear here when they are published.</p>')
+        parts.append('<p class="tl-none">%s</p>' % T('timeline.none'))
     parts.append('<ol class="tl-days" id="tlDays">')
     for day in sorted(days, reverse=True):
         es = days[day]
         extra = len(es) > COLLAPSE_OVER
         cards = []
         for i, e in enumerate(es):
-            c = card(e, pages, show_conf, full_of)
+            c = card(e, pages, show_conf, full_of, lang)
             if extra and i >= COLLAPSE_SHOWN: c = c.replace('<li class="tl-card', '<li class="tl-card tl-extra', 1)
             cards.append(c)
         parts.append('<li class="tl-day" data-date="%s" data-count="%d"><section aria-labelledby="day-%s">'
                      '<header class="tl-day-head"><h2 class="tl-date" id="day-%s"><time datetime="%s">%s</time></h2>'
                      '<p class="tl-summary">%s</p></header><ol class="tl-list">%s</ol>%s</section></li>' % (
-                         day, len(es), day, day, day, esc(long_date(day)), esc(day_summary(es, line_labels, many_lines)), '\n'.join(cards),
-                         ('<button type="button" class="tl-more" hidden>Show all %d finds</button>' % len(es)) if extra else ''))
+                         day, len(es), day, day, day, esc(long_date(day, lang)), esc(day_summary(es, line_labels, many_lines, lang)), '\n'.join(cards),
+                         ('<button type="button" class="tl-more" hidden>%s</button>' % esc(i18n.plural(lang, 'timeline.showAll', len(es)))) if extra else ''))
     parts.append('</ol>')
-    parts.append('<noscript><p class="tl-noscript">Filters and the “since your last visit” note need JavaScript. The finds above are all here without it.</p></noscript>')
+    parts.append('<noscript><p class="tl-noscript">%s</p></noscript>' % T('timeline.noscript'))
     parts.append('</div>')
     return '\n'.join(parts)

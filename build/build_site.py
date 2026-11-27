@@ -28,7 +28,7 @@ import argparse, datetime, fnmatch, hashlib, json, os, shutil, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ENGINE_ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-import access, archive, pages, sitecfg, timeline, validate  # noqa: E402
+import access, archive, i18n, pages, sitecfg, timeline, validate  # noqa: E402
 
 ALWAYS_SKIP = {'.git', '.github', 'node_modules', '.DS_Store', '_site', 'site.config.json', '__pycache__'}
 
@@ -87,6 +87,12 @@ def browser_settings(cfg, version, base, data_urls, kb_url):
         out['visitor'] = access.browser_visitor(cfg['_visitor'])
     if cfg.get('_access'):
         out['access'] = {'logout': '/__gate/logout'}
+    lang = i18n.settings(cfg)
+    if lang['active']:      # likewise only a site that sets a language other than English, or more than one
+        out['language'] = {'default': lang['default'], 'available': lang['available']}
+        for k, v in site.items():   # name_de, familyName_de: the site's own words in other languages
+            if isinstance(v, str) and k.rpartition('_')[0] in ('name', 'familyName') and k.rpartition('_')[2] in i18n.languages():
+                out['site'][k] = v
     return out
 
 
@@ -111,6 +117,9 @@ def main(argv=None):
     for w in report['warnings'] + problems['warnings']:
         print('warning:', w)
     feats = validate.check_features(site, cfg)
+    lerr, lwarn = i18n.check(cfg)
+    feats['errors'] += lerr
+    feats['warnings'] += lwarn
     for w in feats['warnings']:
         print('warning:', w)
     errors = report['errors'] + problems['errors'] + feats['errors']
@@ -132,9 +141,11 @@ def main(argv=None):
     # 4. the engine
     # the timeline's files go only to a site that has the timeline, so any other site's build is as it was
     # (likewise the visitor files go only to a site that turns visitor.enabled on)
-    not_sent = ([] if tl_on else ['timeline.css', 'timeline.js']) + ([] if cfg.get('_visitor') else ['visitor.js', 'visitor.css', 'visitor-match.js'])
+    # (the translation files and the language runtime are not sent as they are: step 4 writes the words each script needs into it)
+    not_sent = ([] if tl_on else ['timeline.css', 'timeline.js']) + ([] if cfg.get('_visitor') else ['visitor.js', 'visitor.css', 'visitor-match.js']) + ['i18n', 'i18n.js']
     shutil.copytree(os.path.join(ENGINE_ROOT, 'engine'), os.path.join(out, base), dirs_exist_ok=True,
-                    ignore=shutil.ignore_patterns(*not_sent) if not_sent else None)
+                    ignore=shutil.ignore_patterns(*not_sent))
+    i18n.bundle(os.path.join(out, base), cfg)
 
     # 4b. the Discovery Timeline: what is new since the last publication
     tl_body, tl_info = None, None

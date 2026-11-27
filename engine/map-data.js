@@ -1,3 +1,4 @@
+/* @i18n map kin */
 /* Family map: data. Builds the event index in the browser from data/people.json (the facts) and
  * data/places.json (the places, and the facts the pages publish that people.json does not hold).
  * Each fact lives in one place: events that mirror a people.json fact take their dates, wording and
@@ -8,6 +9,9 @@
 (function () {
     'use strict';
     var FM = window.FM = window.FM || {};
+    var I = window.FamilyI18n;
+    // dates the site wrote as English words are written again in the chosen language, after they have been read as dates
+    function L(s) { return I.localizeDisplay(s); }
 
     var MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
     var SEASON = { early: [1, 3], spring: [4, 6], summer: [7, 9], late: [10, 12] };
@@ -116,23 +120,22 @@
     }
 
     var TYPE_ORDER = ['born', 'baptised', 'lived', 'married', 'worked', 'served', 'sailed', 'civil case', 'photographed', 'celebrated', 'died', 'buried'];
-    var TYPE_LABEL = {
-        'born': 'Born', 'baptised': 'Baptised', 'lived': 'Lived', 'married': 'Married', 'worked': 'Worked', 'served': 'Served',
-        'sailed': 'Sailed', 'civil case': 'Court case', 'photographed': 'Photographed', 'celebrated': 'Celebrated', 'died': 'Died', 'buried': 'Buried'
-    };
+    function typeKey(t) { return String(t).replace(/\W/g, ''); }
+    var TYPE_LABEL = {};
+    TYPE_ORDER.forEach(function (t) { TYPE_LABEL[t] = I.t('map.type.' + typeKey(t)); });
     // The key groups born and baptised, and worked and studied, as one row each.
     var KEY_GROUPS = [
-        { id: 'born', label: 'Born or baptised', types: ['born', 'baptised'] },
-        { id: 'lived', label: 'Lived', types: ['lived'] },
-        { id: 'married', label: 'Married', types: ['married'] },
-        { id: 'worked', label: 'Worked or studied', types: ['worked'] },
-        { id: 'served', label: 'Served', types: ['served'] },
-        { id: 'sailed', label: 'Sailed', types: ['sailed'] },
-        { id: 'civil case', label: 'Court case', types: ['civil case'] },
-        { id: 'photographed', label: 'Photographed', types: ['photographed'] },
-        { id: 'celebrated', label: 'Celebrated', types: ['celebrated'] },
-        { id: 'died', label: 'Died', types: ['died'] },
-        { id: 'buried', label: 'Buried', types: ['buried'] }
+        { id: 'born', label: I.t('map.group.born'), types: ['born', 'baptised'] },
+        { id: 'lived', label: TYPE_LABEL['lived'], types: ['lived'] },
+        { id: 'married', label: TYPE_LABEL['married'], types: ['married'] },
+        { id: 'worked', label: I.t('map.group.worked'), types: ['worked'] },
+        { id: 'served', label: TYPE_LABEL['served'], types: ['served'] },
+        { id: 'sailed', label: TYPE_LABEL['sailed'], types: ['sailed'] },
+        { id: 'civil case', label: TYPE_LABEL['civil case'], types: ['civil case'] },
+        { id: 'photographed', label: TYPE_LABEL['photographed'], types: ['photographed'] },
+        { id: 'celebrated', label: TYPE_LABEL['celebrated'], types: ['celebrated'] },
+        { id: 'died', label: TYPE_LABEL['died'], types: ['died'] },
+        { id: 'buried', label: TYPE_LABEL['buried'], types: ['buried'] }
     ];
     function keyGroupOf(type) { for (var i = 0; i < KEY_GROUPS.length; i++) if (KEY_GROUPS[i].types.indexOf(type) >= 0) return KEY_GROUPS[i].id; return type; }
 
@@ -140,7 +143,8 @@
     // [{ id, label, pages: [story pages], people: [ids], regions: [hidden regions], default: true }].
     var SITE = window.FamilySite || {};
     var MAPC = SITE.map || {}, TREEC = SITE.tree || {};
-    var BRANCHES = MAPC.branches && MAPC.branches.length ? MAPC.branches : [{ id: 'family', label: 'The family', pages: [], default: true }];
+    I.localize(MAPC, { dates: false });      // the site's own words for this language (label_de and so on) replace the originals
+    var BRANCHES = MAPC.branches && MAPC.branches.length ? MAPC.branches : [{ id: 'family', label: I.t('map.branchDefault'), pages: [], default: true }];
     var HIDDEN = {}; (TREEC.hiddenRegions || []).forEach(function (r) { HIDDEN[r] = true; });
     var KEEP = TREEC.suspectedRelatives || {};
     // map.associates: people who are not family but belong to the story (a business partner, a firm's founder).
@@ -148,8 +152,8 @@
     // associates and never as family. { label, note, people: { associateId: familyPersonId } }
     var ASSOC = MAPC.associates || {};
     var ASSOC_OF = ASSOC.people || {};
-    var ASSOC_LABEL = ASSOC.label || 'Business associate';
-    var ASSOC_NOTE = ASSOC.note || 'Not family';
+    var ASSOC_LABEL = ASSOC.label || I.t('map.associate');
+    var ASSOC_NOTE = ASSOC.note || I.t('map.notFamily');
 
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
@@ -157,7 +161,11 @@
         base = base || '';
         var urls = SITE.data || { people: 'data/people.json', places: 'data/places.json', sources: 'data/sources.json' };
         function get(u) { return fetch(base + u, { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); }); }
-        return Promise.all([get(urls.people), get(urls.places), get(urls.sources)]).then(function (all) { return build(all[0], all[1], all[2]); });
+        return Promise.all([get(urls.people), get(urls.places), get(urls.sources)]).then(function (all) {
+            // the dates stay as written here: they are read as dates first, then written in the chosen language
+            all.forEach(function (doc) { I.localize(doc, { dates: false }); });
+            return build(all[0], all[1], all[2]);
+        });
     }
 
     function build(peopleDoc, placesDoc, sourcesDoc) {
@@ -193,7 +201,7 @@
             (pl.events || []).forEach(function (e) {
                 var ev = {
                     id: e.id, placeId: pl.id, type: e.type, personIds: (e.personIds || []).slice(),
-                    date: e.date, dateStart: e.dateStart, dateEnd: e.dateEnd, datePrecision: e.datePrecision, approximate: !!e.approximate,
+                    date: L(e.date), dateStart: e.dateStart, dateEnd: e.dateEnd, datePrecision: e.datePrecision, approximate: !!e.approximate,
                     factRef: e.factRef || '', factRefs: [], recordCrops: e.recordCrops || [], pages: e.pages || [],
                     sourceIds: (e.sourceIds || []).slice(), confidence: e.confidence, familyStatement: !!e.familyStatement,
                     summary: e.summary || '', voyageId: e.voyageId || null, voyageEnd: e.voyageEnd || null, note: e.note || ''
@@ -205,7 +213,7 @@
                     if (!f0 || (f0.placeId && f0.placeId !== pl.id && factKind(e.factRef) !== 'timeline')) return; // moved or gone: the people.json fact is built below
                     var d = factDates(e.factRef, f0);
                     ev.dateStart = d.dateStart; ev.dateEnd = d.dateEnd; ev.datePrecision = d.datePrecision; ev.approximate = d.approximate;
-                    ev.date = factDisplay(e.factRef, f0);
+                    ev.date = L(factDisplay(e.factRef, f0));
                     ev.confidence = f0.confidence || ev.confidence;
                     ev.familyStatement = f0.confidence === 'family tradition';
                     ev.factRefs = refs;
@@ -222,7 +230,7 @@
                 if (!f || !f.placeId || byFactRef[ref] || !places[f.placeId]) return;
                 var d = factDates(ref, f);
                 add({ id: ref.replace(/[.\[\]]+/g, '-').replace(/-+$/, ''), placeId: f.placeId, type: type, personIds: [p.id].concat(type === 'married' && f.id ? [f.id] : []),
-                      date: factDisplay(ref, f), dateStart: d.dateStart, dateEnd: d.dateEnd, datePrecision: d.datePrecision, approximate: d.approximate,
+                      date: L(factDisplay(ref, f)), dateStart: d.dateStart, dateEnd: d.dateEnd, datePrecision: d.datePrecision, approximate: d.approximate,
                       factRef: ref, factRefs: [ref], recordCrops: f.recordCrops || [], pages: [], sourceIds: (f.sourceIds || []).slice(),
                       confidence: f.confidence || p.confidence, familyStatement: f.confidence === 'family tradition', summary: '', fact: f });
             }
@@ -245,7 +253,7 @@
             if (!visible(p.id)) return;
             (p.voyages || []).forEach(function (v) {
                 if (!voyages[v.id]) voyages[v.id] = { id: v.id, ship: v.ship, from: v.from, to: v.to, fromPlaceId: v.fromPlaceId, toPlaceId: v.toPlaceId,
-                    departureDate: v.departureDate, arrivalDate: v.arrivalDate, display: v.display, sourceIds: v.sourceIds, confidence: v.confidence,
+                    departureDate: v.departureDate, arrivalDate: v.arrivalDate, display: L(v.display), sourceIds: v.sourceIds, confidence: v.confidence,
                     recordCrops: v.recordCrops || [], personIds: [] };
                 if (voyages[v.id].personIds.indexOf(p.id) < 0) voyages[v.id].personIds.push(p.id);
             });
@@ -287,6 +295,7 @@
                 if (!f || f.placeId) return;
                 var disp = factDisplay(ref, f);
                 if (!disp && !f.date) return;
+                disp = L(disp);
                 var d = factDates(ref, f);
                 unplaced.push({ id: 'u-' + ref.replace(/[.\[\]]+/g, '-').replace(/-+$/, ''), placeId: null, type: type, personIds: [p.id], date: disp,
                     dateStart: d.dateStart, dateEnd: d.dateEnd, datePrecision: d.datePrecision, approximate: d.approximate, factRef: ref, factRefs: [ref],
@@ -295,10 +304,10 @@
                     summary: sentenceFor({ type: type, personIds: [p.id], date: disp, fact: f, factRef: ref }, people, places),
                     what: what });
             }
-            if (p.birth) un(p.id + '.birth', p.birth, 'born', 'A birth or baptism record that names the place.');
-            if (p.death) un(p.id + '.death', p.death, 'died', 'The death certificate or a burial record.');
-            (p.occupations || []).forEach(function (f, i) { if (f.years) un(p.id + '.occupations[' + i + ']', f, 'worked', 'A census or register entry that names the place of work.'); });
-            (p.spouses || []).forEach(function (f, i) { if (f.marriageDisplay || f.marriageDate) un(p.id + '.spouses[' + i + ']', f, 'married', 'The marriage entry or certificate.'); });
+            if (p.birth) un(p.id + '.birth', p.birth, 'born', I.t('map.what.birth'));
+            if (p.death) un(p.id + '.death', p.death, 'died', I.t('map.what.death'));
+            (p.occupations || []).forEach(function (f, i) { if (f.years) un(p.id + '.occupations[' + i + ']', f, 'worked', I.t('map.what.work')); });
+            (p.spouses || []).forEach(function (f, i) { if (f.marriageDisplay || f.marriageDate) un(p.id + '.spouses[' + i + ']', f, 'married', I.t('map.what.marriage')); });
         });
         unplaced.forEach(function (u) { byId[u.id] = u; });
 
@@ -354,21 +363,21 @@
         var district = pl.kind === 'registration district';
         switch (e.type) {
             case 'born':
-                if (district) return finish('Birth registered in the ' + districtName(pl), ds);
-                if (!has) return finish('Born ' + ds.replace(/,\s*born\s+/i, ', '));
-                return finish('Born ' + (ds ? ds + ', ' : '') + where);
-            case 'baptised': return finish('Baptised ' + where, ds.replace(/^baptised\s+/i, ''));
+                if (district) return finish(I.t('map.s.birthReg', { district: districtName(pl) }), ds);
+                if (!has) return finish(I.t('map.w.born') + ' ' + ds.replace(/,\s*born\s+/i, ', '));
+                return finish(I.t('map.w.born') + ' ' + (ds ? ds + ', ' : '') + where);
+            case 'baptised': return finish(I.t('map.w.baptised') + ' ' + where, ds.replace(/^baptised\s+/i, ''));
             case 'died':
-                if (district) return finish('Death registered in the ' + districtName(pl), ds);
-                if (!has) return finish('Died ' + ds);
-                return finish(ds ? 'Died ' + ds + ', ' + where : 'Died ' + where);
-            case 'buried': return f.display ? finish('Buried: ' + f.display) : finish('Buried ' + where);
+                if (district) return finish(I.t('map.s.deathReg', { district: districtName(pl) }), ds);
+                if (!has) return finish(I.t('map.w.died') + ' ' + ds);
+                return finish(ds ? I.t('map.w.died') + ' ' + ds + ', ' + where : I.t('map.w.died') + ' ' + where);
+            case 'buried': return f.display ? finish(I.t('map.w.buried') + ': ' + L(f.display)) : finish(I.t('map.w.buried') + ' ' + where);
             case 'married':
                 var names = e.personIds.map(function (id) { var q = people[id] || {}; return String(q.knownAs || '').trim() || q.givenNames; }).filter(Boolean);
-                var lead = names.length > 1 ? names.join(' and ') + ' married' : (who ? who + ' married' : 'Married');
-                return district ? finish(lead + ', registered in the ' + districtName(pl), ds) : finish(lead + (where ? ' ' + where : ''), d);
-            case 'lived': return finish('Lived' + (f.address ? ' at ' + f.address : (where ? ' ' + where : '')), d);
-            case 'worked': case 'served': return finish(f.title ? f.title : (e.type === 'served' ? 'Served' : 'Worked'), f.employer, pl.name, d);
+                var lead = names.length > 1 ? I.t('map.w.marriedMany', { names: I.list(names) }) : (who ? I.t('map.w.marriedOne', { name: who }) : I.t('map.w.marriedNone'));
+                return district ? finish(I.t('map.s.marriedReg', { lead: lead, district: districtName(pl) }), ds) : finish(lead + (where ? ' ' + where : ''), d);
+            case 'lived': return finish(f.address ? I.t('map.w.livedAt', { address: f.address }) : (where ? I.t('map.w.livedWhere', { where: where }) : I.t('map.w.lived')), d);
+            case 'worked': case 'served': return finish(f.title ? f.title : I.t(e.type === 'served' ? 'map.w.served' : 'map.w.worked'), f.employer, pl.name, d);
             default: return finish(pl.name, d);
         }
     }
@@ -380,7 +389,7 @@
         s = s.charAt(0).toUpperCase() + s.slice(1);
         return /[.!?)]$/.test(s) && !/\(family\)$/.test(s) ? s : s + '.';
     }
-    function districtName(pl) { return String(pl.historicName || pl.name || '').replace(/\s*registration district$/i, '').replace(/\s*district$/i, '') + ' district'; }
+    function districtName(pl) { return I.t('map.district', { name: String(pl.historicName || pl.name || '').replace(/\s*registration district$/i, '').replace(/\s*district$/i, '') }); }
     // keeps the date parts of a recorded date and drops the place words after it
     // ("4 November 1829, St Dunstan's, Stepney" becomes "4 November 1829")
     function stripPlace(d) {
@@ -389,10 +398,10 @@
     }
     function placePhrase(pl, type) {
         if (!pl.name) return '';
-        if (pl.kind === 'registration district' || pl.kind === 'district') return 'in the ' + districtName(pl);
-        if (pl.kind === 'church' || pl.kind === 'cemetery' || pl.kind === 'hospital' || pl.kind === 'venue' || pl.kind === 'studio' || pl.kind === 'workplace' || pl.kind === 'military site') return 'at ' + pl.name;
-        if (pl.kind === 'home') return 'at ' + pl.name;
-        return 'in ' + pl.name;
+        if (pl.kind === 'registration district' || pl.kind === 'district') return I.t('map.inDistrict', { district: districtName(pl) });
+        if (pl.kind === 'church' || pl.kind === 'cemetery' || pl.kind === 'hospital' || pl.kind === 'venue' || pl.kind === 'studio' || pl.kind === 'workplace' || pl.kind === 'military site') return I.t('map.at', { place: pl.name });
+        if (pl.kind === 'home') return I.t('map.at', { place: pl.name });
+        return I.t('map.in', { place: pl.name });
     }
 
 
@@ -416,23 +425,29 @@
         var sn = ps[0].surname, same = ps.every(function (p) { return p.surname === sn; }) && sn;
         if (ps.length === 2) {
             var a = callName(ps[0]), b = callName(ps[1]);
-            return same ? a + ' and ' + b + ' ' + sn : personShort(ps[0]) + ' and ' + personShort(ps[1]);
+            return same ? a + I.t('list.last') + b + ' ' + sn : personShort(ps[0]) + I.t('list.last') + personShort(ps[1]);
         }
-        return same ? 'the ' + sn + ' family' : personShort(ps[0]) + ' and ' + (ps.length - 1) + ' others';
+        return same ? I.t('map.who.family', { sn: sn }) : I.t('map.who.others', { name: personShort(ps[0]), n: ps.length - 1 });
     }
-    function possessive(n) { return /s$/.test(n) ? n + "'" : n + "'s"; }
-    var NOUN = { born: 'birthplace', baptised: 'baptism', lived: 'home', married: 'wedding', worked: 'workplace', served: 'service',
-                 sailed: 'voyage', died: 'death', buried: 'grave', 'civil case': 'court case', photographed: 'photograph', celebrated: 'celebration' };
+    function possessive(n) { return new RegExp(I.t('kin.possEnd')).test(n) ? I.t('kin.possS', { name: n }) : I.t('kin.poss', { name: n }); }
+    var NOUN = { born: 'born', baptised: 'baptised', lived: 'lived', married: 'married', worked: 'worked', served: 'served',
+                 sailed: 'sailed', died: 'died', buried: 'buried', 'civil case': 'civilcase', photographed: 'photographed', celebrated: 'celebrated' };
     function headline(e, people, places) {
         var who = whoOf(e.personIds, people), pl = places && places[e.placeId];
-        var noun = NOUN[e.type] || 'place';
-        if (pl && pl.kind === 'registration district' && (e.type === 'born' || e.type === 'died' || e.type === 'married')) noun = e.type === 'born' ? 'birth' : e.type === 'died' ? 'death' : 'wedding';
-        if (e.personIds.length > 1 && { born: 1, baptised: 1, died: 1, buried: 1 }[e.type]) noun = { born: 'births', baptised: 'baptisms', died: 'deaths', buried: 'graves' }[e.type];
-        if (e.voyageEnd === 'departure') noun = 'sailing';
-        if (e.voyageEnd === 'arrival') noun = 'arrival';
-        if (!who) return e.type === 'photographed' ? 'A family photograph' : FM.data.TYPE_LABEL[e.type] || 'An event';
-        var h = possessive(who) + ' ' + noun;
+        var noun = nounOf(e, pl);
+        if (!who) return e.type === 'photographed' ? I.t('map.h.photo') : FM.data.TYPE_LABEL[e.type] || I.t('map.h.event');
+        var h = I.t('map.headline', { whoPoss: possessive(who), who: who, noun: noun });
         return h.charAt(0).toUpperCase() + h.slice(1);
+    }
+    // the thing a place stands for in a headline: "birthplace", "grave", "voyage"
+    function nounOf(e, pl) {
+        var k = function (n) { return I.t('map.h.' + n); };
+        var noun = k(NOUN[e.type] || 'place');
+        if (pl && pl.kind === 'registration district' && (e.type === 'born' || e.type === 'died' || e.type === 'married')) noun = e.type === 'born' ? k('birth') : e.type === 'died' ? k('deathReg') : k('married');
+        if (e.personIds.length > 1 && { born: 1, baptised: 1, died: 1, buried: 1 }[e.type]) noun = k({ born: 'births', baptised: 'baptisms', died: 'deaths', buried: 'graves' }[e.type]);
+        if (e.voyageEnd === 'departure') noun = k('sailing');
+        if (e.voyageEnd === 'arrival') noun = k('arrival');
+        return noun;
     }
     // ---- how someone is related to the people named in map.kinAnchors ([{ id, name }]), for the timeline.
     // Only close family is named: no more than three steps away (a great-grandparent, an aunt, a nephew,
@@ -481,29 +496,45 @@
             r.owner = a.name;
             if (!best || r.steps < best.steps || (r.steps === best.steps && r.blood && !best.blood)) best = r;
         });
-        if (best) best.label = best.owner + "'s " + best.word;
+        if (best) { best.code = best.word; best.word = kinWord(best.code); best.label = kinPoss(best.owner) + ' ' + best.word; }
         return (kinCache[id] = best);
     }
     // "Ron's father and mother" reads better as "Ron's parents"
-    var PAIRS = { 'father|mother': 'parents', 'grandfather|grandmother': 'grandparents', 'great-grandfather|great-grandmother': 'great-grandparents', 'daughter|son': 'children' };
+    var PAIRS = { 'father|mother': 'parents', 'grandfather|grandmother': 'grandparents', 'great-grandfather|great-grandmother': 'greatgrandparents', 'daughter|son': 'children' };
+    // the relationships are worked out in English words, then written in the chosen language
+    var KINKEY = { father: 'father', mother: 'mother', parent: 'parent', grandfather: 'grandfather', grandmother: 'grandmother', grandparent: 'grandparent',
+        son: 'son', daughter: 'daughter', child: 'child', grandson: 'grandson', granddaughter: 'granddaughter', grandchild: 'grandchild',
+        brother: 'brother', sister: 'sister', sibling: 'sibling', uncle: 'uncle', aunt: 'aunt', 'aunt or uncle': 'auntOrUncle', nephew: 'nephew', niece: 'niece',
+        husband: 'husband', wife: 'wife', spouse: 'spouse', 'father-in-law': 'fatherInLaw', 'mother-in-law': 'motherInLaw', 'parent-in-law': 'parentInLaw',
+        'son-in-law': 'sonInLaw', 'daughter-in-law': 'daughterInLaw', 'child-in-law': 'childInLaw', stepfather: 'stepfather', stepmother: 'stepmother',
+        'step-parent': 'stepParent', 'brother-in-law': 'brotherInLaw', 'sister-in-law': 'sisterInLaw', 'sibling-in-law': 'siblingInLaw' };
+    function prefixed(pre, w) { return /-$/.test(pre) ? pre + w : pre + w.charAt(0).toLowerCase() + w.slice(1); }
+    function kinWord(code) {
+        var half = /^half-/.test(code), c = code.replace(/^half-/, ''), great = /^great-/.test(c);
+        c = c.replace(/^great-/, '');
+        var w = c === 'nephew or niece' ? I.t('map.kinNephewOrNiece') : I.t('kin.' + (KINKEY[c] || c));
+        if (great) w = prefixed(I.t('map.kinGreat'), w);
+        if (half) w = prefixed(I.t('map.kinHalf'), w);
+        return w;
+    }
+    function kinPoss(n) { return new RegExp(I.t('map.kinPossEnd')).test(n) ? I.t('map.kinPossS', { name: n }) : I.t('map.kinPoss', { name: n }); }
     function kinLine(ids, people) {
         var groups = [], byOwner = {};
         (ids || []).forEach(function (id) {
             var k = kinOf(id, people); if (!k) return;
             if (!byOwner[k.owner]) { byOwner[k.owner] = []; groups.push(k.owner); }
-            if (byOwner[k.owner].indexOf(k.word) < 0) byOwner[k.owner].push(k.word);
+            if (byOwner[k.owner].indexOf(k.code) < 0) byOwner[k.owner].push(k.code);
         });
         return groups.map(function (o) {
             var ws = byOwner[o], key = ws.slice().sort().join('|');
-            if (PAIRS[key]) return o + "'s " + PAIRS[key];
-            var txt = ws.length > 1 ? ws.slice(0, -1).join(', ') + ' and ' + ws[ws.length - 1] : ws[0];
-            return o + "'s " + txt;
+            if (PAIRS[key]) return kinPoss(o) + ' ' + I.t('map.pair.' + PAIRS[key]);
+            return kinPoss(o) + ' ' + I.list(ws.map(kinWord));
         }).join(', ');
     }
     FM.data = {
         load: load, build: build, deriveDates: deriveDates, deriveFromText: deriveFromText, byDate: byDate, esc: esc,
         TYPE_ORDER: TYPE_ORDER, TYPE_LABEL: TYPE_LABEL, KEY_GROUPS: KEY_GROUPS, keyGroupOf: keyGroupOf, BRANCHES: BRANCHES,
-        districtName: districtName, getFact: getFact, callName: callName, personShort: personShort, whoOf: whoOf, headline: headline,
+        districtName: districtName, nounOf: nounOf, getFact: getFact, callName: callName, personShort: personShort, whoOf: whoOf, headline: headline,
         kinOf: kinOf, kinLine: kinLine
     };
 })();

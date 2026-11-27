@@ -15,12 +15,12 @@ The shared engine behind three public family history sites. Each site keeps its 
 
 | Path | What it is |
 | --- | --- |
-| `engine/` | Everything the browser runs: tree, map, Stuart, nav, lightbox, default tokens, MapLibre, fonts, and `visitor.js`, `visitor-match.js`, `visitor.css` ("Who are you?", copied only when `visitor.enabled`) |
+| `engine/` | Everything the browser runs (the words are in `engine/i18n/en.json` and `de.json`): tree, map, Stuart, nav, lightbox, default tokens, MapLibre, fonts, and `visitor.js`, `visitor-match.js`, `visitor.css` ("Who are you?", copied only when `visitor.enabled`) |
 | `templates/` | `tree.html`, `map.html`, `ask.html`, `timeline.html`, filled in from a site's settings; `gate-worker.js`, `gate.html`, `gate.js` (the password gate, built into `_worker.js` only when `access.enabled`) |
-| `build/` | `build_site.py` (the build), `validate.py`, `migrate.py`, `archive.py`, `pages.py`, `sitecfg.py`, and the Discovery Timeline: `discoveries.py` (detection), `timeline.py` (history between builds), `timeline_page.py` (the page), `previous_site.py` (fetches the live history), and private access: `access.py` (settings checks for `access` and `visitor`, and the gate build) |
+| `build/` | `build_site.py` (the build), `i18n.py` (languages: the dictionaries written into the scripts, dates, plurals), `validate.py`, `migrate.py`, `archive.py`, `pages.py`, `sitecfg.py`, and the Discovery Timeline: `discoveries.py` (detection), `timeline.py` (history between builds), `timeline_page.py` (the page), `previous_site.py` (fetches the live history), and private access: `access.py` (settings checks for `access` and `visitor`, and the gate build) |
 | `schema/` | `family-data.schema.json` and `site-config.schema.json` |
 | `sample/` | Made-up family used by tests and as a starter site |
-| `tests/` | `test_build.py` and `test_discoveries.py` (Python), `test_access.py` (Python), `check-sample.js`, `check-timeline.js`, `check-gate.js`, `check-visitor.js` and `check-access.js` (Playwright and Node), `timeline_fixtures.py` (seven made-up versions of a family), `access_fixtures.py` (the sample with access and visitor on, plus extra made-up people), `gate-server.js` (runs the real `_worker.js` locally), `helpers.js` |
+| `tests/` | `test_build.py` and `test_discoveries.py` (Python), `test_access.py` (Python), `test_i18n.py` (Python), `check-i18n.js` (Playwright, with `i18n_fixtures.py`), `check-sample.js`, `check-timeline.js`, `check-gate.js`, `check-visitor.js` and `check-access.js` (Playwright and Node), `timeline_fixtures.py` (seven made-up versions of a family), `access_fixtures.py` (the sample with access and visitor on, plus extra made-up people), `gate-server.js` (runs the real `_worker.js` locally), `helpers.js` |
 | `tools/` | Map fonts and styles, Street View viewpoints, `backfill-discoveries.py` |
 | `channels.json` | Which engine version each channel (canary, beta, stable) builds with |
 | `sites.json` | Sites to notify when `channels.json` changes |
@@ -70,6 +70,7 @@ python3 tests/test_build.py
 python3 tests/test_discoveries.py       # the backfill tests need git
 python3 tests/test_autorelease.py
 python3 tests/test_access.py            # private access and visitor identity
+python3 tests/test_i18n.py              # languages: the dictionaries, the templates, a site without `language` unchanged
 python3 build/validate.py --site sample
 npm ci && npx playwright install chromium
 node tests/check-sample.js
@@ -77,6 +78,7 @@ node tests/check-timeline.js            # SHOTS=dir saves screenshots; DIST=path
 node tests/check-gate.js                # the gate worker: every way in without the password
 node tests/check-visitor.js             # SHOTS=dir saves screenshots
 node tests/check-access.js              # SHOTS=dir for screenshots, VIDEO=dir for recordings of the first visit
+node tests/check-i18n.js                # the switcher, German dates, translated fields; SHOTS=dir for screenshots
 ```
 
 ## Previewing an engine change against a real site
@@ -144,6 +146,16 @@ Two optional, independent features. Full design in `docs/access.md` and `docs/vi
 - **Workflow changes.** `build-site.yml` has the Cloudflare steps. A site that is not protected must run exactly as before. After a release that changes the workflow, each site's `deploy.yml` and `check.yml` tags need a PR. A protected site in `sites.json` carries `"protected": true` and a `"url"`; `tools/autorelease.py` then checks the gate answers 401 instead of expecting 200. Do not edit `sites.json` in a feature PR.
 - **Not done, on purpose:** per-person passwords, lockout counters (the free Workers plan keeps no state), the Discovery Timeline on a protected site (it reads the live site's history).
 - **Tests use made-up data only** (`tests/access_fixtures.py`, built from `sample/`). To check a real site, build a temporary copy in `/tmp` with names and photographs of living people replaced; never write to a site repo, never print its private data.
+
+## Languages
+
+Optional (`language`, default English only). Full design in `docs/languages.md`. What to keep true:
+
+- **A site without `language` builds the same as before.** Its pages and `site-config.js` are byte for byte unchanged (no `language` key, no `data-i18n*` markers, no switcher). Only `engine/<version>/*` differ, because the scripts carry the English words. `tests/test_i18n.py` compares builds; also `diff -r` a real site against the branch base.
+- **Every piece of interface text lives in `engine/i18n/en.json` and `de.json`**, with the same keys. A script asks for its words on its first line (`/* @i18n tree kin */`); the build writes them in. Never hard-code English in a script or a template without a key, and never edit one dictionary without the other: `tests/test_i18n.py` fails on any gap.
+- **English text in a template equals the English dictionary value**, so an English site gets the same page. Change both together.
+- **Research content is never translated by the engine.** A site adds `story_de` style fields; the original shows when the German is missing.
+- **Dictionary keys with `_one` and `_other` are plurals**; do not use those endings for anything else. German addresses the reader as Sie. No long dashes in either file.
 
 ## Style
 

@@ -1,3 +1,4 @@
+/* @i18n tree kin */
 /* =====================================================================
    FAMILY SITE ENGINE: INTERACTIVE FAMILY TREE
    ---------------------------------------------------------------------
@@ -15,6 +16,7 @@
    ===================================================================== */
 (function () {
     'use strict';
+    var I = window.FamilyI18n;
 
     // ------------------------------------------------------------ constants
     var CW = 200, CH = 134;            // card size
@@ -59,7 +61,8 @@
         return ((g[0] || '') + (s[0] || '')).toUpperCase() || '?';
     }
     function confClass(c) { return 'conf-' + String(c || 'unverified').replace(/\s+/g, '-'); }
-    function confLabel(c) { return String(c || 'unverified'); }
+    function confWord(c) { var k = 'tree.conf.' + String(c || 'unverified'); return I.has(k) ? I.t(k) : String(c || 'unverified'); }
+    function confLabel(c) { return confWord(c); }
     function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
     function reduced() { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
     function isMobile() { return window.innerWidth <= 768; }
@@ -75,17 +78,17 @@
         }
         var q = ev.dateQualifier;
         if (q === 'about') return '~' + y + (ev.confidence === 'unverified' ? '?' : '');
-        if (q === 'before') return 'bef. ' + y;
+        if (q === 'before') return I.t('tree.beforeShort', { y: y });
         if (q === 'uncertain' || ev.confidence === 'unverified') return (String(ev.display || '').charAt(0) === '~' ? '~' : '') + y + '?';
         return y;
     }
     function lifeLine(p) {
         var b = cardYear(p.birth), d = cardYear(p.death);
         if (p.isLiving && !b && !d) return '';
-        if (b && d) return b + ' to ' + d;
-        if (b) return 'b. ' + b;
-        if (d) return 'd. ' + d;
-        return 'Dates unknown';
+        if (b && d) return I.t('tree.lifeSpan', { b: b, d: d });
+        if (b) return I.t('tree.bornShort', { y: b });
+        if (d) return I.t('tree.diedShort', { y: d });
+        return I.t('tree.datesUnknown');
     }
     // tree.cardPhotos "best": with no photo set, use the best picture in the person's media (a photograph or
     // portrait first, then a gravestone, then anything else). Otherwise only person.photo is used.
@@ -120,7 +123,7 @@
         Promise.all([fetch(DATA_URL.people).then(function (r) { return r.json(); }), fetch(DATA_URL.sources).then(function (r) { return r.json(); })])
             .then(function (res) { init(res[0], res[1]); })
             .catch(function (e) {
-                el.viewport.innerHTML = '<p class="tc-noscript">The family data could not be loaded (' + esc(e.message) + '). Reload the page to try again.</p>';
+                el.viewport.innerHTML = '<p class="tc-noscript">' + I.t('tree.loadError', { message: esc(e.message) }) + '</p>';
             });
     }
 
@@ -180,8 +183,10 @@
         if (nav) document.documentElement.style.setProperty('--pc-head-h', Math.round(nav.getBoundingClientRect().height) + 'px');
     }
     function init(pdata, sdata) {
+        I.apply();
+        I.localize(pdata); I.localize(sdata);
         syncHeader();
-        D.meta = Object.assign({}, pdata.meta || {}, SITE.tree || {});
+        D.meta = I.localize(Object.assign({}, pdata.meta || {}, SITE.tree || {}));
         D.people = pruneHidden(pdata.people);
         if (D.meta.coupleBlocks === 'auto') D.people = autoJoinCouples(D.people);
         D.people.forEach(function (p) { D.byId[p.id] = p; });
@@ -500,21 +505,21 @@
         var foot = '<span class="ic' + (hasPhoto(p) ? ' on' : '') + '" data-ic="photo"></span>' +
                    '<span class="ic' + (hasDocs(p) ? ' on' : '') + '" data-ic="doc"></span>' +
                    '<span class="ic' + (hasStory(p) ? ' on' : '') + '" data-ic="story"></span>' +
-                   '<span class="c-you">VIEWPOINT</span>';
+                   '<span class="c-you">' + I.t('tree.viewpointTag') + '</span>';
         return '<div class="c-top"><div class="c-av" aria-hidden="true">' + av + '</div>' +
                '<div class="c-names"><div class="c-name">' + esc(p.displayName) + '</div>' +
                '<div class="c-dis">' + esc(p.disambiguator || '') + '</div></div></div>' +
-               '<div class="c-meta">' + (life ? '<div class="c-dates">' + esc(life) + '</div>' : p.isLiving ? '<div class="c-dates"><span class="c-living">Living</span></div>' : '') +
+               '<div class="c-meta">' + (life ? '<div class="c-dates">' + esc(life) + '</div>' : p.isLiving ? '<div class="c-dates"><span class="c-living">' + I.t('tree.living') + '</span></div>' : '') +
                (p.cardPlace ? '<div class="c-place">' + esc(p.cardPlace) + '</div>' : '') + '</div>' +
                '<div class="c-foot" aria-hidden="true">' + foot + '</div>' +
-               '<span class="c-link" aria-hidden="true" title="Drag onto another person to see how you are related"><i></i></span>';
+               '<span class="c-link" aria-hidden="true" title="' + esc(I.t('tree.dragTitle')) + '"><i></i></span>';
     }
     function cardLabel(p) {
         var parts = [p.displayName];
         if (p.disambiguator) parts.push(p.disambiguator);
-        var life = lifeLine(p); if (life) parts.push(life.replace('~', 'about ').replace('?', ' (unverified)'));
-        if (p.isLiving) parts.push('living');
-        if (p.isDirectLine) parts.push('on ' + directLabel());
+        var life = lifeLine(p); if (life) parts.push(life.replace('~', I.t('tree.aboutSp')).replace('?', I.t('tree.unverifiedParen')));
+        if (p.isLiving) parts.push(I.t('tree.livingLower'));
+        if (p.isDirectLine) parts.push(I.t('tree.onLine', { line: directLabel() }));
         return parts.join(', ');
     }
     function renderCards() {
@@ -559,7 +564,7 @@
             var k = L.kinBox;
             svg('rect', { x: k.x, y: k.y, width: k.w, height: k.h, rx: 12, class: 'ln ln--kin' }, gBack);
             var t = svg('text', { x: k.x + 14, y: k.y + 20, class: 'kin-label' }, gBack);
-            t.textContent = (D.meta && D.meta.kinLabel) || 'Kin · relationship unproven';
+            t.textContent = (D.meta && D.meta.kinLabel) || I.t('tree.kin');
         }
         L.regions.forEach(function (r) {
             svg('rect', { x: r.x, y: r.y, width: r.w, height: r.h, rx: 16, class: 'ln--region' }, gBack);
@@ -625,13 +630,13 @@
                 class: 'ln ln--dashed ln--unconfirmed'
             }, gBack);
             var title = svg('title', {}, path);
-            title.textContent = p.suspectedRelative ? 'Suspected relative of ' + D.byId[p.uncertainBeside].displayName + '. No proven link.' : 'Unconfirmed. ' + (p.disambiguator || p.displayName);
+            title.textContent = p.suspectedRelative ? I.t('tree.suspectedTip', { name: D.byId[p.uncertainBeside].displayName }) : I.t('tree.unconfirmedTip', { name: p.disambiguator || p.displayName });
             var label = svg('text', {
                 x: (x1 + x2) / 2,
                 y: y - 7,
                 class: 'unconfirmed-label'
             }, gBack);
-            label.textContent = p.suspectedRelative ? 'suspected relative' : 'unconfirmed';
+            label.textContent = p.suspectedRelative ? I.t('tree.suspected') : I.t('tree.unconfirmed');
             pathEls.push({ el: path, uncertain: p.id });
         });
     }
@@ -642,20 +647,20 @@
         var rec = (a.spouses || []).filter(function (s) { return s.id === u.partners[1]; })[0] || {};
         var partner = rec.relation === 'partner';
         var yr = rec.marriageDate ? String(rec.marriageDate).slice(0, 4) : '';
-        var txt = partner ? '&' : yr ? 'm. ' + yr : 'm.';
-        var w = yr && !partner ? 46 : 24;
+        var txt = partner ? '&' : yr ? I.t('tree.marriedShort', { y: yr }) : I.t('tree.marriedBare');
+        var w = partner ? 24 : yr ? (txt.length > 7 ? 60 : 46) : (txt.length > 2 ? 34 : 24);
         var g = svg('g', { class: 'pill' + (direct ? ' pill--direct' : '') + (partner ? ' pill--partner' : '') }, el.linksTop);
         svg('rect', { x: x - w / 2, y: y - 9, width: w, height: 18, rx: 9 }, g);
         var t = svg('text', { x: x, y: y + 0.5 }, g); t.textContent = txt;
         var anchorOrder = (a.spouses || []).length > 1 ? rec.order : null;
         if (anchorOrder) {
             var o = svg('text', { x: x, y: y - 17, class: 'ord' }, g);
-            o.textContent = anchorOrder === 1 ? '1ST' : anchorOrder === 2 ? '2ND' : anchorOrder + 'TH';
+            o.textContent = anchorOrder === 1 ? I.t('tree.ord1') : anchorOrder === 2 ? I.t('tree.ord2') : I.t('tree.ordN', { n: anchorOrder });
         }
         var b = byId[u.partners[1]];
-        var tip = '<b>' + esc(a.displayName) + ' and ' + esc(b.displayName) + '</b><br>' +
-                  (anchorOrder ? (anchorOrder === 1 ? 'First' : 'Second') + ' marriage. ' : '') +
-                  (partner ? 'Partners.' : rec.marriageDisplay ? 'Married ' + esc(rec.marriageDisplay) + (rec.place ? ', ' + esc(rec.place) : '') + '.' : 'Marriage date not known.') +
+        var tip = '<b>' + I.t('tree.pairTip', { a: esc(a.displayName), b: esc(b.displayName) }) + '</b><br>' +
+                  (anchorOrder ? (anchorOrder === 1 ? I.t('tree.firstMarriage') : I.t('tree.secondMarriage')) + ' ' : '') +
+                  (partner ? I.t('tree.partnersDot') : rec.marriageDisplay ? (rec.place ? I.t('tree.marriedAt', { date: esc(rec.marriageDisplay), place: esc(rec.place) }) : I.t('tree.marriedOn', { date: esc(rec.marriageDisplay) })) : I.t('tree.marriageUnknown')) +
                   (rec.note ? '<br>' + esc(rec.note) : '');
         g.addEventListener('pointerenter', function (e) { showTip(tip, e.clientX, e.clientY); });
         g.addEventListener('pointermove', function (e) { moveTip(e.clientX, e.clientY); });
@@ -966,7 +971,7 @@
         if (opts.focus) cardEls[id].focus({ preventScroll: true });
         if (opts.open !== false) openDrawer(id);
         if (opts.center) centerOn(id, Math.max(S.s, 0.75)); else if (opts.ensure !== false) setTimeout(function () { ensureVisible(id); }, 30);
-        el.live.textContent = D.byId[id].displayName + ' selected.';
+        el.live.textContent = I.t('tree.selected', { name: D.byId[id].displayName });
         drawMinimap();
     }
     function clearSelection() {
@@ -1033,8 +1038,8 @@
             list.innerHTML = items.length ? items.map(function (p, i) {
                 var v = (p.nameVariants || []).filter(function (x) { return norm(x.name).indexOf(nq) >= 0 && norm(p.displayName).indexOf(nq) < 0; })[0];
                 return '<li role="option" id="sr-' + i + '" data-id="' + esc(p.id) + '" aria-selected="' + (i === active) + '"><span class="r-name">' + esc(p.displayName) + '</span>' +
-                       '<span class="r-sub">' + esc(v ? 'Also recorded as ' + v.name : (p.disambiguator || '')) + '</span></li>';
-            }).join('') : '<li class="r-empty" role="option" aria-disabled="true">No one by that name or spelling yet</li>';
+                       '<span class="r-sub">' + esc(v ? I.t('tree.alsoRecordedAs', { name: v.name }) : (p.disambiguator || '')) + '</span></li>';
+            }).join('') : '<li class="r-empty" role="option" aria-disabled="true">' + I.t('tree.noMatch') + '</li>';
             list.hidden = false; input.setAttribute('aria-expanded', 'true');
             input.setAttribute('aria-activedescendant', active >= 0 ? 'sr-' + active : '');
         }
@@ -1096,7 +1101,7 @@
                     var cur = R.to || R.from, d2 = map[e.key];
                     var nx = d2 === 'left' ? stepId(cur, -1) : d2 === 'right' ? stepId(cur, 1) : neighbor(cur, d2);
                     if (nx === R.from) nx = d2 === 'left' ? stepId(nx, -1) : d2 === 'right' ? stepId(nx, 1) : neighbor(nx, d2);
-                    if (nx) { pickHover(nx); cardEls[nx].focus({ preventScroll: true }); ensureVisible(nx); el.live.textContent = D.byId[nx].displayName + ': ' + (relationship(R.from, nx) || 'no recorded link'); }
+                    if (nx) { pickHover(nx); cardEls[nx].focus({ preventScroll: true }); ensureVisible(nx); el.live.textContent = D.byId[nx].displayName + ': ' + (relationship(R.from, nx) || I.t('tree.noLinkLower')); }
                     return;
                 }
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (R.to) pickChoose(R.to); else if (onCard && onCard.dataset.id !== R.from) pickChoose(onCard.dataset.id); return; }
@@ -1137,7 +1142,7 @@
     }
     function nudge(dir) {
         var b = dir === 'left' ? el.drPrev : dir === 'right' ? el.drNext : null;
-        var msg = { left: 'This is the first person in the tree.', right: 'This is the last person in the tree.', up: 'No parents recorded.', down: 'No children recorded.' }[dir];
+        var msg = I.t('tree.nudge.' + dir);
         el.live.textContent = msg;
         if (b && !el.drawer.hidden) { b.classList.remove('is-bump'); void b.offsetWidth; b.classList.add('is-bump'); }
     }
@@ -1171,31 +1176,66 @@
         best.half = best.m > 0 && best.n > 0 && best.commons.length === 1 && (D.byId[best.commons[0]].spouses || []).length > 1;
         return best;
     }
+    // ---- the words for a relationship. The pieces (father, stepmother, son-in-law) come from the dictionary; how they are put
+    // together (great-grandfather, Urgroßvater, 2nd cousin once removed, Cousin 2. Grades) is each language's own rule, below.
     function ordinal(n) { var s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
-    function word(p, m, f, n) { return p.sex === 'M' ? m : p.sex === 'F' ? f : n; }
-    function label(m, n, sex) {
-        var g = function (mw, fw, nw) { return sex === 'M' ? mw : sex === 'F' ? fw : nw; };
-        var greats = function (k) { return k <= 0 ? '' : k === 1 ? 'great-' : k === 2 ? 'great-great-' : k + '× great-'; };
-        if (m === 0 && n === 0) return 'the same person';
-        if (m === 0) return n === 1 ? g('son', 'daughter', 'child') : greats(n - 2) + g('grandson', 'granddaughter', 'grandchild');
-        if (n === 0) return m === 1 ? g('father', 'mother', 'parent') : greats(m - 2) + g('grandfather', 'grandmother', 'grandparent');
-        if (m === 1 && n === 1) return g('brother', 'sister', 'sibling');
-        if (n === 1) return greats(m - 2) + g('uncle', 'aunt', 'aunt or uncle');
-        if (m === 1) return (n === 2 ? '' : n === 3 ? 'grand-' : greats(n - 3) + 'grand-') + g('nephew', 'niece', 'niece or nephew');
-        var deg = Math.min(m, n) - 1, rem = Math.abs(m - n);
-        return ordinal(deg) + ' cousin' + (rem === 1 ? ' once removed' : rem === 2 ? ' twice removed' : rem > 2 ? ' ' + rem + ' times removed' : '');
-    }
-    function halfify(lbl, b) {
-        if (!b.half) return lbl;
-        if (/cousin/.test(lbl)) return 'half ' + lbl;
-        return lbl.replace(/(aunt or uncle|niece or nephew|brother|sister|sibling|uncle|aunt|nephew|niece)$/, 'half-$1');
-    }
+    function kw(p, m, f, n) { return I.t('kin.' + (p.sex === 'M' ? m : p.sex === 'F' ? f : n)); }
+    function lowerFirst(w) { return w.charAt(0).toLowerCase() + w.slice(1); }
+    var KIN = {
+        en: {
+            greats: function (k) { return k <= 0 ? '' : k === 1 ? 'great-' : k === 2 ? 'great-great-' : k + '× great-'; },
+            blood: function (m, n, sex) {
+                var g = function (mw, fw, nw) { return I.t('kin.' + (sex === 'M' ? mw : sex === 'F' ? fw : nw)); }, greats = KIN.en.greats;
+                if (m === 0 && n === 0) return I.t('kin.same');
+                if (m === 0) return n === 1 ? g('son', 'daughter', 'child') : greats(n - 2) + g('grandson', 'granddaughter', 'grandchild');
+                if (n === 0) return m === 1 ? g('father', 'mother', 'parent') : greats(m - 2) + g('grandfather', 'grandmother', 'grandparent');
+                if (m === 1 && n === 1) return g('brother', 'sister', 'sibling');
+                if (n === 1) return greats(m - 2) + g('uncle', 'aunt', 'auntOrUncle');
+                if (m === 1) return (n === 2 ? '' : n === 3 ? 'grand-' : greats(n - 3) + 'grand-') + g('nephew', 'niece', 'nieceOrNephew');
+                var deg = Math.min(m, n) - 1, rem = Math.abs(m - n);
+                return ordinal(deg) + ' ' + I.t('kin.cousin') + (rem === 1 ? I.t('kin.removed1') : rem === 2 ? I.t('kin.removed2') : rem > 2 ? I.t('kin.removedN', { n: rem }) : '');
+            },
+            half: function (lbl, b) {
+                if (!b.half) return lbl;
+                if (/cousin/.test(lbl)) return 'half ' + lbl;
+                return lbl.replace(/(aunt or uncle|niece or nephew|brother|sister|sibling|uncle|aunt|nephew|niece)$/, 'half-$1');
+            },
+            partnerOf: function (lbl) { return lbl + "'s " + I.t('kin.partner'); },
+            spouseOf: function (lbl, B) { return lbl + "'s " + kw(B, 'husband', 'wife', 'spouse'); },
+            ofPartner: function (lbl) { return "partner's " + lbl; },
+            byMarriage: function (lbl) { return lbl + ' by marriage'; }
+        },
+        de: {
+            join: function (k, w) {      // Enkel, Urenkel, Ururenkel; Großvater, Urgroßvater
+                return k <= 0 ? w : (k <= 3 ? 'Ur' + new Array(k).join('ur') : k + '× Ur') + lowerFirst(w);
+            },
+            blood: function (m, n, sex) {
+                var g = function (mw, fw, nw) { return I.t('kin.' + (sex === 'M' ? mw : sex === 'F' ? fw : nw)); }, join = KIN.de.join;
+                if (m === 0 && n === 0) return I.t('kin.same');
+                if (m === 0) return n === 1 ? g('son', 'daughter', 'child') : join(n - 2, g('grandson', 'granddaughter', 'grandchild'));
+                if (n === 0) return m === 1 ? g('father', 'mother', 'parent') : join(m - 2, g('grandfather', 'grandmother', 'grandparent'));
+                if (m === 1 && n === 1) return g('brother', 'sister', 'sibling');
+                if (n === 1) return m === 2 ? g('uncle', 'aunt', 'auntOrUncle') : join(m - 3, 'Groß' + lowerFirst(g('uncle', 'aunt', 'auntOrUncle')));
+                if (m === 1) return n === 2 ? g('nephew', 'niece', 'nieceOrNephew') : join(n - 3, 'Groß' + lowerFirst(g('nephew', 'niece', 'nieceOrNephew')));
+                var deg = Math.min(m, n) - 1, rem = Math.abs(m - n);
+                return g('cousinM', 'cousinF', 'cousinN') + ' ' + deg + '. Grades' + (rem === 1 ? I.t('kin.removed1') : rem === 2 ? I.t('kin.removed2') : rem > 2 ? I.t('kin.removedN', { n: rem }) : '');
+            },
+            half: function (lbl, b) { return b.half ? 'Halb' + lowerFirst(lbl) : lbl; },
+            partnerOf: function (lbl) { return I.t('kin.partner') + ' von ' + lbl; },
+            spouseOf: function (lbl, B) { return kw(B, 'husband', 'wife', 'spouse') + ' von ' + lbl; },
+            ofPartner: function (lbl) { return lbl + ' des Partners'; },
+            byMarriage: function (lbl) { return lbl + ' (angeheiratet)'; }
+        }
+    };
+    function kin() { return KIN[I.lang] || KIN.en; }
+    function label(m, n, sex) { return kin().blood(m, n, sex); }
+    function halfify(lbl, b) { return kin().half(lbl, b); }
     // What b is to a, with the reasoning behind it.
     function relInfo(a, b) {
         var A = D.byId[a], B = D.byId[b], r = { a: a, b: b, kind: 'none', label: null, commons: [], m: 0, n: 0, half: false, via: null };
-        if (a === b) { r.kind = 'self'; r.label = 'the same person'; return r; }
+        if (a === b) { r.kind = 'self'; r.label = I.t('kin.same'); return r; }
         var sp = (A.spouses || []).filter(function (s) { return s.id === b; })[0];
-        if (sp) { r.kind = 'spouse'; r.label = sp.relation === 'partner' ? 'partner' : ((A.spouses.length > 1) ? (sp.order === 1 ? 'first ' : 'second ') : '') + word(B, 'husband', 'wife', 'spouse'); return r; }
+        if (sp) { r.kind = 'spouse'; r.label = sp.relation === 'partner' ? partnerWord(B) : ((A.spouses.length > 1) ? kw(B, sp.order === 1 ? 'firstHusband' : 'secondHusband', sp.order === 1 ? 'firstWife' : 'secondWife', sp.order === 1 ? 'firstSpouse' : 'secondSpouse') : kw(B, 'husband', 'wife', 'spouse')); return r; }
         var x = blood(a, b);
         if (x) { r.kind = 'blood'; r.m = x.m; r.n = x.n; r.commons = x.commons; r.half = x.half; r.label = halfify(label(x.m, x.n, B.sex), x); return r; }
         // b married one of a's blood relatives
@@ -1204,12 +1244,12 @@
         if (hit) {
             var y = hit.y, S2 = D.byId[hit.s];
             r.kind = 'inlaw'; r.via = hit.s; r.commons = y.commons;
-            if (isPartner(hit.s, b)) r.label = halfify(label(y.m, y.n, S2.sex), y) + "'s partner";
-            else if (y.m === 0 && y.n === 1) r.label = word(B, 'son-in-law', 'daughter-in-law', 'child-in-law');
-            else if (y.m === 1 && y.n === 1) r.label = word(B, 'brother-in-law', 'sister-in-law', 'sibling-in-law');
-            else if (y.m === 1 && y.n === 0) { r.label = word(B, 'stepfather', 'stepmother', 'step-parent'); r.kind = 'step'; }
-            else if (y.m === 2 && y.n === 0) { r.label = word(B, 'step-grandfather', 'step-grandmother', 'step-grandparent'); r.kind = 'step'; }
-            else r.label = halfify(label(y.m, y.n, S2.sex), y) + "'s " + word(B, 'husband', 'wife', 'spouse');
+            if (isPartner(hit.s, b)) r.label = kin().partnerOf(halfify(label(y.m, y.n, S2.sex), y), B);
+            else if (y.m === 0 && y.n === 1) r.label = kw(B, 'sonInLaw', 'daughterInLaw', 'childInLaw');
+            else if (y.m === 1 && y.n === 1) r.label = kw(B, 'brotherInLaw', 'sisterInLaw', 'siblingInLaw');
+            else if (y.m === 1 && y.n === 0) { r.label = kw(B, 'stepfather', 'stepmother', 'stepParent'); r.kind = 'step'; }
+            else if (y.m === 2 && y.n === 0) { r.label = kw(B, 'stepGrandfather', 'stepGrandmother', 'stepGrandparent'); r.kind = 'step'; }
+            else r.label = kin().spouseOf(halfify(label(y.m, y.n, S2.sex), y), B);
             return r;
         }
         // b is a blood relative of a's husband or wife
@@ -1217,21 +1257,22 @@
         if (hit) {
             var z = hit.y;
             r.kind = 'inlaw'; r.via = hit.s; r.commons = z.commons;
-            if (isPartner(a, hit.s)) r.label = "partner's " + halfify(label(z.m, z.n, B.sex), z);
-            else if (z.m === 1 && z.n === 0) r.label = word(B, 'father-in-law', 'mother-in-law', 'parent-in-law');
-            else if (z.m === 1 && z.n === 1) r.label = word(B, 'brother-in-law', 'sister-in-law', 'sibling-in-law');
-            else if (z.m === 0 && z.n === 1) { r.label = word(B, 'stepson', 'stepdaughter', 'stepchild'); r.kind = 'step'; }
-            else if (z.m === 0 && z.n === 2) { r.label = word(B, 'step-grandson', 'step-granddaughter', 'step-grandchild'); r.kind = 'step'; }
-            else r.label = halfify(label(z.m, z.n, B.sex), z) + ' by marriage';
+            if (isPartner(a, hit.s)) r.label = kin().ofPartner(halfify(label(z.m, z.n, B.sex), z));
+            else if (z.m === 1 && z.n === 0) r.label = kw(B, 'fatherInLaw', 'motherInLaw', 'parentInLaw');
+            else if (z.m === 1 && z.n === 1) r.label = kw(B, 'brotherInLaw', 'sisterInLaw', 'siblingInLaw');
+            else if (z.m === 0 && z.n === 1) { r.label = kw(B, 'stepson', 'stepdaughter', 'stepchild'); r.kind = 'step'; }
+            else if (z.m === 0 && z.n === 2) { r.label = kw(B, 'stepGrandson', 'stepGranddaughter', 'stepGrandchild'); r.kind = 'step'; }
+            else r.label = kin().byMarriage(halfify(label(z.m, z.n, B.sex), z));
             return r;
         }
         r.kind = relPath(a, b) ? 'marriage' : 'none';
-        r.label = r.kind === 'marriage' ? 'related by marriage' : null;
+        r.label = r.kind === 'marriage' ? I.t('kin.relatedByMarriage') : null;
         return r;
     }
     function isPartner(a, b) { return ((D.byId[a] || {}).spouses || []).some(function (s) { return s.id === b && s.relation === 'partner'; }); }
-    function spouseWord(a, p) { return isPartner(a, p.id) ? 'partner' : word(p, 'husband', 'wife', 'spouse'); }
-    function directLabel() { return D.meta.directLineLabel || 'Direct line'; }
+    function partnerWord(p) { return I.t(p.sex === 'F' ? 'kin.partnerF' : 'kin.partner'); }
+    function spouseWord(a, p) { return isPartner(a, p.id) ? partnerWord(p) : kw(p, 'husband', 'wife', 'spouse'); }
+    function directLabel() { return D.meta.directLineLabel || I.t('tree.directLine'); }
     function relationship(from, to) {
         if (!from || from === to) return null;
         return relInfo(from, to).label;
@@ -1269,14 +1310,14 @@
         for (var i = 1; i < path.length; i++) {
             var u = D.byId[path[i - 1].id], v = D.byId[path[i].id], t = path[i].type;
             var child = t === 'parent' ? u : t === 'child' ? v : null;
-            if (child && child.parentLinkConfidence && child.parentLinkConfidence !== 'confirmed') notes.push(child.displayName + "'s link to " + (child === u ? v : u).displayName + ' is ' + child.parentLinkConfidence + '.');
+            if (child && child.parentLinkConfidence && child.parentLinkConfidence !== 'confirmed') notes.push(I.t('tree.noteLink', { name: child.displayName, other: (child === u ? v : u).displayName, status: confWord(child.parentLinkConfidence) }));
         }
         path.slice(1, -1).forEach(function (s) {
             var p = D.byId[s.id];
-            if (p.placeholder) notes.push(p.displayName + ' is known only indirectly.');
-            else if (p.confidence === 'unverified') notes.push(p.displayName + ' is unverified.');
+            if (p.placeholder) notes.push(I.t('tree.noteIndirect', { name: p.displayName }));
+            else if (p.confidence === 'unverified') notes.push(I.t('tree.noteUnverified', { name: p.displayName }));
         });
-        if (info && info.kind === 'blood' && info.commons.length === 1 && !info.half && info.m > 0 && info.n > 0) notes.push('Only one shared ancestor is recorded, so this could be a half relationship.');
+        if (info && info.kind === 'blood' && info.commons.length === 1 && !info.half && info.m > 0 && info.n > 0) notes.push(I.t('tree.noteOneAncestor'));
         return notes.filter(function (n, i, all) { return all.indexOf(n) === i; });
     }
     function firstName(p) {
@@ -1291,7 +1332,7 @@
         if (other && !other.placeholder && firstName(other) === s) return p.displayName;
         return s;
     }
-    function poss(s) { return s + (/s$/.test(s) ? "'" : "'s"); }
+    function poss(s) { return new RegExp(I.t('kin.possEnd'), 'i').test(s) ? I.t('kin.possS', { name: s }) : I.t('kin.poss', { name: s }); }
 
     // =================================================================== RELATE: drag the dot on one card onto another
     var R = { on: false, pick: false, from: null, to: null, pid: null, moved: false, dx: 0, dy: 0, px: 0, py: 0, sx: 0, sy: 0, ex: 0, ey: 0, raf: null, shown: null, path: null, info: null, kbd: null };
@@ -1420,11 +1461,11 @@
         var b = el.relBubble;
         if (!R.moved && !R.pick) { b.hidden = true; return; }
         if (!info) {
-            b.innerHTML = '<span class="rb-hint">' + (R.pick ? 'Choose a person to compare with ' + esc(shortName(D.byId[R.from])) : 'Drop on a person') + '</span>';
+            b.innerHTML = '<span class="rb-hint">' + (R.pick ? I.t('tree.pickHint', { name: esc(shortName(D.byId[R.from])) }) : I.t('tree.dropHint')) + '</span>';
             b.classList.remove('has-rel');
         } else {
             var to = D.byId[id];
-            b.innerHTML = '<b>' + esc(to.displayName) + '</b><span>' + esc(info.label ? cap(info.label) : 'No recorded link') + '</span>';
+            b.innerHTML = '<b>' + esc(to.displayName) + '</b><span>' + esc(info.label ? cap(info.label) : I.t('tree.noLink')) + '</span>';
             b.classList.add('has-rel');
         }
         b.hidden = false;
@@ -1481,7 +1522,7 @@
         R.px = r.right; R.py = r.bottom;
         bubble(null); moveBubble(r.right, r.bottom);
         loop();
-        el.live.textContent = 'Comparing from ' + D.byId[id].displayName + '. ' + (viaKeyboard ? 'Use the arrow keys to choose a person and press Enter. Escape cancels.' : 'Choose another person.');
+        el.live.textContent = I.t('tree.comparing', { name: D.byId[id].displayName }) + ' ' + (viaKeyboard ? I.t('tree.comparingKeys') : I.t('tree.comparingTouch'));
     }
     function pickHover(id) {
         if (!R.pick || id === R.from) id = R.pick ? null : id;
@@ -1501,7 +1542,7 @@
     function cancelPick(announce) {
         if (!R.pick) return;
         resetRelate();
-        if (announce) el.live.textContent = 'Comparison cancelled.';
+        if (announce) el.live.textContent = I.t('tree.compareCancelled');
     }
     function showRelation(a, b, swapped) {
         cancelAnimationFrame(R.raf);
@@ -1541,51 +1582,51 @@
     }
     function relSentence(info) {
         var A = D.byId[info.a], B = D.byId[info.b];
-        if (info.kind === 'none') return 'No recorded connection between ' + A.displayName + ' and ' + B.displayName + ' yet';
-        if (info.kind === 'marriage') return B.displayName + ' and ' + A.displayName + ' are related by marriage';
-        return B.displayName + ' is ' + poss(shortName(A, B)) + ' ' + info.label;
+        if (info.kind === 'none') return I.t('tree.relNone', { a: A.displayName, b: B.displayName });
+        if (info.kind === 'marriage') return I.t('tree.relMarriage', { a: A.displayName, b: B.displayName });
+        return I.t('tree.relIs', { b: B.displayName, a: poss(shortName(A, B)), label: info.label });
     }
     function relPopHTML(info, back, path) {
         var A = D.byId[info.a], B = D.byId[info.b], an = shortName(A, B), bn = shortName(B, A);
         function av(p) { return '<span class="rp-av' + (p.isLiving ? ' is-living' : '') + '" aria-hidden="true">' + (p.photo ? '<img src="' + esc(p.photo) + '" alt="">' : esc(initials(p))) + '</span>'; }
         var main;
-        if (info.kind === 'none') main = '<p class="rp-main" id="relPopTitle">No recorded connection between <b>' + esc(an) + '</b> and <b>' + esc(bn) + '</b> yet.</p>';
-        else if (info.kind === 'marriage' && path && path.length === 3 && path[1].type === 'spouse' && path[2].type === 'spouse') main = '<p class="rp-main" id="relPopTitle"><b>' + esc(B.displayName) + '</b> and ' + esc(an) + ' were <em>both married to ' + esc(D.byId[path[1].id].displayName) + '</em>.</p>';
-        else if (info.kind === 'marriage') main = '<p class="rp-main" id="relPopTitle"><b>' + esc(B.displayName) + '</b> and ' + esc(an) + ' are <em>related by marriage</em>.</p>';
-        else main = '<p class="rp-main" id="relPopTitle"><b>' + esc(B.displayName) + '</b> is ' + esc(poss(an)) + ' <em>' + esc(info.label) + '</em>.</p>' +
-                    (back.label && back.kind !== 'marriage' ? '<p class="rp-rev">' + esc(an) + ' is ' + esc(poss(bn)) + ' ' + esc(back.label) + '.</p>' : '');
+        if (info.kind === 'none') main = '<p class="rp-main" id="relPopTitle">' + I.t('tree.relNoneHtml', { a: esc(an), b: esc(bn) }) + '</p>';
+        else if (info.kind === 'marriage' && path && path.length === 3 && path[1].type === 'spouse' && path[2].type === 'spouse') main = '<p class="rp-main" id="relPopTitle">' + I.t('tree.relBothMarried', { b: esc(B.displayName), a: esc(an), x: esc(D.byId[path[1].id].displayName) }) + '</p>';
+        else if (info.kind === 'marriage') main = '<p class="rp-main" id="relPopTitle">' + I.t('tree.relMarriageHtml', { b: esc(B.displayName), a: esc(an) }) + '</p>';
+        else main = '<p class="rp-main" id="relPopTitle">' + I.t('tree.relIsHtml', { b: esc(B.displayName), a: esc(poss(an)), label: esc(info.label) }) + '</p>' +
+                    (back.label && back.kind !== 'marriage' ? '<p class="rp-rev">' + I.t('tree.relRev', { a: esc(an), b: esc(poss(bn)), label: esc(back.label) }) + '</p>' : '');
         var anc = '';
         if (info.kind === 'blood' && info.m > 0 && info.n > 0) {
-            var names = info.commons.map(function (id) { return '<button type="button" class="rp-link" data-person="' + esc(id) + '">' + esc(D.byId[id].displayName) + '</button>'; }).join(' and ');
+            var names = info.commons.map(function (id) { return '<button type="button" class="rp-link" data-person="' + esc(id) + '">' + esc(D.byId[id].displayName) + '</button>'; }).join(' ' + I.t('q.and') + ' ');
             var pl = info.commons.length > 1 ? 's' : '';
-            var term = function (k) { return (k === 1 ? 'parent' : k === 2 ? 'grandparent' : k === 3 ? 'great-grandparent' : (k - 2) + '\u00d7 great-grandparent') + pl; };
-            var how = info.m === info.n ? cap(term(info.m)) + ' of both' : cap(term(info.m)) + ' of ' + an + ', ' + term(info.n) + ' of ' + bn;
-            anc = '<div class="rp-anc"><span class="rp-k">' + (info.commons.length > 1 ? 'Shared ancestors' : 'Shared ancestor') + '</span>' + names +
-                  '<small>' + esc(how) + (info.half ? '. Different ' + (D.byId[info.commons[0]].sex === 'M' ? 'mothers' : 'fathers') + ', so a half relationship.' : '') + '</small></div>';
+            var term = function (k) { return k <= 3 ? I.t('tree.anc' + k + pl) : I.t('tree.ancN' + pl, { n: k - 2 }); };
+            var how = info.m === info.n ? I.t('tree.ancBoth', { term: cap(term(info.m)) }) : I.t('tree.ancEach', { t1: cap(term(info.m)), a: an, t2: term(info.n), b: bn });
+            anc = '<div class="rp-anc"><span class="rp-k">' + (info.commons.length > 1 ? I.t('tree.sharedAncestors') : I.t('tree.sharedAncestor')) + '</span>' + names +
+                  '<small>' + esc(how) + (info.half ? I.t(D.byId[info.commons[0]].sex === 'M' ? 'tree.halfMothers' : 'tree.halfFathers') : '') + '</small></div>';
         } else if (info.kind === 'blood') {
-            anc = '<div class="rp-anc"><small>' + esc(info.m === 0 ? bn + ' descends from ' + an + ', ' + info.n + ' generation' + (info.n > 1 ? 's' : '') + ' down' : an + ' descends from ' + bn + ', ' + info.m + ' generation' + (info.m > 1 ? 's' : '') + ' down') + '</small></div>';
+            anc = '<div class="rp-anc"><small>' + esc(info.m === 0 ? I.n('tree.descends', info.n, { b: bn, a: an }) : I.n('tree.descends', info.m, { b: an, a: bn })) + '</small></div>';
         } else if ((info.kind === 'inlaw' || info.kind === 'step') && info.via) {
-            anc = '<div class="rp-anc"><span class="rp-k">Through marriage</span><button type="button" class="rp-link" data-person="' + esc(info.via) + '">' + esc(D.byId[info.via].displayName) + '</button></div>';
+            anc = '<div class="rp-anc"><span class="rp-k">' + I.t('tree.throughMarriage') + '</span><button type="button" class="rp-link" data-person="' + esc(info.via) + '">' + esc(D.byId[info.via].displayName) + '</button></div>';
         }
         var steps = '';
         if (path && path.length > 1) {
             steps = path.map(function (s, i) {
                 var p = D.byId[s.id], w = '';
-                if (i > 0) { var prevP = D.byId[path[i - 1].id]; w = s.type === 'parent' ? word(p, 'father', 'mother', 'parent') : s.type === 'child' ? word(p, 'son', 'daughter', 'child') : spouseWord(prevP.id, p); w = poss(shortName(prevP)) + ' ' + w; }
+                if (i > 0) { var prevP = D.byId[path[i - 1].id]; w = s.type === 'parent' ? kw(p, 'father', 'mother', 'parent') : s.type === 'child' ? kw(p, 'son', 'daughter', 'child') : spouseWord(prevP.id, p); w = poss(shortName(prevP)) + ' ' + w; }
                 return '<li class="' + (i === 0 || i === path.length - 1 ? 'is-end' : '') + '">' + (w ? '<span class="rp-w">' + esc(w) + '</span>' : '') +
                        '<button type="button" data-person="' + esc(p.id) + '">' + av(p) + '<span>' + esc(p.displayName) + '</span></button></li>';
             }).join('');
             var n = path.length - 1;
-            steps = '<details class="rp-path"' + (n <= 6 ? ' open' : '') + '><summary>How they connect <span>' + n + ' step' + (n > 1 ? 's' : '') + '</span></summary><ol>' + steps + '</ol></details>';
+            steps = '<details class="rp-path"' + (n <= 6 ? ' open' : '') + '><summary>' + I.t('tree.howConnect') + ' <span>' + I.n('tree.steps', n) + '</span></summary><ol>' + steps + '</ol></details>';
         }
         var notes = relNotes(path, info);
         if (info.kind === 'none') {
-            [A, B].forEach(function (p) { if (!(p.parents || []).length && !(p.children || []).length && !(p.spouses || []).length) notes.push(p.displayName + ' has no recorded parents, spouse or children on the tree yet.'); });
+            [A, B].forEach(function (p) { if (!(p.parents || []).length && !(p.children || []).length && !(p.spouses || []).length) notes.push(I.t('tree.noteNoKin', { name: p.displayName })); });
         }
         var nh = notes.length ? '<ul class="rp-notes">' + notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('') + '</ul>' : '';
         return '<div class="rp-head">' + av(A) + '<span class="rp-join" aria-hidden="true"></span>' + av(B) +
-               '<button type="button" class="rp-icon" data-rel-swap aria-label="Swap the direction" title="Swap the direction"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7h11l-3-3M16 13H5l3 3"/></svg></button>' +
-               '<button type="button" class="rp-icon" data-rel-close aria-label="Close" title="Close (Esc)"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>' +
+               '<button type="button" class="rp-icon" data-rel-swap aria-label="' + esc(I.t('tree.swap')) + '" title="' + esc(I.t('tree.swap')) + '"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7h11l-3-3M16 13H5l3 3"/></svg></button>' +
+               '<button type="button" class="rp-icon" data-rel-close aria-label="' + esc(I.t('tree.close')) + '" title="' + esc(I.t('tree.closeEsc')) + '"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>' +
                main + anc + steps + nh;
     }
     // desktop: the card docks to the right of the canvas and the two people are kept in view beside it
@@ -1647,7 +1688,7 @@
             var on = k === S.viewpoint;
             cardEls[k].classList.toggle('is-viewpoint', on);
             var y = on && cardEls[k].querySelector('.c-you');
-            if (y) y.textContent = S.visitorId && k === S.visitorId ? 'YOU' : 'VIEWPOINT';
+            if (y) y.textContent = S.visitorId && k === S.visitorId ? I.t('tree.youTag') : I.t('tree.viewpointTag');
         });
     }
 
@@ -1700,10 +1741,10 @@
         document.body.classList.toggle('dr-expanded', on);
         el.drRead.setAttribute('aria-expanded', String(on));
         el.drExpand.setAttribute('aria-expanded', String(on));
-        el.drExpand.setAttribute('aria-label', on ? 'Collapse to the summary' : 'Expand to the full story');
-        el.drExpand.title = on ? 'Collapse to the summary' : 'Expand to the full story';
-        el.drReadTxt.textContent = on ? 'Back to summary' : 'Read full story';
-        el.drEscTxt.textContent = on ? 'summary' : 'close';
+        el.drExpand.setAttribute('aria-label', on ? I.t('tree.collapse') : I.t('tree.expand'));
+        el.drExpand.title = on ? I.t('tree.collapse') : I.t('tree.expand');
+        el.drReadTxt.textContent = on ? I.t('tree.backToSummary') : I.t('tree.readFull');
+        el.drEscTxt.textContent = on ? I.t('tree.keysSummary') : I.t('tree.keysClose');
         if (quiet) return;
         if (S.drawerFor) { renderDrawer(S.drawerFor); el.drawerBody.scrollTop = 0; }
         syncHash();
@@ -1712,7 +1753,7 @@
             if (on) { var h = $('drawerName'); if (h) h.focus({ preventScroll: true }); }
             else el.drRead.focus({ preventScroll: true });
         }
-        el.live.textContent = on ? 'Showing the full story.' : 'Showing the summary.';
+        el.live.textContent = on ? I.t('tree.showingFull') : I.t('tree.showingSummary');
     }
     function keepDrawerFocus() {
         // the panel content is re-rendered; keep keyboard focus inside the panel instead of dropping it to the page
@@ -1731,15 +1772,15 @@
     }
     function syncBar(id) {
         var i = L.order.indexOf(id), prev = L.order[i - 1], next = L.order[i + 1];
-        [[el.drPrev, el.drPrevName, prev, 'Previous'], [el.drNext, el.drNextName, next, 'Next']].forEach(function (x) {
-            var btn = x[0], q = x[2] ? D.byId[x[2]] : null;
+        [[el.drPrev, el.drPrevName, prev, 'prev'], [el.drNext, el.drNextName, next, 'next']].forEach(function (x) {
+            var btn = x[0], q = x[2] ? D.byId[x[2]] : null, dir = x[3];
             btn.disabled = !q;
-            x[1].textContent = q ? q.displayName : (x[3] === 'Previous' ? 'Start of the tree' : 'End of the tree');
-            btn.setAttribute('aria-label', q ? x[3] + ' person: ' + q.displayName : 'No ' + x[3].toLowerCase() + ' person');
-            btn.title = q ? x[3] + ': ' + q.displayName + ' (' + (x[3] === 'Previous' ? 'Left' : 'Right') + ' arrow)' : '';
+            x[1].textContent = q ? q.displayName : (dir === 'prev' ? I.t('tree.startOfTree') : I.t('tree.endOfTree'));
+            btn.setAttribute('aria-label', q ? I.t(dir === 'prev' ? 'tree.prevPerson' : 'tree.nextPerson', { name: q.displayName }) : I.t(dir === 'prev' ? 'tree.noPrev' : 'tree.noNext'));
+            btn.title = q ? I.t(dir === 'prev' ? 'tree.prevTitle' : 'tree.nextTitle', { name: q.displayName }) : '';
         });
-        el.drPos.textContent = (i + 1) + ' of ' + L.order.length;
-        el.drPos.title = 'Position in the tree, read generation by generation, left to right';
+        el.drPos.textContent = I.t('tree.position', { i: i + 1, n: L.order.length });
+        el.drPos.title = I.t('tree.positionTitle');
     }
     function spy() {
         var b = el.drawerBody, toc = b.querySelector('.pf-toc'); if (!toc) return;
@@ -1757,11 +1798,13 @@
     function famList(p) {
         var byId = D.byId, out = [];
         (p.parents || []).forEach(function (id) { out.push({ id: id, rel: byId[id].sex === 'F' ? 'mother' : 'father' }); });
-        (p.spouses || []).slice().sort(function (a, b) { return a.order - b.order; }).forEach(function (s) { out.push({ id: s.id, rel: s.relation === 'partner' ? 'partner' : (byId[s.id].sex === 'F' ? 'wife' : 'husband') + ((p.spouses || []).length > 1 ? ' (' + (s.order === 1 ? '1st' : '2nd') + ')' : '') }); });
+        (p.spouses || []).slice().sort(function (a, b) { return a.order - b.order; }).forEach(function (s) { out.push({ id: s.id, rel: s.relation === 'partner' ? (byId[s.id].sex === 'F' ? 'partnerF' : 'partner') : (byId[s.id].sex === 'F' ? 'wife' : 'husband'), ord: s.relation !== 'partner' && (p.spouses || []).length > 1 ? s.order : 0 }); });
         siblings(p).forEach(function (id) { out.push({ id: id, rel: byId[id].sex === 'F' ? 'sister' : byId[id].sex === 'M' ? 'brother' : 'sibling' }); });
         (p.children || []).forEach(function (id) { out.push({ id: id, rel: byId[id].sex === 'F' ? 'daughter' : byId[id].sex === 'M' ? 'son' : 'child' }); });
         return out;
     }
+    // a family member's relation to the person, in words: "wife (1st)"
+    function famRelText(f) { return I.t('kin.' + f.rel) + (f.ord ? ' (' + I.t(f.ord === 1 ? 'tree.firstParen' : 'tree.secondParen') + ')' : ''); }
     function siblings(p) {
         var set = {};
         (p.parents || []).forEach(function (pid) { (D.byId[pid].children || []).forEach(function (c) { if (c !== p.id) set[c] = true; }); });
@@ -1776,37 +1819,37 @@
             spy();
             return;
         }
-        var hero = p.portrait ? '<div class="dr-hero"><img src="' + esc(p.portrait) + '" alt="Portrait of ' + esc(p.displayName) + '"></div>'
-                 : p.photo ? '<div class="dr-hero is-mono"><div class="mono mono--photo"><img src="' + esc(p.photo) + '" alt="Portrait of ' + esc(p.displayName) + '"></div></div>'
+        var hero = p.portrait ? '<div class="dr-hero"><img src="' + esc(p.portrait) + '" alt="' + esc(I.t('tree.portraitOf', { name: p.displayName })) + '"></div>'
+                 : p.photo ? '<div class="dr-hero is-mono"><div class="mono mono--photo"><img src="' + esc(p.photo) + '" alt="' + esc(I.t('tree.portraitOf', { name: p.displayName })) + '"></div></div>'
                  : '<div class="dr-hero is-mono">' + monoHTML(p) + '</div>';
         var variants = (p.nameVariants || []).filter(function (v) { return v.name !== p.displayName; });
         var life = '';
         {
-            if (p.birth) life += '<dt>Born</dt><dd>' + esc(p.birth.display) + (p.birth.place ? ', ' + esc(p.birth.place) : '') + (p.birth.alternates ? ' <span class="note">(or ' + esc(p.birth.alternates.map(function (a) { return a.display; }).join(', ')) + ')</span>' : '') + '</dd>';
-            if (p.death) life += '<dt>Died</dt><dd>' + esc(p.death.display) + (p.death.place ? ', ' + esc(p.death.place) : '') + '</dd>';
-            if (p.burial) life += '<dt>Buried</dt><dd>' + esc(p.burial.display) + '</dd>';
-            if (p.immigration && p.immigration.ship) life += '<dt>Arrived</dt><dd>' + esc(p.immigration.ship) + ', ' + esc(fmtDate(p.immigration.date)) + '</dd>';
+            if (p.birth) life += '<dt>' + I.t('tree.born') + '</dt><dd>' + esc(p.birth.display) + (p.birth.place ? ', ' + esc(p.birth.place) : '') + (p.birth.alternates ? ' <span class="note">' + esc(I.t('tree.orAlt', { dates: p.birth.alternates.map(function (a) { return a.display; }).join(', ') })) + '</span>' : '') + '</dd>';
+            if (p.death) life += '<dt>' + I.t('tree.died') + '</dt><dd>' + esc(p.death.display) + (p.death.place ? ', ' + esc(p.death.place) : '') + '</dd>';
+            if (p.burial) life += '<dt>' + I.t('tree.buried') + '</dt><dd>' + esc(p.burial.display) + '</dd>';
+            if (p.immigration && p.immigration.ship) life += '<dt>' + I.t('tree.arrived') + '</dt><dd>' + esc(p.immigration.ship) + ', ' + esc(fmtDate(p.immigration.date)) + '</dd>';
             var places = uniq((p.residences || []).map(function (r) { return r.place; }));
-            if (places.length) life += '<dt>Lived</dt><dd>' + esc(places.join('; ')) + '</dd>';
+            if (places.length) life += '<dt>' + I.t('tree.lived') + '</dt><dd>' + esc(places.join('; ')) + '</dd>';
         }
-        if (p.isLiving && !life) life = '<dt>Status</dt><dd>Living</dd>';
+        if (p.isLiving && !life) life = '<dt>' + I.t('tree.status') + '</dt><dd>' + I.t('tree.living') + '</dd>';
         var rel = relationship(S.viewpoint, id);
         var vp = D.byId[S.viewpoint];
         var media = (p.media || []).map(function (m, i) {
-            return '<button type="button" data-media="' + i + '" aria-label="Open ' + esc(m.caption) + '"><img src="' + esc(m.thumb) + '" alt="" loading="lazy"></button>';
+            return '<button type="button" data-media="' + i + '" aria-label="' + esc(I.t('tree.openItem', { caption: m.caption })) + '"><img src="' + esc(m.thumb) + '" alt="" loading="lazy"></button>';
         }).join('');
-        var fam = famList(p).map(function (f) { var q = D.byId[f.id]; return '<button type="button" class="chip" data-go="' + esc(q.id) + '">' + chipAv(q) + esc(q.displayName) + ' <small>' + esc(f.rel) + '</small></button>'; }).join('');
+        var fam = famList(p).map(function (f) { var q = D.byId[f.id]; return '<button type="button" class="chip" data-go="' + esc(q.id) + '">' + chipAv(q) + esc(q.displayName) + ' <small>' + esc(famRelText(f)) + '</small></button>'; }).join('');
         el.drawerBody.innerHTML =
             hero + '<div class="dr-in">' +
-            '<p class="dr-kicker">' + (p.isDirectLine ? esc(directLabel()) + ' · ' : '') + 'Generation ' + esc(genLabel(p.generation)) + '</p>' +
+            '<p class="dr-kicker">' + (p.isDirectLine ? esc(directLabel()) + ' · ' : '') + esc(I.t('tree.generation', { g: genLabel(p.generation) })) + '</p>' +
             '<h2 class="dr-name" id="drawerName">' + esc(p.displayName) + '</h2>' +
             (p.disambiguator ? '<p class="dr-dis">' + esc(p.disambiguator) + '</p>' : '') +
-            (variants.length ? '<p class="dr-variants"><b>Also recorded as</b> ' + esc(variants.map(function (v) { return v.name; }).join(' · ')) + '</p>' : '') +
+            (variants.length ? '<p class="dr-variants"><b>' + I.t('tree.alsoRecordedBold') + '</b> ' + esc(variants.map(function (v) { return v.name; }).join(' · ')) + '</p>' : '') +
             '<dl class="dr-life">' + life + '</dl>' +
-            (rel ? '<p class="dr-rel"><span>Relationship to ' + esc(vp.givenNames || vp.displayName) + '</span>' + esc(cap(rel)) + '</p>' : '') +
+            (rel ? '<p class="dr-rel"><span>' + esc(I.t('tree.relationshipTo', { name: vp.givenNames || vp.displayName })) + '</span>' + esc(cap(rel)) + '</p>' : '') +
             '<p class="dr-summary">' + esc(p.summary) + '</p>' +
-            (media ? '<div class="dr-sec"><h3>Records and photographs</h3><div class="strip">' + media + '</div></div>' : '') +
-            (fam ? '<div class="dr-sec"><h3>Family</h3><div class="chips">' + fam + '</div></div>' : '') +
+            (media ? '<div class="dr-sec"><h3>' + I.t('tree.recordsPhotos') + '</h3><div class="strip">' + media + '</div></div>' : '') +
+            (fam ? '<div class="dr-sec"><h3>' + I.t('tree.family') + '</h3><div class="chips">' + fam + '</div></div>' : '') +
             '</div>';
     }
     function genLabel(g) { var x = (D.meta.generations || []).filter(function (r) { return r.generation === g; })[0]; return x ? x.label : String(g + 1); }
@@ -1815,6 +1858,7 @@
     var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     function fmtDate(d) {
         if (!d) return '';
+        if (I.lang !== 'en') return I.date(d, { short: true });
         var m = String(d).match(/^(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?/); if (!m) return d;
         if (m[3]) return (+m[3]) + ' ' + MONTHS[+m[2] - 1] + ' ' + m[1];
         if (m[2]) return MONTHS[+m[2] - 1] + ' ' + m[1];
@@ -1863,7 +1907,7 @@
             var ids = run.match(/[a-z0-9\-]+/g) || [];
             var links = ids.filter(function (id) { return num[id]; }).map(function (id) {
                 var n = num[id];
-                return '<a href="#src-' + n + '" data-scroll="src-' + n + '" aria-label="Source ' + n + '">' + n + '</a>';
+                return '<a href="#src-' + n + '" data-scroll="src-' + n + '" aria-label="' + esc(I.t('tree.sourceN', { n: n })) + '">' + n + '</a>';
             });
             return links.length ? '<sup class="fn">' + links.join(',') + '</sup>' : '';
         });
@@ -1884,7 +1928,7 @@
     }
     function srcRefs(ids, num) {
         var links = (ids || []).filter(function (id) { return num[id]; }).map(function (id) {
-            return '<a href="#src-' + num[id] + '" data-scroll="src-' + num[id] + '" aria-label="Source ' + num[id] + '">' + num[id] + '</a>';
+            return '<a href="#src-' + num[id] + '" data-scroll="src-' + num[id] + '" aria-label="' + esc(I.t('tree.sourceN', { n: num[id] })) + '">' + num[id] + '</a>';
         });
         return links.length ? '<sup class="fn">' + links.join(',') + '</sup>' : '';
     }
@@ -1904,112 +1948,112 @@
         var sn = sourceNumbers(p), num = sn.num;
         var byId = D.byId;
         var hero;
-        if (p.portrait) hero = '<div class="pf-portrait"><img src="' + esc(p.portrait) + '" alt="Portrait of ' + esc(p.displayName) + '"></div>';
-        else if (p.photo) hero = '<div class="pf-portrait is-mono"><div class="mono mono--photo"><img src="' + esc(p.photo) + '" alt="Portrait of ' + esc(p.displayName) + '"></div><div class="pf-place">' + esc(p.cardPlace || '') + '</div></div>';
-        else hero = '<div class="pf-portrait is-mono">' + monoHTML(p) + '<div class="pf-place">' + esc(p.cardPlace || (p.isLiving ? 'Living' : '')) + '</div></div>';
+        if (p.portrait) hero = '<div class="pf-portrait"><img src="' + esc(p.portrait) + '" alt="' + esc(I.t('tree.portraitOf', { name: p.displayName })) + '"></div>';
+        else if (p.photo) hero = '<div class="pf-portrait is-mono"><div class="mono mono--photo"><img src="' + esc(p.photo) + '" alt="' + esc(I.t('tree.portraitOf', { name: p.displayName })) + '"></div><div class="pf-place">' + esc(p.cardPlace || '') + '</div></div>';
+        else hero = '<div class="pf-portrait is-mono">' + monoHTML(p) + '<div class="pf-place">' + esc(p.cardPlace || (p.isLiving ? I.t('tree.living') : '')) + '</div></div>';
         var variants = (p.nameVariants || []).filter(function (v) { return v.name !== p.displayName; });
         var dates = '';
         {
-            if (p.birth) dates += '<div><span>Born</span>' + esc(p.birth.display) + (p.birth.alternates ? ' or ' + esc(p.birth.alternates.map(function (a) { return a.display; }).join(', ')) : '') + (p.birth.place ? '<small>' + esc(p.birth.place) + '</small>' : '') + '</div>';
-            if (p.death) dates += '<div><span>Died</span>' + esc(p.death.display) + (p.death.place ? '<small>' + esc(p.death.place) + '</small>' : '') + '</div>';
-            if (p.burial) dates += '<div><span>Buried</span>' + esc(p.burial.display) + '</div>';
-            if (p.immigration && p.immigration.ship) dates += '<div><span>Arrived</span>' + esc(p.immigration.ship) + ', ' + esc(fmtDate(p.immigration.date)) + '</div>';
+            if (p.birth) dates += '<div><span>' + I.t('tree.born') + '</span>' + esc(p.birth.display) + (p.birth.alternates ? ' ' + I.t('q.or') + ' ' + esc(p.birth.alternates.map(function (a) { return a.display; }).join(', ')) : '') + (p.birth.place ? '<small>' + esc(p.birth.place) + '</small>' : '') + '</div>';
+            if (p.death) dates += '<div><span>' + I.t('tree.died') + '</span>' + esc(p.death.display) + (p.death.place ? '<small>' + esc(p.death.place) + '</small>' : '') + '</div>';
+            if (p.burial) dates += '<div><span>' + I.t('tree.buried') + '</span>' + esc(p.burial.display) + '</div>';
+            if (p.immigration && p.immigration.ship) dates += '<div><span>' + I.t('tree.arrived') + '</span>' + esc(p.immigration.ship) + ', ' + esc(fmtDate(p.immigration.date)) + '</div>';
         }
         var badges = (p.isDirectLine ? '<span class="badge badge--direct">' + esc(directLabel()) + '</span>' : '') +
-                     (p.isLiving ? '<span class="badge badge--living">Living</span>' : '') +
-                     '<span class="badge">Generation ' + esc(genLabel(p.generation)) + '</span>' +
-                     (p.confidence && SHOW_CONF ? '<span class="badge ' + confClass(p.confidence) + '">Overall: ' + esc(p.confidence) + '</span>' : '');
+                     (p.isLiving ? '<span class="badge badge--living">' + I.t('tree.living') + '</span>' : '') +
+                     '<span class="badge">' + esc(I.t('tree.generation', { g: genLabel(p.generation) })) + '</span>' +
+                     (p.confidence && SHOW_CONF ? '<span class="badge ' + confClass(p.confidence) + '">' + esc(I.t('tree.overall', { conf: confWord(p.confidence) })) + '</span>' : '');
         var rel = relationship(S.viewpoint, p.id), vp = byId[S.viewpoint];
 
         // sections
         var secs = [];
-        secs.push(['pf-story', 'The story', '<div class="pf-story">' + md(p.story, num) + '</div>']);
+        secs.push(['pf-story', I.t('tree.secStory'), '<div class="pf-story">' + md(p.story, num) + '</div>']);
 
         {
             var rows = [];
-            function row(label, value, ids, conf, note) { rows.push('<tr><th scope="row">' + esc(label) + '</th><td>' + value + (note ? '<span class="note">' + esc(note) + '</span>' : '') + '</td>' + (SHOW_CONF ? '<td class="conf">' + confTag(conf) + '</td>' : '') + '<td class="src">' + (srcRefs(ids, num) || '<span class="note">none</span>') + '</td></tr>'); }
+            function row(label, value, ids, conf, note) { rows.push('<tr><th scope="row">' + esc(label) + '</th><td>' + value + (note ? '<span class="note">' + esc(note) + '</span>' : '') + '</td>' + (SHOW_CONF ? '<td class="conf">' + confTag(conf) + '</td>' : '') + '<td class="src">' + (srcRefs(ids, num) || '<span class="note">' + I.t('tree.none') + '</span>') + '</td></tr>'); }
             if (p.birth) {
-                row('Born', esc(p.birth.display) + (p.birth.place ? ', ' + esc(p.birth.place) : ''), p.birth.sourceIds, p.birth.confidence, p.birth.note);
-                (p.birth.alternates || []).forEach(function (a) { row('Born (other record)', esc(a.display), a.sourceIds, 'confirmed', a.note ? 'As recorded on the ' + a.note : null); });
+                row(I.t('tree.born'), esc(p.birth.display) + (p.birth.place ? ', ' + esc(p.birth.place) : ''), p.birth.sourceIds, p.birth.confidence, p.birth.note);
+                (p.birth.alternates || []).forEach(function (a) { row(I.t('tree.bornOther'), esc(a.display), a.sourceIds, 'confirmed', a.note ? I.t('tree.asRecorded', { note: a.note }) : null); });
             }
-            if (p.death) row('Died', esc(p.death.display) + (p.death.place ? ', ' + esc(p.death.place) : ''), p.death.sourceIds, p.death.confidence, p.death.note);
-            if (p.burial) row('Buried', esc(p.burial.display), p.burial.sourceIds, p.burial.confidence, p.burial.note);
-            (p.voyages || []).forEach(function (v) { row('Voyage', esc(v.display), v.sourceIds, v.confidence, v.note); });
+            if (p.death) row(I.t('tree.died'), esc(p.death.display) + (p.death.place ? ', ' + esc(p.death.place) : ''), p.death.sourceIds, p.death.confidence, p.death.note);
+            if (p.burial) row(I.t('tree.buried'), esc(p.burial.display), p.burial.sourceIds, p.burial.confidence, p.burial.note);
+            (p.voyages || []).forEach(function (v) { row(I.t('tree.voyage'), esc(v.display), v.sourceIds, v.confidence, v.note); });
             if (p.immigration) {
                 var im = p.immigration;
-                row('Immigration', esc([im.ship, im.date ? fmtDate(im.date) : null, im.port, im.age ? 'age ' + im.age : null].filter(Boolean).join(', ') || 'Not yet found'), im.sourceIds, im.confidence, im.note);
+                row(I.t('tree.immigration'), esc([im.ship, im.date ? fmtDate(im.date) : null, im.port, im.age ? I.t('tree.ageN', { n: im.age }) : null].filter(Boolean).join(', ') || I.t('tree.notFound')), im.sourceIds, im.confidence, im.note);
             }
             (p.spouses || []).slice().sort(function (a, b) { return a.order - b.order; }).forEach(function (s) {
-                row(s.relation === 'partner' ? 'Partner' : (p.spouses.length > 1 ? (s.order === 1 ? 'First marriage' : 'Second marriage') : 'Marriage'),
+                row(s.relation === 'partner' ? I.t('tree.partner') : (p.spouses.length > 1 ? (s.order === 1 ? I.t('tree.firstMarriageLabel') : I.t('tree.secondMarriageLabel')) : I.t('tree.marriage')),
                     '<a href="#/person/' + esc(s.id) + '" data-person="' + esc(s.id) + '">' + esc(byId[s.id].displayName) + '</a>' + (s.marriageDisplay ? ', ' + esc(s.marriageDisplay) : '') + (s.place ? ', ' + esc(s.place) : ''),
                     s.sourceIds, s.confidence, s.note);
             });
-            (p.residences || []).forEach(function (r) { row('Residence' + (r.years ? ' (' + r.years + ')' : ''), esc([r.address, r.place].filter(Boolean).join(', ')), r.sourceIds, r.confidence); });
-            (p.occupations || []).forEach(function (o) { row('Occupation' + (o.years ? ' (' + o.years + ')' : ''), esc([o.title, o.employer, o.place].filter(Boolean).join(', ')), o.sourceIds, o.confidence); });
+            (p.residences || []).forEach(function (r) { row(I.t('tree.residence') + (r.years ? ' (' + r.years + ')' : ''), esc([r.address, r.place].filter(Boolean).join(', ')), r.sourceIds, r.confidence); });
+            (p.occupations || []).forEach(function (o) { row(I.t('tree.occupation') + (o.years ? ' (' + o.years + ')' : ''), esc([o.title, o.employer, o.place].filter(Boolean).join(', ')), o.sourceIds, o.confidence); });
             (p.facts || []).forEach(function (f) { row(f.label, esc(f.value), f.sourceIds, f.confidence); });
-            (p.nameVariants || []).forEach(function (v) { if (v.name !== p.displayName) row('Also recorded as', esc(v.name), v.sourceIds, v.confidence || (v.sourceIds.length ? 'confirmed' : 'unverified'), v.note); });
-            if (rows.length) secs.push(['pf-glance', 'At a glance', '<table class="facts"><thead class="visually-hidden"><tr><th>Fact</th><th>Detail</th>' + (SHOW_CONF ? '<th>Confidence</th>' : '') + '<th>Sources</th></tr></thead><tbody>' + rows.join('') + '</tbody></table>']);
+            (p.nameVariants || []).forEach(function (v) { if (v.name !== p.displayName) row(I.t('tree.alsoRecordedBold'), esc(v.name), v.sourceIds, v.confidence || (v.sourceIds.length ? 'confirmed' : 'unverified'), v.note); });
+            if (rows.length) secs.push(['pf-glance', I.t('tree.secGlance'), '<table class="facts"><thead class="visually-hidden"><tr><th>' + I.t('tree.thFact') + '</th><th>' + I.t('tree.thDetail') + '</th>' + (SHOW_CONF ? '<th>' + I.t('tree.thConfidence') + '</th>' : '') + '<th>' + I.t('tree.thSources') + '</th></tr></thead><tbody>' + rows.join('') + '</tbody></table>']);
 
             var tl = (p.timeline || []).slice().sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
-            if (tl.length) secs.push(['pf-timeline', 'Timeline', '<ol class="tline">' + tl.map(function (t) {
-                return '<li class="' + (t.kind === 'context' ? 'is-context' : '') + '"><span class="t-date">' + esc(t.label) + (t.kind === 'context' ? ' · context' : '') + '</span>' + esc(t.event) +
-                       (SHOW_CONF && t.kind !== 'context' && t.confidence !== 'confirmed' ? '<span class="t-note">' + esc(t.confidence) + '</span>' : '') + srcRefs(t.sourceIds, num) + '</li>';
+            if (tl.length) secs.push(['pf-timeline', I.t('tree.secTimeline'), '<ol class="tline">' + tl.map(function (t) {
+                return '<li class="' + (t.kind === 'context' ? 'is-context' : '') + '"><span class="t-date">' + esc(t.label) + (t.kind === 'context' ? I.t('tree.context') : '') + '</span>' + esc(t.event) +
+                       (SHOW_CONF && t.kind !== 'context' && t.confidence !== 'confirmed' ? '<span class="t-note">' + esc(confWord(t.confidence)) + '</span>' : '') + srcRefs(t.sourceIds, num) + '</li>';
             }).join('') + '</ol>']);
         }
 
-        if ((p.media || []).length) secs.push(['pf-docs', 'Documents and photographs', '<div class="gallery">' + p.media.map(function (m, i) {
+        if ((p.media || []).length) secs.push(['pf-docs', I.t('tree.secDocs'), '<div class="gallery">' + p.media.map(function (m, i) {
             return '<button type="button" data-media="' + i + '"><span class="g-img"><img src="' + esc(m.thumb) + '" alt="' + esc(m.alt) + '" loading="lazy"></span>' +
-                   '<span class="g-type">' + esc(m.type === 'clipping' ? 'Clipping' : m.type === 'photo' ? 'Photograph' : 'Record') + (m.transcription ? ' · transcribed' : m.summary ? ' · summarised' : '') + '</span>' +
+                   '<span class="g-type">' + esc(m.type === 'clipping' ? I.t('tree.typeClipping') : m.type === 'photo' ? I.t('tree.typePhoto') : I.t('tree.typeRecord')) + (m.transcription ? I.t('tree.transcribed') : m.summary ? I.t('tree.summarised') : '') + '</span>' +
                    '<span class="g-cap">' + esc(m.caption) + '</span></button>';
         }).join('') + '</div>']);
 
         var fam = famList(p);
         if (fam.length) {
-            var groups = [['Parents', ['father', 'mother']], ['Husbands, wives and partners', ['wife', 'husband', 'partner']], ['Brothers and sisters', ['brother', 'sister', 'sibling']], ['Children', ['son', 'daughter', 'child']]];
+            var groups = [[I.t('tree.groupParents'), ['father', 'mother']], [I.t('tree.groupSpouses'), ['wife', 'husband', 'partner', 'partnerF']], [I.t('tree.groupSiblings'), ['brother', 'sister', 'sibling']], [I.t('tree.groupChildren'), ['son', 'daughter', 'child']]];
             var fh = '';
             groups.forEach(function (g) {
-                var items = fam.filter(function (f) { return g[1].indexOf(f.rel.split(' ')[0]) >= 0; });
+                var items = fam.filter(function (f) { return g[1].indexOf(f.rel) >= 0; });
                 if (!items.length) return;
-                fh += '<h4>' + g[0] + '</h4>' + items.map(function (f) {
+                fh += '<h4>' + esc(g[0]) + '</h4>' + items.map(function (f) {
                     var q = byId[f.id];
-                    return '<button type="button" class="fam-card" data-person="' + esc(q.id) + '"><span class="c-av" aria-hidden="true">' + (q.photo ? '<img src="' + esc(q.photo) + '" alt="">' : esc(initials(q))) + '</span><span><b>' + esc(q.displayName) + '</b><small>' + esc(cap(f.rel)) + (lifeLine(q) ? ' · ' + esc(lifeLine(q)) : '') + '</small></span></button>';
+                    return '<button type="button" class="fam-card" data-person="' + esc(q.id) + '"><span class="c-av" aria-hidden="true">' + (q.photo ? '<img src="' + esc(q.photo) + '" alt="">' : esc(initials(q))) + '</span><span><b>' + esc(q.displayName) + '</b><small>' + esc(cap(famRelText(f))) + (lifeLine(q) ? ' · ' + esc(lifeLine(q)) : '') + '</small></span></button>';
                 }).join('');
             });
-            secs.push(['pf-family', 'Family', '<div class="fam">' + fh + '</div>']);
+            secs.push(['pf-family', I.t('tree.family'), '<div class="fam">' + fh + '</div>']);
         }
 
-        if ((p.openQuestions || []).length) secs.push(['pf-questions', 'Still to discover', '<div class="oq">' + p.openQuestions.map(function (q) {
-            return '<div class="oq-item"><p>' + esc(q.question) + '</p><p class="oq-rec"><b>Where to look</b>' + esc(q.record) + '</p></div>';
+        if ((p.openQuestions || []).length) secs.push(['pf-questions', I.t('tree.secQuestions'), '<div class="oq">' + p.openQuestions.map(function (q) {
+            return '<div class="oq-item"><p>' + esc(q.question) + '</p><p class="oq-rec"><b>' + I.t('tree.whereToLook') + '</b>' + esc(q.record) + '</p></div>';
         }).join('') + '</div>']);
 
-        if (sn.order.length) secs.push(['pf-sources', 'Sources', '<ol class="srcs">' + sn.order.map(function (id, i) {
+        if (sn.order.length) secs.push(['pf-sources', I.t('tree.secSources'), '<ol class="srcs">' + sn.order.map(function (id, i) {
             var s = D.sources[id];
-            var link = s.url ? ' <a href="' + esc(s.url) + '" target="_blank" rel="noopener">Open</a>' : s.file ? ' <a href="' + esc(encodeURI(s.file)) + '" target="_blank" rel="noopener">View file</a>' : '';
+            var link = s.url ? ' <a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + I.t('tree.open') + '</a>' : s.file ? ' <a href="' + esc(encodeURI(s.file)) + '" target="_blank" rel="noopener">' + I.t('tree.viewFile') + '</a>' : '';
             return '<li id="src-' + (i + 1) + '"><span>' + esc(s.title) + '</span>' + link + '<span class="s-meta">' + esc([s.type, s.repository, s.date].filter(Boolean).join(' · ')) + (s.note ? '. ' + esc(s.note) : '') + '</span></li>';
         }).join('') + '</ol>']);
 
         // the family map, for anyone it has a place for
-        var mapLink = PAGES.map && !p.placeholder && hasMapPlace(p) ? '<a href="' + esc(PAGES.map) + '?person=' + encodeURIComponent(p.id) + '" class="more-map">Show on the family map<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M8 4l6 6-6 6"/></svg></a>' : '';
+        var mapLink = PAGES.map && !p.placeholder && hasMapPlace(p) ? '<a href="' + esc(PAGES.map) + '?person=' + encodeURIComponent(p.id) + '" class="more-map">' + I.t('tree.showOnMap') + '<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M8 4l6 6-6 6"/></svg></a>' : '';
         // Ask Stuart about this person, when the site has Stuart
-        var askLink = PAGES.ask && !p.placeholder ? '<a href="' + esc(PAGES.ask) + '?q=' + encodeURIComponent('Tell me about ' + p.displayName) + '" class="more-ask" data-stuart-open data-stuart-ask="' + esc('Tell me about ' + p.displayName) + '">Ask Stuart about ' + esc(p.displayName) + '<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M8 4l6 6-6 6"/></svg></a>' : '';
+        var askLink = PAGES.ask && !p.placeholder ? '<a href="' + esc(PAGES.ask) + '?q=' + encodeURIComponent('Tell me about ' + p.displayName) + '" class="more-ask" data-stuart-open data-stuart-ask="' + esc('Tell me about ' + p.displayName) + '">' + esc(I.t('tree.askAbout', { name: p.displayName })) + '<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M8 4l6 6-6 6"/></svg></a>' : '';
         mapLink += askLink;
-        if (mapLink || (p.relatedPages || []).length) secs.push(['pf-more', 'Read more', '<div class="more">' + mapLink + (p.relatedPages || []).map(function (r) {
+        if (mapLink || (p.relatedPages || []).length) secs.push(['pf-more', I.t('tree.secMore'), '<div class="more">' + mapLink + (p.relatedPages || []).map(function (r) {
             return '<a href="' + esc(r.url) + '">' + esc(r.title) + '<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M8 4l6 6-6 6"/></svg></a>';
         }).join('') + '</div>']);
 
-        var toc = '<nav class="pf-toc" aria-label="Sections of this profile">' + secs.map(function (s) { return '<a href="#' + s[0] + '" data-scroll="' + s[0] + '">' + esc(s[1]) + '</a>'; }).join('') + '</nav>';
+        var toc = '<nav class="pf-toc" aria-label="' + esc(I.t('tree.sections')) + '">' + secs.map(function (s) { return '<a href="#' + s[0] + '" data-scroll="' + s[0] + '">' + esc(s[1]) + '</a>'; }).join('') + '</nav>';
         var i = L.order.indexOf(p.id), prev = L.order[i - 1], next = L.order[i + 1];
         var foot = '<div class="pf-foot">' +
-            (prev ? '<button type="button" data-person="' + esc(prev) + '"><small>Previous</small>' + esc(byId[prev].displayName) + '</button>' : '<span></span>') +
-            (next ? '<button type="button" data-person="' + esc(next) + '"><small>Next</small>' + esc(byId[next].displayName) + '</button>' : '<span></span>') + '</div>';
+            (prev ? '<button type="button" data-person="' + esc(prev) + '"><small>' + I.t('tree.previous') + '</small>' + esc(byId[prev].displayName) + '</button>' : '<span></span>') +
+            (next ? '<button type="button" data-person="' + esc(next) + '"><small>' + I.t('tree.next') + '</small>' + esc(byId[next].displayName) + '</button>' : '<span></span>') + '</div>';
 
         return '<header class="pf-hero">' + hero + '<div>' +
                '<p class="pf-kicker">' + esc(p.isDirectLine ? directLabel() : (p.region && D.meta.regionKicker) || D.meta.familyLabel || D.meta.title) + '</p>' +
                '<h2 class="pf-name" id="drawerName" tabindex="-1">' + esc(p.displayName) + '</h2>' +
                (p.disambiguator ? '<p class="pf-dis">' + esc(p.disambiguator) + '</p>' : '') +
                (dates ? '<div class="pf-dates">' + dates + '</div>' : '') +
-               (variants.length ? '<p class="pf-variants"><b>Also recorded as</b> ' + esc(variants.map(function (v) { return v.name; }).join(' · ')) + '</p>' : '') +
-               (rel ? '<p class="pf-variants"><b>Relationship to ' + esc(vp.givenNames || vp.displayName) + ':</b> ' + esc(rel) + '</p>' : '') +
+               (variants.length ? '<p class="pf-variants"><b>' + I.t('tree.alsoRecordedBold') + '</b> ' + esc(variants.map(function (v) { return v.name; }).join(' · ')) + '</p>' : '') +
+               (rel ? '<p class="pf-variants"><b>' + esc(I.t('tree.relationshipTo', { name: vp.givenNames || vp.displayName })) + ':</b> ' + esc(rel) + '</p>' : '') +
                '<div class="pf-badges">' + badges + '</div>' +
                '</div></header>' + toc +
                secs.map(function (s) { return '<section class="pf-sec" id="' + s[0] + '" aria-labelledby="' + s[0] + '-h"><h3 id="' + s[0] + '-h">' + esc(s[1]) + '</h3>' + s[2] + '</section>'; }).join('') +
@@ -2068,7 +2112,7 @@
         el.lbImg.alt = m.alt || m.caption;
         el.lbImg.src = m.file;
         el.lbOpen.href = encodeURI(m.pdf || m.original || m.file);
-        el.lbOpen.textContent = m.pdf ? 'Open PDF' : 'Open original';
+        el.lbOpen.textContent = m.pdf ? I.t('tree.openPdf') : I.t('tree.openOriginal');
         Array.prototype.forEach.call(el.lbStrip.children, function (b, k) { b.setAttribute('aria-current', k === LB.i ? 'true' : 'false'); });
         if (!m.transcription && LB.tab !== 'summary') LB.tab = m.summary ? 'summary' : 'about';
         if (m.transcription && LB.tab === 'summary') LB.tab = 'transcription';
@@ -2077,17 +2121,17 @@
     function lbSide() {
         var m = LB.list[LB.i], s = D.sources[m.sourceId] || {};
         var tabs = [];
-        if (m.transcription) tabs.push(['transcription', m.translation ? 'Original text' : 'Transcription']);
-        if (m.translation) tabs.push(['translation', 'English translation']);
-        if (m.summary) tabs.push(['summary', 'Summary']);
+        if (m.transcription) tabs.push(['transcription', m.translation ? I.t('tree.tabOriginal') : I.t('tree.tabTranscription')]);
+        if (m.translation) tabs.push(['translation', I.t('tree.tabTranslation')]);
+        if (m.summary) tabs.push(['summary', I.t('tree.tabSummary')]);
         var body = LB.tab === 'translation' ? m.translation : LB.tab === 'summary' ? m.summary : LB.tab === 'transcription' ? m.transcription : '';
         el.lbSide.innerHTML =
-            '<h3>About this item</h3><p>' + esc(m.caption) + '</p>' +
-            '<h3>Record</h3><p class="rec">' + esc(s.title || '') + (s.repository ? '. ' + esc(s.repository) : '') + (s.date ? ' (' + esc(s.date) + ')' : '') + (s.note ? '. ' + esc(s.note) : '') + '</p>' +
+            '<h3>' + I.t('tree.aboutItem') + '</h3><p>' + esc(m.caption) + '</p>' +
+            '<h3>' + I.t('tree.record') + '</h3><p class="rec">' + esc(s.title || '') + (s.repository ? '. ' + esc(s.repository) : '') + (s.date ? ' (' + esc(s.date) + ')' : '') + (s.note ? '. ' + esc(s.note) : '') + '</p>' +
             (tabs.length ? '<div class="lb-tabs" role="tablist">' + tabs.map(function (t) { return '<button type="button" role="tab" data-tab="' + t[0] + '" aria-selected="' + (LB.tab === t[0]) + '">' + t[1] + '</button>'; }).join('') + '</div>' +
                 '<div class="lb-text" role="tabpanel" tabindex="0">' + esc(body || '') + '</div>' +
-                (m.transcription ? '<p class="rec">The original scan is shown beside this text. Readings marked uncertain are flagged in brackets.</p>' : '')
-                : '<p class="rec">No transcription yet.</p>');
+                (m.transcription ? '<p class="rec">' + I.t('tree.scanNote') + '</p>' : '')
+                : '<p class="rec">' + I.t('tree.noTranscription') + '</p>');
     }
     function lbFit() {
         var r = el.lbStage.getBoundingClientRect(), iw = el.lbImg.naturalWidth || 1, ih = el.lbImg.naturalHeight || 1;

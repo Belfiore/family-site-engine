@@ -73,8 +73,8 @@ body.map-body { overflow: hidden; height: 100vh; height: 100dvh; background: var
 /* switches */
 .fm-switch { display: inline-flex; align-items: center; gap: .55rem; font-family: var(--font-accent); font-size: .92rem; color: var(--fm-ink-2); cursor: pointer; line-height: 1.25; }
 .fm-switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.fm-switch span { width: 34px; height: 20px; border-radius: 999px; background: #d9c9b4; position: relative; flex: none; transition: background .2s; }
-.fm-switch span::after { content: ''; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform .2s var(--fm-ease); }
+.fm-switch input + span { width: 34px; height: 20px; border-radius: 999px; background: #d9c9b4; position: relative; flex: none; transition: background .2s; }
+.fm-switch input + span::after { content: ''; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform .2s var(--fm-ease); }
 .fm-switch input:checked + span { background: var(--fm-accent); }
 .fm-switch input:checked + span::after { transform: translateX(14px); }
 .fm-switch input:focus-visible + span { outline: 2px solid var(--fm-accent); outline-offset: 2px; }

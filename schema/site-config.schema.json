@@ -920,6 +920,26 @@
    },
    "additionalProperties": false,
    "description": "The Discovery Timeline: a page of what the family has newly learned, with the history kept by the build between publications. See docs/discovery-timeline.md."
+  },
+  "language": {
+   "type": "object",
+   "properties": {
+    "default": {
+     "type": "string",
+     "pattern": "^[a-z]{2}$",
+     "description": "The language of the site when a visitor has not chosen one (default en). The engine has words for en and de. See docs/languages.md."
+    },
+    "available": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "pattern": "^[a-z]{2}$"
+     },
+     "description": "The languages a visitor can choose from (default: only the default language). With more than one, the navigation bar shows a switcher such as EN | DE and the choice is kept in the visitor's browser."
+    }
+   },
+   "additionalProperties": false,
+   "description": "Optional. Languages for the engine's own words (menus, buttons, labels, dates). The site's own words stay as written; add \"story_de\", \"label_de\" and so on beside a field to give a German version. A site without this block is English only and builds as it always did. See docs/languages.md."
   }
  }
 }

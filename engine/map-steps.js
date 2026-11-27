@@ -6,6 +6,7 @@
 (function () {
     'use strict';
     var FM = window.FM = window.FM || {};
+    var I = window.FamilyI18n;
     var $ = function (id) { return document.getElementById(id); };
     var esc = FM.data.esc, glyph = FM.glyph;
     var U = function () { return FM.util; };
@@ -24,8 +25,8 @@
         if (e.recordCrops && e.recordCrops.length) media = '<a class="record-link ec-media" href="images/records/' + esc(e.recordCrops[0]) + '"><img src="images/records/' + esc(e.recordCrops[0]) + '" alt="' + esc(e.summary) + '" loading="lazy"></a>';
         else if (img) media = '<a class="record-link ec-media" href="' + esc(img.file) + '"><img src="' + esc(img.thumb || img.file) + '" alt="' + esc(img.caption) + '" loading="lazy"></a>';
         var conf = e.familyStatement ? 'family tradition' : e.confidence;
-        var where = pl ? '<button type="button" class="ec-place" data-open-place="' + esc(pl.id) + '">' + esc(pl.name) + '</button>' + (pl.drawAs === 'area' ? ' <span class="ec-prec">(an area)</span>' : pl.drawAs === 'halo' ? ' <span class="ec-prec">(within ' + esc(U().metresText(pl.uncertaintyMetres)) + ')</span>' : '')
-                         : '<span class="ec-place ec-place--none">Place not known</span>';
+        var where = pl ? '<button type="button" class="ec-place" data-open-place="' + esc(pl.id) + '">' + esc(pl.name) + '</button>' + (pl.drawAs === 'area' ? ' <span class="ec-prec">' + esc(I.t('map.anArea')) + '</span>' : pl.drawAs === 'halo' ? ' <span class="ec-prec">' + esc(I.t('map.within', { distance: U().metresText(pl.uncertaintyMetres) })) + '</span>' : '')
+                         : '<span class="ec-place ec-place--none">' + esc(I.t('map.placeUnknown')) + '</span>';
         var voyage = '';
         if (e.voyage) {
             var disp = esc(e.voyage.display || ''), ship = esc(e.voyage.ship || '');
@@ -35,14 +36,14 @@
         var first = e.personIds[0];
         return '<article class="ec' + (e.noProvenLink ? ' is-orkney' : '') + (e.associate ? ' is-associate' : '') + (e.familyStatement ? ' is-family' : '') + '" data-event="' + esc(e.id) + '">' +
             '<p class="ec-top"><span class="ec-gl">' + glyph(e.type) + '</span><span class="ec-type">' + esc(FM.data.TYPE_LABEL[e.type]) + '</span><span class="ec-date">' + esc(U().dateLabel(e)) + '</span></p>' +
-            (e.noProvenLink ? '<p class="ec-npl"><span class="badge badge--npl">No proven link to this family</span></p>' : '') +
-            (e.associate ? '<p class="ec-npl"><span class="badge badge--assoc">' + esc(D.associateLabel || 'Business associate') + '. ' + esc(D.associateNote || 'Not family') + '</span></p>' : '') +
+            (e.noProvenLink ? '<p class="ec-npl"><span class="badge badge--npl">' + esc(I.t('map.noProven')) + '</span></p>' : '') +
+            (e.associate ? '<p class="ec-npl"><span class="badge badge--assoc">' + esc(D.associateLabel || I.t('map.associate')) + '. ' + esc(D.associateNote || I.t('map.notFamily')) + '</span></p>' : '') +
             '<p class="ec-where">' + where + '</p>' + voyage +
-            '<p class="ec-text">' + esc(e.summary) + (e.familyStatement && !/\(family/.test(e.summary) ? ' (family)' : '') + '</p>' +
+            '<p class="ec-text">' + esc(e.summary) + esc(FM.famMark(e)) + '</p>' +
             (people ? '<div class="ec-people">' + people + '</div>' : '') + media +
-            (opts.noActions ? '' : '<div class="ec-actions">' + (pl ? '<button type="button" class="fm-btn fm-btn--sm" data-open-place="' + esc(pl.id) + '">Open place</button>' : '') +
+            (opts.noActions ? '' : '<div class="ec-actions">' + (pl ? '<button type="button" class="fm-btn fm-btn--sm" data-open-place="' + esc(pl.id) + '">' + esc(I.t('map.openPlace')) + '</button>' : '') +
                 (pl && pl.streetView ? FM.sv.button(pl, { small: true }) : (pl && pl.streetViewReason && /coverage/i.test(pl.streetViewReason) ? '<span class="ec-nosv">' + esc(pl.streetViewReason) + '</span>' : '')) +
-                (first ? '<a class="fm-btn fm-btn--sm fm-btn--ghost" href="' + esc(((window.FamilySite || {}).pages || {}).tree || 'family-tree.html') + '#/person/' + esc(first) + '">Full profile</a>' : '') + '</div>') +
+                (first ? '<a class="fm-btn fm-btn--sm fm-btn--ghost" href="' + esc(((window.FamilySite || {}).pages || {}).tree || 'family-tree.html') + '#/person/' + esc(first) + '">' + esc(I.t('map.fullProfile')) + '</a>' : '') + '</div>') +
             '</article>';
     }
     FM.eventCard = eventCard;
@@ -53,13 +54,13 @@
         function render(step, i) {
             var card = $('stepCard');
             var evs = (step.events || []).map(function (id) { return FM.DATA.byId[id]; }).filter(Boolean);
-            card.innerHTML = '<div class="sc-in"><p class="fm-label">' + (i + 1) + ' of ' + p.steps.length + '</p>' +
+            card.innerHTML = '<div class="sc-in"><p class="fm-label">' + esc(I.t('map.stepOf', { i: i + 1, n: p.steps.length })) + '</p>' +
                 (step.card && step.card.title ? '<h2 class="sc-title">' + esc(step.card.title) + '</h2>' : '') +
                 (step.card && step.card.text ? '<p class="sc-text">' + esc(step.card.text) + '</p>' : '') +
                 evs.map(function (e) { return eventCard(e, { noActions: false }); }).join('') +
-                '<div class="sc-ctl"><button type="button" class="fm-btn fm-btn--sm" data-sc="prev"' + (i === 0 ? ' disabled' : '') + '>Previous</button>' +
-                '<button type="button" class="fm-btn fm-btn--sm" data-sc="next">' + (i === p.steps.length - 1 ? 'Finish' : 'Next') + '</button>' +
-                '<button type="button" class="fm-x" data-sc="close" aria-label="Close">&times;</button></div></div>';
+                '<div class="sc-ctl"><button type="button" class="fm-btn fm-btn--sm" data-sc="prev"' + (i === 0 ? ' disabled' : '') + '>' + esc(I.t('map.previous')) + '</button>' +
+                '<button type="button" class="fm-btn fm-btn--sm" data-sc="next">' + esc(I.t(i === p.steps.length - 1 ? 'map.finish' : 'map.next')) + '</button>' +
+                '<button type="button" class="fm-x" data-sc="close" aria-label="' + esc(I.t('map.close')) + '">&times;</button></div></div>';
             card.hidden = false;
             var target = null;
             if (step.camera && step.camera.center) {

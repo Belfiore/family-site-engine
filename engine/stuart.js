@@ -1,3 +1,4 @@
+/* @i18n stuart visitor kin */
 /* Stuart: the family archive's guide.
  *
  * One chat, used two ways:
@@ -19,9 +20,11 @@
     var KEY = { me: 'stuart.me', chat: 'stuart.chat', mode: 'stuart.mode', open: 'stuart.open', flash: 'stuart.flash', seen: 'stuart.seen' };
     // site settings (site-config.js): where the engine's files and Stuart's index are, the page names, the family
     var SITE = window.FamilySite || {};
+    var I = window.FamilyI18n;
+    I.apply();
     var BASE = (SITE.engine && SITE.engine.base) || '';
     var PAGES = SITE.pages || { home: 'index.html', tree: 'family-tree.html', map: 'map.html', ask: 'ask.html' };
-    var FAMILY = (SITE.site && SITE.site.familyName) || 'this family';
+    var FAMILY = (SITE.site && I.pick(SITE.site, 'familyName')) || I.t('stuart.family');
     var ENGINE = ['archive-kin.js', 'archive-dates.js', 'archive-search.js', 'archive-core.js'].map(function (f) { return BASE + f; });
     var REDUCE = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     var HERE = decodeURIComponent(location.pathname.split('/').pop() || PAGES.home || 'index.html');
@@ -126,26 +129,26 @@
         var self = this;
         var id = ++uid;
 
-        var root = el('section', { class: 'st st--' + opts.mode, 'aria-label': 'Conversation with Stuart' });
+        var root = el('section', { class: 'st st--' + opts.mode, 'aria-label': I.t('stuart.conversation') });
         var scroller = el('div', { class: 'st-scroll' });
         var log = el('ol', { class: 'st-log' });
         var live = el('div', { class: 'st-sr', role: 'status', 'aria-live': 'polite' });
-        var jump = el('button', { type: 'button', class: 'st-jump', hidden: true, onclick: function () { toEnd(true); } }, [icon('down'), 'Latest answer']);
-        var ta = el('textarea', { class: 'st-input', rows: '1', maxlength: '500', id: 'st-input-' + id, 'aria-label': 'Your question for Stuart', placeholder: 'Tell Stuart who you are first', disabled: true });
-        var send = el('button', { type: 'submit', class: 'st-send', 'aria-label': 'Ask Stuart', disabled: true }, [icon('send')]);
+        var jump = el('button', { type: 'button', class: 'st-jump', hidden: true, onclick: function () { toEnd(true); } }, [icon('down'), I.t('stuart.latest')]);
+        var ta = el('textarea', { class: 'st-input', rows: '1', maxlength: '500', id: 'st-input-' + id, 'aria-label': I.t('stuart.inputAria'), placeholder: I.t('stuart.inputFirst'), disabled: true });
+        var send = el('button', { type: 'submit', class: 'st-send', 'aria-label': I.t('stuart.askAria'), disabled: true }, [icon('send')]);
         var whoText = el('span', { class: 'st-who-text' });
         var who = el('p', { class: 'st-who', hidden: true }, [whoText,
-            el('button', { type: 'button', class: 'st-link', onclick: function () { changeMe(); } }, ['Change']),
-            el('button', { type: 'button', class: 'st-link', onclick: function () { restart(); } }, ['New conversation'])]);
+            el('button', { type: 'button', class: 'st-link', onclick: function () { changeMe(); } }, [I.t('stuart.change')]),
+            el('button', { type: 'button', class: 'st-link', onclick: function () { restart(); } }, [I.t('stuart.newConversation')])]);
         var form = el('form', { class: 'st-compose', onsubmit: function (e) { e.preventDefault(); ask(ta.value); } }, [
             who, el('div', { class: 'st-field' }, [ta, send]),
-            el('p', { class: 'st-hint', id: 'st-hint-' + id, text: 'Enter to ask. Shift and Enter for a new line.' })]);
+            el('p', { class: 'st-hint', id: 'st-hint-' + id, text: I.t('stuart.hint') })]);
         ta.setAttribute('aria-describedby', 'st-hint-' + id);
 
         if (page) {
             root.appendChild(el('header', { class: 'st-hero' }, [seal('st-hero-seal'), el('div', {}, [
-                el('h1', { class: 'st-hero-name', text: 'Ask Stuart' }),
-                el('p', { class: 'st-hero-role', text: 'The family archivist. Every answer comes from the records on this site, with a link to each one.' })])]));
+                el('h1', { class: 'st-hero-name', text: I.t('stuart.heroName') }),
+                el('p', { class: 'st-hero-role', text: I.t('stuart.heroRole') })])]));
         }
         scroller.appendChild(log);
         root.appendChild(scroller);
@@ -192,7 +195,7 @@
             return li;
         }
         function typing() {
-            return stuart([el('div', { class: 'st-typing', role: 'img', 'aria-label': 'Stuart is looking through the records' }, [el('span'), el('span'), el('span')])], 'st-msg--typing');
+            return stuart([el('div', { class: 'st-typing', role: 'img', 'aria-label': I.t('stuart.typing') }, [el('span'), el('span'), el('span')])], 'st-msg--typing');
         }
         function stagger(body) { Array.prototype.forEach.call(body.children, function (c, i) { c.style.setProperty('--i', String(Math.min(i, 8))); }); }
         function chip(text, onPick, cls) { return el('button', { type: 'button', class: 'st-chip' + (cls ? ' ' + cls : ''), onclick: onPick }, [text]); }
@@ -272,7 +275,7 @@
                 a.addEventListener('click', function (e) { go(e, href); });
                 return a;
             })));
-            if (r.mapLink) kids.push(el('p', {}, [link('See these places on the family map', r.mapLink, 'st-go')]));
+            if (r.mapLink) kids.push(el('p', {}, [link(I.t('stuart.mapLink'), r.mapLink, 'st-go')]));
             if (r.evidence && r.evidence.length) kids.push(sources(r.evidence, sid));
             var next = (r.more ? ['Tell me more'] : []).concat(r.followups || []);
             if (next.length) kids.push(chips(next.slice(0, 4)));
@@ -286,7 +289,7 @@
             return rel + ' of ' + prev.name;
         }
         function chain(d) {
-            var ol = el('ol', { class: 'st-chain', 'aria-label': 'How they are connected' });
+            var ol = el('ol', { class: 'st-chain', 'aria-label': I.t('stuart.chain') });
             d.steps.forEach(function (s, i) {
                 var p = A.byId[s.id];
                 if (i) {
@@ -299,18 +302,18 @@
             return ol;
         }
         function sources(list, sid) {
-            var kind = { record: 'Original record', family: 'Family memory', reference: 'Reference', page: 'On this site', story: 'Family tree', photo: 'Photograph', calculated: 'Worked out' };
+            var kind = {}; ['record', 'family', 'reference', 'page', 'story', 'photo', 'calculated'].forEach(function (k) { kind[k] = I.t('stuart.kind.' + k); });
             var inner = el('ol', { class: 'st-src-list' }, list.map(function (e) {
                 var url = safeUrl(e.url);
                 var title = url ? link(e.title, url, null) : el('span', { text: e.title });
                 if (url && e.external) { title.setAttribute('target', '_blank'); title.setAttribute('rel', 'noopener'); }
                 return el('li', { id: sid + '-' + e.n }, [el('span', { class: 'st-src-n', text: String(e.n) }), el('span', { class: 'st-src-text' }, [
-                    el('span', { class: 'st-kind st-kind--' + e.kind, text: kind[e.kind] || 'Record' }), title,
-                    e.external ? el('span', { class: 'st-sr', text: ' (opens another site)' }) : null,
+                    el('span', { class: 'st-kind st-kind--' + e.kind, text: kind[e.kind] || I.t('stuart.kind.other') }), title,
+                    e.external ? el('span', { class: 'st-sr', text: I.t('stuart.opensOther') }) : null,
                     e.detail ? el('span', { class: 'st-src-detail', text: e.detail }) : null])]);
             }));
             var wrap = el('div', { class: 'st-src-wrap' }, [inner]);
-            var btn = el('button', { type: 'button', class: 'st-src-toggle', 'aria-expanded': 'false', 'aria-controls': sid }, [icon('chevron'), 'Where this comes from', el('span', { class: 'st-count', text: String(list.length) })]);
+            var btn = el('button', { type: 'button', class: 'st-src-toggle', 'aria-expanded': 'false', 'aria-controls': sid }, [icon('chevron'), I.t('stuart.whereFrom'), el('span', { class: 'st-count', text: String(list.length) })]);
             var box = el('div', { class: 'st-sources', id: sid }, [btn, wrap]);
             function set(open) { btn.setAttribute('aria-expanded', String(open)); box.classList.toggle('is-open', open); }
             btn.addEventListener('click', function () { set(btn.getAttribute('aria-expanded') !== 'true'); });
@@ -337,7 +340,7 @@
             turns.push({ q: q, pin: pin || null, shown: shown || null });
             put(KEY.chat, { me: me, turns: turns }, true);
             function show() {
-                if (!r) { stuart([el('p', { text: 'Something went wrong while I was looking that up. Please try asking another way.' })]); return; }
+                if (!r) { stuart([el('p', { text: I.t('stuart.wentWrong') })]); return; }
                 var li = answer(r);
                 if (quiet) li.classList.add('st-still');
                 convo.focus = r.state.focus; convo.family = r.state.family; convo.period = r.state.period; convo.last = r.state.last;
@@ -387,8 +390,8 @@
         function picker() {
             var listId = 'st-pick-' + id, active = -1, shown = [];
             var input = el('input', { type: 'text', class: 'st-pick-input', role: 'combobox', 'aria-expanded': 'false', 'aria-controls': listId,
-                'aria-autocomplete': 'list', 'aria-label': 'Your name', placeholder: 'Start typing your name', autocomplete: 'off', spellcheck: 'false' });
-            var list = el('ul', { class: 'st-pick-list', id: listId, role: 'listbox', 'aria-label': 'Family members' });
+                'aria-autocomplete': 'list', 'aria-label': I.t('visitor.yourName'), placeholder: I.t('visitor.placeholder'), autocomplete: 'off', spellcheck: 'false' });
+            var list = el('ul', { class: 'st-pick-list', id: listId, role: 'listbox', 'aria-label': I.t('stuart.pickAria') });
             var everyone = people();
             function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
             function matches(q) {
@@ -411,7 +414,7 @@
                     opt.addEventListener('click', function () { choose(p.id); });
                     list.appendChild(opt);
                 });
-                if (!shown.length) list.appendChild(el('li', { class: 'st-pick-none', role: 'presentation', text: 'No one by that name on the tree yet.' }));
+                if (!shown.length) list.appendChild(el('li', { class: 'st-pick-none', role: 'presentation', text: I.t('stuart.pickNone') }));
                 input.setAttribute('aria-expanded', 'true');
                 if (active >= 0 && shown[active]) input.setAttribute('aria-activedescendant', listId + '-' + active); else input.removeAttribute('aria-activedescendant');
             }
@@ -423,8 +426,8 @@
                 else if (e.key === 'Enter') { e.preventDefault(); if (shown[Math.max(0, active)]) choose(shown[Math.max(0, active)].id); }
                 else if (e.key === 'Escape') { list.textContent = ''; input.setAttribute('aria-expanded', 'false'); }
             });
-            var box = el('div', { class: 'st-pick' }, [el('label', { class: 'st-pick-label', for: 'st-pick-in-' + id, text: 'Who are you?' }), input, list,
-                el('button', { type: 'button', class: 'st-link st-pick-visitor', onclick: function () { choose('visitor'); } }, ["I'm not on the family tree"])]);
+            var box = el('div', { class: 'st-pick' }, [el('label', { class: 'st-pick-label', for: 'st-pick-in-' + id, text: I.t('visitor.question') }), input, list,
+                el('button', { type: 'button', class: 'st-link st-pick-visitor', onclick: function () { choose('visitor'); } }, [I.t('stuart.notOnTree')])]);
             input.id = 'st-pick-in-' + id;
             box.input = input;
             draw();
@@ -433,9 +436,10 @@
         function intro() {
             var pick = picker();
             stuart([
-                el('p', { class: 'st-hello', text: "Hello, I'm Stuart." }),
-                el('p', { text: 'I look after the records of ' + FAMILY + ': the family tree, the certificates and census returns, the photographs and the stories on this site. Ask me about anyone, and I will answer from the records and show you where each fact comes from.' }),
-                el('p', { text: 'First, who are you? Find yourself on the family tree, and I will answer from where you sit in it, so "my grandfather" or "my cousins" means yours.' }),
+                el('p', { class: 'st-hello', text: I.t('stuart.hello') }),
+                el('p', { text: I.t('stuart.introWho', { family: FAMILY }) }),
+                el('p', { text: I.t('stuart.introFirst') }),
+                I.t('stuart.languageNote') ? el('p', { class: 'st-note', text: I.t('stuart.languageNote') }) : null,
                 pick], 'st-msg--intro');
             setTimeout(function () { if (opts.focus !== false) pick.input.focus({ preventScroll: true }); }, REDUCE ? 0 : 350);
         }
@@ -474,16 +478,16 @@
             var onStory = !page && HERE !== PAGES.home && pageName();
             if (me && me !== 'visitor') {
                 var nm = firstName(me);
-                kids.push(el('p', { text: returning ? 'Welcome back, ' + nm + '.' : 'Lovely to meet you, ' + nm + '. You are ' + describe(me) + ', so the whole tree is your family.' }));
-                if (!returning) kids.push(el('p', { text: 'When you ask about "my grandmother" or "my cousins", I will work it out from you. Ask about anyone by name too.' }));
+                kids.push(el('p', { text: returning ? I.t('stuart.welcomeBack', { name: nm }) : I.t('stuart.meet', { name: nm, rel: describe(me) }) }));
+                if (!returning) kids.push(el('p', { text: I.t('stuart.meetHow') }));
             } else {
-                kids.push(el('p', { text: returning ? 'Welcome back.' : 'That is fine. I will answer about the family as a whole. Ask about anyone by name, a place, a year or a family.' }));
+                kids.push(el('p', { text: returning ? I.t('stuart.welcomeBackPlain') : I.t('stuart.visitorOk') }));
             }
-            var tool = HERE === PAGES.tree ? 'the family tree' : HERE === PAGES.map ? 'the family map' : null, f = !page && focusPerson();
-            if (f) kids.push(el('p', { text: 'You are looking at ' + A.byId[f].name + (tool ? ' on ' + tool : '') + '. Here is where I would start:' }));
-            else if (tool) kids.push(el('p', { text: 'You are looking at ' + tool + '. Here is where I would start:' }));
-            else if (onStory) kids.push(el('p', { text: 'You are reading ' + onStory + '. Here is where I would start:' }));
-            else kids.push(el('p', { text: 'Here are some places to start:' }));
+            var tool = HERE === PAGES.tree ? 'Tree' : HERE === PAGES.map ? 'Map' : null, f = !page && focusPerson();
+            if (f) kids.push(el('p', { text: I.t('stuart.lookPerson' + (tool || ''), { name: A.byId[f].name }) }));
+            else if (tool) kids.push(el('p', { text: I.t('stuart.look' + tool) }));
+            else if (onStory) kids.push(el('p', { text: I.t('stuart.reading', { title: onStory }) }));
+            else kids.push(el('p', { text: I.t('stuart.startHere') }));
             kids.push(chips(starters()));
             stuart(kids, 'st-msg--greet');
         }
@@ -492,15 +496,15 @@
             put(KEY.me, pid);
             ready = true;
             ta.disabled = false;
-            ta.placeholder = 'Ask Stuart about the family';
-            whoText.textContent = pid === 'visitor' ? 'Asking as a visitor.' : 'Asking as ' + A.byId[pid].name + '.';
+            ta.placeholder = I.t('stuart.inputReady');
+            whoText.textContent = pid === 'visitor' ? I.t('stuart.askingAsVisitor') : I.t('stuart.askingAs', { name: A.byId[pid].name });
             who.hidden = false;
         }
         function choose(pid) {
             if (pid !== 'visitor' && !A.byId[pid]) return;
             var pickMsg = log.querySelector('.st-msg--intro .st-pick');
-            if (pickMsg) pickMsg.replaceWith(el('p', { class: 'st-picked', text: pid === 'visitor' ? 'Answering as a visitor.' : 'You are ' + A.byId[pid].name + '.' }));
-            mine(pid === 'visitor' ? "I'm not on the family tree" : "I'm " + A.byId[pid].name);
+            if (pickMsg) pickMsg.replaceWith(el('p', { class: 'st-picked', text: pid === 'visitor' ? I.t('stuart.answeringAsVisitor') : I.t('stuart.youAre', { name: A.byId[pid].name }) }));
+            mine(pid === 'visitor' ? I.t('stuart.notOnTree') : I.t('stuart.imName', { name: A.byId[pid].name }));
             setMe(pid);
             if (window.FamilyVisitor) { if (pid === 'visitor') { if (window.FamilyVisitor.status() === 'none') window.FamilyVisitor.skip(); } else if (window.FamilyVisitor.id() !== pid) window.FamilyVisitor.set(pid); }
             turns = []; convo = { history: [], pins: {} };
@@ -514,11 +518,11 @@
                 if (pendingQ) { var q = pendingQ; pendingQ = null; ask(q); }
             }, REDUCE ? 0 : 500);
         }
-        function changeMe() { put(KEY.me, null); me = null; ready = false; ta.disabled = true; send.disabled = true; who.hidden = true; ta.placeholder = 'Tell Stuart who you are first'; intro(); toEnd(true); }
+        function changeMe() { put(KEY.me, null); me = null; ready = false; ta.disabled = true; send.disabled = true; who.hidden = true; ta.placeholder = I.t('stuart.inputFirst'); intro(); toEnd(true); }
         function restart() { turns = []; convo = { history: [], pins: {} }; put(KEY.chat, { me: me, turns: [] }, true); log.textContent = ''; greet(true); ta.focus(); }
 
         // ---------------------------------------------------------- start
-        log.appendChild(el('li', { class: 'st-msg st-msg--stuart st-msg--loading' }, [el('div', { class: 'st-avatar' }, [seal()]), el('div', { class: 'st-body' }, [el('div', { class: 'st-typing', role: 'img', 'aria-label': 'Stuart is opening the archive' }, [el('span'), el('span'), el('span')])])]));
+        log.appendChild(el('li', { class: 'st-msg st-msg--stuart st-msg--loading' }, [el('div', { class: 'st-avatar' }, [seal()]), el('div', { class: 'st-body' }, [el('div', { class: 'st-typing', role: 'img', 'aria-label': I.t('stuart.opening') }, [el('span'), el('span'), el('span')])])]));
         loadArchive().then(function (archive) {
             A = archive;
             log.textContent = '';
@@ -546,7 +550,7 @@
             if (wantFocus) self.focus();
         }).catch(function (e) {
             log.textContent = '';
-            stuart([el('p', { text: 'I could not open the archive just now (' + e.message + '). The family tree and the other pages still work, and you can try again in a moment.' })]);
+            stuart([el('p', { text: I.t('stuart.cannotOpen', { error: e.message }) })]);
         });
 
         // focus the question box, or the name finder; if the archive is still loading, do it once it arrives
@@ -564,20 +568,20 @@
     function Widget() {
         var chat = null, mode = get(KEY.mode) === 'drawer' ? 'drawer' : 'float';
         var tip = el('div', { class: 'st-tip', id: 'st-tip', role: 'tooltip' }, [
-            el('strong', { text: 'Ask Stuart, the family archivist' }),
-            el('span', { text: 'Ask about anyone on the family tree. Stuart answers from the records on this site, works out how people are related to you, and shows where each fact comes from.' })]);
+            el('strong', { text: I.t('stuart.tipTitle') }),
+            el('span', { text: I.t('stuart.tipText') })]);
         var launch = el('button', { type: 'button', class: 'st-launch', 'aria-expanded': 'false', 'aria-controls': 'st-panel', 'aria-describedby': 'st-tip' }, [
-            seal('st-launch-seal'), el('span', { class: 'st-launch-text', text: 'Ask Stuart' })]);
+            seal('st-launch-seal'), el('span', { class: 'st-launch-text', text: I.t('stuart.launch') })]);
         var modeBtn = el('button', { type: 'button', class: 'st-icon-btn' });
-        var title = el('div', { class: 'st-head-title' }, [el('strong', { text: 'Stuart' }), el('span', { text: 'Family archivist' })]);
+        var title = el('div', { class: 'st-head-title' }, [el('strong', { text: I.t('stuart.name') }), el('span', { text: I.t('stuart.role') })]);
         var head = el('header', { class: 'st-head' }, [el('div', { class: 'st-avatar' }, [seal()]), title, el('div', { class: 'st-head-tools' }, [
             modeBtn,
-            el('a', { class: 'st-icon-btn', href: PAGES.ask || 'ask.html', title: 'Open Stuart on a full page', 'aria-label': 'Open Stuart on a full page' }, [icon('expand')]),
-            el('button', { type: 'button', class: 'st-icon-btn', title: 'Close', 'aria-label': 'Close Stuart', onclick: function () { close(); } }, [icon('close')])])]);
+            el('a', { class: 'st-icon-btn', href: PAGES.ask || 'ask.html', title: I.t('stuart.fullPage'), 'aria-label': I.t('stuart.fullPage') }, [icon('expand')]),
+            el('button', { type: 'button', class: 'st-icon-btn', title: I.t('stuart.close'), 'aria-label': I.t('stuart.closeAria'), onclick: function () { close(); } }, [icon('close')])])]);
         var bodyHost = el('div', { class: 'st-panel-body' });
-        var panel = el('div', { class: 'st-panel', id: 'st-panel', role: 'dialog', 'aria-label': 'Chat with Stuart', 'data-mode': mode, tabindex: '-1', hidden: true }, [head, bodyHost]);
+        var panel = el('div', { class: 'st-panel', id: 'st-panel', role: 'dialog', 'aria-label': I.t('stuart.panelAria'), 'data-mode': mode, tabindex: '-1', hidden: true }, [head, bodyHost]);
         // one labelled region holds the button, its explanation and the chat, so it is easy to find with a screen reader
-        document.body.appendChild(el('aside', { class: 'st-widget', 'aria-label': 'Ask Stuart' }, [launch, tip, panel]));
+        document.body.appendChild(el('aside', { class: 'st-widget', 'aria-label': I.t('stuart.launch') }, [launch, tip, panel]));
 
         // On full-screen pages (the family tree, the map) the button shrinks to Stuart's seal, and the page names its
         // own controls in data-avoid so the button sits just above whichever of them is showing in the corner.
@@ -623,7 +627,7 @@
             modeBtn.textContent = '';
             var toDrawer = mode === 'float';
             modeBtn.appendChild(icon(toDrawer ? 'drawer' : 'float'));
-            modeBtn.setAttribute('aria-label', toDrawer ? 'Show as a drawer down the side' : 'Show as a small window');
+            modeBtn.setAttribute('aria-label', I.t(toDrawer ? 'stuart.toDrawer' : 'stuart.toWindow'));
             modeBtn.title = modeBtn.getAttribute('aria-label');
         }
         modeBtn.addEventListener('click', function () {
