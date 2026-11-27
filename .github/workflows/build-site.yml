@@ -17,6 +17,11 @@
 # If the data check, the build or any of the site's checks fails, nothing is published and the live site
 # stays as it was.
 #
+# A site that turns on private access (access.enabled in site.config.json) is published to Cloudflare Pages instead
+# of GitHub Pages, behind a password gate (docs/access.md). The calling workflow then passes three secrets
+# (secrets: inherit does it): SITE_PASSWORD, CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID. A site without it is
+# published to GitHub Pages exactly as before and none of the steps for it run.
+#
 # A site that turns on the Discovery Timeline (timeline.enabled in site.config.json) also has the history of what
 # was found fetched from its live site before the build, and written back with the new build. Other sites skip
 # those steps.
@@ -45,6 +50,16 @@ on:
         description: Where the engine lives.
         type: string
         default: Belfiore/family-site-engine
+    secrets:
+      SITE_PASSWORD:
+        description: The family password of a protected site (access.enabled). Becomes the SITE_PASSWORD secret of its Cloudflare Pages project.
+        required: false
+      CLOUDFLARE_API_TOKEN:
+        description: A Cloudflare API token that can edit Cloudflare Pages. Only for a protected site.
+        required: false
+      CLOUDFLARE_ACCOUNT_ID:
+        description: The Cloudflare account that holds the Pages project. Only for a protected site.
+        required: false
     outputs:
       engine-version:
         description: The engine version the site was built with.
@@ -55,6 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       engine-version: ${{ steps.engine.outputs.version }}
+      protected: ${{ steps.engine.outputs.protected }}
     steps:
       - name: Check out the site
         uses: actions/checkout@v5
@@ -99,6 +115,12 @@ jobs:
               f.write('version=%s\n' % v)
               if (json.load(open(os.path.join(os.environ['SITE_DIR'], 'site.config.json'), encoding='utf-8')).get('timeline') or {}).get('enabled') is True:
                   f.write('timeline=true\n')
+              acc = json.load(open(os.path.join(os.environ['SITE_DIR'], 'site.config.json'), encoding='utf-8')).get('access') or {}
+              if acc.get('enabled') is True:
+                  proj = str(acc.get('project') or '')
+                  if not re.match(r'^[a-z0-9]([a-z0-9-]{0,56}[a-z0-9])?$', proj):
+                      sys.exit('access.project in site.config.json must name the Cloudflare Pages project (lower case letters, digits, hyphens)')
+                  f.write('protected=true\nproject=%s\n' % proj)
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f: f.write('Built with engine %s (%s).\n' % (v, why))
           PY
 
@@ -138,7 +160,7 @@ jobs:
         run: python3 engine/build/build_site.py --site "site/${{ inputs.site-dir }}" --out _site ${{ steps.engine.outputs.timeline == 'true' && '--previous previous' || '' }}
 
       - name: Set up Node for the site's checks
-        if: inputs.site-tests != ''
+        if: inputs.site-tests != '' || steps.engine.outputs.protected == 'true'
         uses: actions/setup-node@v5
         with:
           node-version: '20'
@@ -167,17 +189,70 @@ jobs:
           done <<< "$SITE_TESTS"
 
       - name: Set up Pages
-        if: inputs.deploy
+        if: inputs.deploy && steps.engine.outputs.protected != 'true'
         uses: actions/configure-pages@v6
 
       - name: Upload the built site
-        if: inputs.deploy
+        if: inputs.deploy && steps.engine.outputs.protected != 'true'
         uses: actions/upload-pages-artifact@v5
         with:
           path: _site
 
+      # Only for a protected site (access.enabled). The password is put in the project's own secret store, then the
+      # build is published. Cloudflare reads the secret when a deployment is made, so changing the password is
+      # changing the GitHub secret and running this again; every device is then asked for the new one.
+      - name: Publish to Cloudflare Pages
+        id: cloudflare
+        if: inputs.deploy && steps.engine.outputs.protected == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
+          PROJECT: ${{ steps.engine.outputs.project }}
+        run: |
+          set -euo pipefail
+          for v in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID SITE_PASSWORD; do
+            if [ -z "${!v:-}" ]; then
+              echo "::error::The $v secret is not set, so a protected site cannot be published. See docs/access.md in the engine."
+              exit 1
+            fi
+          done
+          # the first publication makes the project; later ones find it there
+          npx --yes wrangler@3 pages project create "$PROJECT" --production-branch main >/dev/null 2>&1 || echo "Project $PROJECT is already there."
+          printf '%s' "$SITE_PASSWORD" | npx --yes wrangler@3 pages secret put SITE_PASSWORD --project-name "$PROJECT" >/dev/null
+          npx --yes wrangler@3 pages deploy _site --project-name "$PROJECT" --branch main --commit-dirty=true 2>&1 | tee cloudflare-deploy.log
+          url=$(grep -Eo 'https://[A-Za-z0-9.-]+\.pages\.dev' cloudflare-deploy.log | head -1)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      # The gate must be what answers. If the worker were not picked up, Cloudflare would serve the files openly, so
+      # this looks at the deployment as a stranger would and fails the run if anything comes back without the password.
+      - name: Check the gate is closed
+        if: inputs.deploy && steps.engine.outputs.protected == 'true'
+        env:
+          URL: ${{ steps.cloudflare.outputs.url }}
+        run: |
+          set -euo pipefail
+          [ -n "$URL" ] || { echo "::error::Could not read the address Cloudflare published to."; exit 1; }
+          bad=0
+          for path in / /index.html /data/people.json /site-config.js; do
+            for attempt in 1 2 3 4 5 6; do
+              code=$(curl -s -o /dev/null -w '%{http_code}' "$URL$path" || echo 000)
+              [ "$code" = "401" ] && break
+              sleep 10
+            done
+            echo "$path -> $code"
+            [ "$code" = "401" ] || bad=1
+          done
+          gate=$(curl -s -D - -o /dev/null "$URL/" | tr -d '\r' | grep -i '^x-family-gate:' || true)
+          [ -n "$gate" ] || { echo "No X-Family-Gate header: the gate is not what answered."; bad=1; }
+          if [ "$bad" = "1" ]; then
+            echo "::error::The published site answered without asking for the password. Treat it as open until this is fixed."
+            exit 1
+          fi
+          echo "Published to $URL, and it asks for the password."
+
   deploy:
-    if: inputs.deploy
+    if: inputs.deploy && needs.build.outputs.protected != 'true'
     needs: build
     runs-on: ubuntu-latest
     environment:

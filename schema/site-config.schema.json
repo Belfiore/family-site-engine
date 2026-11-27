@@ -805,6 +805,91 @@
    },
    "additionalProperties": false
   },
+  "access": {
+   "type": "object",
+   "properties": {
+    "enabled": {
+     "type": "boolean",
+     "description": "Turn on the family password (default false). When false the site is built exactly as before. When true the build makes a Cloudflare Pages worker (_worker.js) that serves nothing without the password. See docs/access.md."
+    },
+    "project": {
+     "type": "string",
+     "pattern": "^[a-z0-9]([a-z0-9-]{0,56}[a-z0-9])?$",
+     "description": "The name of the Cloudflare Pages project the site is published to. Required when enabled."
+    },
+    "kicker": {
+     "type": "string",
+     "description": "The line above the site's name on the password page. Default: A private family archive."
+    },
+    "wordmark": {
+     "type": "string",
+     "description": "The name shown on the password page. Default: site.name."
+    },
+    "prompt": {
+     "type": "string",
+     "description": "The label of the password field. Default: Family password."
+    },
+    "button": {
+     "type": "string",
+     "description": "The label of the button. Default: Enter."
+    },
+    "hint": {
+     "type": "string",
+     "description": "An optional line under the field, such as who to ask for the password. Visible to everyone, so never put the password in it."
+    },
+    "cookieDays": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 365,
+     "description": "How long a device stays let in after the password is entered. Default 90."
+    },
+    "entranceImage": {
+     "type": "string",
+     "description": "A picture inside the site, shown to everyone on the password page. Optional. It is public, so only a picture that is fine to make public."
+    }
+   },
+   "additionalProperties": false,
+   "description": "Private access: one family password, checked by a Cloudflare Pages worker before any page, picture or data file is served. The password is never written here; it is the SITE_PASSWORD secret. See docs/access.md."
+  },
+  "visitor": {
+   "type": "object",
+   "properties": {
+    "enabled": {
+     "type": "boolean",
+     "description": "Turn on \"Who are you?\" (default false). When false the site is built exactly as before. See docs/visitor.md."
+    },
+    "question": {
+     "type": "string",
+     "description": "The question. Default: Who are you?"
+    },
+    "lead": {
+     "type": "string",
+     "description": "The line under the question."
+    },
+    "skipLabel": {
+     "type": "string",
+     "description": "The quiet option to carry on without choosing. Default: Continue without choosing."
+    },
+    "welcome": {
+     "type": "boolean",
+     "description": "Show the short welcome after a choice (default true). It is skipped for visitors who ask their device for reduced motion."
+    },
+    "livingPhotos": {
+     "type": "boolean",
+     "description": "Show a living person's photo beside their name in the list (default false)."
+    },
+    "scope": {
+     "type": "string",
+     "enum": [
+      "living",
+      "all"
+     ],
+     "description": "Who can be chosen: people marked isLiving (default) or everyone on the tree."
+    }
+   },
+   "additionalProperties": false,
+   "description": "Visitor identity: the visitor says who they are, the device remembers it, and the family tree opens from their place. A personal preference kept in the browser, never a login. See docs/visitor.md."
+  },
   "timeline": {
    "type": "object",
    "properties": {

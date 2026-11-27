@@ -30,6 +30,9 @@ jobs:
       - name: The automatic release
         run: python3 tests/test_autorelease.py
 
+      - name: Private access and visitor identity
+        run: python3 tests/test_access.py
+
       - name: The sample site's data
         run: python3 build/validate.py --site sample
 
@@ -47,3 +50,12 @@ jobs:
 
       - name: The Discovery Timeline page in a browser
         run: node tests/check-timeline.js
+
+      - name: Private access, the gate worker's security checks
+        run: node tests/check-gate.js
+
+      - name: Visitor identity in a browser
+        run: node tests/check-visitor.js
+
+      - name: Private access in a browser
+        run: node tests/check-access.js

@@ -89,6 +89,8 @@ What a site can set today is [`site.config.json`](docs/site-config.md), checked 
 | `engine.version` | Optional. Pins the site to one engine version and ignores the channel until the pin is removed. |
 | `pages.home`, `pages.tree`, `pages.map`, `pages.ask` | The file name of that page, or `null` to leave it out. A page left out loses every link to it. |
 | `timeline.enabled` | The Discovery Timeline. Off unless set to true. `timeline.file` names the page (default `discoveries.html`). |
+| `access.enabled` | A family password in front of the whole site. Off unless set to true. Needs a private repository and Cloudflare Pages. See [Private access](docs/access.md). |
+| `visitor.enabled` | "Who are you?": the visitor says who they are and the tree opens from their place. Off unless set to true. See [Visitor identity](docs/visitor.md). |
 | `nav` | The shared navigation bar, in order. |
 | `theme`, `tree`, `map`, `stuart` | Colours, and how the tree, the map and Stuart behave for this family. |
 
@@ -230,20 +232,30 @@ No label on the pull request means a patch. `minor` is something new, `major` is
 
 A site can be rebuilt once from its own Actions tab, with an engine version filled in. A release that is in use is never deleted or re-tagged. The full process, including what GitHub has to have set up, is in [Releases](docs/releasing.md).
 
+## Private access and visitor identity
+
+Two optional features, independent of each other and off unless a site turns them on. A site that uses neither builds exactly as it did.
+
+**Private access** puts one shared family password in front of the whole site: no page, picture or data file is served until the password has been given, and a device is remembered for 90 days. GitHub Pages cannot check a password, and a public repository is public, so a protected site uses a private repository and publishes to Cloudflare Pages, where a worker built by the engine checks a signed cookie before it serves anything. The password is only the `SITE_PASSWORD` secret, never a setting or a file, and changing it logs every device out. It is one shared secret with no accounts: anyone who has it can pass it on. See [Private access](docs/access.md) for what it needs, how to set it up and what it does not protect against.
+
+**Visitor identity** asks each visitor "Who are you?" once, with a forgiving typeahead that tells similar names apart, and remembers the answer on that device. The family tree then opens centred on them, and Stuart uses the same choice. It is a preference, never a login: it is stored as one person id in the browser and sent nowhere. Later features read it through `window.FamilyVisitor`. See [Visitor identity](docs/visitor.md).
+
+Who can reach the site, who a visitor says they are, and which people a page shows are three separate things, and none of them feeds another.
+
 ## Privacy
 
 A living person is published with a name and a relationship, and marked as living. Dates, places, photographs and stories of living people stay out of the public pages. The engine shows whatever a record holds and does not strip fields itself, so that limit is kept in the data: leave those fields out of a living person's record, and set `isLiving` to true. The tree then marks them as living, and Stuart speaks of them in the present tense.
 
 The Discovery Timeline is stricter. A living person never becomes a find, never appears in a headline, and is stored only as a hash. People in `tree.hiddenRegions` are withheld the same way. See [the Discovery Timeline](docs/discovery-timeline.md).
 
-Never commit a key, a token or a password. Map keys, if a site uses them, stay in that site's settings and are restricted to the site's address. The token that publishes a release and tells sites to rebuild (`RELEASE_TOKEN`, or `SITES_DISPATCH_TOKEN` when that is the one set) is a GitHub Actions secret on this repository, not a file.
+Never commit a key, a token or a password. The family password of a protected site is the `SITE_PASSWORD` secret, never a setting. Map keys, if a site uses them, stay in that site's settings and are restricted to the site's address. The token that publishes a release and tells sites to rebuild (`RELEASE_TOKEN`, or `SITES_DISPATCH_TOKEN` when that is the one set) is a GitHub Actions secret on this repository, not a file.
 
 ## Project structure
 
 ```
-engine/            tree, map, Stuart, navigation, record viewer, default colours
-templates/         tree.html, map.html, ask.html, timeline.html
-build/             build_site.py, validate.py, and the Discovery Timeline
+engine/            tree, map, Stuart, navigation, record viewer, visitor identity, default colours
+templates/         tree.html, map.html, ask.html, timeline.html, gate-worker.js, gate.html, gate.js
+build/             build_site.py, validate.py, access.py, and the Discovery Timeline
 schema/            family-data.schema.json, site-config.schema.json
 sample/            a made-up family, used by the tests and as a starter site
 tests/             build tests and browser checks
@@ -265,13 +277,17 @@ Use the made-up family in `sample/` for tests, fixtures and examples. Do not add
 python3 tests/test_build.py
 python3 tests/test_discoveries.py
 python3 tests/test_autorelease.py
+python3 tests/test_access.py
 python3 build/validate.py --site sample
 npm ci && npx playwright install chromium
 node tests/check-sample.js
 node tests/check-timeline.js
+node tests/check-gate.js
+node tests/check-visitor.js
+node tests/check-access.js
 ```
 
-Further reading: [Adding a site](docs/adding-a-site.md), [the data format](docs/data-format.md), [site settings](docs/site-config.md), [the Discovery Timeline](docs/discovery-timeline.md), [releases](docs/releasing.md), [the map](docs/map.md), [map keys](docs/map-keys.md), [Stuart](docs/stuart.md).
+Further reading: [Adding a site](docs/adding-a-site.md), [the data format](docs/data-format.md), [site settings](docs/site-config.md), [the Discovery Timeline](docs/discovery-timeline.md), [private access](docs/access.md), [visitor identity](docs/visitor.md), [releases](docs/releasing.md), [the map](docs/map.md), [map keys](docs/map-keys.md), [Stuart](docs/stuart.md).
 
 ## Licence
 

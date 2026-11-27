@@ -107,6 +107,14 @@ def tail_css(cfg, ctx):
     return out
 
 
+def visitor_head(cfg, ctx):
+    """The visitor files, in the head so the page can be held back until "Who are you?" is answered. Nothing for a site without visitor."""
+    if not cfg.get('_visitor'): return []
+    return ['<link rel="stylesheet" href="%svisitor.css">' % ctx['base'],
+            '<script src="%svisitor-match.js"></script>' % ctx['base'],
+            '<script src="%svisitor.js"></script>' % ctx['base']]
+
+
 def settings_scripts(ctx):
     return ['<script src="%s"></script>' % ctx['config'], '<script src="%snav.js" defer></script>' % ctx['base']]
 
@@ -147,6 +155,7 @@ def render_engine_page(kind, template, cfg, ctx, extra=None):
     head += ['<link rel="stylesheet" href="%s">' % esc(s) for s in sheets]
     head += ['<link rel="stylesheet" href="%s%s">' % (ctx['base'], c) for c in assets['css']]
     head += tail_css(cfg, ctx)
+    head += visitor_head(cfg, ctx)
     scripts = settings_scripts(ctx) + ['<script src="%s%s"></script>' % (ctx['base'], j) for j in assets['js']]
     if stuart_on(cfg) and cfg['widget'].get('enabled', True) and assets.get('widget'):
         scripts.append(widget_tag(ctx, assets['widget']))
@@ -226,7 +235,7 @@ def process_site_page(src, filename, cfg, ctx, widget_opts):
     # the head ends with Stuart's stylesheet, the theme and nav.css
     i = src.lower().rfind('</head>')
     if i >= 0:
-        src = src[:i] + '\n'.join(tail_css(cfg, ctx)) + '\n' + src[i:]
+        src = src[:i] + '\n'.join(tail_css(cfg, ctx) + visitor_head(cfg, ctx)) + '\n' + src[i:]
     # the body ends with the settings, the menu script and Stuart's button
     tail = settings_scripts(ctx)
     if widget_opts is not None:

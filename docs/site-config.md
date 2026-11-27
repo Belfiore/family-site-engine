@@ -168,6 +168,46 @@ Optional. The Discovery Timeline: a page of what the family has newly learned, n
 
 A site that turns it on needs an engine release that has the timeline, `build-site.yml` from the same release in its `deploy.yml` and `check.yml`, and `pages: write` for the deploy job. The site must not already have a `discoveries.html` or a `discoveries/` folder (the build stops if it does).
 
+## access
+
+Optional. A family password in front of the whole site. Off unless turned on; a site that leaves it off builds exactly as before. It needs a private repository and Cloudflare Pages instead of GitHub Pages, and the password is the `SITE_PASSWORD` secret, never a setting. See [private access](access.md) for what it needs and what it does not protect against.
+
+| Setting | Default | |
+| --- | --- | --- |
+| `enabled` | `false` | Make the gate (`_worker.js`) and publish to Cloudflare Pages |
+| `project` | none (required) | The Cloudflare Pages project name: lower case letters, digits and hyphens |
+| `kicker` | `A private family archive` | The line above the name on the entrance page |
+| `wordmark` | `site.name` | The name shown on the entrance page |
+| `prompt` | `Family password` | The label of the password field |
+| `button` | `Enter` | The label of the button |
+| `hint` | none | A line under the field, such as who to ask. Everyone can read it, so never put the password in it |
+| `cookieDays` | `90` | How long a device stays let in (1 to 365) |
+| `entranceImage` | none | A picture inside the site, shown to everyone before the password. Use only a picture that is fine to make public |
+
+```json
+"access": { "enabled": true, "project": "smith-family-archive", "hint": "Ask Grandma for it." }
+```
+
+A key called `password`, `secret`, `token` or the like is an error, and so is any setting that is not in the table (a misspelt `enabled` would quietly leave the site open).
+
+## visitor
+
+Optional. "Who are you?": the visitor says who they are, the device remembers it, and the family tree opens from their place. A preference kept in the browser, never a login. Off unless turned on; a site that leaves it off builds exactly as before. See [visitor identity](visitor.md).
+
+| Setting | Default | |
+| --- | --- | --- |
+| `enabled` | `false` | Ask visitors who they are, once |
+| `question` | `Who are you?` | The question |
+| `lead` | `Find yourself in the family, and the tree will open from where you sit in it.` | The line under the question |
+| `skipLabel` | `Continue without choosing` | The quiet way to carry on without saying |
+| `welcome` | `true` | Show the short welcome after a choice. Skipped anyway for visitors who ask their device for reduced motion |
+| `livingPhotos` | `false` | Show a living person's photograph beside their name in the list |
+| `scope` | `living` | `living`: people marked `isLiving`. `all`: everyone on the tree. Placeholders and hidden regions are never offered |
+
+```json
+"visitor": { "enabled": true }
+```
+
 ## publish and process
 
 - `publish.exclude`: files and folders not to publish (globs from the site folder: `"drafts/"`, `"*.psd"`). `.git`, `.github`, `node_modules`, `_site` and `site.config.json` are never published.

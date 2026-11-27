@@ -9,17 +9,18 @@ The shared engine behind three public family history sites. Each site keeps its 
 3. **Never put living people's details on any public page or map.** The engine does not redact living people by itself (since 1.0.0 they are shown like anyone else, marked as living on the tree). So never add output, example data, tests, fixtures or docs that contain a real living person's name, dates, places or photos. Use the made-up `sample/` family for anything new.
 4. **Never commit secrets or API keys.** That includes MapTiler and Google keys, `SITES_DISPATCH_TOKEN`, and tokens in test output. Keys belong in a site's own settings and in GitHub secrets, never here.
 5. **No em dashes in any site text.** That covers templates, engine UI strings, Stuart's answers, docs and CHANGELOG entries. Use commas, colons, parentheses or full stops.
+6. **Private access and visitor identity stay optional and separate.** Both are off by default, and a site with them off must build byte for byte as before. The family password is never a setting, a build input or a file: only the `SITE_PASSWORD` secret. See [Private access and visitor identity](#private-access-and-visitor-identity).
 
 ## Layout
 
 | Path | What it is |
 | --- | --- |
-| `engine/` | Everything the browser runs: tree, map, Stuart, nav, lightbox, default tokens, MapLibre, fonts |
-| `templates/` | `tree.html`, `map.html`, `ask.html`, `timeline.html`, filled in from a site's settings |
-| `build/` | `build_site.py` (the build), `validate.py`, `migrate.py`, `archive.py`, `pages.py`, `sitecfg.py`, and the Discovery Timeline: `discoveries.py` (detection), `timeline.py` (history between builds), `timeline_page.py` (the page), `previous_site.py` (fetches the live history) |
+| `engine/` | Everything the browser runs: tree, map, Stuart, nav, lightbox, default tokens, MapLibre, fonts, and `visitor.js`, `visitor-match.js`, `visitor.css` ("Who are you?", copied only when `visitor.enabled`) |
+| `templates/` | `tree.html`, `map.html`, `ask.html`, `timeline.html`, filled in from a site's settings; `gate-worker.js`, `gate.html`, `gate.js` (the password gate, built into `_worker.js` only when `access.enabled`) |
+| `build/` | `build_site.py` (the build), `validate.py`, `migrate.py`, `archive.py`, `pages.py`, `sitecfg.py`, and the Discovery Timeline: `discoveries.py` (detection), `timeline.py` (history between builds), `timeline_page.py` (the page), `previous_site.py` (fetches the live history), and private access: `access.py` (settings checks for `access` and `visitor`, and the gate build) |
 | `schema/` | `family-data.schema.json` and `site-config.schema.json` |
 | `sample/` | Made-up family used by tests and as a starter site |
-| `tests/` | `test_build.py` and `test_discoveries.py` (Python), `check-sample.js` and `check-timeline.js` (Playwright), `timeline_fixtures.py` (seven made-up versions of a family) |
+| `tests/` | `test_build.py` and `test_discoveries.py` (Python), `test_access.py` (Python), `check-sample.js`, `check-timeline.js`, `check-gate.js`, `check-visitor.js` and `check-access.js` (Playwright and Node), `timeline_fixtures.py` (seven made-up versions of a family), `access_fixtures.py` (the sample with access and visitor on, plus extra made-up people), `gate-server.js` (runs the real `_worker.js` locally), `helpers.js` |
 | `tools/` | Map fonts and styles, Street View viewpoints, `backfill-discoveries.py` |
 | `channels.json` | Which engine version each channel (canary, beta, stable) builds with |
 | `sites.json` | Sites to notify when `channels.json` changes |
@@ -67,10 +68,15 @@ Claude's part ends at the PR. If `gh` is not signed in, push nothing: leave the 
 ```sh
 python3 tests/test_build.py
 python3 tests/test_discoveries.py       # the backfill tests need git
+python3 tests/test_autorelease.py
+python3 tests/test_access.py            # private access and visitor identity
 python3 build/validate.py --site sample
 npm ci && npx playwright install chromium
 node tests/check-sample.js
 node tests/check-timeline.js            # SHOTS=dir saves screenshots; DIST=path checks a real site's build
+node tests/check-gate.js                # the gate worker: every way in without the password
+node tests/check-visitor.js             # SHOTS=dir saves screenshots
+node tests/check-access.js              # SHOTS=dir for screenshots, VIDEO=dir for recordings of the first visit
 ```
 
 ## Previewing an engine change against a real site
@@ -124,6 +130,20 @@ Optional (`timeline.enabled`, default false). Full design in `docs/discovery-tim
 - **`tools/backfill-discoveries.py` only writes its suggestions file.** Never make it edit data.
 - **No dependencies, no network, no model** in detection or headlines. Headlines must be deterministic and contain no long dashes.
 - **Tests use made-up data only** (`tests/timeline_fixtures.py`, built from `sample/`). To check real data, build a temporary copy of a site in `/tmp`; never write to a site repo.
+
+## Private access and visitor identity
+
+Two optional, independent features. Full design in `docs/access.md` and `docs/visitor.md`. What to keep true:
+
+- **Off means unchanged.** With `access` and `visitor` absent or not enabled, the build has no `_worker.js`, no `robots.txt` the site did not have, no visitor files, no `access` or `visitor` key in `site-config.js` or `engine-build.json`, and no extra tags in any page. `tests/test_access.py` compares builds; also `diff -r` a real site (see the backward compatibility check). Neither feature switches the other on.
+- **A password screen in the browser is not security, and the engine does not offer one.** Genuine protection is the Cloudflare Pages worker (`templates/gate-worker.js`, built to `_worker.js`) that checks a signed cookie before serving any file, with `env.ASSETS.fetch` behind it. GitHub Pages cannot do this and the repository of a protected site must be private. Do not add a client-side check, an encrypted-page scheme or anything that sends the files first and hides them after.
+- **The password has one home: the `SITE_PASSWORD` secret.** Never in `site.config.json` (`access.check` rejects keys called password, secret, token or key), the schema defaults, the build output, `engine-build.json`, a test that prints it, a log, a cookie or browser storage. The cookie holds an expiry and an HMAC only, signed with a key derived from the password, so a password change ends every session. `tests/check-gate.js` greps the build for the password.
+- **The gate fails closed.** No `SITE_PASSWORD`, no content (503). Every response before the cookie check is the entrance page or a refusal. Changes to the worker need a case in `tests/check-gate.js` (and a quick mutation: break the check, see the test fail). The entrance page carries no family names and no picture unless `access.entranceImage` is named, and that picture is public.
+- **Access, identity and visibility stay three things.** The password decides who reaches the site. Visitor identity is a preference (where the tree starts), never authentication, never sent anywhere, never in a URL or cookie, stored as one person id in `localStorage`. Which people appear is `isLiving`, `tree.hiddenRegions` and the rest of the site's own rules. Do not let one feed another. The picker offers nobody a page does not already show: living only by default (`visitor.scope`), never placeholders or hidden regions, no living photographs unless `visitor.livingPhotos`.
+- **Future features read the visitor through `window.FamilyVisitor`** (see `docs/visitor.md`), after checking it exists. Do not read the storage key directly, and do not use identity to restrict anything.
+- **Workflow changes.** `build-site.yml` has the Cloudflare steps. A site that is not protected must run exactly as before. After a release that changes the workflow, each site's `deploy.yml` and `check.yml` tags need a PR. A protected site in `sites.json` carries `"protected": true` and a `"url"`; `tools/autorelease.py` then checks the gate answers 401 instead of expecting 200. Do not edit `sites.json` in a feature PR.
+- **Not done, on purpose:** per-person passwords, lockout counters (the free Workers plan keeps no state), the Discovery Timeline on a protected site (it reads the live site's history).
+- **Tests use made-up data only** (`tests/access_fixtures.py`, built from `sample/`). To check a real site, build a temporary copy in `/tmp` with names and photographs of living people replaced; never write to a site repo, never print its private data.
 
 ## Style
 

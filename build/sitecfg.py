@@ -4,6 +4,8 @@ The settings are documented in docs/site-config.md and checked against schema/si
 """
 import copy, json, os
 
+import access
+
 DEFAULTS = {
     'schemaVersion': 1,
     'engine': {'channel': 'stable'},
@@ -71,5 +73,8 @@ def load(site_dir):
         cfg['_pages']['timeline'] = pages['timeline']['file']
         if not any(isinstance(i, dict) and i.get('href') == pages['timeline']['file'] for i in cfg.get('nav') or []):
             cfg['nav'] = list(cfg.get('nav') or []) + [{'label': TIMELINE_PAGE['label'], 'href': pages['timeline']['file']}]
+    # private access and visitor identity: both are off unless the site says enabled: true, and then nothing else changes
+    cfg['_access'] = access.access_settings(raw)
+    cfg['_visitor'] = access.visitor_settings(raw)
     cfg['_raw'] = raw
     return cfg

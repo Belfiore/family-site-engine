@@ -502,6 +502,7 @@
             if (pickMsg) pickMsg.replaceWith(el('p', { class: 'st-picked', text: pid === 'visitor' ? 'Answering as a visitor.' : 'You are ' + A.byId[pid].name + '.' }));
             mine(pid === 'visitor' ? "I'm not on the family tree" : "I'm " + A.byId[pid].name);
             setMe(pid);
+            if (window.FamilyVisitor) { if (pid === 'visitor') { if (window.FamilyVisitor.status() === 'none') window.FamilyVisitor.skip(); } else if (window.FamilyVisitor.id() !== pid) window.FamilyVisitor.set(pid); }
             turns = []; convo = { history: [], pins: {} };
             put(KEY.chat, { me: me, turns: turns }, true);
             var t = REDUCE ? null : typing();
@@ -522,6 +523,14 @@
             A = archive;
             log.textContent = '';
             var saved = get(KEY.me);
+            // on a site with visitor identity (visitor.enabled) the visitor's own choice is the one Stuart uses
+            var vis = window.FamilyVisitor && window.FamilyVisitor.id();
+            if (vis && A.byId[vis]) saved = vis;
+            if (window.FamilyVisitor) window.addEventListener('familyvisitor:change', function (e) {
+                var d = e.detail || {};
+                if (d.reason === 'clear') { put(KEY.me, null); put(KEY.chat, null, true); }
+                else if (d.id && d.id !== me && A.byId[d.id]) { setMe(d.id); turns = []; convo = { history: [], pins: {} }; put(KEY.chat, { me: me, turns: [] }, true); log.textContent = ''; greet(false); }
+            });
             if (saved && (saved === 'visitor' || A.byId[saved])) {
                 setMe(saved);
                 var chat = get(KEY.chat, true);

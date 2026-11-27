@@ -123,5 +123,6 @@ The token that sends those messages (`SITES_DISPATCH_TOKEN`, see [releases](rele
 - [ ] `python3 path/to/engine/build/validate.py --site .` shows no errors
 - [ ] the site builds and looks right locally
 - [ ] Pages source is GitHub Actions; `deploy.yml` publishes only from the live branch
+- [ ] a site that should be private: the repository is private and [private access](access.md) is set up (the site is then on Cloudflare Pages, not GitHub Pages)
 - [ ] map keys, if any, are restricted to the site's address ([map keys](map-keys.md))
 - [ ] the site is in `sites.json`, and the dispatch token can reach it
