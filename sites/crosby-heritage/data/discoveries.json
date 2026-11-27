@@ -1,0 +1,565 @@
+{
+ "discoveries": [
+  {
+   "id": "c001",
+   "personIds": [
+    "howard-frank-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Howard Frank Magwire and his twin brother Harold Charles were born on New Year's Day 1919 in Springfield, Vermont, sons of Frank A. Magwire.",
+   "findType": "record",
+   "source": {
+    "text": "Springfield, Vermont, Annual Town Report (births of 1919), archive.org item annualreportofto00spri_0, leaf 120; Find a Grave memorial 300481449, Howard Frank Magwire (1919 to 2014), with bio citing VT birth record, VT marriage record, wife's obituary and Town of Springfield cemetery cards; Find a Grave memorial 43545548, Harold Charles Magwire (1919 to 2002)",
+    "url": "https://archive.org/details/annualreportofto00spri_0/page/n119"
+   },
+   "confidence": "confirmed",
+   "image": "images/records/1919-birth-magwire-twins-springfield-vt-townreport-highlighted.jpg",
+   "imageAlt": "Springfield VT births, January 1919: lines for 1 Jan, sons Harold Charles and Howard Frank, father Frank A. Magwire"
+  },
+  {
+   "id": "c002",
+   "personIds": [
+    "frank-albert-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Frank Albert Magwire married Alice Evadna Bates in Springfield, Vermont, on July 10, 1912.",
+   "findType": "record",
+   "source": {
+    "text": "Springfield, Vermont, Annual Town Report (marriages of 1912), archive.org item annualreportofto00spri_3, printed page 81, leaf 87; Find a Grave memorial 208110370, Frank Albert Magwire (1889 to 1967), with obituary text from the Daily Eagle, Claremont NH, 9 Oct 1967; Find a Grave memorial 235597706, Alice B. Bates Magwire (1889 to 1972)",
+    "url": "https://archive.org/details/annualreportofto00spri_3/page/n86"
+   },
+   "confidence": "confirmed",
+   "image": "images/records/1912-marriage-magwire-bates-springfield-vt-townreport-highlighted.jpg",
+   "imageAlt": "Springfield VT marriages, page 81: July 10, Frank Albert Magwire and Alice Evadna Bates"
+  },
+  {
+   "id": "c003",
+   "personIds": [
+    "frank-albert-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Frank Albert Magwire ran Magwire's Pharmacy in Springfield, Vermont, for 37 years before retiring in 1954.",
+   "findType": "record",
+   "source": {
+    "text": "Find a Grave memorial 208110370, Frank Albert Magwire (1889 to 1967), with obituary text from the Daily Eagle, Claremont NH, 9 Oct 1967; Find a Grave memorial 175501341, Charles E. Magwire Sr. (1895 to 1991), and 174016232, Edna Alice Magwire Pope (1893 to 1988; bio cites Vermont Death Records 1909 to 2008)",
+    "url": "https://www.findagrave.com/memorial/208110370"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c004",
+   "personIds": [
+    "howard-frank-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Tracy Crosby is named as the daughter of Howard Frank Magwire, and Rick and Tracy appear together in both Crosby parents' obituaries.",
+   "findType": "connection",
+   "source": {
+    "text": "Find a Grave memorial 300481449, Howard Frank Magwire (1919 to 2014), with bio citing VT birth record, VT marriage record, wife's obituary and Town of Springfield cemetery cards; Find a Grave memorial 129338715, Roy E. Crosby (1925 to 2014), with obituary from The Springfield Republican, 6 to 7 May 2014; Obituary of Dorothy R. (Richardson) Crosby, Toomey-O'Brien Funeral Home, Feb 2022",
+    "url": "https://www.findagrave.com/memorial/300481449"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c005",
+   "personIds": [
+    "howard-frank-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Howard Frank Magwire married Gwendolyn Farr in Springfield, Vermont, on January 7, 1961.",
+   "findType": "connection",
+   "source": {
+    "text": "Find a Grave memorial 300481449, Howard Frank Magwire (1919 to 2014), with bio citing VT birth record, VT marriage record, wife's obituary and Town of Springfield cemetery cards",
+    "url": "https://www.findagrave.com/memorial/300481449"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c006",
+   "personIds": [
+    "howard-frank-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Howard Frank Magwire died in 2014 and rests in Oakland Cemetery in Springfield, Vermont.",
+   "findType": "record",
+   "source": {
+    "text": "Find a Grave memorial 300481449, Howard Frank Magwire (1919 to 2014), with bio citing VT birth record, VT marriage record, wife's obituary and Town of Springfield cemetery cards",
+    "url": "https://www.findagrave.com/memorial/300481449"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c007",
+   "personIds": [
+    "alice-evadna-bates-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Alice Bates Magwire was born in Williamstown, Massachusetts, in 1889 and died in Springfield, Vermont, in 1972.",
+   "findType": "record",
+   "source": {
+    "text": "Find a Grave memorial 235597706, Alice B. Bates Magwire (1889 to 1972)",
+    "url": "https://www.findagrave.com/memorial/235597706"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c008",
+   "personIds": [
+    "albert-a-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Albert A. Magwire, born in Brooklyn in 1845, settled in Springfield, Vermont, where he died in 1929.",
+   "findType": "record",
+   "source": {
+    "text": "Find a Grave memorial 300820447, Albert A. Magwire (1845 to 1929); Find a Grave memorial 263996734, Alice Jenny Spaulding Magwire (1866 to 1951), with marriage note (8 Nov 1887, Cavendish); Find a Grave memorial 175501341, Charles E. Magwire Sr. (1895 to 1991), and 174016232, Edna Alice Magwire Pope (1893 to 1988; bio cites Vermont Death Records 1909 to 2008); Find a Grave memorial 208110370, Frank Albert Magwire (1889 to 1967), with obituary text from the Daily Eagle, Claremont NH, 9 Oct 1967",
+    "url": "https://www.findagrave.com/memorial/300820447"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c009",
+   "personIds": [
+    "alice-jenny-spaulding-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Alice Jenny Spaulding was born on August 17, 1866 in Cavendish, Vermont, to Charles Elliot and Amantha (Putnam) Spaulding.",
+   "findType": "record",
+   "source": {
+    "text": "Charles J. Spalding, The Spalding Memorial (Chicago, 1872), p. 448, entry 8733; Genealogy of the Dickey Family (Worcester, 1898), p. 285, entries 2130 to 2137; Find a Grave memorial 263996734, Alice Jenny Spaulding Magwire (1866 to 1951), with marriage note (8 Nov 1887, Cavendish)",
+    "url": "https://archive.org/details/spaldingmemorial1872spal/page/n491"
+   },
+   "confidence": "probable",
+   "image": "images/records/1872-spalding-memorial-p448-charles-elliot-spaulding-family-highlighted.jpg",
+   "imageAlt": "The Spalding Memorial (1872), page 448, entries 8733 to 8737: Charles-Elliot, m. Amantha Putnam 25 Mar 1856; children incl. Alice-Jennie b. 17 Aug 1866"
+  },
+  {
+   "id": "c010",
+   "personIds": [
+    "alice-jenny-spaulding-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Alice Jenny Spaulding married Albert A. Magwire in Cavendish, Vermont, in November 1887.",
+   "findType": "connection",
+   "source": {
+    "text": "Find a Grave memorial 263996734, Alice Jenny Spaulding Magwire (1866 to 1951), with marriage note (8 Nov 1887, Cavendish)",
+    "url": "https://www.findagrave.com/memorial/263996734"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c011",
+   "personIds": [
+    "charles-elliot-spaulding"
+   ],
+   "found": "2026-11-27",
+   "headline": "Charles Elliot Spaulding married Amantha Putnam in Springfield, Vermont, on March 25, 1856, and they farmed in Cavendish.",
+   "findType": "record",
+   "source": {
+    "text": "Charles J. Spalding, The Spalding Memorial (Chicago, 1872), p. 448, entry 8733; Genealogy of the Dickey Family (Worcester, 1898), p. 285, entries 2130 to 2137",
+    "url": "https://archive.org/details/spaldingmemorial1872spal/page/n491"
+   },
+   "confidence": "probable",
+   "image": "images/records/1898-dickey-genealogy-p285-amantha-putnam-spaulding-family-highlighted.jpg",
+   "imageAlt": "Dickey Genealogy (1898), page 285, entries 2130 to 2137: Amantha Putnam, b. 9 Sep 1837, m. Charles Elliot Spaulding; children incl. Alice Jenny b. 17 Aug 1866"
+  },
+  {
+   "id": "c012",
+   "personIds": [
+    "charles-elliot-spaulding"
+   ],
+   "found": "2026-11-27",
+   "headline": "Charles Elliot Spaulding died in 1890 and Amantha in 1926; both rest in Cavendish Village Cemetery.",
+   "findType": "record",
+   "source": {
+    "text": "Find a Grave memorials 85115712 and 85115767, Charles Elliot Spaulding (1833 to 1890) and Amantha Putnam Spaulding (1837 to 1926)",
+    "url": "https://www.findagrave.com/memorial/85115712"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c013",
+   "personIds": [
+    "amantha-putnam-spaulding"
+   ],
+   "found": "2026-11-27",
+   "headline": "Amantha Putnam was born on September 9, 1837, a daughter of Timothy Putnam and Betsey Hall.",
+   "findType": "connection",
+   "source": {
+    "text": "Genealogy of the Dickey Family (Worcester, 1898), p. 285, entries 2130 to 2137; Find a Grave memorials 85115712 and 85115767, Charles Elliot Spaulding (1833 to 1890) and Amantha Putnam Spaulding (1837 to 1926)",
+    "url": "https://archive.org/details/genealogyofdicke00dick/page/n316"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c017",
+   "personIds": [
+    "harry-james-farr"
+   ],
+   "found": "2026-11-27",
+   "headline": "A Harry James Farr married Laura Mary Seward in Springfield, Vermont, on December 4, 1912.",
+   "findType": "record",
+   "source": {
+    "text": "Springfield, Vermont, Annual Town Report (marriages of 1912), archive.org item annualreportofto00spri_3, leaf 88",
+    "url": "https://archive.org/details/annualreportofto00spri_3/page/n87"
+   },
+   "confidence": "confirmed",
+   "image": "images/records/1912-marriage-farr-seward-springfield-vt-townreport-highlighted.jpg",
+   "imageAlt": "Springfield VT marriages: Dec. 4, Harry James Farr and Laura Mary Seward"
+  },
+  {
+   "id": "c018",
+   "personIds": [
+    "harry-james-farr"
+   ],
+   "found": "2026-11-27",
+   "headline": "In 1950 Harry J. Farr, born in Colorado, lived in Springfield, Vermont, with his wife Mary A., a post office clerk.",
+   "findType": "record",
+   "source": {
+    "text": "1950 U.S. Census, Springfield, Windsor Co., Vermont, ED 14-41, sheet 12, lines 24 to 26 (NARA)",
+    "url": "https://1950census.archives.gov/search/?name=Farr&state=VT&county=Windsor"
+   },
+   "confidence": "confirmed",
+   "image": "images/records/1950-census-farr-harry-springfield-vt-ed14-41-highlighted.jpg",
+   "imageAlt": "1950 census, Springfield VT, ED 14-41, sheet 12, lines 24 to 26: Harry J. Farr (head, 62, Colorado), Mary A. (wife, 48, Vermont, postal clerk), Alma B. (daughter, 16)"
+  },
+  {
+   "id": "c019",
+   "personIds": [
+    "gwendolyn-farr-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Gwendolyn Farr Magwire's parents were Harry James Farr and Mary Abbie West Farr of Springfield, Vermont.",
+   "findType": "record",
+   "source": {
+    "text": "Obituary of Richard H. Farr (1930 to 2009), Gloucester Times, May 2009; Obituary of Gwendolyn (Farr) Magwire (1927 to 2009), The Republican, 9 Sep 2009, via Legacy.com / MassLive; 1950 U.S. Census, Springfield, Windsor Co., Vermont, ED 14-41, sheet 12, lines 24 to 26 (NARA)",
+    "url": "https://obituaries.gloucestertimes.com/obituary/richard-farr-772418521"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c020",
+   "personIds": [
+    "roy-e-crosby",
+    "dorothy-r-richardson-crosby"
+   ],
+   "found": "2026-11-27",
+   "headline": "Rick and Tracy Crosby are named in the obituaries of Roy and Dorothy Crosby, with grandchildren Brittany, Mitch and Travis.",
+   "findType": "record",
+   "source": {
+    "text": "Find a Grave memorial 129338715, Roy E. Crosby (1925 to 2014), with obituary from The Springfield Republican, 6 to 7 May 2014; Obituary of Dorothy R. (Richardson) Crosby, Toomey-O'Brien Funeral Home, Feb 2022",
+    "url": "https://www.findagrave.com/memorial/129338715"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c021",
+   "personIds": [
+    "roy-e-crosby"
+   ],
+   "found": "2026-11-27",
+   "headline": "Roy E. Crosby served aboard the aircraft carrier Marcus Island at the Battle of Leyte Gulf in October 1944.",
+   "findType": "record",
+   "source": {
+    "text": "Find a Grave memorial 129338715, Roy E. Crosby (1925 to 2014), with obituary from The Springfield Republican, 6 to 7 May 2014",
+    "url": "https://www.findagrave.com/memorial/129338715"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c022",
+   "personIds": [
+    "dorothy-r-richardson-crosby"
+   ],
+   "found": "2026-11-27",
+   "headline": "Dorothy Richardson Crosby was born in 1928 to Robert and Anne (Ernst) Richardson and grew up in Chicopee.",
+   "findType": "record",
+   "source": {
+    "text": "Obituary of Dorothy R. (Richardson) Crosby, Toomey-O'Brien Funeral Home, Feb 2022; Obituary of Barbara R. (Richardson) Vogel (1921 to 2016), The Westfield News, 1 Dec 2016",
+    "url": "https://www.toomeyobrien.com/obituaries/dorothy-richardson-crosby"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c023",
+   "personIds": [
+    "roy-e-crosby"
+   ],
+   "found": "2026-11-27",
+   "headline": "Roy Crosby was one of at least nine children of Ernest and Eva (Pierce) Crosby of Chicopee.",
+   "findType": "record",
+   "source": {
+    "text": "Find a Grave memorial 129338715, Roy E. Crosby (1925 to 2014), with obituary from The Springfield Republican, 6 to 7 May 2014; Muriel J. (Crosby) Strauss person page and obituary text, Cousins Connection tree; Obituary of Bernard \"Mel\" Crosby (1926 to 2024), Curran-Jones Funeral Home; 1950 U.S. Census, Chicopee, Hampden Co., Massachusetts, ED 7-40, sheet 73, lines 14 to 17 (NARA)",
+    "url": "https://www.findagrave.com/memorial/129338715"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c024",
+   "personIds": [
+    "ernest-a-crosby"
+   ],
+   "found": "2026-11-27",
+   "headline": "The 1950 census shows Ernest A. Crosby, a widower born in Nova Scotia, living in Chicopee with his daughters Thelma and Muriel.",
+   "findType": "record",
+   "source": {
+    "text": "1950 U.S. Census, Chicopee, Hampden Co., Massachusetts, ED 7-40, sheet 73, lines 14 to 17 (NARA)",
+    "url": "https://1950census.archives.gov/search/?name=Ernest%20Crosby&state=MA&county=Hampden"
+   },
+   "confidence": "confirmed",
+   "image": "images/records/1950-census-crosby-ernest-chicopee-ma-ed7-40-sheet73-highlighted.jpg",
+   "imageAlt": "1950 census, Chicopee MA, ED 7-40, sheet 73, lines 14 to 17: Ernest A. Crosby (head, 65, Wd, Nova Scotia), Thelma L. (daughter, 33), Douglas Rhodes (son-in-law, 33), Muriel J. (daughter, 29)"
+  },
+  {
+   "id": "c025",
+   "personIds": [
+    "ernest-a-crosby"
+   ],
+   "found": "2026-11-27",
+   "headline": "Ernest and Eva Crosby rest together in Hillcrest Park Cemetery in Springfield, Massachusetts.",
+   "findType": "record",
+   "source": {
+    "text": "Find a Grave memorials 226673791 and 226673806, Ernest A. Crosby (1884 to 1958) and Eva E. Crosby (1885 to 1944), Hillcrest Park Cemetery, Springfield MA",
+    "url": "https://www.findagrave.com/memorial/226673791"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c026",
+   "personIds": [
+    "muriel-j-crosby-strauss"
+   ],
+   "found": "2026-11-27",
+   "headline": "Muriel Crosby Strauss, born in Chicopee in 1921, named her parents as Ernest and Eva (Pierce) Crosby.",
+   "findType": "connection",
+   "source": {
+    "text": "Muriel J. (Crosby) Strauss person page and obituary text, Cousins Connection tree",
+    "url": "https://www.cousinsconnection.com/getperson.php?personID=I13437&tree=tree1"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c027",
+   "personIds": [
+    "bernard-m-crosby"
+   ],
+   "found": "2026-11-27",
+   "headline": "Bernard \"Mel\" Crosby, Roy's younger brother, married Beatrice Patterson in 1948 and lived to 98.",
+   "findType": "connection",
+   "source": {
+    "text": "Obituary of Bernard \"Mel\" Crosby (1926 to 2024), Curran-Jones Funeral Home; Obituary of Beatrice A. (Patterson) Crosby (1929 to 2018), Curran-Jones Funeral Home",
+    "url": "https://www.curranjones.com/obituary/bernard-crosby"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c031",
+   "personIds": [
+    "harold-charles-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Harold Charles Magwire, Howard's twin, served in the U.S. Navy and rests in the Vermont Veterans Memorial Cemetery.",
+   "findType": "record",
+   "source": {
+    "text": "Find a Grave memorial 43545548, Harold Charles Magwire (1919 to 2002)",
+    "url": "https://www.findagrave.com/memorial/43545548"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c032",
+   "personIds": [
+    "raymond-bates-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Raymond Bates Magwire, the eldest son of Frank and Alice, was born in 1913 and died in 1997.",
+   "findType": "connection",
+   "source": {
+    "text": "Find a Grave memorial 77870180, Raymond Bates Magwire (1913 to 1997); Find a Grave memorial 208110370, Frank Albert Magwire (1889 to 1967), with obituary text from the Daily Eagle, Claremont NH, 9 Oct 1967",
+    "url": "https://www.findagrave.com/memorial/77870180"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c034",
+   "personIds": [
+    "gwendolyn-farr-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "Gwendolyn (Farr) Magwire, born in Springfield, Vermont in 1927, was married to Howard Magwire for 48 years and died in Suffield, Connecticut in September 2009.",
+   "findType": "record",
+   "source": {
+    "text": "Obituary of Gwendolyn (Farr) Magwire (1927 to 2009), The Republican, 9 Sep 2009, via Legacy.com / MassLive",
+    "url": "https://obits.masslive.com/us/obituaries/masslive/name/gwendolyn-magwire-obituary?id=12484302"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c035",
+   "personIds": [
+    "richard-h-farr"
+   ],
+   "found": "2026-11-27",
+   "headline": "Gwendolyn's brother Richard Farr's obituary names their parents as Harry James Farr and Mary Abbie West Farr.",
+   "findType": "record",
+   "source": {
+    "text": "Obituary of Richard H. Farr (1930 to 2009), Gloucester Times, May 2009",
+    "url": "https://obituaries.gloucestertimes.com/obituary/richard-farr-772418521"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c036",
+   "personIds": [
+    "mary-abbie-west-farr"
+   ],
+   "found": "2026-11-27",
+   "headline": "Mary Abbie West Farr's maiden name, once only family memory, is now stated in her son Richard's obituary.",
+   "findType": "record",
+   "source": {
+    "text": "Obituary of Richard H. Farr (1930 to 2009), Gloucester Times, May 2009; Obituary of Gwendolyn (Farr) Magwire (1927 to 2009), The Republican, 9 Sep 2009, via Legacy.com / MassLive",
+    "url": "https://obituaries.gloucestertimes.com/obituary/richard-farr-772418521"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c037",
+   "personIds": [
+    "ernest-a-crosby"
+   ],
+   "found": "2026-11-27",
+   "headline": "Ernest Crosby and Eva Pierce, both from Yarmouth County, Nova Scotia, married in Wakefield, Massachusetts on July 6, 1906.",
+   "findType": "record",
+   "source": {
+    "text": "Wakefield, Massachusetts, Annual Town Report 1905 to 1907, marriages registered in 1906, printed page 143 (archive.org item annualreportof190507wake, leaf 568)",
+    "url": "https://archive.org/details/annualreportof190507wake/page/n568"
+   },
+   "confidence": "confirmed",
+   "image": "images/records/1906-marriage-crosby-pierce-wakefield-ma-townreport-highlighted.jpg",
+   "imageAlt": "Wakefield MA marriages registered in 1906, page 143: July 6, Ernest A. Crosby 22, Norwood N.S., James W. and Asenath; Eva E. Pierce 21, Brazil Lake N.S., Charles and Alice; by John R. Chaffee"
+  },
+  {
+   "id": "c038",
+   "personIds": [
+    "ruby-evelyn-crosby"
+   ],
+   "found": "2026-11-27",
+   "headline": "Ruby Evelyn Crosby, the first child of Ernest and Eva, was born in Wakefield, Massachusetts on November 18, 1906.",
+   "findType": "record",
+   "source": {
+    "text": "Wakefield, Massachusetts, Annual Town Report 1905 to 1907, births registered in 1906, printed page 137 (archive.org item annualreportof190507wake, leaf 562)",
+    "url": "https://archive.org/details/annualreportof190507wake/page/n562"
+   },
+   "confidence": "confirmed",
+   "image": "images/records/1906-birth-ruby-evelyn-crosby-wakefield-ma-townreport-highlighted.jpg",
+   "imageAlt": "Wakefield MA births 1906, page 137: Nov. 18, Ruby Evelyn Crosby, parents Ernest A. and Eva E. (Pierce)"
+  },
+  {
+   "id": "c039",
+   "personIds": [
+    "james-william-crosby"
+   ],
+   "found": "2026-11-27",
+   "headline": "James Crosby and Asenath Porter, the couple named as Ernest's parents in 1906, married at Ohio, Yarmouth County, Nova Scotia in January 1882.",
+   "findType": "record",
+   "source": {
+    "text": "Nova Scotia Historical Vital Statistics, marriage of James H. [W.] Crosby and Asenath Porter, Ohio, Yarmouth Co., 21 Jan 1882 (book 1839, page 175, entry 16)",
+    "url": "https://archives.novascotia.ca/vital-statistics/marriage/?ID=61961"
+   },
+   "confidence": "confirmed",
+   "image": "images/records/1882-marriage-crosby-porter-ohio-yarmouth-ns-highlighted.jpg",
+   "imageAlt": "Nova Scotia marriage register, Yarmouth Co., 21 Jan 1882: James Crosby and Asenath Porter at Ohio"
+  },
+  {
+   "id": "c040",
+   "personIds": [
+    "james-william-crosby"
+   ],
+   "found": "2026-11-27",
+   "headline": "James William Crosby died at Brazil Lake, Nova Scotia in December 1937; his death record names his parents Joseph Crosby and Eunice Saunders.",
+   "findType": "record",
+   "source": {
+    "text": "Nova Scotia Historical Vital Statistics, death of James William Crosby, Brazil Lake, Yarmouth Co., 22 Dec 1937 (year 1937, file 300, number 973)",
+    "url": "https://archives.novascotia.ca/vital-statistics/death/?ID=337358"
+   },
+   "confidence": "confirmed",
+   "image": "images/records/1937-death-james-william-crosby-brazil-lake-ns-highlighted.jpg",
+   "imageAlt": "Nova Scotia death registration 1937: James William Crosby, Brazil Lake, died 22 Dec 1937, born 31 Oct 1857 Pleasant Valley, father Joseph Crosby, mother Eunice Saunders"
+  },
+  {
+   "id": "c041",
+   "personIds": [
+    "asenath-porter-crosby"
+   ],
+   "found": "2026-11-27",
+   "headline": "Asenath Porter Crosby died at Brazil Lake in November 1938, eleven months after her husband.",
+   "findType": "record",
+   "source": {
+    "text": "Nova Scotia Historical Vital Statistics, death of Asenath (Porter) Crosby, Brazil Lake, Yarmouth Co., 2 Nov 1938",
+    "url": "https://archives.novascotia.ca/vital-statistics/death/?ID=297900"
+   },
+   "confidence": "confirmed",
+   "image": "images/records/1938-death-asenath-porter-crosby-brazil-lake-ns-highlighted.jpg",
+   "imageAlt": "Nova Scotia death registration 1938: Asenath Crosby, Brazil Lake, died 2 Nov 1938, born 12 Apr 1860 Ohio, father Hezekiah Porter, mother Celia Porter"
+  },
+  {
+   "id": "c042",
+   "personIds": [
+    "ernest-a-crosby"
+   ],
+   "found": "2026-11-27",
+   "headline": "The Crosby line now reaches back to Yarmouth County, Nova Scotia: Ernest was the son of James W. and Asenath (Porter) Crosby.",
+   "findType": "connection",
+   "source": {
+    "text": "Wakefield, Massachusetts, Annual Town Report 1905 to 1907, marriages registered in 1906, printed page 143 (archive.org item annualreportof190507wake, leaf 568); Nova Scotia Historical Vital Statistics, marriage of James H. [W.] Crosby and Asenath Porter, Ohio, Yarmouth Co., 21 Jan 1882 (book 1839, page 175, entry 16); Nova Scotia Historical Vital Statistics, death of Asenath (Porter) Crosby, Brazil Lake, Yarmouth Co., 2 Nov 1938; Nova Scotia Historical Vital Statistics, death of James William Crosby, Brazil Lake, Yarmouth Co., 22 Dec 1937 (year 1937, file 300, number 973)",
+    "url": "https://archive.org/details/annualreportof190507wake/page/n568"
+   },
+   "confidence": "probable"
+  },
+  {
+   "id": "c043",
+   "personIds": [
+    "robert-h-richardson"
+   ],
+   "found": "2026-11-27",
+   "headline": "Dorothy's parents, Robert H. Richardson and Anna E. Ernst, married at Holyoke, Massachusetts on September 6, 1920.",
+   "findType": "record",
+   "source": {
+    "text": "Wayland, Massachusetts, Annual Reports 1919 to 1920, marriages registered in 1920, printed page 56 (archive.org item officialreportso1919wayl, leaf 275)",
+    "url": "https://archive.org/details/officialreportso1919wayl/page/n275"
+   },
+   "confidence": "confirmed",
+   "image": "images/records/1920-marriage-richardson-ernst-holyoke-wayland-ma-townreport-highlighted.jpg",
+   "imageAlt": "Wayland MA marriages registered in 1920, page 56: September 6, Robert H. Richardson and Anna E. Ernst, at Holyoke, by Rev. Edwin B. Robinson"
+  },
+  {
+   "id": "c044",
+   "personIds": [
+    "barbara-eleanor-richardson-vogel"
+   ],
+   "found": "2026-11-27",
+   "headline": "Dorothy Crosby's older sister Barbara was born in Cochituate (Wayland), Massachusetts in October 1921.",
+   "findType": "record",
+   "source": {
+    "text": "Wayland, Massachusetts, Annual Reports 1921 to 1922, births recorded in 1921, printed page 35 (archive.org item officialreportso1921wayl, leaf 40); Obituary of Barbara R. (Richardson) Vogel (1921 to 2016), The Westfield News, 1 Dec 2016",
+    "url": "https://archive.org/details/officialreportso1921wayl/page/n40"
+   },
+   "confidence": "confirmed",
+   "image": "images/records/1921-birth-barbara-eleanor-richardson-wayland-ma-townreport-highlighted.jpg",
+   "imageAlt": "Wayland MA births 1921, page 35: October 26, Barbara Eleanor Richardson, parents Robert H. and Anna E."
+  },
+  {
+   "id": "c045",
+   "personIds": [
+    "frank-albert-magwire"
+   ],
+   "found": "2026-11-27",
+   "headline": "In 1941 Frank Magwire took the Village of Springfield all the way to the Vermont Supreme Court over a license fee on the pinball machines in Magwire's Pharmacy, and won his appeal.",
+   "findType": "record",
+   "source": {
+    "text": "Magwire v. Village of Springfield, 111 Vt. 414, 17 A.2d 260 (Vt. 1941), a civil suit over pinball license fees at Magwire's Pharmacy",
+    "url": "https://www.courtlistener.com/opinion/4215709/magwire-v-village-of-springfield/"
+   },
+   "confidence": "confirmed"
+  }
+ ]
+}

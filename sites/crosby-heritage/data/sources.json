@@ -1,0 +1,263 @@
+{
+ "sources": [
+  {
+   "id": "s01",
+   "title": "Springfield, Vermont, Annual Town Report (births of 1919), archive.org item annualreportofto00spri_0, leaf 120",
+   "type": "vital record",
+   "url": "https://archive.org/details/annualreportofto00spri_0/page/n119",
+   "note": "Original printed town register extract (published by the Town Clerk). Primary for event, secondary for print transcription."
+  },
+  {
+   "id": "s02",
+   "title": "Springfield, Vermont, Annual Town Report (marriages of 1912), archive.org item annualreportofto00spri_3, printed page 81, leaf 87",
+   "type": "vital record",
+   "url": "https://archive.org/details/annualreportofto00spri_3/page/n86",
+   "note": "Town Clerk printed marriage list."
+  },
+  {
+   "id": "s03",
+   "title": "Springfield, Vermont, Annual Town Report (marriages of 1912), archive.org item annualreportofto00spri_3, leaf 88",
+   "type": "vital record",
+   "url": "https://archive.org/details/annualreportofto00spri_3/page/n87",
+   "note": "Town Clerk printed marriage list."
+  },
+  {
+   "id": "s04",
+   "title": "1950 U.S. Census, Chicopee, Hampden Co., Massachusetts, ED 7-40, sheet 73, lines 14 to 17 (NARA)",
+   "type": "census",
+   "url": "https://1950census.archives.gov/search/?name=Ernest%20Crosby&state=MA&county=Hampden",
+   "note": "Original census image, informant unknown."
+  },
+  {
+   "id": "s05",
+   "title": "1950 U.S. Census, Springfield, Windsor Co., Vermont, ED 14-41, sheet 12, lines 24 to 26 (NARA)",
+   "type": "census",
+   "url": "https://1950census.archives.gov/search/?name=Farr&state=VT&county=Windsor",
+   "note": "Original census image, informant unknown."
+  },
+  {
+   "id": "s06",
+   "title": "Charles J. Spalding, The Spalding Memorial (Chicago, 1872), p. 448, entry 8733",
+   "type": "compiled genealogy",
+   "url": "https://archive.org/details/spaldingmemorial1872spal/page/n491",
+   "note": "Compiled genealogy (published 1872). Lead quality for early generations; near-contemporary for this family."
+  },
+  {
+   "id": "s07",
+   "title": "Genealogy of the Dickey Family (Worcester, 1898), p. 285, entries 2130 to 2137",
+   "type": "compiled genealogy",
+   "url": "https://archive.org/details/genealogyofdicke00dick/page/n316",
+   "note": "Compiled genealogy (published 1898)."
+  },
+  {
+   "id": "s10",
+   "title": "Find a Grave memorial 300481449, Howard Frank Magwire (1919 to 2014), with bio citing VT birth record, VT marriage record, wife's obituary and Town of Springfield cemetery cards",
+   "type": "memorial",
+   "url": "https://www.findagrave.com/memorial/300481449",
+   "note": "Derivative (volunteer transcription)."
+  },
+  {
+   "id": "s11",
+   "title": "Find a Grave memorial 43545548, Harold Charles Magwire (1919 to 2002)",
+   "type": "memorial",
+   "url": "https://www.findagrave.com/memorial/43545548",
+   "note": "Derivative; headstone photo held by contributor."
+  },
+  {
+   "id": "s12",
+   "title": "Find a Grave memorial 77870180, Raymond Bates Magwire (1913 to 1997)",
+   "type": "memorial",
+   "url": "https://www.findagrave.com/memorial/77870180",
+   "note": "Derivative."
+  },
+  {
+   "id": "s13",
+   "title": "Find a Grave memorial 208110370, Frank Albert Magwire (1889 to 1967), with obituary text from the Daily Eagle, Claremont NH, 9 Oct 1967",
+   "type": "newspaper",
+   "url": "https://www.findagrave.com/memorial/208110370",
+   "note": "Derivative transcription of an obituary."
+  },
+  {
+   "id": "s14",
+   "title": "Find a Grave memorial 235597706, Alice B. Bates Magwire (1889 to 1972)",
+   "type": "memorial",
+   "url": "https://www.findagrave.com/memorial/235597706",
+   "note": "Derivative."
+  },
+  {
+   "id": "s15",
+   "title": "Find a Grave memorial 300820447, Albert A. Magwire (1845 to 1929)",
+   "type": "memorial",
+   "url": "https://www.findagrave.com/memorial/300820447",
+   "note": "Derivative."
+  },
+  {
+   "id": "s16",
+   "title": "Find a Grave memorial 263996734, Alice Jenny Spaulding Magwire (1866 to 1951), with marriage note (8 Nov 1887, Cavendish)",
+   "type": "memorial",
+   "url": "https://www.findagrave.com/memorial/263996734",
+   "note": "Derivative."
+  },
+  {
+   "id": "s17",
+   "title": "Find a Grave memorials 85115712 and 85115767, Charles Elliot Spaulding (1833 to 1890) and Amantha Putnam Spaulding (1837 to 1926)",
+   "type": "memorial",
+   "url": "https://www.findagrave.com/memorial/85115712",
+   "note": "Derivative; headstone photos held by contributors."
+  },
+  {
+   "id": "s18",
+   "title": "Find a Grave memorial 175501341, Charles E. Magwire Sr. (1895 to 1991), and 174016232, Edna Alice Magwire Pope (1893 to 1988; bio cites Vermont Death Records 1909 to 2008)",
+   "type": "memorial",
+   "url": "https://www.findagrave.com/memorial/175501341",
+   "note": "Derivative."
+  },
+  {
+   "id": "s20",
+   "title": "Find a Grave memorial 129338715, Roy E. Crosby (1925 to 2014), with obituary from The Springfield Republican, 6 to 7 May 2014",
+   "type": "newspaper",
+   "url": "https://www.findagrave.com/memorial/129338715",
+   "note": "Derivative transcription of an obituary."
+  },
+  {
+   "id": "s21",
+   "title": "Obituary of Dorothy R. (Richardson) Crosby, Toomey-O'Brien Funeral Home, Feb 2022",
+   "type": "newspaper",
+   "url": "https://www.toomeyobrien.com/obituaries/dorothy-richardson-crosby",
+   "note": "Obituary, family informant."
+  },
+  {
+   "id": "s22",
+   "title": "Find a Grave memorials 226673791 and 226673806, Ernest A. Crosby (1884 to 1958) and Eva E. Crosby (1885 to 1944), Hillcrest Park Cemetery, Springfield MA",
+   "type": "memorial",
+   "url": "https://www.findagrave.com/memorial/226673791",
+   "note": "Derivative."
+  },
+  {
+   "id": "s23",
+   "title": "Muriel J. (Crosby) Strauss person page and obituary text, Cousins Connection tree",
+   "type": "newspaper",
+   "url": "https://www.cousinsconnection.com/getperson.php?personID=I13437&tree=tree1",
+   "note": "Online tree quoting an obituary; derivative."
+  },
+  {
+   "id": "s24",
+   "title": "Obituary of Bernard \"Mel\" Crosby (1926 to 2024), Curran-Jones Funeral Home",
+   "type": "newspaper",
+   "url": "https://www.curranjones.com/obituary/bernard-crosby",
+   "note": "Obituary, family informant."
+  },
+  {
+   "id": "s25",
+   "title": "Obituary of Beatrice A. (Patterson) Crosby (1929 to 2018), Curran-Jones Funeral Home",
+   "type": "newspaper",
+   "url": "https://www.curranjones.com/obituary/beatrice-crosby",
+   "note": "Obituary, family informant."
+  },
+  {
+   "id": "s26",
+   "title": "Find a Grave memorial 194280144 (John Magwire 1762 to 1821) and 37655787 (Francis G. Magwire 1803 to 1888), Brandon VT family",
+   "type": "memorial",
+   "url": "https://www.findagrave.com/memorial/37655787",
+   "note": "Derivative; unlinked lead."
+  },
+  {
+   "id": "s27",
+   "title": "Obituary of Richard H. Farr (1930 to 2009), Gloucester Times, May 2009",
+   "type": "newspaper",
+   "url": "https://obituaries.gloucestertimes.com/obituary/richard-farr-772418521",
+   "note": "Obituary, family informant. Text owned by the publisher: link only on the public site."
+  },
+  {
+   "id": "s28",
+   "title": "Wakefield, Massachusetts, Annual Town Report 1905 to 1907, marriages registered in 1906, printed page 143 (archive.org item annualreportof190507wake, leaf 568)",
+   "type": "vital record",
+   "url": "https://archive.org/details/annualreportof190507wake/page/n568",
+   "note": "Town Clerk printed marriage register extract."
+  },
+  {
+   "id": "s29",
+   "title": "Wakefield, Massachusetts, Annual Town Report 1905 to 1907, births registered in 1906, printed page 137 (archive.org item annualreportof190507wake, leaf 562)",
+   "type": "vital record",
+   "url": "https://archive.org/details/annualreportof190507wake/page/n562",
+   "note": "Town Clerk printed birth register extract."
+  },
+  {
+   "id": "s30",
+   "title": "Nova Scotia Historical Vital Statistics, marriage of James H. [W.] Crosby and Asenath Porter, Ohio, Yarmouth Co., 21 Jan 1882 (book 1839, page 175, entry 16)",
+   "type": "vital record",
+   "url": "https://archives.novascotia.ca/vital-statistics/marriage/?ID=61961",
+   "note": "Image of the original civil marriage register, free at Nova Scotia Archives."
+  },
+  {
+   "id": "s31",
+   "title": "Nova Scotia Historical Vital Statistics, death of Asenath (Porter) Crosby, Brazil Lake, Yarmouth Co., 2 Nov 1938",
+   "type": "web",
+   "url": "https://archives.novascotia.ca/vital-statistics/death/?ID=297900",
+   "note": "Image of the original civil death registration; informant her son William Crosby."
+  },
+  {
+   "id": "s32",
+   "title": "Nova Scotia Historical Vital Statistics, death of James William Crosby, Brazil Lake, Yarmouth Co., 22 Dec 1937 (year 1937, file 300, number 973)",
+   "type": "web",
+   "url": "https://archives.novascotia.ca/vital-statistics/death/?ID=337358",
+   "note": "Image of the original civil death registration."
+  },
+  {
+   "id": "s33",
+   "title": "Obituary of Barbara R. (Richardson) Vogel (1921 to 2016), The Westfield News, 1 Dec 2016",
+   "type": "newspaper",
+   "url": "https://thewestfieldnews.com/barbara-r-vogel/",
+   "note": "Obituary, family informant. Link only on the public site."
+  },
+  {
+   "id": "s34",
+   "title": "Wayland, Massachusetts, Annual Reports 1919 to 1920, marriages registered in 1920, printed page 56 (archive.org item officialreportso1919wayl, leaf 275)",
+   "type": "vital record",
+   "url": "https://archive.org/details/officialreportso1919wayl/page/n275",
+   "note": "Town Clerk printed marriage register extract."
+  },
+  {
+   "id": "s35",
+   "title": "Wayland, Massachusetts, Annual Reports 1921 to 1922, births recorded in 1921, printed page 35 (archive.org item officialreportso1921wayl, leaf 40)",
+   "type": "vital record",
+   "url": "https://archive.org/details/officialreportso1921wayl/page/n40",
+   "note": "Town Clerk printed birth register extract."
+  },
+  {
+   "id": "s36",
+   "title": "Obituary of Gwendolyn (Farr) Magwire (1927 to 2009), The Republican, 9 Sep 2009, via Legacy.com / MassLive",
+   "type": "newspaper",
+   "url": "https://obits.masslive.com/us/obituaries/masslive/name/gwendolyn-magwire-obituary?id=12484302",
+   "note": "Obituary, family informant. Link only on the public site; the guest book names living people and stays private."
+  },
+  {
+   "id": "s37",
+   "title": "Magwire v. Village of Springfield, 111 Vt. 414, 17 A.2d 260 (Vt. 1941), a civil suit over pinball license fees at Magwire's Pharmacy",
+   "type": "court opinion",
+   "url": "https://www.courtlistener.com/opinion/4215709/magwire-v-village-of-springfield/",
+   "note": "Published appellate opinion (civil). Primary for the facts admitted in the pleadings."
+  },
+  {
+   "id": "s38",
+   "title": "Find a Grave memorial 62392610, Thelma L. Crosby (1916 to 1991), Hillcrest Park Cemetery, Springfield MA",
+   "type": "memorial",
+   "url": "https://www.findagrave.com/memorial/62392610",
+   "note": "Derivative."
+  },
+  {
+   "id": "s39",
+   "title": "Nova Scotia Historical Vital Statistics, marriage of Charles Pierce and Alice Whitehouse, Hebron, Yarmouth Co., 1865",
+   "type": "vital record",
+   "url": "https://archives.novascotia.ca/vital-statistics/marriage/?ID=15361",
+   "note": "Original register image; identity with Eva's parents unproven (lead)."
+  },
+  {
+   "id": "s40",
+   "title": "Chester, Vermont, auditors' report (archive.org item annualreportofau00ches, dated 1927): \"Abbie West, teaching\"",
+   "type": "vital record",
+   "url": "https://archive.org/details/annualreportofau00ches",
+   "note": "Town report payment list; identity unproven (lead)."
+  }
+ ]
+}
