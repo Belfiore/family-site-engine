@@ -46,6 +46,35 @@ def safe_url(u, allow_relative=True):
     return ''
 
 
+URL_IN_TEXT = re.compile(r'https?://[^\s<>"\']+', re.I)
+NEW_TAB = ' target="_blank" rel="noopener"'
+
+
+def trim_url(u):
+    """A web address found inside a sentence, without the full stop or bracket that closes the sentence."""
+    while u and (u[-1] in '.,;:!?' or (u[-1] in ')]' and u.count({')': '(', ']': '['}[u[-1]]) < u.count(u[-1]))):
+        u = u[:-1]
+    return u
+
+
+def source_html(src):
+    """The source of a find. A web address, whether the find names one (source.url) or the source's own words contain one, is
+    a link that opens in a new tab. Anything else is plain text."""
+    text = src.get('text') or ''
+    url = safe_url(src.get('url'), allow_relative=False)
+    if url:
+        return '<a class="tl-source" href="%s"%s>%s</a>' % (esc(url), NEW_TAB, esc(text))
+    out, pos = [], 0
+    for m in URL_IN_TEXT.finditer(text):
+        u = trim_url(m.group(0))
+        if not safe_url(u, allow_relative=False): continue
+        out.append(esc(text[pos:m.start()]))
+        out.append('<a href="%s"%s>%s</a>' % (esc(u), NEW_TAB, esc(u)))
+        pos = m.start() + len(u)
+    out.append(esc(text[pos:]))
+    return '<span class="tl-source">%s</span>' % ''.join(out)
+
+
 def count_phrase(n):
     return '%d new find%s' % (n, '' if n == 1 else 's')
 
@@ -66,6 +95,7 @@ def day_summary(entries, line_labels, many_lines):
 
 def action_for(e, pages):
     """One quiet link to the exact person or place, or none. Never a generic page."""
+    if e.get('offTree'): return None        # about someone (or a place) the tree and the map leave out: nothing there to open
     tree, mp = pages.get('tree'), pages.get('map')
     pids, pls = e.get('personIds') or [], e.get('placeIds') or []
     focus = e.get('focus') if e.get('focus') in pids else (pids[0] if pids else None)
@@ -80,18 +110,15 @@ def action_for(e, pages):
     return None
 
 
-def card(e, pages):
+def card(e, pages, show_conf=False, full_of=None):
+    """show_conf: timeline.showConfidence. full_of: a thumbnail's path -> the full-size file, so the picture can open large."""
     t = e.get('type') if e.get('type') in TYPE_LABELS else 'record'
     action = action_for(e, pages)
     src = e.get('source') or {}
     meta = []
     if src.get('text'):
-        url = safe_url(src.get('url'), allow_relative=False)
-        if url and not action:
-            meta.append('<a class="tl-source" href="%s" rel="noopener">%s</a>' % (esc(url), esc(src['text'])))
-        else:
-            meta.append('<span class="tl-source">%s</span>' % esc(src['text']))
-    if e.get('confidence') in CONF_LABEL:
+        meta.append(source_html(src))
+    if show_conf and e.get('confidence') in CONF_LABEL:
         meta.append('<span class="tl-conf" data-conf="%s">%s</span>' % (esc(e['confidence']), CONF_LABEL[e['confidence']]))
     if e.get('foundBy'):
         meta.append('<span class="tl-by">Found by %s</span>' % esc(e['foundBy']))
@@ -111,15 +138,22 @@ def card(e, pages):
     if action:
         body.append('<p class="tl-act"><a class="tl-action" href="%s">%s</a></p>' % (esc(action['href']), esc(action['label'])))
     img = safe_url(e.get('image'))
-    thumb = ('<img class="tl-thumb" src="%s" alt="%s" loading="lazy" decoding="async">' % (esc(img), esc(e.get('imageAlt') or ''))) if img else ''
+    thumb = ''
+    if img:
+        full = safe_url((full_of or {}).get(e.get('image'))) or img
+        alt = e.get('imageAlt') or ''
+        # the engine's own lightbox (records.js) opens it on a click; with no script, or a middle click, it opens in a new tab
+        thumb = ('<a class="record-link tl-thumb-link" href="%s"%s aria-label="%s"><img class="tl-thumb" src="%s" alt="%s" loading="lazy" decoding="async"></a>' % (
+            esc(full), NEW_TAB, esc('View full size: ' + alt if alt else 'View the full-size image'), esc(img), esc(alt)))
     return ('<li class="tl-card%s" id="find-%s" data-type="%s" data-lines="%s" data-published="%s" data-status="%s">'
             '<div class="tl-card-text">%s</div>%s</li>') % (
         ' tl-has-thumb' if thumb else '', esc(e['id']), t, esc(' '.join(e.get('lines') or [])), esc(e.get('published') or ''),
         esc(e.get('status') or 'current'), '\n'.join(body), thumb)
 
 
-def render_body(entries, line_labels, cfg, pages, since=None):
+def render_body(entries, line_labels, cfg, pages, since=None, full_of=None):
     """The page's content: heading, banner, filters, and a section for each day with finds."""
+    show_conf = bool((cfg.get('timeline') or {}).get('showConfidence'))
     many_lines = len([l for l in line_labels if any(l['id'] in (e.get('lines') or []) for e in entries)]) >= 2
     days = {}
     for e in entries: days.setdefault(e['found'], []).append(e)
@@ -153,7 +187,7 @@ def render_body(entries, line_labels, cfg, pages, since=None):
         extra = len(es) > COLLAPSE_OVER
         cards = []
         for i, e in enumerate(es):
-            c = card(e, pages)
+            c = card(e, pages, show_conf, full_of)
             if extra and i >= COLLAPSE_SHOWN: c = c.replace('<li class="tl-card', '<li class="tl-card tl-extra', 1)
             cards.append(c)
         parts.append('<li class="tl-day" data-date="%s" data-count="%d"><section aria-labelledby="day-%s">'

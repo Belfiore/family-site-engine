@@ -153,10 +153,13 @@ def render_engine_page(kind, template, cfg, ctx, extra=None):
     head.append('<link rel="stylesheet" href="%stokens.css">' % ctx['base'])
     sheets = page.get('stylesheets') if page.get('stylesheets') is not None else (cfg.get('head') or {}).get('stylesheets') or []
     head += ['<link rel="stylesheet" href="%s">' % esc(s) for s in sheets]
-    head += ['<link rel="stylesheet" href="%s%s">' % (ctx['base'], c) for c in assets['css']]
+    css, js = assets['css'], assets['js']
+    if kind == 'timeline' and 'tl-thumb-link' in ((extra or {}).get('timelineBody') or ''):
+        css, js = ['records.css'] + css, ['records.js'] + js       # a find with a picture: it opens large in the engine's lightbox
+    head += ['<link rel="stylesheet" href="%s%s">' % (ctx['base'], c) for c in css]
     head += tail_css(cfg, ctx)
     head += visitor_head(cfg, ctx)
-    scripts = settings_scripts(ctx) + ['<script src="%s%s"></script>' % (ctx['base'], j) for j in assets['js']]
+    scripts = settings_scripts(ctx) + ['<script src="%s%s"></script>' % (ctx['base'], j) for j in js]
     if stuart_on(cfg) and cfg['widget'].get('enabled', True) and assets.get('widget'):
         scripts.append(widget_tag(ctx, assets['widget']))
     tree = cfg.get('tree') or {}

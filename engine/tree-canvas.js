@@ -34,6 +34,9 @@
     var L = { pos: {}, blocks: [], unions: [], rows: {}, width: 0, height: 0, kinBox: null, regions: [], order: [] };
     var S = { tx: 0, ty: 0, s: 1, sel: null, hover: null, viewpoint: null, anim: null, drawerFor: null, expanded: false };
     var SITE = window.FamilySite || {};
+    // the confidence badges in a person's panel (Overall, and the Confirmed / Probable / Unverified of each fact) are kept in the data
+    // and left off the page unless the site sets tree.showConfidence
+    var SHOW_CONF = !!(SITE.tree && SITE.tree.showConfidence);
     var PAGES = SITE.pages || {};
     var DATA_URL = SITE.data || { people: 'data/people.json', sources: 'data/sources.json' };
     var SITE_NAME = (SITE.site && SITE.site.name) || '';
@@ -1915,7 +1918,7 @@
         var badges = (p.isDirectLine ? '<span class="badge badge--direct">' + esc(directLabel()) + '</span>' : '') +
                      (p.isLiving ? '<span class="badge badge--living">Living</span>' : '') +
                      '<span class="badge">Generation ' + esc(genLabel(p.generation)) + '</span>' +
-                     (p.confidence ? '<span class="badge ' + confClass(p.confidence) + '">Overall: ' + esc(p.confidence) + '</span>' : '');
+                     (p.confidence && SHOW_CONF ? '<span class="badge ' + confClass(p.confidence) + '">Overall: ' + esc(p.confidence) + '</span>' : '');
         var rel = relationship(S.viewpoint, p.id), vp = byId[S.viewpoint];
 
         // sections
@@ -1924,7 +1927,7 @@
 
         {
             var rows = [];
-            function row(label, value, ids, conf, note) { rows.push('<tr><th scope="row">' + esc(label) + '</th><td>' + value + (note ? '<span class="note">' + esc(note) + '</span>' : '') + '</td><td class="conf">' + confTag(conf) + '</td><td class="src">' + (srcRefs(ids, num) || '<span class="note">none</span>') + '</td></tr>'); }
+            function row(label, value, ids, conf, note) { rows.push('<tr><th scope="row">' + esc(label) + '</th><td>' + value + (note ? '<span class="note">' + esc(note) + '</span>' : '') + '</td>' + (SHOW_CONF ? '<td class="conf">' + confTag(conf) + '</td>' : '') + '<td class="src">' + (srcRefs(ids, num) || '<span class="note">none</span>') + '</td></tr>'); }
             if (p.birth) {
                 row('Born', esc(p.birth.display) + (p.birth.place ? ', ' + esc(p.birth.place) : ''), p.birth.sourceIds, p.birth.confidence, p.birth.note);
                 (p.birth.alternates || []).forEach(function (a) { row('Born (other record)', esc(a.display), a.sourceIds, 'confirmed', a.note ? 'As recorded on the ' + a.note : null); });
@@ -1945,12 +1948,12 @@
             (p.occupations || []).forEach(function (o) { row('Occupation' + (o.years ? ' (' + o.years + ')' : ''), esc([o.title, o.employer, o.place].filter(Boolean).join(', ')), o.sourceIds, o.confidence); });
             (p.facts || []).forEach(function (f) { row(f.label, esc(f.value), f.sourceIds, f.confidence); });
             (p.nameVariants || []).forEach(function (v) { if (v.name !== p.displayName) row('Also recorded as', esc(v.name), v.sourceIds, v.confidence || (v.sourceIds.length ? 'confirmed' : 'unverified'), v.note); });
-            if (rows.length) secs.push(['pf-glance', 'At a glance', '<table class="facts"><thead class="visually-hidden"><tr><th>Fact</th><th>Detail</th><th>Confidence</th><th>Sources</th></tr></thead><tbody>' + rows.join('') + '</tbody></table>']);
+            if (rows.length) secs.push(['pf-glance', 'At a glance', '<table class="facts"><thead class="visually-hidden"><tr><th>Fact</th><th>Detail</th>' + (SHOW_CONF ? '<th>Confidence</th>' : '') + '<th>Sources</th></tr></thead><tbody>' + rows.join('') + '</tbody></table>']);
 
             var tl = (p.timeline || []).slice().sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
             if (tl.length) secs.push(['pf-timeline', 'Timeline', '<ol class="tline">' + tl.map(function (t) {
                 return '<li class="' + (t.kind === 'context' ? 'is-context' : '') + '"><span class="t-date">' + esc(t.label) + (t.kind === 'context' ? ' · context' : '') + '</span>' + esc(t.event) +
-                       (t.kind !== 'context' && t.confidence !== 'confirmed' ? '<span class="t-note">' + esc(t.confidence) + '</span>' : '') + srcRefs(t.sourceIds, num) + '</li>';
+                       (SHOW_CONF && t.kind !== 'context' && t.confidence !== 'confirmed' ? '<span class="t-note">' + esc(t.confidence) + '</span>' : '') + srcRefs(t.sourceIds, num) + '</li>';
             }).join('') + '</ol>']);
         }
 

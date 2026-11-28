@@ -266,6 +266,15 @@ class TestBuildChanges(unittest.TestCase):
         self.assertIn('"map": null', js)
         self.assertIn('"ask": null', js)
 
+    def test_tree_show_confidence_reaches_the_browser_only_when_set(self):
+        code, log = run_build(self.site.dir, self.out)
+        self.assertEqual(code, 0, log)
+        self.assertNotIn('showConfidence', read(os.path.join(self.out, 'site-config.js')))
+        self.site.edit_json('site.config.json', lambda c: c['tree'].update(showConfidence=True))
+        code, log = run_build(self.site.dir, self.out)
+        self.assertEqual(code, 0, log)
+        self.assertIn('"showConfidence": true', read(os.path.join(self.out, 'site-config.js')))
+
     def test_nav_to_a_page_that_is_off(self):
         self.site.edit_json('site.config.json', lambda c: c['pages'].update(map=None))
         code, log = run_build(self.site.dir, self.out)

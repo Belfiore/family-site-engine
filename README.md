@@ -246,7 +246,7 @@ Who can reach the site, who a visitor says they are, and which people a page sho
 
 A living person is published with a name and a relationship, and marked as living. Dates, places, photographs and stories of living people stay out of the public pages. The engine shows whatever a record holds and does not strip fields itself, so that limit is kept in the data: leave those fields out of a living person's record, and set `isLiving` to true. The tree then marks them as living, and Stuart speaks of them in the present tense.
 
-The Discovery Timeline is stricter. A living person never becomes a find, never appears in a headline, and is stored only as a hash. People in `tree.hiddenRegions` are withheld the same way. See [the Discovery Timeline](docs/discovery-timeline.md).
+The Discovery Timeline is stricter. A living person never becomes a find, never appears in a headline, and is stored only as a hash. People in `tree.hiddenRegions` are withheld the same way, unless `timeline.showRegions` names the region (deceased people only). See [the Discovery Timeline](docs/discovery-timeline.md).
 
 Never commit a key, a token or a password. The family password of a protected site is the `SITE_PASSWORD` secret, never a setting. Map keys, if a site uses them, stay in that site's settings and are restricted to the site's address. The token that publishes a release and tells sites to rebuild (`RELEASE_TOKEN`, or `SITES_DISPATCH_TOKEN` when that is the one set) is a GitHub Actions secret on this repository, not a file.
 

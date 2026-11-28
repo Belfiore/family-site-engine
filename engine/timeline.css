@@ -91,6 +91,8 @@
 .tl-action::after { content: ' \2192'; }
 .tl-action:hover { color: var(--tl-ink); text-decoration-color: currentColor; }
 .tl-action:focus-visible, .tl-meta a:focus-visible, .tl-more:focus-visible, .tl-chip:focus-visible, .tl-banner-go:focus-visible, .tl-filters > summary:focus-visible { outline: 2px solid var(--tl-accent); outline-offset: 3px; }
+.tl-thumb-link { flex: 0 0 auto; display: block; line-height: 0; cursor: zoom-in; border-radius: 3px; }
+.tl-thumb-link:focus-visible { outline: 2px solid var(--tl-accent); outline-offset: 3px; }
 .tl-thumb { flex: 0 0 auto; width: 96px; height: 96px; object-fit: cover; border-radius: 3px; border: 1px solid var(--tl-line); background: var(--tl-paper); }
 
 .tl-more { display: block; margin: .9rem 0 0; font: inherit; font-size: 1rem; color: var(--tl-accent); background: none; border: 1px solid var(--tl-line); border-radius: 999px; padding: .5rem 1.2rem; min-height: 44px; cursor: pointer; }

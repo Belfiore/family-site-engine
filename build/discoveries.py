@@ -148,6 +148,9 @@ class Snapshot:
         self.line_labels = []    # [{id, label}]
         self.manual = []         # researcher-written discoveries: {covers, d, origin}
         self.refs = {'place_public': set(), 'place_private': set(), 'src_public': set(), 'src_private': set()}
+        self.off_tree = set()    # people in a hidden region that timeline.showRegions lets the page name; the tree still leaves them off
+        self.off_places = set()  # places only those people have anything to do with: the map does not draw them either
+        self.full_of = {}        # a picture's thumbnail path -> the full-size file, from the media of people the page may show
         self.warnings = []
 
 
@@ -200,7 +203,11 @@ def build_snapshot(site, cfg, people_doc, sources_doc, places_doc, curated_doc, 
     hidden = set(tree.get('hiddenRegions') or meta.get('hiddenRegions') or [])
     people = [p for p in (people_doc or {}).get('people') or [] if isinstance(p, dict) and p.get('id')]
     by = {p['id']: p for p in people}
-    snap.withheld = {p['id'] for p in people if is_living(p) or (p.get('region') and p['region'] in hidden)}
+    # timeline.showRegions lets named hidden regions onto the timeline (leads, associates). A living person is withheld whatever
+    # region they are in, and a region that is not hidden has nothing to show. Left out, this is exactly as it was.
+    shown = set((cfg.get('timeline') or {}).get('showRegions') or []) & hidden
+    snap.withheld = {p['id'] for p in people if is_living(p) or (p.get('region') and p['region'] in hidden and p['region'] not in shown)}
+    snap.off_tree = {p['id'] for p in people if not is_living(p) and p.get('region') and p['region'] in shown}
     snap.persons = set(by) - snap.withheld
     snap.names = {p['id']: p.get('displayName') or p['id'] for p in people}
     snap.sex = {p['id']: p.get('sex') for p in people}
@@ -229,12 +236,15 @@ def build_snapshot(site, cfg, people_doc, sources_doc, places_doc, curated_doc, 
         return key
 
     # places, and who is in them: a place only withheld people have anything to do with is withheld too
+    off_pl, on_pl = set(), set()
     for p in people:
         pl, so = set(), set()
         collect_refs(p, pl, so)
         tgt = 'private' if p['id'] in snap.withheld else 'public'
         snap.refs['place_' + tgt] |= pl
         snap.refs['src_' + tgt] |= so
+        if p['id'] in snap.off_tree: off_pl |= pl
+        elif tgt == 'public': on_pl |= pl
     for pl in plist:
         # what a place says about itself (where its coordinates came from, its blurb) is public, and counts as citing a source
         own = {k: v for k, v in pl.items() if k != 'events'}
@@ -243,9 +253,12 @@ def build_snapshot(site, cfg, people_doc, sources_doc, places_doc, curated_doc, 
             hid_ = any(o in snap.withheld for o in e.get('personIds') or [])
             tgt = 'private' if hid_ else 'public'
             snap.refs['place_' + tgt].add(pl['id'])
+            if not hid_: (off_pl if any(o in snap.off_tree for o in e.get('personIds') or []) else on_pl).add(pl['id'])
             so = set()
             collect_refs(e, set(), so)
             snap.refs['src_' + tgt] |= so
+
+    snap.off_places = off_pl - on_pl
 
     def place_name(pid_):
         return (snap.places.get(pid_) or {}).get('name') or ''
@@ -323,6 +336,7 @@ def build_snapshot(site, cfg, people_doc, sources_doc, places_doc, curated_doc, 
             if not isinstance(m, dict): continue
             rel = m.get('file') or m.get('thumb')
             if not rel: continue
+            if m.get('thumb') and m.get('file') and m['thumb'] != m['file']: snap.full_of.setdefault(m['thumb'], m['file'])
             ident = (file_id(rel) if file_id else file_sha(site, rel)) or slug(rel)
             kind = 'photo' if (m.get('type') or 'photo') in ('photo', 'portrait', 'gravestone') else 'document'
             add(kind, '%s:%s' % (pid, ident), [pid], v={'type': m.get('type') or 'photo', 'caption': m.get('caption') or '', 'alt': m.get('alt') or '',
@@ -353,15 +367,18 @@ def build_snapshot(site, cfg, people_doc, sources_doc, places_doc, curated_doc, 
 
 
 # ------------------------------------------------------------------ comparing two snapshots
-def diff(prev_atoms, cur_atoms, absorbed, masked):
+def diff(prev_atoms, cur_atoms, absorbed, masked, absorbed_places=frozenset()):
     """What changed in meaning. absorbed: people who were withheld last time and are not now (their existing record
-    is the new baseline, not news). masked: people withheld now (nothing about them is reported or retired)."""
+    is the new baseline, not news). masked: people withheld now (nothing about them is reported or retired).
+    absorbed_places: places that are public now only because such a person is (a region newly shown by
+    timeline.showRegions); a place that was already in the data is not a new place."""
     changes = []
     added, removed = {}, {}
     for k, b in cur_atoms.items():
         if set(b['p']) & absorbed: continue
         a = prev_atoms.get(k)
         if a is None:
+            if b['kind'] == 'place' and set(b['pl']) & absorbed_places: continue
             added[k] = b
         elif differs(a.get('c', ''), b.get('c', '')):
             op = 'refine' if refines(b['kind'], a.get('c', ''), b.get('c', '')) else 'modify'
@@ -1029,7 +1046,9 @@ def update(prev, snap, now, engine_version, cfg):
             was_withheld = set(prev.get('withheld') or [])
             absorbed = {p for p in snap.persons if hid(p) in was_withheld}
             masked = set(snap.withheld)
-            changes = diff(prev_atoms, atoms, absorbed, masked)
+            shown_now = absorbed & snap.off_tree
+            absorbed_places = {pl for b in atoms.values() if set(b['p']) & shown_now for pl in b['pl']} if shown_now else frozenset()
+            changes = diff(prev_atoms, atoms, absorbed, masked, absorbed_places)
             new_sources = set(snap.sources) - set(prev.get('sources') or [])
             new_entries = group(changes, snap, new_sources, cfg) if changes or new_sources else []
             have = {e['id']: e for e in entries}
@@ -1062,6 +1081,15 @@ def update(prev, snap, now, engine_version, cfg):
     return state, report
 
 
+def off_tree(e, snap):
+    """Is this find about someone the tree leaves out (a hidden region shown by timeline.showRegions), or a place only they
+    have to do with? Such a find is shown with no link to the tree or the map, because there is nothing there to open."""
+    pids, pls = e.get('personIds') or [], e.get('placeIds') or []
+    focus = e.get('focus') if e.get('focus') in pids else (pids[0] if pids else None)
+    if focus: return focus in snap.off_tree
+    return bool(pls) and all(p in snap.off_places for p in pls)
+
+
 PUBLIC_FIELDS = ('id', 'found', 'foundIs', 'published', 'type', 'headline', 'foundBy', 'source', 'confidence', 'image', 'imageAlt',
                  'changeNote', 'status', 'statusDate', 'change', 'lines', 'personIds', 'placeIds', 'focus')
 
@@ -1071,5 +1099,7 @@ def public_history(state, snap):
     out = []
     for e in state['entries']:
         if not public_ok(e, snap): continue
-        out.append({k: e[k] for k in PUBLIC_FIELDS if k in e and e[k] not in (None, '', [])} | {'id': e['id']})
+        item = {k: e[k] for k in PUBLIC_FIELDS if k in e and e[k] not in (None, '', [])} | {'id': e['id']}
+        if (snap.off_tree or snap.off_places) and off_tree(e, snap): item['offTree'] = True      # only on a site that shows such a region
+        out.append(item)
     return {'schema': 1, 'site': state.get('site'), 'since': state.get('since'), 'lines': snap.line_labels, 'entries': out}

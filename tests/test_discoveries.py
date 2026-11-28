@@ -388,6 +388,127 @@ class TestPrivacy(Chain):
         self.assertEqual(entries(o2), [])
         self.assertNotIn('Pierre', read(os.path.join(o2, 'discoveries.html')))
 
+    # ---- timeline.showRegions: hidden regions (leads, associates) that the page may name, while the tree still leaves them off
+    def _region_site(self, name, show, now_hidden=True):
+        src = os.path.join(self.tmp, name)
+        shutil.copytree(self.versions[0][1], src)
+        cf = os.path.join(src, 'site.config.json')
+        cfg = jload(cf)
+        cfg['timeline']['showRegions'] = show
+        with open(cf, 'w', encoding='utf-8') as f: json.dump(cfg, f, indent=1)
+        return src
+
+    def _lyon(self, src, pid='pierre-moreau', discovery=None):
+        pf = os.path.join(src, 'data', 'people.json')
+        doc = jload(pf)
+        res = {'place': 'Lyon', 'placeId': 'lyon', 'address': '9 rue Neuve, Lyon', 'years': '1870', 'confidence': 'confirmed', 'sourceIds': ['family-testimony']}
+        if discovery: res['discovery'] = discovery
+        next(p for p in doc['people'] if p['id'] == pid)['residences'].append(res)
+        with open(pf, 'w', encoding='utf-8') as f: json.dump(doc, f, indent=1)
+
+    def _two(self, name, src):
+        o1, o2 = os.path.join(self.tmp, name + '1'), os.path.join(self.tmp, name + '2')
+        rc, text = build(src, o1, 'none', '2026-11-02T10:00:00Z')
+        self.assertEqual(rc, 0, text)
+        return o1, o2
+
+    def test_a_region_named_in_showRegions_is_on_the_timeline_with_no_link_to_the_tree(self):
+        src = self._region_site('sr-shown', ['legend'])
+        o1, o2 = self._two('sr-shown', src)
+        self._lyon(src)
+        rc, text = build(src, o2, o1, '2026-11-03T10:00:00Z')
+        self.assertEqual(rc, 0, text)
+        found = [e for e in entries(o2) if 'Pierre' in e['headline']]
+        self.assertEqual(len(found), 1, heads(o2))
+        self.assertTrue(found[0].get('offTree'))
+        page = read(os.path.join(o2, 'discoveries.html'))
+        card = next(c for c in re.findall(r'<li class="tl-card[^"]*".*?</li>', page, re.S) if 'Pierre' in c)
+        self.assertNotIn('tl-action', card)
+        self.assertNotIn('person/pierre-moreau', page)
+        self.assertNotIn('See it in the tree', card)
+
+    def test_a_living_person_in_a_shown_region_is_still_withheld(self):
+        src = self._region_site('sr-living', ['legend'])
+        pf = os.path.join(src, 'data', 'people.json')
+        doc = jload(pf)
+        kate = next(p for p in doc['people'] if p['id'] == 'kate-hartley')
+        self.assertTrue(kate.get('isLiving'))
+        kate['region'] = 'legend'
+        with open(pf, 'w', encoding='utf-8') as f: json.dump(doc, f, indent=1)
+        o1, o2 = self._two('sr-living', src)
+        self._lyon(src, 'kate-hartley')
+        rc, text = build(src, o2, o1, '2026-11-03T10:00:00Z')
+        self.assertEqual(rc, 0, text)
+        self.assertEqual(entries(o2), [])
+        text = '\n'.join(read(os.path.join(o2, f)) for f in ('discoveries.html', 'discoveries/history.json', 'discoveries/state.json'))
+        self.assertNotIn('Kate', text)
+        self.assertNotIn('kate-hartley', text)
+        self.assertIn(D.hid('kate-hartley'), text)        # only the one-way mark of her id
+
+    def test_a_hidden_region_that_is_not_named_stays_withheld(self):
+        src = self._region_site('sr-other', ['associates'])         # legend is hidden too, and not named
+        o1, o2 = self._two('sr-other', src)
+        self._lyon(src)
+        rc, text = build(src, o2, o1, '2026-11-03T10:00:00Z')
+        self.assertEqual(rc, 0, text)
+        self.assertEqual(entries(o2), [])
+        self.assertNotIn('Pierre', read(os.path.join(o2, 'discoveries.html')))
+
+    def test_turning_it_on_does_not_flood_the_page_and_later_finds_show(self):
+        src = self._region_site('sr-flood', [])
+        o1, o2 = self._two('sr-flood', src)
+        cf = os.path.join(src, 'site.config.json')
+        cfg = jload(cf)
+        cfg['timeline']['showRegions'] = ['legend']
+        with open(cf, 'w', encoding='utf-8') as f: json.dump(cfg, f, indent=1)
+        rc, text = build(src, o2, o1, '2026-11-03T10:00:00Z')
+        self.assertEqual(rc, 0, text)
+        self.assertEqual(entries(o2), [], 'what the family already knew about the region is not news')
+        self._lyon(src)
+        o3 = os.path.join(self.tmp, 'sr-flood3')
+        rc, text = build(src, o3, o2, '2026-11-04T10:00:00Z')
+        self.assertEqual(rc, 0, text)
+        self.assertTrue(any('Pierre' in h for h in heads(o3)))
+
+    def test_leaving_showRegions_out_or_empty_changes_nothing(self):
+        a = self._region_site('sr-none-a', [])
+        b = os.path.join(self.tmp, 'sr-none-b')
+        shutil.copytree(a, b)
+        cf = os.path.join(b, 'site.config.json')
+        cfg = jload(cf)
+        del cfg['timeline']['showRegions']
+        with open(cf, 'w', encoding='utf-8') as f: json.dump(cfg, f, indent=1)
+        oa, ob = os.path.join(self.tmp, 'sr-none-oa'), os.path.join(self.tmp, 'sr-none-ob')
+        for src, o in ((a, oa), (b, ob)):
+            rc, text = build(src, o, 'none', '2026-11-02T10:00:00Z')
+            self.assertEqual(rc, 0, text)
+        for f in ('discoveries.html', 'discoveries/history.json', 'discoveries/state.json'):
+            self.assertEqual(read(os.path.join(oa, f)), read(os.path.join(ob, f)), f)
+
+    def test_a_researchers_note_on_someone_in_a_shown_region_stands(self):
+        src = self._region_site('sr-note', ['legend'])
+        o1, o2 = self._two('sr-note', src)
+        self._lyon(src, discovery={'headline': 'Pierre Moreau was a lead in Lyon in 1870.', 'foundBy': 'Sebastian'})
+        rc, text = build(src, o2, o1, '2026-11-03T10:00:00Z')
+        self.assertEqual(rc, 0, text)
+        self.assertIn('Pierre Moreau was a lead in Lyon in 1870.', heads(o2))
+
+    def test_a_find_about_a_place_only_those_people_have_is_marked_off_the_tree(self):
+        from types import SimpleNamespace
+        snap = SimpleNamespace(off_tree={'lead'}, off_places={'lyon'})
+        self.assertTrue(D.off_tree({'personIds': ['lead'], 'focus': 'lead'}, snap))
+        self.assertFalse(D.off_tree({'personIds': ['kin'], 'focus': 'kin'}, snap))
+        self.assertTrue(D.off_tree({'type': 'place', 'placeIds': ['lyon'], 'personIds': []}, snap))
+        self.assertFalse(D.off_tree({'type': 'place', 'placeIds': ['lyon', 'leeds'], 'personIds': []}, snap))
+
+    def test_showRegions_is_checked_against_the_data(self):
+        for show, want in ((['nowhere'], "'nowhere' is not in tree.hiddenRegions"), (['legend', 'ghosts'], "'ghosts' is not in tree.hiddenRegions")):
+            src = self._region_site('sr-check', show)
+            rc, text = build(src, os.path.join(self.tmp, 'sr-check-o'), 'none', '2026-11-02T10:00:00Z')
+            self.assertEqual(rc, 0, text)
+            self.assertIn(want, text)
+            shutil.rmtree(src); shutil.rmtree(os.path.join(self.tmp, 'sr-check-o'))
+
     def test_a_note_on_a_living_person_is_ignored_and_warned_about(self):
         src = os.path.join(self.tmp, 'livingnote')
         shutil.copytree(self.versions[0][1], src)
@@ -602,11 +723,14 @@ class TestPage(Chain):
         self.assertEqual(days[0], ('2026-11-26', 'Thursday, 26 November 2026'))
         self.assertIn('8 new finds across The Hartleys and The Moreaus.', page)
 
-    def test_a_find_has_at_most_one_link_and_the_headline_is_never_one(self):
+    def test_a_find_has_at_most_one_action_link_and_the_headline_is_never_a_link(self):
+        # the quiet "See it in the tree" link is one per find. A source address and a picture can also be links (below), and nothing else is.
         for n in self.out:
             for c in self.cards(n):
-                self.assertLessEqual(len(re.findall(r'<a\b', c)), 1, c)
+                self.assertLessEqual(c.count('class="tl-action"'), 1, c)
                 self.assertFalse(re.search(r'<h3[^>]*>\s*<a', c))
+                for a in re.findall(r'<a\b[^>]*>', c):
+                    self.assertTrue('tl-action' in a or 'tl-source' in a or 'tl-thumb-link' in a or 'target="_blank"' in a, a)
         c = next(c for c in self.cards('v3') if 'Ilkley' in c)
         self.assertIn('href="map.html?place=ilkley"', c)
         self.assertIn('Show on the map', c)
@@ -619,7 +743,8 @@ class TestPage(Chain):
         c = next(c for c in cards if 'Greek Street' in c)
         self.assertIn('New record', c)
         self.assertIn('1891 census, Soho (a made-up source)', c)
-        self.assertIn('Probable', c)
+        self.assertNotIn('Probable', c)          # confidence is kept in the data and left off the page unless timeline.showConfidence is true
+        self.assertNotIn('tl-conf', c)
         self.assertIn('Found by Sebastian', c)
         self.assertIn('<img class="tl-thumb" src="images/records/census-1891-soho.png"', c)
         self.assertIn('alt="A census page with one line marked"', c)
@@ -665,12 +790,99 @@ class TestPage(Chain):
         self.assertRegex(c, r'data-lines="[a-z ]+"')
         self.assertRegex(c, r'id="find-[a-z]-[0-9a-f]+"')
 
+    # ---- source addresses, pictures that open large, and confidence off by default
+    @staticmethod
+    def one(text, url=None, image=None, conf=None, cfg=None, full_of=None):
+        e = [{'id': 'x-1', 'type': 'record', 'headline': 'Found one.', 'found': '2026-11-01', 'published': '2026-11-01T00:00:00Z', 'status': 'current',
+              'lines': ['a'], 'personIds': [], 'placeIds': [], 'source': {'text': text, 'url': url} if text else None, 'confidence': conf,
+              'image': image, 'imageAlt': 'A page'}]
+        return timeline_page.render_body(e, [{'id': 'a', 'label': 'A'}], cfg or {}, {}, full_of=full_of)
+
+    def test_a_source_address_is_a_link_that_opens_in_a_new_tab(self):
+        c = next(c for c in self.cards('v5') if 'Greek Street' in c)
+        self.assertIn('<a class="tl-source" href="https://example.org/census-1891" target="_blank" rel="noopener">1891 census, Soho (a made-up source)</a>', c)
+        self.assertIn('class="tl-action"', c)       # the card still has its own quiet link into the tree
+
+    def test_an_address_written_in_a_sources_words_is_a_link_too(self):
+        a = '<a href="https://example.org/reg/12" target="_blank" rel="noopener">https://example.org/reg/12</a>'
+        self.assertIn('<span class="tl-source">%s</span>' % a, self.one('https://example.org/reg/12'))
+        self.assertIn('see %s. Page 4</span>' % a, self.one('Parish register, see https://example.org/reg/12. Page 4'))
+        h = self.one('Wikipedia (https://example.org/wiki/A_(b))')
+        self.assertIn('<a href="https://example.org/wiki/A_(b)" target="_blank" rel="noopener">https://example.org/wiki/A_(b)</a>)</span>', h)
+        h = self.one('See https://example.org/b', 'https://example.org/a')       # a named address wins, and there is one link, not two
+        self.assertEqual(h.count('<a '), 1)
+        self.assertIn('href="https://example.org/a"', h)
+        for plain in ('An archive entry, box 4', 'javascript:alert(1) and ftp://example.org/y', 'www.example.org/no-scheme'):
+            self.assertNotIn('<a ', self.one(plain), plain)
+        h = self.one('<b>https://example.org/x</b>')
+        self.assertNotIn('<b>', h)
+        self.assertEqual(h.count('<a '), 1)
+
+    def test_a_picture_opens_full_size_and_the_page_loads_the_lightbox_only_then(self):
+        c = next(c for c in self.cards('v5') if 'Greek Street' in c)
+        self.assertIn('<a class="record-link tl-thumb-link" href="images/records/census-1891-soho.png" target="_blank" rel="noopener" '
+                      'aria-label="View full size: A census page with one line marked"><img class="tl-thumb"', c)
+        for n in self.out:
+            page = self.page(n)
+            has = 'tl-thumb-link' in page
+            self.assertEqual('records.js' in page, has, n)
+            self.assertEqual('records.css' in page, has, n)
+
+    def test_a_thumbnail_opens_the_full_size_file_not_itself(self):
+        src = os.path.join(self.tmp, 'thumbfull')
+        shutil.copytree(self.versions[2][1], src)
+        rel = next(e['image'] for e in entries(self.out['v3']) if 'Alice Hartley' in e['headline'] and 'photograph' in e['headline'])
+        thumb = 'images/thumbs/' + os.path.basename(rel)
+        os.makedirs(os.path.join(src, 'images', 'thumbs'), exist_ok=True)
+        shutil.copy(os.path.join(src, rel), os.path.join(src, thumb))
+        pf = os.path.join(src, 'data', 'people.json')
+        doc = jload(pf)
+        hit = [m for p in doc['people'] for m in p.get('media') or [] if m.get('file') == rel]
+        self.assertTrue(hit)
+        for m in hit: m['thumb'] = thumb
+        with open(pf, 'w', encoding='utf-8') as f: json.dump(doc, f, indent=1)
+        o = os.path.join(self.tmp, 'thumbfull-out')
+        rc, text = build(src, o, self.out['v2'], self.versions[2][2])
+        self.assertEqual(rc, 0, text)
+        card = next(c for c in re.findall(r'<li class="tl-card[^"]*".*?</li>', read(os.path.join(o, 'discoveries.html')), re.S) if 'Alice Hartley' in c)
+        self.assertIn('href="%s"' % rel, card)
+        self.assertIn('<img class="tl-thumb" src="%s"' % thumb, card)
+        h = self.one('S', image='images/t/a.jpg', full_of={'images/t/a.jpg': 'images/full/a.jpg'})
+        self.assertIn('href="images/full/a.jpg"', h)
+        self.assertIn('src="images/t/a.jpg"', h)
+        self.assertNotIn('<a ', self.one('S'))          # no picture, no link
+
+    def test_confidence_is_kept_in_the_data_and_off_the_page_unless_asked(self):
+        self.assertTrue(any(e.get('confidence') for e in entries(self.out['v5'])))      # history.json keeps it
+        for n in self.out: self.assertNotIn('tl-conf', self.page(n), n)
+        self.assertNotIn('tl-conf', self.one('S', conf='probable'))
+        self.assertNotIn('tl-conf', self.one('S', conf='probable', cfg={'timeline': {'showConfidence': False}}))
+        h = self.one('S', conf='probable', cfg={'timeline': {'showConfidence': True}})
+        self.assertIn('<span class="tl-conf" data-conf="probable">Probable</span>', h)
+        src = os.path.join(self.tmp, 'showconf')
+        shutil.copytree(self.versions[4][1], src)
+        cf = os.path.join(src, 'site.config.json')
+        cfg = jload(cf)
+        cfg['timeline']['showConfidence'] = True
+        with open(cf, 'w', encoding='utf-8') as f: json.dump(cfg, f, indent=1)
+        o = os.path.join(self.tmp, 'showconf-out')
+        rc, text = build(src, o, self.out['v4'], self.versions[4][2])
+        self.assertEqual(rc, 0, text)
+        page = read(os.path.join(o, 'discoveries.html'))
+        self.assertIn('<span class="tl-conf" data-conf="probable">Probable</span>', page)
+        self.assertEqual(entries(o), entries(self.out['v5']))       # the option changes the page, never the history
+
+
     def test_nothing_in_the_page_is_a_long_dash_or_loads_from_elsewhere(self):
         for n in self.out:
             page = self.page(n)
             self.assertFalse(DASHES.search(page))
-            for u in re.findall(r'(?:src|href)="(https?://[^"]+)"', page):
-                self.fail('the page links out to %s' % u)
+            # nothing is loaded from elsewhere (a script, a style, a picture); a source can be a link out, in a new tab
+            for u in re.findall(r'<(?:script|img|link|iframe|source)\b[^>]*\b(?:src|href)="(https?://[^"]+)"', page):
+                self.fail('the page loads %s' % u)
+            for a in re.findall(r'<a\b[^>]*href="https?://[^"]+"[^>]*>', page):
+                self.assertIn('target="_blank"', a)
+                self.assertIn('rel="noopener"', a)
 
     def test_the_headline_text_is_escaped(self):
         e = [{'id': 'x-1', 'type': 'record', 'headline': 'Found <b>"A" & B</b>.', 'found': '2026-11-01', 'published': '2026-11-01T00:00:00Z', 'status': 'current',
