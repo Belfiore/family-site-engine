@@ -145,9 +145,11 @@ const json = (f, fn) => { const d = JSON.parse(fs.readFileSync(f, 'utf8')); fn(d
         // pins, hover card, list
         const pins = await page.evaluate(() => [...document.querySelectorAll('.mk-wrap')].map(w => w.getAttribute('aria-label') || ''));
         check(pins.some(l => /\(.*, your /.test(l)), 'a pin\'s label names the relationship', pins.find(l => /your /.test(l)));
-        const mk = page.locator('.mk-wrap', { hasText: '' }).first();
         await page.evaluate(() => { const w = [...document.querySelectorAll('.mk-wrap')].find(x => /\(.*, your /.test(x.getAttribute('aria-label') || '')); w.dataset.t = '1'; });
-        await page.hover('.mk-wrap[data-t="1"]'); await page.waitForTimeout(500);
+        await page.click('#panelClose'); await page.waitForTimeout(400);
+        // the pointer arriving on the pin (not a real mouse move: on a small CI screen something else can sit over it)
+        await page.evaluate(() => document.querySelector('.mk-wrap[data-t="1"]').dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'mouse' })));
+        await page.waitForTimeout(600);
         const pk = await page.evaluate(() => ({ shown: !document.getElementById('peek').hidden, rel: [...document.querySelectorAll('#peek .pk-rel li')].map(l => l.textContent) }));
         check(pk.shown && pk.rel.length > 0 && pk.rel.every(t => /your /.test(t)), 'the hover card on a pin lists them with their relationship', JSON.stringify(pk));
         await page.mouse.move(5, 5);
