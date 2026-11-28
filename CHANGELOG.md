@@ -2,6 +2,10 @@
 
 Each release, newest first. A major version says what a site has to change.
 
+## 1.6.0
+
+- Heritage styles: ten themes, a suggestion from the family's data, and Site style and Language on the settings page (#23) by @Belfiore
+
 ## 1.5.0
 
 - Map: Relationships to, no Street View message, source preview and drawer (#22) by @Belfiore
