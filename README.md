@@ -90,6 +90,7 @@ What a site can set today is [`site.config.json`](docs/site-config.md), checked 
 | `pages.home`, `pages.tree`, `pages.map`, `pages.ask` | The file name of that page, or `null` to leave it out. A page left out loses every link to it. |
 | `timeline.enabled` | The Discovery Timeline. Off unless set to true. `timeline.file` names the page (default `discoveries.html`). |
 | `access.enabled` | A family password in front of the whole site. Off unless set to true. Needs a private repository and Cloudflare Pages. See [Private access](docs/access.md). |
+| `basicAccess` | A basic family password on the home page (or every page) for a site that is still on GitHub Pages. A stopgap, not protection: the files stay public. Off unless `enabled` is true. See [A basic family password](docs/basic-access.md). |
 | `visitor.enabled` | "Who are you?": the visitor says who they are and the tree opens from their place. Off unless set to true. See [Visitor identity](docs/visitor.md). |
 | `nav` | The shared navigation bar, in order. |
 | `theme`, `tree`, `map`, `stuart` | Colours, and how the tree, the map and Stuart behave for this family. |
@@ -278,6 +279,7 @@ python3 tests/test_build.py
 python3 tests/test_discoveries.py
 python3 tests/test_autorelease.py
 python3 tests/test_access.py
+python3 tests/test_basic_access.py
 python3 build/validate.py --site sample
 npm ci && npx playwright install chromium
 node tests/check-sample.js
@@ -285,9 +287,10 @@ node tests/check-timeline.js
 node tests/check-gate.js
 node tests/check-visitor.js
 node tests/check-access.js
+node tests/check-basic-access.js
 ```
 
-Further reading: [Adding a site](docs/adding-a-site.md), [the data format](docs/data-format.md), [site settings](docs/site-config.md), [the Discovery Timeline](docs/discovery-timeline.md), [private access](docs/access.md), [visitor identity](docs/visitor.md), [releases](docs/releasing.md), [the map](docs/map.md), [map keys](docs/map-keys.md), [Stuart](docs/stuart.md).
+Further reading: [Adding a site](docs/adding-a-site.md), [the data format](docs/data-format.md), [site settings](docs/site-config.md), [the Discovery Timeline](docs/discovery-timeline.md), [private access](docs/access.md), [visitor identity](docs/visitor.md), [a basic family password](docs/basic-access.md), [releases](docs/releasing.md), [the map](docs/map.md), [map keys](docs/map-keys.md), [Stuart](docs/stuart.md).
 
 ## Licence
 

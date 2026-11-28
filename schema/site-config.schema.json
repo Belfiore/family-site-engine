@@ -905,6 +905,45 @@
    },
    "additionalProperties": false,
    "description": "The Discovery Timeline: a page of what the family has newly learned, with the history kept by the build between publications. See docs/discovery-timeline.md."
+  },
+  "basicAccess": {
+   "type": "object",
+   "properties": {
+    "enabled": {
+     "type": "boolean",
+     "description": "Turn on the basic family password (default false). When false the site is built exactly as before. This is a stopgap, not protection: see docs/basic-access.md."
+    },
+    "scope": {
+     "type": "string",
+     "enum": [
+      "home",
+      "all"
+     ],
+     "description": "Which pages ask for the password: home (the home page only, the default) or all (every page the engine builds)."
+    },
+    "salt": {
+     "type": "string",
+     "description": "Random salt, base64. Made by tools/basic-password.py or the settings page. Never the password."
+    },
+    "hash": {
+     "type": "string",
+     "description": "PBKDF2-SHA256 hash of the password, base64. Made by tools/basic-password.py or the settings page. Never the password."
+    },
+    "iterations": {
+     "type": "integer",
+     "minimum": 100000,
+     "maximum": 2000000,
+     "description": "PBKDF2 iterations (default 210000). Leave as the tool wrote it."
+    },
+    "days": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 365,
+     "description": "How many days a device is remembered after the password is typed (default 30)."
+    }
+   },
+   "additionalProperties": false,
+   "description": "A basic family password for a site that is still on GitHub Pages. It keeps casual visitors from a page and nothing else: the pages, data and pictures stay public. Only a salt and a hash are stored, never the password. For real protection use access. See docs/basic-access.md."
   }
  }
 }

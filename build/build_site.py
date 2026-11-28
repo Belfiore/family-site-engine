@@ -132,7 +132,7 @@ def main(argv=None):
     # 4. the engine
     # the timeline's files go only to a site that has the timeline, so any other site's build is as it was
     # (likewise the visitor files go only to a site that turns visitor.enabled on)
-    not_sent = ([] if tl_on else ['timeline.css', 'timeline.js']) + ([] if cfg.get('_visitor') else ['visitor.js', 'visitor.css', 'visitor-match.js'])
+    not_sent = ([] if tl_on else ['timeline.css', 'timeline.js']) + ([] if cfg.get('_visitor') else ['visitor.js', 'visitor.css', 'visitor-match.js']) + ([] if cfg.get('_basic') else ['basic-gate.js'])
     shutil.copytree(os.path.join(ENGINE_ROOT, 'engine'), os.path.join(out, base), dirs_exist_ok=True,
                     ignore=shutil.ignore_patterns(*not_sent) if not_sent else None)
 
@@ -215,6 +215,8 @@ def main(argv=None):
         info['access'] = gate
     if cfg.get('_visitor'):
         info['visitor'] = True
+    if cfg.get('_basic'):       # only a site that turns it on has this key
+        info['basicAccess'] = {'scope': cfg['_basic']['scope']}
     if tl_info:       # only a site with the timeline on has this key, so other sites' files are unchanged
         info['timeline'] = {k: tl_info[k] for k in ('file', 'mode', 'new', 'entries', 'since')}
     with open(os.path.join(out, 'engine-build.json'), 'w', encoding='utf-8') as f: json.dump(info, f, indent=1)

@@ -360,6 +360,9 @@ def check_features(site, cfg):
     """The settings of the optional features that need more than the schema (private access, visitor identity)."""
     import access
     errors, warnings = access.check(cfg, site)
+    import basic_access
+    e2, w2 = basic_access.check(cfg)
+    errors, warnings = errors + e2, warnings + w2
     return {'errors': errors, 'warnings': warnings}
 
 

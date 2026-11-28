@@ -5,7 +5,7 @@
   "description": "The shared engine behind the family history sites: the family tree, the family map and Stuart, the family archivist.",
   "license": "UNLICENSED",
   "scripts": {
-    "test": "python3 tests/test_build.py && python3 tests/test_discoveries.py && python3 tests/test_autorelease.py && python3 tests/test_access.py && node tests/check-sample.js && node tests/check-timeline.js && node tests/check-gate.js && node tests/check-visitor.js && node tests/check-access.js",
+    "test": "python3 tests/test_build.py && python3 tests/test_discoveries.py && python3 tests/test_autorelease.py && python3 tests/test_access.py && python3 tests/test_basic_access.py && node tests/check-sample.js && node tests/check-timeline.js && node tests/check-gate.js && node tests/check-visitor.js && node tests/check-access.js && node tests/check-basic-access.js",
     "build:sample": "python3 build/build_site.py --site sample --out _site"
   },
   "devDependencies": {

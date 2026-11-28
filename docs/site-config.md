@@ -208,6 +208,14 @@ Optional. "Who are you?": the visitor says who they are, the device remembers it
 "visitor": { "enabled": true }
 ```
 
+## basicAccess
+
+```json
+"basicAccess": { "enabled": true, "scope": "home", "salt": "...", "hash": "...", "iterations": 210000, "days": 30 }
+```
+
+Optional. A basic family password for a site that is still on GitHub Pages. It is a stopgap, not protection: the files stay public. Without it, or with `enabled` false, the site is built exactly as before. Make `salt` and `hash` with `tools/basic-password.py`; the password itself is never a setting. See [a basic family password](basic-access.md) for what it does and does not do.
+
 ## publish and process
 
 - `publish.exclude`: files and folders not to publish (globs from the site folder: `"drafts/"`, `"*.psd"`). `.git`, `.github`, `node_modules`, `_site` and `site.config.json` are never published.

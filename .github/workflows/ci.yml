@@ -33,6 +33,9 @@ jobs:
       - name: Private access and visitor identity
         run: python3 tests/test_access.py
 
+      - name: Basic family password
+        run: python3 tests/test_basic_access.py
+
       - name: The sample site's data
         run: python3 build/validate.py --site sample
 
@@ -59,3 +62,6 @@ jobs:
 
       - name: Private access in a browser
         run: node tests/check-access.js
+
+      - name: Basic family password in a browser
+        run: node tests/check-basic-access.js
