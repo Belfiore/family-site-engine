@@ -306,7 +306,6 @@ body.map-body { overflow: hidden; height: 100vh; height: 100dvh; background: var
 .pn-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: .7rem 0 .2rem; }
 .pn-actions .sv-btn { font-size: .8rem; padding: .55rem 1.1rem .55rem .8rem; }
 .pn-tn { display: inline-flex; gap: .3rem; flex-wrap: wrap; }
-.pn-nosv { font-family: var(--font-accent); font-style: italic; color: var(--fm-muted); font-size: .9rem; margin: 0; }
 .pn-h { font-family: var(--font-display); font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: var(--fm-accent); margin: 1.2rem 0 .4rem; padding-bottom: .25rem; border-bottom: 1px solid var(--fm-rule); }
 .pn-events { list-style: none; margin: 0; padding: 0; }
 .ev { display: grid; grid-template-columns: auto 1fr; gap: .1rem .6rem; padding: .55rem 0; border-bottom: 1px dotted var(--fm-rule); }
@@ -438,7 +437,6 @@ sup .fn, .fn { color: var(--fm-accent); font-family: var(--font-display); font-s
 .ec-media { display: block; margin: .3rem 0 .45rem; }
 .ec-media img { width: 100%; max-height: 120px; object-fit: cover; object-position: top; border: 1px solid var(--fm-rule); border-radius: 4px; background: #f2e9d8; }
 .ec-actions { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
-.ec-nosv { font-family: var(--font-accent); font-style: italic; font-size: .82rem; color: var(--fm-muted); }
 .ec-npl { margin: .2rem 0 0; }
 
 /* step stage (shared with a future tour) */
@@ -673,3 +671,11 @@ body.sv-open .fm-key, body.sv-open .fm-chips, body.sv-open .fm-tl, body.sv-open 
 .badge--assoc { background: var(--fm-assoc-bg, #e7efec); color: var(--fm-assoc, #2f5d50); border: 1px solid var(--fm-assoc, #2f5d50); border-radius: 2px; }
 .ev.is-associate { border-left: 3px solid var(--fm-assoc, #2f5d50); padding-left: .4rem; }
 .ec.is-associate { border-left: 3px solid var(--fm-assoc, #2f5d50); }
+
+/* "Relationships to": what a person is to the one chosen in the key (map-viewpoint.js). Absent until someone is chosen. */
+.fm-viewpoint { margin-bottom: .9rem; padding-bottom: .8rem; border-bottom: 1px solid var(--fm-gold-line); }
+.fm-viewpoint .fm-select { width: 100%; }
+.chip-vp { font-style: italic; color: var(--fm-muted); }
+.chip-vp::before { content: "\00b7\00a0"; font-style: normal; }
+.pk-rel { list-style: none; margin: .2rem 0 .35rem; padding: 0; font-family: var(--font-accent); font-size: .88rem; color: var(--fm-ink-2); }
+.mk-rel { font-style: italic; opacity: .85; }

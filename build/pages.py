@@ -16,23 +16,23 @@ from urllib.parse import urlparse
 
 import i18n
 
-ENGINE_CSS_GONE = {'nav.css', 'stuart.css', 'tree-canvas.css', 'map.css', 'tokens.css'}
+ENGINE_CSS_GONE = {'nav.css', 'stuart.css', 'tree-canvas.css', 'map.css', 'tokens.css', 'source-preview.css'}
 ENGINE_JS_GONE = {'stuart.js', 'nav.js', 'config.js', 'tree-canvas.js', 'map-data.js', 'map-ui.js', 'map-timeline.js',
                   'map-player.js', 'map-steps.js', 'map-glyphs.js', 'archive-core.js', 'archive-kin.js',
-                  'archive-dates.js', 'archive-search.js', 'site-config.js'}
+                  'archive-dates.js', 'archive-search.js', 'site-config.js', 'kinship.js', 'map-viewpoint.js', 'source-preview.js'}
 ENGINE_SHARED = {'records.css', 'records.js'}
 
 # what each engine page loads, in order
 PAGE_ASSETS = {
-    'tree': {'css': ['tree-canvas.css'], 'js': ['tree-canvas.js'],
+    'tree': {'css': ['tree-canvas.css'], 'js': ['kinship.js', 'tree-canvas.js'],
              'viewport': 'width=device-width, initial-scale=1.0, viewport-fit=cover',
              'widget': {'compact': True, 'avoid': '.tc-minimap, .tc-controls, .tc-legend, .dr-foot'}},
-    'map': {'css': ['records.css', 'vendor/maplibre-gl-5.24.1/maplibre-gl.css', 'map.css'],
-            'js': ['vendor/maplibre-gl-5.24.1/maplibre-gl.js', 'records.js', 'map-glyphs.js', 'map-data.js', 'map-player.js',
-                   'map-ui.js', 'map-steps.js', 'map-timeline.js'],
+    'map': {'css': ['records.css', 'vendor/maplibre-gl-5.24.1/maplibre-gl.css', 'map.css', 'source-preview.css'],
+            'js': ['vendor/maplibre-gl-5.24.1/maplibre-gl.js', 'records.js', 'kinship.js', 'map-glyphs.js', 'map-data.js', 'map-player.js',
+                   'map-viewpoint.js', 'source-preview.js', 'map-ui.js', 'map-steps.js', 'map-timeline.js'],
             'preconnect': ['https://tiles.openfreemap.org'],
             'viewport': 'width=device-width, initial-scale=1.0, viewport-fit=cover',
-            'widget': {'compact': True, 'avoid': '.maplibregl-ctrl-bottom-right, .fm-attrib, .fm-tl, .fm-chips, .fm-key, .fm-key-pill, .fm-note, .fm-edition, .fm-peek, .fm-panel, .fm-sheet, .fm-events'}},
+            'widget': {'compact': True, 'avoid': '.maplibregl-ctrl-bottom-right, .fm-attrib, .fm-tl, .fm-chips, .fm-key, .fm-key-pill, .fm-note, .fm-edition, .fm-peek, .fm-panel, .fm-sheet, .fm-events, .sp-drawer, .sp-card'}},
     'ask': {'css': [], 'js': ['archive-kin.js', 'archive-dates.js', 'archive-search.js', 'archive-core.js', 'stuart.js'],
             'viewport': 'width=device-width, initial-scale=1.0', 'csp': True, 'widget': None},
     'timeline': {'css': ['timeline.css'], 'js': ['timeline.js'],

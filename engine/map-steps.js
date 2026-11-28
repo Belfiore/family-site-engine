@@ -18,7 +18,7 @@
         // each person with how they are related to the kin anchors (map.kinAnchors), when that is close
         var people = e.personIds.map(function (id) {
             var p = D.people[id], k = FM.data.kinOf(id, D.people);
-            return '<button type="button" class="chip" data-person="' + esc(id) + '">' + U().avatar(p, 'av--xs') + '<span>' + esc(p.displayName) + (k ? '<span class="chip-rel">, ' + esc(k.label) + '</span>' : '') + '</span></button>';
+            return '<button type="button" class="chip" data-person="' + esc(id) + '">' + U().avatar(p, 'av--xs') + '<span>' + esc(p.displayName) + (k ? '<span class="chip-rel">, ' + esc(k.label) + '</span>' : '') + FM.rel.chip(id) + '</span></button>';
         }).join('');
         var media = '';
         var img = pl && (pl.images || [])[0];
@@ -42,7 +42,7 @@
             '<p class="ec-text">' + esc(e.summary) + esc(FM.famMark(e)) + '</p>' +
             (people ? '<div class="ec-people">' + people + '</div>' : '') + media +
             (opts.noActions ? '' : '<div class="ec-actions">' + (pl ? '<button type="button" class="fm-btn fm-btn--sm" data-open-place="' + esc(pl.id) + '">' + esc(I.t('map.openPlace')) + '</button>' : '') +
-                (pl && pl.streetView ? FM.sv.button(pl, { small: true }) : (pl && pl.streetViewReason && /coverage/i.test(pl.streetViewReason) ? '<span class="ec-nosv">' + esc(pl.streetViewReason) + '</span>' : '')) +
+                (pl && pl.streetView ? FM.sv.button(pl, { small: true }) : '') +
                 (first ? '<a class="fm-btn fm-btn--sm fm-btn--ghost" href="' + esc(((window.FamilySite || {}).pages || {}).tree || 'family-tree.html') + '#/person/' + esc(first) + '">' + esc(I.t('map.fullProfile')) + '</a>' : '') + '</div>') +
             '</article>';
     }

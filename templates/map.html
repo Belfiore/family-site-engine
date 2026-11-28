@@ -42,6 +42,12 @@
             <button type="button" class="fm-key-pill" id="keyPill" aria-expanded="false" aria-controls="keyBody" data-i18n="map.keyFilters">Key and filters</button>
             <div class="fm-key-body" id="keyBody">
                 <button type="button" class="fm-key-hide" id="keyHide" aria-controls="keyBody" aria-label="Hide the key and filters" title="Hide the key and filters" data-i18n-aria-label="map.hideKey" data-i18n-title="map.hideKey"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+                <div class="fm-viewpoint" id="vpBox" hidden>
+                    <label for="vpSel" class="fm-label" data-i18n="map.vpLabel">Relationships to</label>
+                    <select id="vpSel" class="fm-select">
+                        <option value="" data-i18n="map.vpNone">No one</option>
+                    </select>
+                </div>
                 <div class="fm-family" id="familyBox">
                     <label for="famSel" class="fm-label" data-i18n="map.family">Family</label>
                     <select id="famSel" class="fm-select">
