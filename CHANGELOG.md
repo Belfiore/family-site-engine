@@ -2,6 +2,10 @@
 
 Each release, newest first. A major version says what a site has to change.
 
+## 1.5.0
+
+- Map: Relationships to, no Street View message, source preview and drawer (#22) by @Belfiore
+
 ## 1.4.0
 
 - Discoveries: hidden-region finds, source links, full-size pictures, confidence off by default (#17) by @Belfiore
