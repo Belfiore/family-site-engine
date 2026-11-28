@@ -48,7 +48,7 @@ A release can still be made by hand, as before: tag `vX.Y.Z` on `main` and publi
 - **Each site** keeps its `deploy.yml` listening for `repository_dispatch` of type `engine-release` (they already do).
 - **Settings > Actions > General > Workflow permissions** can stay on read-only; each job asks for what it needs.
 
-Without `RELEASE_TOKEN` the workflow stops at its first step with a message that says so, before anything is changed.
+Without `RELEASE_TOKEN` the workflow stops at its first step with a message that says so, before anything is changed. The next step tries a dry run of a push to `main` with the token, so a token that cannot write (Contents not set to read and write, or this repository missing from its repository access) is reported in the first minute, naming the secret, and not after the tests and site builds. If the release stops with `Permission to ... denied` at the commit step, the token cannot push.
 
 ### The build workflow
 

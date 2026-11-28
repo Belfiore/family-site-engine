@@ -58,6 +58,21 @@ jobs:
             exit 1
           fi
 
+      # Contacting the server for a push is refused for a token that cannot write, so a dry run of the push to main finds
+      # a token without Contents write access here, in the first minute, and not after the tests and the site builds.
+      - name: The token can push to main
+        env:
+          PUSH_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.SITES_DISPATCH_TOKEN }}
+          WHICH: ${{ secrets.RELEASE_TOKEN && 'RELEASE_TOKEN' || 'SITES_DISPATCH_TOKEN' }}
+        run: |
+          AUTH="$(printf 'x-access-token:%s' "$PUSH_TOKEN" | base64 -w0)"
+          echo "::add-mask::$AUTH"
+          git fetch --quiet origin main
+          if ! git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $AUTH" push --dry-run origin FETCH_HEAD:refs/heads/main; then
+            echo "::error::The $WHICH secret cannot push to main in $GITHUB_REPOSITORY. Give the token Contents read and write on this repository (fine-grained token: Repository access must include it, and Contents must be Read and write), or use a classic token with the repo scope. If main has a rule that needs pull requests, let the token's owner bypass it. See docs/releasing.md."
+            exit 1
+          fi
+
       - name: Decide whether this push makes a release
         id: plan
         env:

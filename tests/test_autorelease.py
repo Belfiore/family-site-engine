@@ -470,6 +470,13 @@ class TestTheWorkflowFile(unittest.TestCase):
         self.assertIn('autorelease.py sitedir', self.text)
         self.assertIn('--site "site${SITE_DIR:+/$SITE_DIR}"', self.text)
 
+    def test_a_token_that_cannot_push_is_found_before_the_tests(self):
+        plan = self.text[self.text.index('  plan:'):self.text.index('  tests:')]
+        self.assertIn('push --dry-run origin FETCH_HEAD:refs/heads/main', plan)
+        self.assertLess(plan.index('The token can push to main'), plan.index('Decide whether this push makes a release'))
+        self.assertIn('add-mask', plan)
+        self.assertNotIn('PUSH_TOKEN@', self.text, 'the token never goes into a URL')
+
     def test_it_cannot_loop(self):
         self.assertIn("!startsWith(github.event.head_commit.message, '[auto-release]')", self.text)
         self.assertIn("github.actor != 'github-actions[bot]'", self.text)
