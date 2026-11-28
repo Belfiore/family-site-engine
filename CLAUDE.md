@@ -15,12 +15,12 @@ The shared engine behind three public family history sites. Each site keeps its 
 
 | Path | What it is |
 | --- | --- |
-| `engine/` | Everything the browser runs (the words are in `engine/i18n/en.json` and `de.json`): tree, map, Stuart, nav, lightbox, default tokens, MapLibre, fonts, and `visitor.js`, `visitor-match.js`, `visitor.css` ("Who are you?", copied only when `visitor.enabled`) |
+| `engine/` | Everything the browser runs (the words are in `engine/i18n/en.json` and `de.json`): tree, map, Stuart, nav, lightbox, default tokens, MapLibre, fonts, `kinship.js` (how two people are related: the only code that works it out), `map-viewpoint.js`, `source-preview.js` and `.css`, and `visitor.js`, `visitor-match.js`, `visitor.css` ("Who are you?", copied only when `visitor.enabled`) |
 | `templates/` | `tree.html`, `map.html`, `ask.html`, `timeline.html`, filled in from a site's settings; `gate-worker.js`, `gate.html`, `gate.js` (the password gate, built into `_worker.js` only when `access.enabled`) |
 | `build/` | `build_site.py` (the build), `i18n.py` (languages: the dictionaries written into the scripts, dates, plurals), `validate.py`, `migrate.py`, `archive.py`, `pages.py`, `sitecfg.py`, and the Discovery Timeline: `discoveries.py` (detection), `timeline.py` (history between builds), `timeline_page.py` (the page), `previous_site.py` (fetches the live history), and private access: `access.py` (settings checks for `access` and `visitor`, and the gate build) |
 | `schema/` | `family-data.schema.json` and `site-config.schema.json` |
 | `sample/` | Made-up family used by tests and as a starter site |
-| `tests/` | `test_build.py` and `test_discoveries.py` (Python), `test_access.py` (Python), `test_i18n.py` (Python), `check-i18n.js` (Playwright, with `i18n_fixtures.py`), `check-sample.js`, `check-timeline.js`, `check-gate.js`, `check-visitor.js` and `check-access.js` (Playwright and Node), `timeline_fixtures.py` (seven made-up versions of a family), `access_fixtures.py` (the sample with access and visitor on, plus extra made-up people), `gate-server.js` (runs the real `_worker.js` locally), `helpers.js` |
+| `tests/` | `test_build.py` and `test_discoveries.py` (Python), `test_access.py` (Python), `test_i18n.py` (Python), `check-i18n.js` (Playwright, with `i18n_fixtures.py`), `check-sample.js`, `check-timeline.js`, `check-gate.js`, `check-visitor.js`, `check-access.js` and `check-map-relations.js` (Playwright and Node), `timeline_fixtures.py` (seven made-up versions of a family), `access_fixtures.py` (the sample with access and visitor on, plus extra made-up people), `gate-server.js` (runs the real `_worker.js` locally), `helpers.js` |
 | `tools/` | Map fonts and styles, Street View viewpoints, `backfill-discoveries.py` |
 | `channels.json` | Which engine version each channel (canary, beta, stable) builds with |
 | `sites.json` | Sites to notify when `channels.json` changes |
@@ -79,6 +79,7 @@ node tests/check-gate.js                # the gate worker: every way in without 
 node tests/check-visitor.js             # SHOTS=dir saves screenshots
 node tests/check-access.js              # SHOTS=dir for screenshots, VIDEO=dir for recordings of the first visit
 node tests/check-i18n.js                # the switcher, German dates, translated fields; SHOTS=dir for screenshots
+node tests/check-map-relations.js       # the map's Relationships to, no Street View message, source card and drawer; SHOTS=dir
 ```
 
 ## Previewing an engine change against a real site
@@ -156,6 +157,13 @@ Optional (`language`, default English only). Full design in `docs/languages.md`.
 - **English text in a template equals the English dictionary value**, so an English site gets the same page. Change both together.
 - **Research content is never translated by the engine.** A site adds `story_de` style fields; the original shows when the German is missing.
 - **Dictionary keys with `_one` and `_other` are plurals**; do not use those endings for anything else. German addresses the reader as Sie. No long dashes in either file.
+
+## The map's relationships and sources
+
+- **One relationship calculation.** `engine/kinship.js` is the only code that works out how two people are related. The tree page and the map both call it, on the same people (`FamilyKinship.pruneHidden`). Do not add a second algorithm, and do not extend the map's older `kinOf` (it serves `map.kinAnchors` only). `tests/check-map-relations.js` compares the map's words with the tree page's for every person, in English and German.
+- **One choice.** "Relationships to" is one person id in `localStorage` `tc_viewpoint`, read and written through `FamilyKinship.viewpoint`. A visitor's own answer (`visitor.enabled`) overrides it and is never written to it. Nothing chosen means the map adds nothing.
+- **Sources show only what they hold.** `source-preview.js` makes no link, thumbnail or summary the source does not have. A source with neither `file` nor `url` is plain text. See `docs/source-preview.md`.
+- **A place without Street View says nothing.** No message, no empty button.
 
 ## Style
 

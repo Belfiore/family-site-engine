@@ -13,12 +13,15 @@ The family map (`pages.map`, usually `map.html`) shows where the family was born
 | `engine/map-data.js` | `FM.data`: loads the data files and builds the event index. Date rules, sentences, branches, hidden regions |
 | `engine/map-player.js` | `FM.Player` (the step player), `FM.Camera` (camera movement) and `FM.geo` |
 | `engine/map-ui.js` | Explore mode and everything shared: map styles, markers, peek, panels, key and filters, person search, Street View, list and tray, URL state, modes and keys |
+| `engine/kinship.js` | `FamilyKinship`: how two people are related, in words. The only place that works it out; the family tree page and the map both ask it |
+| `engine/map-viewpoint.js` | `FM.rel`: the map's "Relationships to" choice and the words it adds next to names |
+| `engine/source-preview.js`, `source-preview.css` | The source title link, its preview card and its drawer (see [source preview](source-preview.md)) |
 | `engine/map-steps.js` | `FM.eventCard` and `FM.stepStage`, shared by Timeline now and a guided tour later |
 | `engine/map-timeline.js` | Timeline mode |
 | `engine/map-styles/` | `atlas.json` (the engine's own style over OpenFreeMap tiles) and `fallback.json` with its GeoJSON (a plain map from the engine's own files, used when the tiles do not load) |
 | `engine/fonts/` | Cormorant Garamond glyphs for map labels |
 
-Scripts load in this order, and each one only uses what loaded before it: the site settings, MapLibre, `records.js` (the lightbox), `map-glyphs.js`, `map-data.js`, `map-player.js`, `map-ui.js`, `map-steps.js`, `map-timeline.js`.
+Scripts load in this order, and each one only uses what loaded before it: the site settings, MapLibre, `records.js` (the lightbox), `map-glyphs.js`, `map-data.js`, `kinship.js`, `map-player.js`, `map-viewpoint.js`, `source-preview.js`, `map-ui.js`, `map-steps.js`, `map-timeline.js`.
 
 ## The event index
 
@@ -83,6 +86,8 @@ A mode is registered with `FM.registerMode(name, { label, enter, leave, urlState
 
 ## Street View
 
+A place with no Street View says nothing about it: no message, no empty button. (The Then and Today buttons beside it switch the map style, not Street View, so they stay.) A site's `streetViewReason` is for the site's own notes and is not shown.
+
 Without a key, the Street View button opens Google Maps in a new tab at the place's viewpoint. With `map.googleEmbedKey`, it opens Street View inside the page beside the place's old photograph or record.
 
 No Google imagery is ever saved. `tools/streetview-viewpoints.mjs` fills in each place's viewpoint (`panoLat`, `panoLng`, `heading`, `captureDate`) from Google's metadata endpoint, with a key read from the environment and never written down:
@@ -100,3 +105,17 @@ Every viewpoint stays `checked: false` until someone has looked at the view. See
 python3 tools/build-glyphs.py /path/to/cormorant-garamond-ttf-files    # writes engine/fonts/
 python3 tools/build-styles.py /path/to/positron.json                   # writes engine/map-styles/
 ```
+
+## Relationships to
+
+The key has a "Relationships to" list at the top, the same choice the family tree page has ("Relationships to" in its header). Choose a person and every name on the map is followed by what that person is to the one chosen ("your great-grandaunt"): the name chips in a place's panel, the cards in Timeline mode, the hover card on a pin, the pin's label for screen readers, and "View as list". Choose "No one" and the page is as it was.
+
+- **One calculation.** `engine/kinship.js` works out the words. The tree page and the map call it with the same people (including the tree's rule for hidden regions), so the same pair gets the same words on both pages, in English and in German. Nothing else in the engine works out a relationship. Do not write a second one.
+- **One choice.** It is kept as one person id in `localStorage` under `tc_viewpoint`, the key the tree page uses, so a choice made on one page is the choice on the other. A visitor who has said who they are (`visitor.enabled`) overrides it on both pages and is never written over it.
+- **Nothing is guessed.** Someone the tree page does not draw (a hidden region, an associate), or whom the data does not connect to the chosen person, gets no words.
+- **German.** The words are the tree page's ("Urgroßvater"). The map shows them without "your", because the German possessive has to agree with the grammatical gender of the word, which the engine cannot tell.
+- The map's older `map.kinAnchors` labels (close family of named people, in Timeline mode) are a separate setting and are unchanged.
+
+## Sources
+
+Every source with a `file` or a `url` in `data/sources.json` has its title as a link in a place's sources list. Hover over it (after about 300 ms) or tab to it and a card shows the document; click or press Enter and it opens in a drawer from the right (a full-height sheet from the bottom on a phone), with the map exactly where it was. A footnote marker next to a statement scrolls to its source, highlights it and moves focus there. A source with neither a `file` nor a `url` stays plain text. Details, and where else the component could go, are in [source preview](source-preview.md).

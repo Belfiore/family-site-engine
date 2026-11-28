@@ -4,6 +4,7 @@
 (function () {
     'use strict';
     var FM = window.FM = window.FM || {};
+    FM.sp = window.FamilySourcePreview;
     var I = window.FamilyI18n;
     I.apply();      // the words already in the page, in the visitor's language
     // site settings: map keys, home region, historic maps, families (window.FamilySite, from site.config.json)
@@ -393,6 +394,15 @@
         setData('fm-halos', { type: 'FeatureCollection', features: halos });
     }
     FM.refresh = function () { refreshOverlays(); renderKey(); renderChips(); };
+    // "Relationships to" changed: the words on pins, the open panel, the list and the cards. Nothing moves and focus stays where it is.
+    window.addEventListener('fm:viewpoint', function () {
+        if (!DATA) return;
+        hidePeek();
+        refreshOverlays();
+        FM.rel.refreshChips($('panelBody'));
+        if (!$('listView').hidden) openListQuiet();
+        if (FM.afterViewpoint) FM.afterViewpoint();
+    });
 
     var lastItems = [], tapZoomParked = false;
     function updateMarkers(items) {
@@ -461,6 +471,13 @@
         }
         if (FM.afterMarkers) FM.afterMarkers(markers);
     }
+    function placePeople(evs) { var ids = []; evs.forEach(function (e) { e.personIds.forEach(function (id) { if (ids.indexOf(id) < 0) ids.push(id); }); }); return ids; }
+    // the one relationship to put on a pin's visible label: only when everyone at the place who has one is the same person
+    function singleRel(evs) {
+        if (!FM.rel.id) return '';
+        var ids = placePeople(evs).filter(function (id) { return FM.rel.of(id); });
+        return ids.length === 1 ? FM.rel.phrase(ids[0]) : '';
+    }
     function markerHTML(members) {
         if (members.length > 1) {
             var n = members.reduce(function (a, m) { return a + m.events.length; }, 0);
@@ -484,8 +501,10 @@
         var count = m.events.length > 1 ? '<span class="mk-count" aria-hidden="true">' + m.events.length + '</span>' : '';
         var hd = placeHeadline(m.events);
         var shape = '<span class="mk-pin"><svg class="mk-pin-bg" viewBox="0 0 30 40" aria-hidden="true"><path d="M15 39C15 39 3 24.5 3 15a12 12 0 0 1 24 0c0 9.5-12 24-12 24z"/></svg>' + glyph(m.head, 'mk-gl') + '</span>';
-        var tag = '<span class="mk-label" aria-hidden="true">' + esc(hd.text) + (hd.more ? ' <i>+' + hd.more + '</i>' : '') + '</span>';
-        var label = hd.text + (hd.more ? ' ' + I.t('map.andMore', { n: hd.more }) : '') + ', ' + pl.name + ', ' + spanOf(m.events) +
+        var tagRel = singleRel(m.events);
+        var tag = '<span class="mk-label" aria-hidden="true">' + esc(hd.text) + (hd.more ? ' <i>+' + hd.more + '</i>' : '') + (tagRel ? ' <em class="mk-rel">' + esc(tagRel) + '</em>' : '') + '</span>';
+        var whoRel = FM.rel.names(placePeople(m.events), 3);
+        var label = hd.text + (hd.more ? ' ' + I.t('map.andMore', { n: hd.more }) : '') + (whoRel ? ' (' + whoRel + ')' : '') + ', ' + pl.name + ', ' + spanOf(m.events) +
                     (approx ? I.t('map.ariaApprox') : '') + (m.orkney ? '. ' + I.t('map.noProven') : '') + (m.associate ? '. ' + DATA.associateLabel + ', ' + DATA.associateNote.toLowerCase() : '') + '.';
         return { anchor: 'bottom', cls: cls, inner: shape + count + tag, label: label };
     }
@@ -573,6 +592,7 @@
                 '<h3 class="pk-name">' + esc(hd.text) + '</h3>' +
                 '<p class="pk-where">' + esc(pl.name) + '</p>' +
                 (approx ? '<p class="pk-approx">' + esc(approx) + '</p>' : '') +
+                peekPeople(m.events) +
                 (m.events.length > 1 ? '<ul class="pk-evs">' + rows + '</ul>' : '<p class="pk-line">' + esc(m.events[0].summary) + '</p>') +
                 (m.orkney ? '<p class="pk-badges"><span class="badge badge--npl">' + esc(I.t('map.noProvenShort')) + '</span></p>' : '') +
                 (m.associate ? '<p class="pk-badges"><span class="badge badge--assoc">' + esc(DATA.associateLabel) + '. ' + esc(DATA.associateNote) + '</span></p>' : '') +
@@ -581,6 +601,13 @@
         }
         pk.hidden = false;
         positionPeek(mk);
+    }
+    // with "Relationships to" chosen: the people at this place who have a relationship to show, each with what they are
+    function peekPeople(evs) {
+        if (!FM.rel.id) return '';
+        var ids = []; evs.forEach(function (e) { e.personIds.forEach(function (id) { if (ids.indexOf(id) < 0) ids.push(id); }); });
+        var rows = ids.filter(function (id) { return FM.rel.of(id); }).slice(0, 4).map(function (id) { return '<li>' + esc(personName(id)) + FM.rel.chip(id) + '</li>'; });
+        return rows.length ? '<ul class="pk-rel">' + rows.join('') + '</ul>' : '';
     }
     function positionPeek(mk) {
         var pk = $('peek'), stage = $('stage').getBoundingClientRect();
@@ -691,7 +718,8 @@
         var precision = pl.drawAs === 'area' ? I.t(pl.kind === 'registration district' ? 'map.prec.district' : 'map.prec.area')
                       : pl.drawAs === 'halo' ? I.t('map.prec.halo', { distance: metresText(pl.uncertaintyMetres) })
                       : I.t('map.prec.pin');
-        var sv = pl.streetView ? FM.sv.button(pl) : '<p class="pn-nosv">' + esc(pl.streetViewReason || I.t('map.noSv')) + '</p>';
+        // no Street View for a place: nothing is said about it (no message, no empty button)
+        var sv = pl.streetView ? FM.sv.button(pl) : '';
         var thenNow = '<div class="pn-tn" role="group" aria-label="' + esc(I.t('map.thenNowLabel')) + '"><button type="button" class="fm-btn fm-btn--sm" data-style-set="then"' + (CFG.MAPTILER_KEY && HISTORIC && !outsideHome(pl) ? '' : ' disabled title="' + esc(CFG.MAPTILER_KEY ? I.t('map.oldMapsGbOnly') : I.t('map.needsKeyShort')) + '"') + '>' + esc(I.t('map.then')) + '</button><button type="button" class="fm-btn fm-btn--sm" data-style-set="today">' + esc(I.t('map.today')) + '</button>' +
                       (CFG.MAPTILER_KEY && HISTORIC && !outsideHome(pl) ? '<button type="button" class="fm-btn fm-btn--sm" data-compare="1">' + esc(I.t('map.compare')) + '</button>' : '') + '</div>';
         var today = todayText(pl, evs);
@@ -728,7 +756,7 @@
     }
     function srcLine(s) {
         var x = DATA.sources[s] || { title: s };
-        return '<strong>' + esc(x.title) + '</strong>' + (x.repository ? '. ' + esc(x.repository) : '') + (x.url ? ' <a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(I.t('map.open')) + '</a>' : '');
+        return FM.sp.titleHTML(x) + (x.repository ? '. ' + esc(x.repository) : '') + (x.url ? ' <a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(I.t('map.open')) + '</a>' : '');
     }
     function srcItem(s, n) {
         var x = DATA.sources[s] || { title: s };
@@ -740,7 +768,7 @@
     function eventRow(e, num, opts) {
         opts = opts || {};
         var pl = DATA.places[e.placeId];
-        var people = e.personIds.filter(function (id) { return id !== opts.skipPerson; }).map(function (id) { var p = DATA.people[id]; return '<button type="button" class="chip" data-person="' + esc(id) + '">' + avatar(p, 'av--xs') + esc(p.displayName) + '</button>'; }).join('');
+        var people = e.personIds.filter(function (id) { return id !== opts.skipPerson; }).map(function (id) { var p = DATA.people[id]; return '<button type="button" class="chip" data-person="' + esc(id) + '">' + avatar(p, 'av--xs') + esc(p.displayName) + FM.rel.chip(id) + '</button>'; }).join('');
         var crops = (e.recordCrops || []).slice(0, 3).map(function (c) { return '<a class="record-link ev-crop" href="images/records/' + esc(c) + '"><img src="images/records/' + esc(c) + '" alt="' + esc(e.summary) + '" loading="lazy"></a>'; }).join('');
         var voyage = e.voyage ? '<span class="ev-ship">' + esc(e.voyage.ship) + ': ' + esc(e.voyage.display) + '</span>' : '';
         return '<li class="ev ev--' + esc(e.type.replace(/\s+/g, '-')) + (e.familyStatement ? ' is-family' : '') + (e.orkney ? ' is-orkney' : '') + (e.associate ? ' is-associate' : '') + '" data-event="' + esc(e.id) + '">' +
@@ -1168,16 +1196,17 @@
     }
 
     // ================================================================== list view and tray
-    function openList() {
+    function openList() { buildList(); showSheet('listView', $('listOpen')); }
+    function openListQuiet() { var b = $('listBody'), top = b.scrollTop; buildList(); b.scrollTop = top; }
+    function buildList() {
         var placesSorted = Object.keys(DATA.places).map(function (pid) { return { pl: DATA.places[pid], evs: visiblePlaceEvents(pid) }; })
             .filter(function (x) { return x.evs.length; })
             .sort(function (a, b) { return (a.evs[0].dateStart || '9') < (b.evs[0].dateStart || '9') ? -1 : 1; });
         $('listBody').innerHTML = '<ol class="lv">' + placesSorted.map(function (x) {
             return '<li class="lv-place"><h3><button type="button" class="lv-open" data-open-place="' + esc(x.pl.id) + '">' + esc(x.pl.name) + '</button></h3>' +
                 '<p class="lv-meta">' + esc(kindLabel(x.pl)) + '. ' + esc(x.pl.drawAs === 'area' ? I.t('map.lv.area') : x.pl.drawAs === 'halo' ? I.t('map.lv.halo', { distance: metresText(x.pl.uncertaintyMetres) }) : I.t('map.lv.pin')) + (x.pl.noProvenLink ? esc(' ' + I.t('map.noProven') + '.') : '') + '</p>' +
-                '<ol class="lv-events">' + x.evs.map(function (e) { return '<li><strong>' + esc(dateLabel(e)) + '</strong>, ' + esc(FM.data.TYPE_LABEL[e.type].toLowerCase()) + ': ' + esc(e.summary) + ' <span class="lv-people">(' + esc(e.personIds.map(personName).join(', ')) + ')</span></li>'; }).join('') + '</ol></li>';
+                '<ol class="lv-events">' + x.evs.map(function (e) { return '<li><strong>' + esc(dateLabel(e)) + '</strong>, ' + esc(FM.data.TYPE_LABEL[e.type].toLowerCase()) + ': ' + esc(e.summary) + ' <span class="lv-people">(' + e.personIds.map(function (id) { return esc(personName(id)) + FM.rel.chip(id); }).join(', ') + ')</span></li>'; }).join('') + '</ol></li>';
         }).join('') + '</ol>';
-        showSheet('listView', $('listOpen'));
     }
     function openTray() {
         var items = DATA.unplaced.filter(function (u) { return eventPasses(u); }).sort(FM.data.byDate);
@@ -1378,7 +1407,7 @@
                 else if (part.act === 'person') openPerson(part.id);
                 return;
             }
-            if ((t = e.target.closest('.fn[data-fn]'))) { e.preventDefault(); var li = document.getElementById('fm-src-' + t.dataset.fn); if (li) { li.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'center' }); li.classList.add('is-flash'); setTimeout(function () { li.classList.remove('is-flash'); }, 1600); } return; }
+            if ((t = e.target.closest('.fn[data-fn]'))) { e.preventDefault(); var li = document.getElementById('fm-src-' + t.dataset.fn); if (li) { li.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'center' }); li.setAttribute('tabindex', '-1'); li.focus({ preventScroll: true }); li.classList.add('is-flash'); setTimeout(function () { li.classList.remove('is-flash'); }, 1600); } return; }
         });
         $('peek').addEventListener('pointerleave', schedulePeekHide);
         $('peek').addEventListener('pointerenter', function () { clearTimeout(peekHideTimer); });
@@ -1506,6 +1535,8 @@
         var st = readURL();
         FM.data.load().then(function (d) {
             DATA = d; FM.DATA = d;
+            FM.rel.setup(d);
+            FM.sp.resolver(function (id) { return DATA && DATA.sources[id] || null; });
             S.style = st.style === 'atlas' || (st.style === 'then' && HISTORIC && CFG.MAPTILER_KEY) ? st.style : 'today';
             renderStyleSwitch();
             renderFamily(); renderKey(); initYears(); renderPersonBox(); bindUI();

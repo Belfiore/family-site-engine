@@ -65,3 +65,6 @@ jobs:
 
       - name: Languages in a browser
         run: node tests/check-i18n.js
+
+      - name: The map's relationships and source preview in a browser
+        run: node tests/check-map-relations.js

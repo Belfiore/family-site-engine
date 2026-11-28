@@ -178,11 +178,12 @@
     function closeFanSoon() { clearTimeout(fanTimer); fanTimer = setTimeout(function () { closeFan(); }, 220); }
     // how the people in an event are related to the kin anchors (map.kinAnchors), when that is close
     function kinSpan(e) { var k = FM.data.kinLine(e.personIds, FM.DATA.people); return k ? '<span class="el-r">' + esc(k) + '</span>' : ''; }
+    FM.afterViewpoint = function () { if (T && T.beats && $('tlList') && $('tlList').children.length) { renderList(); highlightList(); } FM.rel.refreshChips($('tlNow')); };
     function renderList() {
         var html = T.beats.map(function (b) {
             return b.events.map(function (e) {
                 return '<li class="el" data-beat="' + b.index + '" data-event="' + esc(e.id) + '"><button type="button" class="el-b"><span class="el-gl">' + glyph(e.type) + '</span><span class="el-d">' + esc(U().dateLabel(e)) + '</span><span class="el-t">' +
-                    esc(e.personIds.map(function (id) { return FM.DATA.people[id].displayName; }).join(', ') || FM.data.TYPE_LABEL[e.type]) + '</span>' + kinSpan(e) + '<span class="el-p">' + esc(e.placeId ? FM.DATA.places[e.placeId].name : I.t('map.placeUnknown')) + '</span></button></li>';
+                    (e.personIds.map(function (id) { return esc(FM.DATA.people[id].displayName) + FM.rel.chip(id); }).join(', ') || esc(FM.data.TYPE_LABEL[e.type])) + '</span>' + kinSpan(e) + '<span class="el-p">' + esc(e.placeId ? FM.DATA.places[e.placeId].name : I.t('map.placeUnknown')) + '</span></button></li>';
             }).join('');
         }).join('');
         if (T.undated.length) html += '<li class="el-h" role="presentation">' + esc(I.t('map.dateUnknownHeading')) + '</li>' + T.undated.map(function (e) {
@@ -490,7 +491,7 @@
     function showTip(tk) {
         var g = $('rail')._groups[+tk.dataset.group];
         var tip = $('tlTip');
-        tip.innerHTML = g.items.slice(0, 8).map(function (it) { return '<span>' + glyph(it.e.type) + ' <b>' + esc(U().dateLabel(it.e)) + '</b> ' + esc(it.e.personIds.map(function (id) { var q = FM.DATA.people[id]; return String(q.knownAs || '').trim() || q.givenNames || q.displayName; }).join(', ')) + '</span>'; }).join('') + (g.items.length > 8 ? '<span>and ' + (g.items.length - 8) + ' more</span>' : '');
+        tip.innerHTML = g.items.slice(0, 8).map(function (it) { return '<span>' + glyph(it.e.type) + ' <b>' + esc(U().dateLabel(it.e)) + '</b> ' + it.e.personIds.map(function (id) { var q = FM.DATA.people[id]; return esc(String(q.knownAs || '').trim() || q.givenNames || q.displayName) + FM.rel.chip(id); }).join(', ') + '</span>'; }).join('') + (g.items.length > 8 ? '<span>and ' + (g.items.length - 8) + ' more</span>' : '');
         tip.hidden = false;
         var r = tk.getBoundingClientRect(), tr = $('track').getBoundingClientRect();
         tip.style.left = Math.max(4, Math.min(tr.width - 260, r.left - tr.left - 60)) + 'px';

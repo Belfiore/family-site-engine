@@ -33,6 +33,19 @@
 
     // ------------------------------------------------------------ state
     var D = { people: [], byId: {}, sources: {}, meta: {} };
+    // How people are related is worked out in kinship.js, shared with the family map. K is made once D is filled.
+    var K = null, VP = window.FamilyKinship.viewpoint;
+    function relInfo(a, b) { return K.relInfo(a, b); }
+    function relationship(a, b) { return K.relationship(a, b); }
+    function relPath(a, b) { return K.relPath(a, b); }
+    function relNotes(path, info) { return K.relNotes(path, info); }
+    function blood(a, b) { return K.blood(a, b); }
+    function kw(p, m, f, n) { return K.kw(p, m, f, n); }
+    function spouseWord(a, p) { return K.spouseWord(a, p); }
+    function shortName(p, other) { return K.shortName(p, other); }
+    function poss(s) { return K.poss(s); }
+    function firstName(p) { return K.firstName(p); }
+    function directLabel() { return D.meta.directLineLabel || I.t('tree.directLine'); }
     var L = { pos: {}, blocks: [], unions: [], rows: {}, width: 0, height: 0, kinBox: null, regions: [], order: [] };
     var S = { tx: 0, ty: 0, s: 1, sel: null, hover: null, viewpoint: null, anim: null, drawerFor: null, expanded: false };
     var SITE = window.FamilySite || {};
@@ -127,33 +140,6 @@
             });
     }
 
-    // People in a hidden region (tree.hiddenRegions) stay in data/people.json untouched but are not drawn.
-    // A person listed in tree.suspectedRelatives ({ personId: besideId }) is kept from a hidden region and
-    // drawn beside that person as a suspected relative, joined by a dashed line, with no proven link.
-    function pruneHidden(people) {
-        var hidden = {}; (D.meta.hiddenRegions || []).forEach(function (r) { hidden[r] = true; });
-        var keep = D.meta.suspectedRelatives || {};
-        if (!Object.keys(hidden).length) return people;
-        var drop = {};
-        people.forEach(function (p) { if (p.region && hidden[p.region] && !keep[p.id]) drop[p.id] = true; });
-        var idOf = function (r) { return typeof r === 'string' ? r : r && r.id; };
-        var host = {};
-        people.forEach(function (p) { host[p.id] = p; });
-        return people.filter(function (p) { return !drop[p.id]; }).map(function (p) {
-            var q = Object.assign({}, p);
-            q.parents = (p.parents || []).filter(function (r) { return !drop[idOf(r)]; });
-            q.children = (p.children || []).filter(function (r) { return !drop[idOf(r)]; });
-            q.spouses = (p.spouses || []).filter(function (r) { return !drop[idOf(r)]; });
-            if (q.uncertainBeside && drop[q.uncertainBeside]) delete q.uncertainBeside;
-            if (keep[p.id] && host[keep[p.id]]) {
-                var beside = host[keep[p.id]];
-                q.region = null; q.parents = []; q.spouses = [];
-                q.uncertainBeside = beside.id; q.generation = beside.generation;
-                q.suspectedRelative = true;
-            }
-            return q;
-        });
-    }
     // tree.coupleBlocks "auto": when both partners have parents on the tree and the data gives no layoutJoin,
     // draw them as one couple in the family of the partner on the direct line (else the husband), so their
     // children are drawn once. The other partner's parents still connect to their own card.
@@ -187,9 +173,10 @@
         I.localize(pdata); I.localize(sdata);
         syncHeader();
         D.meta = I.localize(Object.assign({}, pdata.meta || {}, SITE.tree || {}));
-        D.people = pruneHidden(pdata.people);
+        D.people = window.FamilyKinship.pruneHidden(pdata.people, D.meta);
         if (D.meta.coupleBlocks === 'auto') D.people = autoJoinCouples(D.people);
         D.people.forEach(function (p) { D.byId[p.id] = p; });
+        K = window.FamilyKinship.create(D);
         sdata.sources.forEach(function (s) { D.sources[s.id] = s; });
         layout();
         renderBands();
@@ -1154,186 +1141,6 @@
         else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
 
-    // =================================================================== RELATIONSHIPS (viewpoint)
-    // =================================================================== RELATIONSHIPS
-    function ancestors(id) {
-        var map = {}; map[id] = 0; var q = [[id, 0]];
-        while (q.length) { var c = q.shift(); (D.byId[c[0]].parents || []).forEach(function (p) { if (!(p in map)) { map[p] = c[1] + 1; q.push([p, c[1] + 1]); } }); }
-        return map;
-    }
-    // nearest shared ancestors of a and b: m = generations up from a, n = from b
-    function blood(a, b) {
-        var A = ancestors(a), B = ancestors(b), best = null;
-        Object.keys(A).forEach(function (k) {
-            if (!(k in B)) return;
-            var s = A[k] + B[k];
-            if (!best || s < best.s || (s === best.s && Math.abs(A[k] - B[k]) < Math.abs(best.m - best.n))) best = { m: A[k], n: B[k], s: s };
-        });
-        if (!best) return null;
-        best.commons = Object.keys(A).filter(function (k) { return k in B && A[k] === best.m && B[k] === best.n; })
-            .sort(function (x, y) { return (D.byId[x].sex === 'M' ? 0 : 1) - (D.byId[y].sex === 'M' ? 0 : 1); });
-        // half relations: one shared ancestor who had children by more than one partner
-        best.half = best.m > 0 && best.n > 0 && best.commons.length === 1 && (D.byId[best.commons[0]].spouses || []).length > 1;
-        return best;
-    }
-    // ---- the words for a relationship. The pieces (father, stepmother, son-in-law) come from the dictionary; how they are put
-    // together (great-grandfather, Urgroßvater, 2nd cousin once removed, Cousin 2. Grades) is each language's own rule, below.
-    function ordinal(n) { var s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
-    function kw(p, m, f, n) { return I.t('kin.' + (p.sex === 'M' ? m : p.sex === 'F' ? f : n)); }
-    function lowerFirst(w) { return w.charAt(0).toLowerCase() + w.slice(1); }
-    var KIN = {
-        en: {
-            greats: function (k) { return k <= 0 ? '' : k === 1 ? 'great-' : k === 2 ? 'great-great-' : k + '× great-'; },
-            blood: function (m, n, sex) {
-                var g = function (mw, fw, nw) { return I.t('kin.' + (sex === 'M' ? mw : sex === 'F' ? fw : nw)); }, greats = KIN.en.greats;
-                if (m === 0 && n === 0) return I.t('kin.same');
-                if (m === 0) return n === 1 ? g('son', 'daughter', 'child') : greats(n - 2) + g('grandson', 'granddaughter', 'grandchild');
-                if (n === 0) return m === 1 ? g('father', 'mother', 'parent') : greats(m - 2) + g('grandfather', 'grandmother', 'grandparent');
-                if (m === 1 && n === 1) return g('brother', 'sister', 'sibling');
-                if (n === 1) return greats(m - 2) + g('uncle', 'aunt', 'auntOrUncle');
-                if (m === 1) return (n === 2 ? '' : n === 3 ? 'grand-' : greats(n - 3) + 'grand-') + g('nephew', 'niece', 'nieceOrNephew');
-                var deg = Math.min(m, n) - 1, rem = Math.abs(m - n);
-                return ordinal(deg) + ' ' + I.t('kin.cousin') + (rem === 1 ? I.t('kin.removed1') : rem === 2 ? I.t('kin.removed2') : rem > 2 ? I.t('kin.removedN', { n: rem }) : '');
-            },
-            half: function (lbl, b) {
-                if (!b.half) return lbl;
-                if (/cousin/.test(lbl)) return 'half ' + lbl;
-                return lbl.replace(/(aunt or uncle|niece or nephew|brother|sister|sibling|uncle|aunt|nephew|niece)$/, 'half-$1');
-            },
-            partnerOf: function (lbl) { return lbl + "'s " + I.t('kin.partner'); },
-            spouseOf: function (lbl, B) { return lbl + "'s " + kw(B, 'husband', 'wife', 'spouse'); },
-            ofPartner: function (lbl) { return "partner's " + lbl; },
-            byMarriage: function (lbl) { return lbl + ' by marriage'; }
-        },
-        de: {
-            join: function (k, w) {      // Enkel, Urenkel, Ururenkel; Großvater, Urgroßvater
-                return k <= 0 ? w : (k <= 3 ? 'Ur' + new Array(k).join('ur') : k + '× Ur') + lowerFirst(w);
-            },
-            blood: function (m, n, sex) {
-                var g = function (mw, fw, nw) { return I.t('kin.' + (sex === 'M' ? mw : sex === 'F' ? fw : nw)); }, join = KIN.de.join;
-                if (m === 0 && n === 0) return I.t('kin.same');
-                if (m === 0) return n === 1 ? g('son', 'daughter', 'child') : join(n - 2, g('grandson', 'granddaughter', 'grandchild'));
-                if (n === 0) return m === 1 ? g('father', 'mother', 'parent') : join(m - 2, g('grandfather', 'grandmother', 'grandparent'));
-                if (m === 1 && n === 1) return g('brother', 'sister', 'sibling');
-                if (n === 1) return m === 2 ? g('uncle', 'aunt', 'auntOrUncle') : join(m - 3, 'Groß' + lowerFirst(g('uncle', 'aunt', 'auntOrUncle')));
-                if (m === 1) return n === 2 ? g('nephew', 'niece', 'nieceOrNephew') : join(n - 3, 'Groß' + lowerFirst(g('nephew', 'niece', 'nieceOrNephew')));
-                var deg = Math.min(m, n) - 1, rem = Math.abs(m - n);
-                return g('cousinM', 'cousinF', 'cousinN') + ' ' + deg + '. Grades' + (rem === 1 ? I.t('kin.removed1') : rem === 2 ? I.t('kin.removed2') : rem > 2 ? I.t('kin.removedN', { n: rem }) : '');
-            },
-            half: function (lbl, b) { return b.half ? 'Halb' + lowerFirst(lbl) : lbl; },
-            partnerOf: function (lbl) { return I.t('kin.partner') + ' von ' + lbl; },
-            spouseOf: function (lbl, B) { return kw(B, 'husband', 'wife', 'spouse') + ' von ' + lbl; },
-            ofPartner: function (lbl) { return lbl + ' des Partners'; },
-            byMarriage: function (lbl) { return lbl + ' (angeheiratet)'; }
-        }
-    };
-    function kin() { return KIN[I.lang] || KIN.en; }
-    function label(m, n, sex) { return kin().blood(m, n, sex); }
-    function halfify(lbl, b) { return kin().half(lbl, b); }
-    // What b is to a, with the reasoning behind it.
-    function relInfo(a, b) {
-        var A = D.byId[a], B = D.byId[b], r = { a: a, b: b, kind: 'none', label: null, commons: [], m: 0, n: 0, half: false, via: null };
-        if (a === b) { r.kind = 'self'; r.label = I.t('kin.same'); return r; }
-        var sp = (A.spouses || []).filter(function (s) { return s.id === b; })[0];
-        if (sp) { r.kind = 'spouse'; r.label = sp.relation === 'partner' ? partnerWord(B) : ((A.spouses.length > 1) ? kw(B, sp.order === 1 ? 'firstHusband' : 'secondHusband', sp.order === 1 ? 'firstWife' : 'secondWife', sp.order === 1 ? 'firstSpouse' : 'secondSpouse') : kw(B, 'husband', 'wife', 'spouse')); return r; }
-        var x = blood(a, b);
-        if (x) { r.kind = 'blood'; r.m = x.m; r.n = x.n; r.commons = x.commons; r.half = x.half; r.label = halfify(label(x.m, x.n, B.sex), x); return r; }
-        // b married one of a's blood relatives
-        var hit = null;
-        (B.spouses || []).some(function (s) { var y = blood(a, s.id); if (y) { hit = { y: y, s: s.id }; return true; } return false; });
-        if (hit) {
-            var y = hit.y, S2 = D.byId[hit.s];
-            r.kind = 'inlaw'; r.via = hit.s; r.commons = y.commons;
-            if (isPartner(hit.s, b)) r.label = kin().partnerOf(halfify(label(y.m, y.n, S2.sex), y), B);
-            else if (y.m === 0 && y.n === 1) r.label = kw(B, 'sonInLaw', 'daughterInLaw', 'childInLaw');
-            else if (y.m === 1 && y.n === 1) r.label = kw(B, 'brotherInLaw', 'sisterInLaw', 'siblingInLaw');
-            else if (y.m === 1 && y.n === 0) { r.label = kw(B, 'stepfather', 'stepmother', 'stepParent'); r.kind = 'step'; }
-            else if (y.m === 2 && y.n === 0) { r.label = kw(B, 'stepGrandfather', 'stepGrandmother', 'stepGrandparent'); r.kind = 'step'; }
-            else r.label = kin().spouseOf(halfify(label(y.m, y.n, S2.sex), y), B);
-            return r;
-        }
-        // b is a blood relative of a's husband or wife
-        (A.spouses || []).some(function (s) { var y = blood(s.id, b); if (y) { hit = { y: y, s: s.id }; return true; } return false; });
-        if (hit) {
-            var z = hit.y;
-            r.kind = 'inlaw'; r.via = hit.s; r.commons = z.commons;
-            if (isPartner(a, hit.s)) r.label = kin().ofPartner(halfify(label(z.m, z.n, B.sex), z));
-            else if (z.m === 1 && z.n === 0) r.label = kw(B, 'fatherInLaw', 'motherInLaw', 'parentInLaw');
-            else if (z.m === 1 && z.n === 1) r.label = kw(B, 'brotherInLaw', 'sisterInLaw', 'siblingInLaw');
-            else if (z.m === 0 && z.n === 1) { r.label = kw(B, 'stepson', 'stepdaughter', 'stepchild'); r.kind = 'step'; }
-            else if (z.m === 0 && z.n === 2) { r.label = kw(B, 'stepGrandson', 'stepGranddaughter', 'stepGrandchild'); r.kind = 'step'; }
-            else r.label = kin().byMarriage(halfify(label(z.m, z.n, B.sex), z));
-            return r;
-        }
-        r.kind = relPath(a, b) ? 'marriage' : 'none';
-        r.label = r.kind === 'marriage' ? I.t('kin.relatedByMarriage') : null;
-        return r;
-    }
-    function isPartner(a, b) { return ((D.byId[a] || {}).spouses || []).some(function (s) { return s.id === b && s.relation === 'partner'; }); }
-    function partnerWord(p) { return I.t(p.sex === 'F' ? 'kin.partnerF' : 'kin.partner'); }
-    function spouseWord(a, p) { return isPartner(a, p.id) ? partnerWord(p) : kw(p, 'husband', 'wife', 'spouse'); }
-    function directLabel() { return D.meta.directLineLabel || I.t('tree.directLine'); }
-    function relationship(from, to) {
-        if (!from || from === to) return null;
-        return relInfo(from, to).label;
-    }
-    // Shortest chain through parents, children and marriages; confirmed links are preferred over uncertain ones.
-    function relPath(a, b) {
-        var dist = {}, prev = {}, done = {};
-        D.people.forEach(function (p) { dist[p.id] = Infinity; });
-        dist[a] = 0;
-        function pen(id) { var p = D.byId[id]; return (p.confidence === 'confirmed' ? 0 : 0.05) + (p.parentLinkConfidence && p.parentLinkConfidence !== 'confirmed' ? 0.05 : 0) + (p.isDirectLine ? 0 : 0.001); }
-        for (;;) {
-            var u = null, best = Infinity;
-            Object.keys(dist).forEach(function (k) { if (!done[k] && dist[k] < best) { best = dist[k]; u = k; } });
-            if (u === null || u === b) break;
-            done[u] = true;
-            var P = D.byId[u], nb = [];
-            (P.parents || []).forEach(function (x) { nb.push([x, 1, 'parent']); });
-            (P.children || []).forEach(function (x) { nb.push([x, 1, 'child']); });
-            (P.spouses || []).forEach(function (s) { nb.push([s.id, 1.25, 'spouse']); });
-            nb.forEach(function (e) {
-                if (!D.byId[e[0]]) return;
-                var d = dist[u] + e[1] + pen(e[0]);
-                if (d < dist[e[0]]) { dist[e[0]] = d; prev[e[0]] = { from: u, type: e[2] }; }
-            });
-        }
-        if (dist[b] === Infinity) return null;
-        var out = [{ id: b, type: prev[b] ? prev[b].type : null }], c = b;
-        while (prev[c]) { c = prev[c].from; out.unshift({ id: c, type: prev[c] ? prev[c].type : null }); }
-        out[0].type = null;
-        return out;
-    }
-    function relNotes(path, info) {
-        var notes = [];
-        if (!path) return notes;
-        for (var i = 1; i < path.length; i++) {
-            var u = D.byId[path[i - 1].id], v = D.byId[path[i].id], t = path[i].type;
-            var child = t === 'parent' ? u : t === 'child' ? v : null;
-            if (child && child.parentLinkConfidence && child.parentLinkConfidence !== 'confirmed') notes.push(I.t('tree.noteLink', { name: child.displayName, other: (child === u ? v : u).displayName, status: confWord(child.parentLinkConfidence) }));
-        }
-        path.slice(1, -1).forEach(function (s) {
-            var p = D.byId[s.id];
-            if (p.placeholder) notes.push(I.t('tree.noteIndirect', { name: p.displayName }));
-            else if (p.confidence === 'unverified') notes.push(I.t('tree.noteUnverified', { name: p.displayName }));
-        });
-        if (info && info.kind === 'blood' && info.commons.length === 1 && !info.half && info.m > 0 && info.n > 0) notes.push(I.t('tree.noteOneAncestor'));
-        return notes.filter(function (n, i, all) { return all.indexOf(n) === i; });
-    }
-    function firstName(p) {
-        if (p.shortName) return p.shortName;
-        var q = p.displayName.match(/"([^"]+)"/);
-        return (q ? q[1] : p.displayName.split(' ')[0]).replace(/[,.;:]+$/, '');
-    }
-    function shortName(p, other) {
-        // people known only by a title and initials ("Mr H. G. Andrews") keep their full name
-        if (p.placeholder || /^(Mr|Mrs|Miss|Ms)\b/.test(p.displayName)) return p.displayName;
-        var s = firstName(p);
-        if (other && !other.placeholder && firstName(other) === s) return p.displayName;
-        return s;
-    }
-    function poss(s) { return new RegExp(I.t('kin.possEnd'), 'i').test(s) ? I.t('kin.possS', { name: s }) : I.t('kin.poss', { name: s }); }
-
     // =================================================================== RELATE: drag the dot on one card onto another
     var R = { on: false, pick: false, from: null, to: null, pid: null, moved: false, dx: 0, dy: 0, px: 0, py: 0, sx: 0, sy: 0, ex: 0, ey: 0, raf: null, shown: null, path: null, info: null, kbd: null };
     function dotAt(id) { var p = L.pos[id], o = 15 * clamp(0.8 / S.s, 1, 2.4); return { x: p.x + CW - o, y: p.y + CH - o }; }
@@ -1653,13 +1460,13 @@
         var sel = el.viewpoint;
         var people = D.people.slice().sort(function (a, b) { return a.generation - b.generation || L.pos[a.id].x - L.pos[b.id].x; });
         sel.innerHTML = people.map(function (p) { return '<option value="' + esc(p.id) + '">' + esc(p.displayName) + '</option>'; }).join('');
-        var saved = null; try { saved = localStorage.getItem('tc_viewpoint'); } catch (_) {}
+        var saved = VP.saved(D.byId);
         S.visitorId = visitorId();       // who the visitor said they are (visitor.enabled), if they are on this tree
-        S.viewpoint = S.visitorId || (saved && D.byId[saved] ? saved : D.meta.rootPersonId);
+        S.viewpoint = S.visitorId || saved || D.meta.rootPersonId;
         sel.value = S.viewpoint;
         markViewpoint();
         sel.addEventListener('change', function () {
-            S.viewpoint = sel.value; if (!S.visitorId) { try { localStorage.setItem('tc_viewpoint', S.viewpoint); } catch (_) {} }
+            S.viewpoint = sel.value; if (!S.visitorId) VP.save(S.viewpoint);
             markViewpoint(); if (S.drawerFor) renderDrawer(S.drawerFor);
         });
         window.addEventListener('familyvisitor:change', onVisitorChange);
@@ -1669,14 +1476,12 @@
     // "how are we related". Nothing is hidden or locked: the whole tree is still there to move around.
     // A site without visitor.enabled has no window.FamilyVisitor, so none of this does anything.
     function visitorId() {
-        var v = window.FamilyVisitor, id = v && v.id && v.id();
-        return id && D.byId[id] ? id : null;
+        return VP.visitor(D.byId);
     }
     function centerVisitor(animate) { centerOn(S.visitorId, isMobile() ? 0.65 : 0.7, animate); }
     function onVisitorChange() {
         S.visitorId = visitorId();
-        var saved = null; try { saved = localStorage.getItem('tc_viewpoint'); } catch (_) {}
-        S.viewpoint = S.visitorId || (saved && D.byId[saved] ? saved : D.meta.rootPersonId);
+        S.viewpoint = S.visitorId || VP.saved(D.byId) || D.meta.rootPersonId;
         el.viewpoint.value = S.viewpoint;
         markViewpoint();
         if (S.drawerFor) renderDrawer(S.drawerFor);

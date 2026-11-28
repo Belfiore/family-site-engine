@@ -336,7 +336,16 @@
             branchOf[p.id] = b || def.id;
         });
 
+        // How people are related (kinship.js, the same code and the same people as the family tree page). Never worked out here.
+        var tree = { people: [], byId: {} }, kin = null;
+        if (window.FamilyKinship) {
+            tree.people = window.FamilyKinship.pruneHidden(peopleDoc.people, Object.assign({}, peopleDoc.meta || {}, SITE.tree || {}));
+            tree.people.forEach(function (p) { tree.byId[p.id] = p; });
+            kin = window.FamilyKinship.create(tree);
+        }
+
         return {
+            kin: kin, treePeople: tree.people, treeById: tree.byId,
             people: people, places: places, sources: sources, events: events, unplaced: unplaced, byId: byId, voyages: voyages,
             placeEvents: placeEvents, personEvents: personEvents, branchOf: branchOf, living: living, orkney: orkney,
             associate: associate, associateOf: ASSOC_OF, associateLabel: ASSOC_LABEL, associateNote: ASSOC_NOTE,
