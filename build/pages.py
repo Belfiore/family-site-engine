@@ -14,6 +14,8 @@ On the site's own pages the build:
 import html, os, re
 from urllib.parse import urlparse
 
+import i18n
+
 ENGINE_CSS_GONE = {'nav.css', 'stuart.css', 'tree-canvas.css', 'map.css', 'tokens.css'}
 ENGINE_JS_GONE = {'stuart.js', 'nav.js', 'config.js', 'tree-canvas.js', 'map-data.js', 'map-ui.js', 'map-timeline.js',
                   'map-player.js', 'map-steps.js', 'map-glyphs.js', 'archive-core.js', 'archive-kin.js',
@@ -48,12 +50,64 @@ def nav_items(cfg):
     return [i for i in cfg.get('nav') or [] if isinstance(i, dict)]
 
 
+# the engine's own page names: a site that keeps one of these English names and gives no word of its own for a language
+# gets the dictionary's
+DEFAULT_NAMES = {'Home': 'nav.home', 'Family Tree': 'nav.tree', 'Family Map': 'nav.map', 'Ask Stuart': 'nav.ask', 'Discoveries': 'nav.discoveries'}
+
+
+def other_word(obj, field, lang, base):
+    """The site's word for a language, else the dictionary's word for one of the engine's own page names, else None."""
+    v = obj.get(field + '_' + lang)
+    if v: return v
+    if lang == 'en': return base
+    key = DEFAULT_NAMES.get(base) if field in ('label', 'title', 'heading') else None
+    return i18n.raw(lang, key) if key else None
+
+
+def words(cfg, obj, field):
+    """A site's own words in its default language, and the attributes that give the other languages: ("text", ' data-label-en="..."').
+
+    A site writes `label` and, where it wants, `label_de`. Without a language setting this is just the label."""
+    st = i18n.settings(cfg)
+    base = (obj or {}).get(field)
+    if not st['active']:
+        return base, ''
+    shown = (other_word(obj, field, st['default'], base) if st['default'] != 'en' else base)
+    shown = shown or base
+    attrs = ''
+    if st['switcher'] or st['default'] != 'en':
+        for l in st['available']:
+            if l == st['default']: continue
+            v = other_word(obj, field, l, base)
+            if v and v != shown: attrs += ' data-label-%s="%s"' % (l, esc(v))
+    return shown, attrs
+
+
+def html_words(cfg, obj, field):
+    """Like words(), for a site's text that may hold HTML: (shown markup, attributes giving the other languages as markup)."""
+    st = i18n.settings(cfg)
+    base = (obj or {}).get(field)
+    if not st['active']:
+        return base, ''
+    shown = (obj.get(field + '_' + st['default']) or base) if st['default'] != 'en' else base
+    attrs = ''
+    if st['switcher'] or st['default'] != 'en':
+        for l in st['available']:
+            if l == st['default']: continue
+            v = obj.get(field + '_' + l) or (base if l == 'en' else None)
+            if v and v != shown: attrs += ' data-html-%s="%s"' % (l, esc(v))
+    return shown, attrs
+
+
 def nav_html(cfg, active):
-    name = (cfg.get('site') or {}).get('name') or ''
+    lang = i18n.settings(cfg)['default']
+    site = cfg.get('site') or {}
+    name, name_attrs = words(cfg, site, 'name')
+    name = name or ''
     home = cfg['_pages']['home']
-    lines = ['<nav class="main-nav" aria-label="Site">',
+    lines = ['<nav class="main-nav" aria-label="%s">' % esc(i18n.t(lang, 'nav.site')),
              '    <div class="nav-inner">',
-             '        <a href="%s" class="nav-logo">%s</a>' % (esc(home), esc(name)),
+             '        <a href="%s" class="nav-logo"%s>%s</a>' % (esc(home), name_attrs, esc(name)),
              '        <div class="nav-links" id="navLinks">']
     for it in nav_items(cfg):
         if 'comment' in it:
@@ -61,9 +115,10 @@ def nav_html(cfg, active):
             continue
         href = it.get('href') or ''
         on = href == active
-        lines.append('            <a href="%s"%s>%s</a>' % (esc(href), ' class="active" aria-current="page"' if on else '', esc(it.get('label'))))
+        label, attrs = words(cfg, it, 'label')
+        lines.append('            <a href="%s"%s%s>%s</a>' % (esc(href), ' class="active" aria-current="page"' if on else '', attrs, esc(label)))
     lines += ['        </div>',
-              '        <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">',
+              '        <button class="nav-toggle" id="navToggle" aria-label="%s" aria-expanded="false" aria-controls="navLinks">' % esc(i18n.t(lang, 'nav.openMenu')),
               '            <span></span><span></span><span></span>',
               '        </button>',
               '    </div>',
@@ -164,32 +219,53 @@ def render_engine_page(kind, template, cfg, ctx, extra=None):
         scripts.append(widget_tag(ctx, assets['widget']))
     tree = cfg.get('tree') or {}
     mp = cfg.get('map') or {}
-    home_region = (mp.get('home') or {}).get('name') or 'the home region'
+    home_name = (mp.get('home') or {}).get('name')
     fams = ''.join('\n                        <option value="%s">%s</option>' % (esc(f.get('id')), esc(f.get('option') or f.get('label')))
                    for f in mp.get('families') or [])
+    st = i18n.settings(cfg)
+    title_text, title_attrs = words(cfg, page, 'title')
+    if page.get('heading'):
+        head_text, head_attrs = words(cfg, page, 'heading')
+    elif kind in ('tree', 'map', 'ask'):
+        head_text = i18n.t(st['default'], kind + '.heading')
+        head_attrs = ' data-i18n="%s.heading"' % kind if st['switcher'] else ''
+    else:
+        head_text, head_attrs = title_text, title_attrs
+    if tree.get('directLineLabel'):
+        dl_text, dl_attrs = words(cfg, tree, 'directLineLabel')
+        direct_line = '<span%s>%s</span>' % (dl_attrs, esc(dl_text)) if dl_attrs else esc(dl_text)
+    else:
+        direct_line = i18n.span(cfg, 'tree.directLine')
+    legend_note = ''
+    if tree.get('legendNote'):
+        note_text, note_attrs = html_words(cfg, tree, 'legendNote')
+        legend_note = ' <span%s>%s</span>' % (note_attrs, note_text) if note_attrs else ' ' + note_text    # the site's own words; HTML allowed
+    home_url = esc(cfg['_pages']['home'])
     values = {
-        'lang': esc((cfg.get('site') or {}).get('lang') or 'en-GB'),
+        'lang': esc((cfg.get('site') or {}).get('lang') or 'en-GB') if i18n.settings(cfg)['default'] == 'en' else i18n.settings(cfg)['default'],
         'viewport': assets['viewport'],
         'csp': ('    <meta http-equiv="Content-Security-Policy" content="%s">\n' % csp_for(cfg)) if assets.get('csp') else '',
-        'title': esc(page.get('title')),
+        'title': esc(title_text),
+        'titleAttr': title_attrs,
+        'headingAttr': head_attrs,
         'description': esc(page.get('description')),
         'head': ''.join('    %s\n' % h for h in head),
         'nav': nav_html(cfg, page['file']),
         'scripts': '\n'.join(scripts),
-        'directLineLabel': esc(tree.get('directLineLabel') or 'Direct line'),
+        'directLineLabel': direct_line,
         'homePage': esc(cfg['_pages']['home']),
         'familyOptions': fams,
-        'homeRegion': esc(home_region),
-        'mapNoscriptExtra': mp.get('noscript') or '',   # the site's own words; HTML allowed
-        'legendNote': (' ' + tree['legendNote']) if tree.get('legendNote') else '',   # the site's own words; HTML allowed
-        'heading': esc(page.get('heading') or {'tree': 'The Family Tree', 'map': 'The Family Map', 'ask': 'Ask Stuart'}.get(kind) or page.get('title')),
+        'backHome': esc(i18n.t(st['default'], 'map.backTo', place=(((mp.get('home') or {}).get('name_' + st['default']) if st['default'] != 'en' else None) or home_name)) if home_name else i18n.t(st['default'], 'map.backHome')),
+        'mapNoscriptExtra': (html_words(cfg, mp, 'noscript')[0] if mp.get('noscript') else ''),   # the site's own words; HTML allowed
+        'legendNote': legend_note,
+        'heading': esc(head_text),
         'timelineBody': '',
-        'treeNoscript': tree.get('noscript') or ('The <a href="%s">home page</a> and the other pages work without it.' % esc(cfg['_pages']['home'])),
+        'treeNoscript': (html_words(cfg, tree, 'noscript')[0] if tree.get('noscript') else i18n.t(st['default'], 'tree.noscriptHome', home=home_url)),
         # the key's row for framed groups, only on a tree that has them
-        'legendRegions': '                <li><span class="lg-card lg-card--frame"></span>Group whose link to the family is unproven</li>\n' if tree.get('regions') else '',
+        'legendRegions': '                <li><span class="lg-card lg-card--frame"></span>%s</li>\n' % i18n.span(cfg, 'tree.legendRegions') if tree.get('regions') else '',
     }
     values.update(extra or {})      # what only one page has: the timeline's content, made by timeline.py
-    out = template
+    out = i18n.template(template, cfg)
     for k, v in values.items():
         out = out.replace('{{%s}}' % k, v)
     left = re.findall(r'\{\{[a-zA-Z]+\}\}', out)

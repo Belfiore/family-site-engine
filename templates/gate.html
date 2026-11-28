@@ -34,6 +34,9 @@
         .g-enter:hover, .g-enter:focus-visible { background: var(--g-gold); color: var(--g-ink); outline: none; }
         .g-enter[disabled] { opacity: .6; cursor: default; }
         .g-msg { min-height: 1.6em; margin: .8rem 0 0; font-size: 1rem; color: #f3c7a6; text-align: center; }
+        .g-lang { margin: 1.6rem 0 0; font-family: var(--g-display); font-size: .78rem; letter-spacing: .26em; color: rgba(253, 248, 240, .5); }
+        .g-lang button { border: 0; background: none; color: rgba(253, 248, 240, .72); font: inherit; letter-spacing: inherit; padding: .5rem .55rem; min-height: 2.75rem; cursor: pointer; }
+        .g-lang button[aria-pressed=true] { color: var(--g-gold); text-decoration: underline; text-underline-offset: .3em; cursor: default; }
         .g-hint { margin: .6rem auto 0; max-width: 22rem; font-size: 1rem; color: rgba(253, 248, 240, .62); }
         :focus-visible { outline: 2px solid var(--g-gold); outline-offset: 3px; }
         noscript p { margin: 1.4rem 0 0; color: #f3c7a6; }
@@ -58,7 +61,7 @@
 </head>
 <body>
 <main>
-    <p class="g-kicker">{{kicker}}</p>
+    <p class="g-kicker"{{kickerAttr}}>{{kicker}}</p>
     <h1 class="g-word">{{wordmark}}</h1>
 {{image}}    <svg class="g-tree" viewBox="0 0 176 74" aria-hidden="true" focusable="false">
         <path pathLength="1" d="M88 70 V40 M88 40 C88 28 44 36 44 22 M88 40 C88 28 132 36 132 22 M44 22 C44 14 24 16 24 6 M44 22 C44 14 64 16 64 6 M132 22 C132 14 112 16 112 6 M132 22 C132 14 152 16 152 6"></path>
@@ -66,15 +69,15 @@
         <circle cx="24" cy="6" r="2.6"></circle><circle cx="64" cy="6" r="2.6"></circle><circle cx="112" cy="6" r="2.6"></circle><circle cx="152" cy="6" r="2.6"></circle>
     </svg>
     <form id="gate" method="post" action="/__gate/login" autocomplete="on">
-        <label for="pw">{{prompt}}</label>
+        <label for="pw"{{promptAttr}}>{{prompt}}</label>
         <div class="g-row">
             <input id="pw" name="password" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" required autofocus>
-            <button type="button" class="g-show" id="show" aria-pressed="false">Show</button>
+            <button type="button" class="g-show" id="show" aria-pressed="false" data-i18n="gate.show">Show</button>
         </div>
-        <button class="g-enter" id="go" type="submit">{{button}}</button>
+        <button class="g-enter" id="go" type="submit"{{buttonAttr}}>{{button}}</button>
         <p class="g-msg" id="msg" role="status" aria-live="polite"></p>
     </form>
-{{hint}}    <noscript><p>This private archive needs JavaScript switched on to take the password.</p></noscript>
+{{hint}}{{langSwitch}}    <noscript><p data-i18n="gate.noscript">This private archive needs JavaScript switched on to take the password.</p></noscript>
 </main>
 <script>
 {{script}}

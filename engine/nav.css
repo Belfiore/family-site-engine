@@ -88,10 +88,40 @@
 }
 .nav-toggle span { display: block; width: 22px; height: 2px; background: var(--gold, #d4af37); }
 
+/* the language switcher, only on a site with more than one language: EN | DE */
+.lang-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    margin-left: auto;
+    flex: 0 0 auto;
+    font-family: var(--font-display, 'Cinzel', serif);
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.4);
+}
+.nav-links + .lang-switch { margin-left: 0; }
+.lang-switch button {
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+    padding: 0 0.35rem;
+    background: none;
+    border: 0;
+    border-radius: 3px;
+    font: inherit;
+    letter-spacing: inherit;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+}
+.lang-switch button:hover { color: var(--gold, #d4af37); }
+.lang-switch button[aria-pressed="true"] { color: var(--gold, #d4af37); cursor: default; text-decoration: underline; text-underline-offset: 0.3em; }
+.lang-switch button:focus-visible { outline: 2px solid var(--gold, #d4af37); outline-offset: 1px; }
+
 @container site-nav (max-width: 1180px) {
     .nav-inner { padding: 0 1.25rem; }
     .nav-links { display: none; }
     .nav-toggle { display: flex; }
+    .lang-switch { margin-left: auto; margin-right: 0.25rem; }
     .nav-links.open {
         display: flex;
         flex-direction: column;

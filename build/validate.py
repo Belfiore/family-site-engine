@@ -27,6 +27,12 @@ def schema(name):
     return SCHEMAS[name]
 
 
+def language_codes():
+    sys.path.insert(0, HERE)
+    import i18n
+    return set(i18n.languages())
+
+
 TYPES = {'string': str, 'integer': int, 'number': (int, float), 'boolean': bool, 'object': dict, 'array': list, 'null': type(None)}
 
 
@@ -88,6 +94,14 @@ class Checker:
                 elif isinstance(s.get('additionalProperties'), dict):
                     self.check(x, s['additionalProperties'], '%s.%s' % (path, k))
                 elif s.get('additionalProperties') is False and props:
+                    # story_de beside story: the site's words in another language (docs/languages.md)
+                    m = re.match(r'^(.+)_([a-z]{2})$', k)
+                    if m and m.group(1) in props and m.group(2) in language_codes():
+                        if props[m.group(1)].get('type') != 'string' and 'string' not in (props[m.group(1)].get('type') or []):
+                            self.warnings.append('%s: "%s" is not a field that can be translated' % (path, k))
+                        elif not isinstance(x, str):
+                            self.errors.append('%s.%s: should be string, not %s' % (path, k, type(x).__name__))
+                        continue
                     self.warnings.append('%s: unknown field "%s"' % (path, k))
         if isinstance(v, list):
             if 'maxItems' in s and len(v) > s['maxItems']:

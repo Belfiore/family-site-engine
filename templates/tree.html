@@ -3,31 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="{{viewport}}">
-{{csp}}    <title>{{title}}</title>
+{{csp}}    <title{{titleAttr}}>{{title}}</title>
     <meta name="description" content="{{description}}">
 {{head}}</head>
 <body class="canvas-body">
-<a class="skip-link" href="#treeHelp">Skip to the family tree</a>
+<a class="skip-link" href="#treeHelp" data-i18n="tree.skip">Skip to the family tree</a>
 {{nav}}
 
 <main class="tc" id="app">
-    <section class="tc-stage" id="stage" aria-label="Interactive family tree">
+    <section class="tc-stage" id="stage" aria-label="Interactive family tree" data-i18n-aria-label="tree.stage">
 
         <header class="tc-head">
             <div class="tc-title">
-                <h1>{{heading}}</h1>
-                <p class="tc-sub" id="treeHelp" tabindex="-1">Drag or scroll to move, pinch or <kbd>Ctrl</kbd>&#8202;+&#8202;scroll to zoom. Select a person to read their story. Drag the dot on a card onto anyone to see how they are related (or press <kbd>R</kbd> on a card).</p>
+                <h1{{headingAttr}}>{{heading}}</h1>
+                <p class="tc-sub" id="treeHelp" tabindex="-1" data-i18n-html="tree.help">Drag or scroll to move, pinch or <kbd>Ctrl</kbd>&#8202;+&#8202;scroll to zoom. Select a person to read their story. Drag the dot on a card onto anyone to see how they are related (or press <kbd>R</kbd> on a card).</p>
             </div>
             <div class="tc-tools">
                 <div class="tc-search" role="search">
-                    <label for="search" class="visually-hidden">Find a person</label>
+                    <label for="search" class="visually-hidden" data-i18n="tree.find">Find a person</label>
                     <svg class="i" aria-hidden="true" viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4.5 4.5"/></svg>
-                    <input id="search" type="search" placeholder="Find a person or spelling…" autocomplete="off" spellcheck="false"
+                    <input id="search" type="search" placeholder="Find a person or spelling…" data-i18n-placeholder="tree.findPlaceholder" autocomplete="off" spellcheck="false"
                            role="combobox" aria-expanded="false" aria-controls="searchResults" aria-autocomplete="list">
-                    <ul id="searchResults" class="tc-results" role="listbox" aria-label="Matching people" hidden></ul>
+                    <ul id="searchResults" class="tc-results" role="listbox" aria-label="Matching people" data-i18n-aria-label="tree.matching" hidden></ul>
                 </div>
                 <div class="tc-viewpoint">
-                    <label for="viewpoint">Relationships to</label>
+                    <label for="viewpoint" data-i18n="tree.relationshipsTo">Relationships to</label>
                     <select id="viewpoint"></select>
                 </div>
             </div>
@@ -37,7 +37,7 @@
             <div class="tc-world" id="world">
                 <div class="tc-bands" id="bands" aria-hidden="true"></div>
                 <svg class="tc-links" id="links" aria-hidden="true"></svg>
-                <div class="tc-cards" id="cards" role="group" aria-label="People in the tree"></div>
+                <div class="tc-cards" id="cards" role="group" aria-label="People in the tree" data-i18n-aria-label="tree.people"></div>
                 <svg class="tc-links tc-links--top" id="linksTop" aria-hidden="true"></svg>
                 <svg class="tc-rel" id="relLayer" aria-hidden="true">
                     <defs>
@@ -56,39 +56,39 @@
 
         <div class="tc-genrail" id="genrail" aria-hidden="true"></div>
 
-        <div class="tc-controls" role="toolbar" aria-label="Canvas controls">
-            <button class="tc-btn" id="zoomOut" type="button" aria-label="Zoom out" title="Zoom out (−)"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10"/></svg></button>
-            <button class="tc-btn tc-btn--pct" id="zoomPct" type="button" aria-label="Reset zoom to 100 per cent" title="Reset zoom">100%</button>
-            <button class="tc-btn" id="zoomIn" type="button" aria-label="Zoom in" title="Zoom in (+)"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10M10 5v10"/></svg></button>
+        <div class="tc-controls" role="toolbar" aria-label="Canvas controls" data-i18n-aria-label="tree.controls">
+            <button class="tc-btn" id="zoomOut" type="button" aria-label="Zoom out" title="Zoom out (−)" data-i18n-aria-label="tree.zoomOut" data-i18n-title="tree.zoomOutTitle"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10"/></svg></button>
+            <button class="tc-btn tc-btn--pct" id="zoomPct" type="button" aria-label="Reset zoom to 100 per cent" title="Reset zoom" data-i18n-aria-label="tree.zoomResetAria" data-i18n-title="tree.zoomReset">100%</button>
+            <button class="tc-btn" id="zoomIn" type="button" aria-label="Zoom in" title="Zoom in (+)" data-i18n-aria-label="tree.zoomIn" data-i18n-title="tree.zoomInTitle"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10M10 5v10"/></svg></button>
             <span class="tc-sep" aria-hidden="true"></span>
-            <button class="tc-btn tc-btn--text" id="fit" type="button" title="Fit the whole tree (0)"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7V3h4M13 3h4v4M17 13v4h-4M7 17H3v-4"/></svg><span>Fit</span></button>
-            <button class="tc-btn tc-btn--text" id="centerSel" type="button" title="Centre on the selected person"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3"/><path d="M10 2v3M10 15v3M2 10h3M15 10h3"/></svg><span>Centre</span></button>
-            <button class="tc-btn tc-btn--text" id="keyToggle" type="button" aria-expanded="false" aria-controls="legend"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 5h12M4 10h12M4 15h7"/></svg><span>Key</span></button>
+            <button class="tc-btn tc-btn--text" id="fit" type="button" title="Fit the whole tree (0)" data-i18n-title="tree.fitTitle"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7V3h4M13 3h4v4M17 13v4h-4M7 17H3v-4"/></svg><span data-i18n="tree.fit">Fit</span></button>
+            <button class="tc-btn tc-btn--text" id="centerSel" type="button" title="Centre on the selected person" data-i18n-title="tree.centreTitle"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3"/><path d="M10 2v3M10 15v3M2 10h3M15 10h3"/></svg><span data-i18n="tree.centre">Centre</span></button>
+            <button class="tc-btn tc-btn--text" id="keyToggle" type="button" aria-expanded="false" aria-controls="legend"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 5h12M4 10h12M4 15h7"/></svg><span data-i18n="tree.key">Key</span></button>
         </div>
 
-        <aside class="tc-legend" id="legend" aria-label="Key to the tree" hidden>
-            <h2>Reading the tree</h2>
+        <aside class="tc-legend" id="legend" aria-label="Key to the tree" data-i18n-aria-label="tree.legend" hidden>
+            <h2 data-i18n="tree.legendTitle">Reading the tree</h2>
             <ul>
                 <li><span class="lg-line lg-line--direct"></span>{{directLineLabel}}</li>
-                <li><span class="lg-line"></span>Parent and child</li>
-                <li><span class="lg-line lg-line--dashed"></span>A dashed line means the link is unproven</li>
-                <li><span class="lg-pill">m. 1950</span>Marriage, with year if known</li>
-                <li><span class="lg-pill">&amp;</span>Partners</li>
-                <li><span class="lg-card lg-card--uncertain"></span>Identity or name uncertain</li>
+                <li><span class="lg-line"></span><span data-i18w="tree.legendParent">Parent and child</span></li>
+                <li><span class="lg-line lg-line--dashed"></span><span data-i18w="tree.legendDashed">A dashed line means the link is unproven</span></li>
+                <li><span class="lg-pill">m. 1950</span><span data-i18w="tree.legendMarriage">Marriage, with year if known</span></li>
+                <li><span class="lg-pill">&amp;</span><span data-i18w="tree.legendPartners">Partners</span></li>
+                <li><span class="lg-card lg-card--uncertain"></span><span data-i18w="tree.legendUncertain">Identity or name uncertain</span></li>
 {{legendRegions}}            </ul>
-            <h3>What each card holds</h3>
+            <h3 data-i18n="tree.legendCards">What each card holds</h3>
             <ul class="lg-icons">
-                <li><span class="ic on" data-ic="photo"></span>Photograph</li>
-                <li><span class="ic on" data-ic="doc"></span>Documents and records</li>
-                <li><span class="ic on" data-ic="story"></span>A full written story</li>
+                <li><span class="ic on" data-ic="photo"></span><span data-i18w="tree.legendPhoto">Photograph</span></li>
+                <li><span class="ic on" data-ic="doc"></span><span data-i18w="tree.legendDocs">Documents and records</span></li>
+                <li><span class="ic on" data-ic="story"></span><span data-i18w="tree.legendStory">A full written story</span></li>
             </ul>
-            <p class="lg-note">Faded icons mean we have nothing of that kind yet. Dates: <b>~</b> about, <b>?</b> unverified.{{legendNote}}</p>
+            <p class="lg-note"><span data-i18wh="tree.legendNote">Faded icons mean we have nothing of that kind yet. Dates: <b>~</b> about, <b>?</b> unverified.</span>{{legendNote}}</p>
         </aside>
 
-        <canvas class="tc-minimap" id="minimap" width="200" height="120" aria-label="Overview map. Click to move the view." role="img" hidden></canvas>
+        <canvas class="tc-minimap" id="minimap" width="200" height="120" aria-label="Overview map. Click to move the view." data-i18n-aria-label="tree.minimap" role="img" hidden></canvas>
         <div class="tc-tip" id="tip" role="tooltip" hidden></div>
         <div class="visually-hidden" id="live" aria-live="polite"></div>
-        <noscript><p class="tc-noscript">The interactive tree needs JavaScript. {{treeNoscript}}</p></noscript>
+        <noscript><p class="tc-noscript"><span data-i18w="tree.noscript">The interactive tree needs JavaScript.</span> {{treeNoscript}}</p></noscript>
     </section>
 
     <aside class="tc-drawer" id="drawer" aria-labelledby="drawerName" hidden>
@@ -96,28 +96,28 @@
         <div class="dr-bar">
             <button class="dr-step dr-step--prev" id="drPrev" type="button">
                 <svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M12 4l-6 6 6 6"/></svg>
-                <span class="dr-step-txt"><small>Previous</small><b id="drPrevName"></b></span>
+                <span class="dr-step-txt"><small data-i18n="tree.previous">Previous</small><b id="drPrevName"></b></span>
             </button>
             <span class="dr-pos" id="drPos" aria-hidden="true"></span>
             <button class="dr-step dr-step--next" id="drNext" type="button">
-                <span class="dr-step-txt"><small>Next</small><b id="drNextName"></b></span>
+                <span class="dr-step-txt"><small data-i18n="tree.next">Next</small><b id="drNextName"></b></span>
                 <svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M8 4l6 6-6 6"/></svg>
             </button>
-            <button class="dr-icon" id="drExpand" type="button" aria-controls="drawer" aria-expanded="false" aria-label="Expand to the full story">
+            <button class="dr-icon" id="drExpand" type="button" aria-controls="drawer" aria-expanded="false" aria-label="Expand to the full story" data-i18n-aria-label="tree.expand">
                 <svg class="i i-grow" viewBox="0 0 20 20" aria-hidden="true"><path d="M8 3H3v5M3 3l6 6M12 17h5v-5M17 17l-6-6"/></svg>
                 <svg class="i i-shrink" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 9h5V4M9 9L3 3M16 11h-5v5M11 11l6 6"/></svg>
             </button>
-            <button class="dr-icon" id="drawerClose" type="button" aria-label="Close person details">
+            <button class="dr-icon" id="drawerClose" type="button" aria-label="Close person details" data-i18n-aria-label="tree.closeDrawer">
                 <svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>
             </button>
         </div>
         <div class="tc-drawer-body" id="drawerBody" tabindex="-1"></div>
         <div class="dr-foot">
             <button type="button" class="dr-cta" id="drRead" aria-controls="drawer" aria-expanded="false">
-                <span id="drReadTxt">Read full story</span>
+                <span id="drReadTxt" data-i18n="tree.readFull">Read full story</span>
                 <svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M8 4l6 6-6 6"/></svg>
             </button>
-            <p class="dr-keys" aria-hidden="true"><kbd>&larr;</kbd><kbd>&rarr;</kbd> previous / next <span class="sep">&middot;</span> <kbd>&uarr;</kbd><kbd>&darr;</kbd> parent / child <span class="sep">&middot;</span> <kbd>Esc</kbd> <span id="drEscTxt">close</span></p>
+            <p class="dr-keys" aria-hidden="true"><kbd>&larr;</kbd><kbd>&rarr;</kbd> <span data-i18w="tree.keysPrevNext">previous / next</span> <span class="sep">&middot;</span> <kbd>&uarr;</kbd><kbd>&darr;</kbd> <span data-i18w="tree.keysParentChild">parent / child</span> <span class="sep">&middot;</span> <kbd>Esc</kbd> <span id="drEscTxt" data-i18n="tree.keysClose">close</span></p>
         </div>
     </aside>
 </main>
@@ -126,11 +126,11 @@
     <div class="lb-top">
         <h2 id="lbTitle" class="lb-title"></h2>
         <div class="lb-tools">
-            <button class="lb-btn" id="lbOut" type="button" aria-label="Zoom out"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10"/></svg></button>
-            <button class="lb-btn" id="lbReset" type="button" aria-label="Fit image">Fit</button>
-            <button class="lb-btn" id="lbIn" type="button" aria-label="Zoom in"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10M10 5v10"/></svg></button>
-            <a class="lb-btn" id="lbOpen" target="_blank" rel="noopener">Open original</a>
-            <button class="lb-btn lb-close" id="lbClose" type="button" aria-label="Close viewer"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
+            <button class="lb-btn" id="lbOut" type="button" aria-label="Zoom out" data-i18n-aria-label="tree.zoomOut"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10"/></svg></button>
+            <button class="lb-btn" id="lbReset" type="button" aria-label="Fit image" data-i18n-aria-label="tree.fitImage" data-i18n="tree.fit">Fit</button>
+            <button class="lb-btn" id="lbIn" type="button" aria-label="Zoom in" data-i18n-aria-label="tree.zoomIn"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10M10 5v10"/></svg></button>
+            <a class="lb-btn" id="lbOpen" target="_blank" rel="noopener" data-i18n="tree.openOriginal">Open original</a>
+            <button class="lb-btn lb-close" id="lbClose" type="button" aria-label="Close viewer" data-i18n-aria-label="tree.closeViewer"><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
         </div>
     </div>
     <div class="lb-main">

@@ -4,6 +4,7 @@
 (function () {
     'use strict';
     var FM = window.FM = window.FM || {};
+    var I = window.FamilyI18n;
     var $ = function (id) { return document.getElementById(id); };
     var esc = FM.data.esc, glyph = FM.glyph;
     var U = function () { return FM.util; };
@@ -128,8 +129,8 @@
             var first = g.items[0], last = g.items[g.items.length - 1], stack = g.items.length > 1;
             var beats = []; g.items.forEach(function (it) { if (beats.indexOf(it.b.index) < 0) beats.push(it.b.index); });
             g.beats = beats;
-            var label = stack ? g.items.length + ' events, ' + U().dateLabel(first.e) + (U().dateLabel(last.e) !== U().dateLabel(first.e) ? ' to ' + U().dateLabel(last.e) : '') + '. Opens a list.'
-                              : U().dateLabel(first.e) + ': ' + FM.data.TYPE_LABEL[first.e.type] + ', ' + whoOf(first.e) + ', ' + (first.e.placeId ? FM.DATA.places[first.e.placeId].name : 'place not known');
+            var label = stack ? I.t('map.tlStack', { events: I.n('map.nEvents', g.items.length), first: U().dateLabel(first.e), range: U().dateLabel(last.e) !== U().dateLabel(first.e) ? ' ' + I.t('q.to') + ' ' + U().dateLabel(last.e) : '' })
+                              : U().dateLabel(first.e) + ': ' + FM.data.TYPE_LABEL[first.e.type] + ', ' + whoOf(first.e) + ', ' + (first.e.placeId ? FM.DATA.places[first.e.placeId].name : I.t('map.tlPlaceUnknownLower'));
             html += '<button type="button" class="tk' + (stack ? ' tk--stack' : '') + (first.e.orkney ? ' is-orkney' : '') + '" style="left:' + ((g.px0 + g.px1) / 2 / w * 100) + '%" data-beat="' + first.b.index + '" data-beats="' + beats.join(' ') + '" data-group="' + gi + '"' + (stack ? ' aria-haspopup="true" aria-expanded="false"' : '') + ' aria-label="' + esc(label) + '">' +
                 glyph(first.e.type, 'tk-gl') + '</button>';
         });
@@ -156,7 +157,7 @@
         closeFan();
         fanFor = tk;
         $('tlTip').hidden = true;
-        fan.innerHTML = '<p class="fan-h">' + g.items.length + ' events</p>' + g.items.map(function (it, i) {
+        fan.innerHTML = '<p class="fan-h">' + esc(I.n('map.nEvents', g.items.length)) + '</p>' + g.items.map(function (it, i) {
             return '<button type="button" class="fan-b' + (it.b.index === T.index ? ' is-current' : '') + '" style="--i:' + Math.min(i, 12) + '" data-beat="' + it.b.index + '" data-event="' + esc(it.e.id) + '">' + glyph(it.e.type) +
                 '<span class="fan-d">' + esc(U().dateLabel(it.e)) + '</span><span class="fan-t">' + esc(whoOf(it.e)) + '</span></button>';
         }).join('');
@@ -181,11 +182,11 @@
         var html = T.beats.map(function (b) {
             return b.events.map(function (e) {
                 return '<li class="el" data-beat="' + b.index + '" data-event="' + esc(e.id) + '"><button type="button" class="el-b"><span class="el-gl">' + glyph(e.type) + '</span><span class="el-d">' + esc(U().dateLabel(e)) + '</span><span class="el-t">' +
-                    esc(e.personIds.map(function (id) { return FM.DATA.people[id].displayName; }).join(', ') || FM.data.TYPE_LABEL[e.type]) + '</span>' + kinSpan(e) + '<span class="el-p">' + esc(e.placeId ? FM.DATA.places[e.placeId].name : 'Place not known') + '</span></button></li>';
+                    esc(e.personIds.map(function (id) { return FM.DATA.people[id].displayName; }).join(', ') || FM.data.TYPE_LABEL[e.type]) + '</span>' + kinSpan(e) + '<span class="el-p">' + esc(e.placeId ? FM.DATA.places[e.placeId].name : I.t('map.placeUnknown')) + '</span></button></li>';
             }).join('');
         }).join('');
-        if (T.undated.length) html += '<li class="el-h" role="presentation">Date unknown</li>' + T.undated.map(function (e) {
-            return '<li class="el el--undated" data-undated="' + esc(e.id) + '"><button type="button" class="el-b"><span class="el-gl">' + glyph(e.type) + '</span><span class="el-d">Date unknown</span><span class="el-t">' + esc(e.personIds.map(function (id) { return FM.DATA.people[id].displayName; }).join(', ')) + '</span>' + kinSpan(e) + '<span class="el-p">' + esc(e.placeId ? FM.DATA.places[e.placeId].name : 'Place not known') + '</span></button></li>';
+        if (T.undated.length) html += '<li class="el-h" role="presentation">' + esc(I.t('map.dateUnknownHeading')) + '</li>' + T.undated.map(function (e) {
+            return '<li class="el el--undated" data-undated="' + esc(e.id) + '"><button type="button" class="el-b"><span class="el-gl">' + glyph(e.type) + '</span><span class="el-d">' + esc(I.t('map.dateUnknownHeading')) + '</span><span class="el-t">' + esc(e.personIds.map(function (id) { return FM.DATA.people[id].displayName; }).join(', ')) + '</span>' + kinSpan(e) + '<span class="el-p">' + esc(e.placeId ? FM.DATA.places[e.placeId].name : I.t('map.placeUnknown')) + '</span></button></li>';
         }).join('');
         $('tlList').innerHTML = html;
     }
@@ -222,7 +223,7 @@
         markTicks();
     }
     function showBeat(b) {
-        $('tlNow').innerHTML = '<p class="fm-label">' + (b.events.length > 1 ? b.events.length + ' events' : 'Now') + '</p>' + b.events.map(function (e) { return FM.eventCard(e); }).join('');
+        $('tlNow').innerHTML = '<p class="fm-label">' + esc(b.events.length > 1 ? I.n('map.nEvents', b.events.length) : I.t('map.now')) + '</p>' + b.events.map(function (e) { return FM.eventCard(e); }).join('');
     }
 
     // ================================================================== map during playback
@@ -337,7 +338,7 @@
     function onState(st) {
         var btn = $('tlPlay');
         btn.classList.toggle('is-playing', st.playing);
-        btn.setAttribute('aria-label', st.playing ? 'Pause' : 'Play');
+        btn.setAttribute('aria-label', I.t(st.playing ? 'map.pause' : 'map.play'));
         $('fm').classList.toggle('tl-playing', st.playing);
         FM.writeURL();
     }
@@ -356,7 +357,7 @@
     function ensurePlayer() {
         if (player) return player;
         player = new FM.Player({ speed: T.speed, transitionFor: transitionFor, dwellFor: function (s) { return s.dwell; } });
-        player.on('enter', onEnter).on('transition', onTransition).on('state', onState).on('end', function () { U().announce('The end of the timeline.'); });
+        player.on('enter', onEnter).on('transition', onTransition).on('state', onState).on('end', function () { U().announce(I.t('map.endOfTimeline')); });
         FM.player = player;
         return player;
     }
@@ -381,7 +382,7 @@
         $('tlAll').addEventListener('change', function () { T.showAll = this.checked; U().refreshOverlays(); });
         $('tlPeriod').addEventListener('change', function () {
             T.period = this.checked;
-            if (T.period) { if (!(window.FM_CONFIG || {}).MAPTILER_KEY) { U().note('The period maps need a MapTiler key (see config.js).'); this.checked = false; T.period = false; return; } U().setStyle('then'); }
+            if (T.period) { if (!(window.FM_CONFIG || {}).MAPTILER_KEY) { U().note(I.t('map.periodNeedsKey')); this.checked = false; T.period = false; return; } U().setStyle('then'); }
         });
         $('tlCamera').value = T.camera;
         $('tlCamera').addEventListener('change', function () { T.camera = this.value; try { localStorage.setItem('fm-camera', T.camera); } catch (e) { /* blocked */ } FM.camera.following = true; FM.camera.resetOverview(); $('followAgain').hidden = true; var s = player.current(); if (s) frameBeat(s.beat); FM.writeURL(); });
@@ -424,7 +425,7 @@
         $('tlOpts').addEventListener('click', function () { var on = !$('timeline').classList.contains('is-opts'); $('timeline').classList.toggle('is-opts', on); this.setAttribute('aria-expanded', on ? 'true' : 'false'); });
         $('tlList').addEventListener('click', function (e) {
             var li = e.target.closest('.el'); if (!li) return;
-            if (li.dataset.undated) { var ev = FM.DATA.byId[li.dataset.undated] || T.undated.filter(function (x) { return x.id === li.dataset.undated; })[0]; if (ev) { $('tlNow').innerHTML = '<p class="fm-label">Date unknown</p>' + FM.eventCard(ev); if (ev.placeId) FM.openPlace(ev.placeId, { noFly: false }); } return; }
+            if (li.dataset.undated) { var ev = FM.DATA.byId[li.dataset.undated] || T.undated.filter(function (x) { return x.id === li.dataset.undated; })[0]; if (ev) { $('tlNow').innerHTML = '<p class="fm-label">' + esc(I.t('map.dateUnknownHeading')) + '</p>' + FM.eventCard(ev); if (ev.placeId) FM.openPlace(ev.placeId, { noFly: false }); } return; }
             jumpTo(+li.dataset.beat, li.dataset.event);
         });
         $('tlNow').addEventListener('click', function () { /* links and buttons are delegated in map-ui.js */ });
@@ -453,7 +454,7 @@
         // swipe the sheet up for the whole list, down to close it; a tap on the grip toggles it
         var grip = $('tlPanel').querySelector('.fm-events-grip'), sy = null;
         var setOpen = function (on) { $('tlPanel').classList.toggle('is-open', on); grip.setAttribute('aria-expanded', on ? 'true' : 'false'); };
-        grip.setAttribute('role', 'button'); grip.setAttribute('tabindex', '0'); grip.setAttribute('aria-label', 'Show every event'); grip.setAttribute('aria-expanded', 'false');
+        grip.setAttribute('role', 'button'); grip.setAttribute('tabindex', '0'); grip.setAttribute('aria-label', I.t('map.showEveryEvent')); grip.setAttribute('aria-expanded', 'false');
         grip.addEventListener('click', function () { setOpen(!$('tlPanel').classList.contains('is-open')); });
         grip.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(!$('tlPanel').classList.contains('is-open')); } });
         $('tlPanel').addEventListener('touchstart', function (e) { var t = e.target; sy = (t === grip || t.closest('.fm-now .fm-label') || ($('tlPanel').classList.contains('is-open') && t.closest('.fm-h--list'))) ? e.touches[0].clientY : null; }, { passive: true });
@@ -514,7 +515,7 @@
         player.speed = T.speed;
         FM.camera.active = true; FM.camera.following = true; FM.camera.resetOverview();
         rebuild(st.event || null);
-        if (st.event && FM.DATA.byId[st.event] === undefined) U().note('That event is not in the timeline with the current filters.');
+        if (st.event && FM.DATA.byId[st.event] === undefined) U().note(I.t('map.notInTimeline'));
         if (st.fromPerson) player.play();
         setTimeout(function () { measure(); renderTrack(); highlightList(); setTime(T.time || (T.beats[0] ? T.beats[0].t : 0), { noMarkers: true }); }, 60);
     }
@@ -530,7 +531,7 @@
         $('fm').classList.remove('tl-playing');
     }
     FM.registerMode('timeline', {
-        label: 'Timeline',
+        label: I.t('map.timeline'),
         enter: enter, leave: leave,
         urlState: function () {
             var b = T.beats[T.index];

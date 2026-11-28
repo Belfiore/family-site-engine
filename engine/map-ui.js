@@ -4,6 +4,8 @@
 (function () {
     'use strict';
     var FM = window.FM = window.FM || {};
+    var I = window.FamilyI18n;
+    I.apply();      // the words already in the page, in the visitor's language
     // site settings: map keys, home region, historic maps, families (window.FamilySite, from site.config.json)
     var SITE = window.FamilySite || {}, MAPC = SITE.map || {}, PAGES = SITE.pages || {};
     // read each time, so a key set or cleared after the page loads takes effect
@@ -57,44 +59,44 @@
     function lifeYears(p) {
         var b = p.birth && (p.birth.date || '').slice(0, 4), d = p.death && (p.death.date || '').slice(0, 4);
         if (!b && !d) return '';
-        return (b ? (p.birth.dateQualifier || /about|probably/i.test(p.birth.display || '') ? 'c. ' : '') + b : '?') + ' to ' + (d || '?');
+        var bs = b ? (p.birth.dateQualifier || /about|probably/i.test(p.birth.display || '') ? I.t('map.circaYear', { y: b }) : b) : '?';
+        return I.t('map.lifeSpan', { from: bs, to: d || '?' });
     }
-    function confLabel(c) { return c === 'family tradition' ? 'Family statement' : c === 'confirmed' ? 'Confirmed' : c === 'probable' ? 'Probable' : (c || ''); }
+    function confLabel(c) { return c === 'family tradition' ? I.t('map.conf.family') : c === 'confirmed' ? I.t('map.conf.confirmed') : c === 'probable' ? I.t('map.conf.probable') : (c || ''); }
     function confClass(c) { return c === 'confirmed' ? 'c-conf' : c === 'probable' ? 'c-prob' : 'c-fam'; }
     function placeLL(pl) { return [pl.lng, pl.lat]; }
     function personName(id) { var p = DATA.people[id]; return p ? p.displayName : id; }
-    var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     function fmtISO(iso, prec) {
         if (!iso) return '';
         var p = String(iso).split('-'), m = +p[1], d = +p[2];
-        if (prec === 'day' && d) return d + ' ' + MONTHS[m - 1] + ' ' + p[0];
-        if (prec === 'month' && m) return MONTHS[m - 1] + ' ' + p[0];
+        if (prec === 'day' && d) return I.dateParts(+p[0], m, d);
+        if (prec === 'month' && m) return I.dateParts(+p[0], m, 0);
         return p[0];
     }
     // the date as the site records it, without the place or age words that
     // some recorded dates carry ("10 May 1895, Edgbaston, aged 64" reads "10 May 1895")
     function dateLabel(e) {
         if (!e.dateStart) {
-            if (e.voyageEnd === 'arrival') return 'Arrival date not recorded';
-            if (e.voyageEnd === 'departure') return 'Sailing date not recorded';
-            return 'Date unknown';
+            if (e.voyageEnd === 'arrival') return I.t('map.dateArrivalNone');
+            if (e.voyageEnd === 'departure') return I.t('map.dateSailingNone');
+            return I.t('map.dateUnknown');
         }
         var d = String(e.date || '').replace(/\s*\(family\)/i, '').trim();
         if (d && !e.isVoyage) {
             var out = d.split(/,\s*/).filter(function (x, i) { return i === 0 || (/\b\d{4}\b/.test(x) && !/^(as\s+)?aged\b|^under\b/i.test(x)); }).join(', ');
             if (e.type === 'baptised') out = out.replace(/^(probably\s+|about\s+)?baptised\s+/i, '$1');
-            if (/\d{4}|\d0s\b/.test(out) && out.length <= 44) return out;
+            if (/\d{4}|\d0s\b/.test(out) && out.length <= 44) return I.localizeDisplay(out);
         }
         var prec = e.datePrecision === 'day' || e.datePrecision === 'month' ? e.datePrecision : 'year';
         var label = fmtISO(e.dateStart, prec);
-        if (e.isVoyage && e.dateEnd && e.dateEnd !== e.dateStart) label += ' to ' + fmtISO(e.dateEnd, prec);
-        return (e.approximate && !e.isVoyage ? 'about ' : '') + label;
+        if (e.isVoyage && e.dateEnd && e.dateEnd !== e.dateStart) label += ' ' + I.t('q.to') + ' ' + fmtISO(e.dateEnd, prec);
+        return (e.approximate && !e.isVoyage ? I.t('q.about') + ' ' : '') + label;
     }
     function spanOf(evs) {
         var ys = []; evs.forEach(function (e) { if (e.dateStart) { ys.push(yearOf(e.dateStart)); ys.push(yearOf(e.dateEnd)); } });
-        if (!ys.length) return 'Date unknown';
+        if (!ys.length) return I.t('map.dateUnknown');
         var a = Math.min.apply(null, ys), b = Math.max.apply(null, ys);
-        return a === b ? String(a) : a + ' to ' + b;
+        return a === b ? String(a) : a + ' ' + I.t('q.to') + ' ' + b;
     }
     function headline(e) { return FM.data.headline(e, DATA.people, DATA.places); }
     // what a place is, in a few words: its main event, and how many more
@@ -104,11 +106,11 @@
         return { text: seen[0] || '', more: Math.max(0, seen.length - 1), all: seen };
     }
     function approxLine(pl) {
-        if (pl.drawAs === 'area') return 'Somewhere in ' + (/^(the|a)\s/i.test(pl.name) ? '' : pl.kind === 'registration district' || pl.kind === 'district' || pl.kind === 'parish' ? 'the ' : '') + pl.name + '. The exact place is not known, so the pin marks the middle of the area.';
-        if (pl.drawAs === 'halo') return 'In this general area, within ' + metresText(pl.uncertaintyMetres) + ' of the pin. The exact house is not known.';
+        if (pl.drawAs === 'area') return I.t('map.approxArea', { name: !/^(the|a)\s/i.test(pl.name) && (pl.kind === 'registration district' || pl.kind === 'district' || pl.kind === 'parish') ? I.t('map.theArea', { name: pl.name }) : pl.name });
+        if (pl.drawAs === 'halo') return I.t('map.approxHalo', { distance: metresText(pl.uncertaintyMetres) });
         return '';
     }
-    function metresText(m) { return m >= 1500 ? 'about ' + Math.round(m / 1000) + ' km' : 'about ' + Math.round(m / 10) * 10 + ' metres'; }
+    function metresText(m) { return m >= 1500 ? I.t('map.aboutKm', { n: Math.round(m / 1000) }) : I.t('map.aboutM', { n: Math.round(m / 10) * 10 }); }
 
     // ================================================================== filters and scope
     function scopeIds() {
@@ -126,7 +128,7 @@
     }
     // ---- family: the families in map.families ([{ id, label, roots }]), back a chosen number of generations
     var FAMILIES = {}; (MAPC.families || []).forEach(function (f) { FAMILIES[f.id] = f; });
-    var GENS = [[1, 'Parents'], [2, 'Grandparents'], [3, 'Great-grandparents'], [4, '2x great-grandparents'], [5, '3x great-grandparents'], [0, 'Every generation']];
+    var GENS = [1, 2, 3, 4, 5, 0].map(function (n) { return [n, I.t('map.gen.' + n), I.t('map.genChip.' + n)]; });
     var famCache = { key: null, set: null };
     function refIds(list) { return (list || []).map(function (r) { return typeof r === 'string' ? r : r && r.id; }).filter(function (id) { return id && DATA.people[id]; }); }
     function familySet() {
@@ -178,12 +180,12 @@
         });
     }
     var EDITIONS = [
-        { id: 'uk-osgb63k1885', name: 'Ordnance Survey one-inch, 1885 to 1900', from: 0, to: 1887, note: 'the earliest edition available here' },
-        { id: 'uk-oslondon1k1893', name: 'Ordnance Survey London five-foot, 1893 to 1896', from: 1888, to: 1905, london: true },
-        { id: 'uk-osgb10k1888', name: 'Ordnance Survey six-inch, 1888 to 1913', from: 1888, to: 1918 },
-        { id: 'uk-osgb1919', name: 'Ordnance Survey, 1919 to 1947', from: 1919, to: 1936 },
-        { id: 'uk-osgb25k1937', name: 'Ordnance Survey 1:25,000, 1937 to 1961', from: 1937, to: 1954 },
-        { id: 'uk-osgb63k1955', name: 'Ordnance Survey one-inch, 1955 to 1961', from: 1955, to: 3000 }
+        { id: 'uk-osgb63k1885', name: I.t('map.ed.osgb63k1885'), from: 0, to: 1887, note: I.t('map.ed.earliest') },
+        { id: 'uk-oslondon1k1893', name: I.t('map.ed.oslondon1k1893'), from: 1888, to: 1905, london: true },
+        { id: 'uk-osgb10k1888', name: I.t('map.ed.osgb10k1888'), from: 1888, to: 1918 },
+        { id: 'uk-osgb1919', name: I.t('map.ed.osgb1919'), from: 1919, to: 1936 },
+        { id: 'uk-osgb25k1937', name: I.t('map.ed.osgb25k1937'), from: 1937, to: 1954 },
+        { id: 'uk-osgb63k1955', name: I.t('map.ed.osgb63k1955'), from: 1955, to: 3000 }
     ];
     function editionFor(year, lngLat) {
         var y = year || 1900;
@@ -198,7 +200,7 @@
     FM.editionFor = editionFor;
     function nlsSource(ed) {
         return { type: 'raster', url: 'https://api.maptiler.com/tiles/' + ed.id + '/tiles.json?key=' + encodeURIComponent(CFG.MAPTILER_KEY), tileSize: 256,
-                 attribution: '<a href="https://maps.nls.uk/projects/subscription-api/" target="_blank" rel="noopener">National Library of Scotland</a> historic maps via <a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">MapTiler</a>' };
+                 attribution: I.t('map.nlsAttrib', { nls: '<a href="https://maps.nls.uk/projects/subscription-api/" target="_blank" rel="noopener">National Library of Scotland</a>', maptiler: '<a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">MapTiler</a>' }) };
     }
     function styleFor(name, ctx) {
         if (name === 'today') return styleState.failed ? loadStyleJson('fallback') : Promise.resolve('https://tiles.openfreemap.org/styles/liberty');
@@ -228,7 +230,7 @@
         if (S.compare && name !== 'then') setCompare(false);
         if ((name === 'then') && !CFG.MAPTILER_KEY) {
             // without a key the map stays as it is, rather than jumping to another style
-            note('The old maps are not switched on yet: they need a free MapTiler key in config.js.');
+            note(I.t('map.noOldMaps'));
             renderStyleSwitch();
             return Promise.resolve();
         }
@@ -245,7 +247,7 @@
         var el = $('edition');
         if (!ed) { el.hidden = true; return; }
         el.hidden = false;
-        el.innerHTML = '<strong>' + esc(ed.name) + '</strong>' + (ed.note ? ' (' + esc(ed.note) + ')' : '') + '<br>Map: <a href="https://maps.nls.uk/" target="_blank" rel="noopener">National Library of Scotland</a>, CC BY';
+        el.innerHTML = '<strong>' + esc(ed.name) + '</strong>' + (ed.note ? ' (' + esc(ed.note) + ')' : '') + '<br>' + I.t('map.mapCredit', { link: '<a href="https://maps.nls.uk/" target="_blank" rel="noopener">National Library of Scotland</a>' });
     }
     FM.setThenEdition = function (year, lngLat) {
         if (S.style !== 'then' || !CFG.MAPTILER_KEY || !map) return;
@@ -270,10 +272,10 @@
     function renderStyleSwitch() {
         if ($('satBtn')) renderSatBtn();
         var box = $('styleSwitch');
-        var opts = [['today', 'Today'], ['atlas', 'Atlas']].concat(HISTORIC ? [['then', 'Then']] : []);
+        var opts = [['today', I.t('map.today')], ['atlas', I.t('map.styleAtlas')]].concat(HISTORIC ? [['then', I.t('map.then')]] : []);
         box.innerHTML = opts.map(function (o) {
             return '<button type="button" role="radio" aria-checked="' + (S.style === o[0]) + '" data-style="' + o[0] + '"' +
-                (o[0] === 'then' && !CFG.MAPTILER_KEY ? ' title="Needs a MapTiler key in the site settings"' : '') + '>' + o[1] + '</button>';
+                (o[0] === 'then' && !CFG.MAPTILER_KEY ? ' title="' + esc(I.t('map.needsKey')) + '"' : '') + '>' + o[1] + '</button>';
         }).join('');
     }
 
@@ -298,17 +300,17 @@
         var want = S.sat && S.style !== 'then' && !!CFG.MAPTILER_KEY;
         if (!want) { if (map.getLayer('fm-sat')) map.removeLayer('fm-sat'); return; }
         if (!map.getSource('fm-sat')) map.addSource('fm-sat', { type: 'raster', url: 'https://api.maptiler.com/tiles/satellite-v2/tiles.json?key=' + encodeURIComponent(CFG.MAPTILER_KEY), tileSize: 256,
-            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">MapTiler</a> satellite' });
+            attribution: I.t('map.satAttrib', { maptiler: '<a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">MapTiler</a>' }) });
         if (!map.getLayer('fm-sat')) map.addLayer({ id: 'fm-sat', type: 'raster', source: 'fm-sat', paint: { 'raster-fade-duration': 200 } }, ['fm-area-fill', 'fm-area-line', 'fm-halo', 'fm-trails'].filter(function (id) { return map.getLayer(id); })[0] || firstSymbolLayer());
     }
     function setSat(on, quiet) {
-        if (on && !CFG.MAPTILER_KEY) { note('Satellite needs a MapTiler key in the site settings.'); on = false; }
+        if (on && !CFG.MAPTILER_KEY) { note(I.t('map.satNeedsKey')); on = false; }
         S.sat = !!on;
         $('satBtn').setAttribute('aria-pressed', S.sat ? 'true' : 'false');
         applySat();
-        if (!quiet) { writeURL(); announce(S.sat ? 'Satellite view on.' : 'Satellite view off.'); }
+        if (!quiet) { writeURL(); announce(I.t(S.sat ? 'map.satOn' : 'map.satOff')); }
     }
-    function renderSatBtn() { $('satBtn').disabled = S.style === 'then'; $('satBtn').title = S.style === 'then' ? 'Satellite works with Today and Atlas' : 'Show the photograph from above under today\'s map'; $('satBtn').setAttribute('aria-pressed', S.sat ? 'true' : 'false'); }
+    function renderSatBtn() { $('satBtn').disabled = S.style === 'then'; $('satBtn').title = S.style === 'then' ? I.t('map.satWorksWith') : I.t('map.satTitle'); $('satBtn').setAttribute('aria-pressed', S.sat ? 'true' : 'false'); }
     // shop, bus-stop and other point-of-interest icons only clutter a family map
     function hidePois(m) {
         var st = m && m.getStyle(); if (!st) return;
@@ -470,8 +472,9 @@
             var tlFut = members.every(function (m) { return m.tl && m.tl.future; });
             return {
                 anchor: 'center', cls: 'mk--cluster' + (allFaded ? ' is-faded' : '') + (anyOrk ? ' is-orkney' : '') + (allAsc ? ' is-associate' : '') + (tlCur ? ' is-current' : '') + (tlPast ? ' is-past' : '') + (tlFut ? ' is-future' : ''),
-                inner: '<span class="mk-c"><span class="mk-n">' + members.length + '</span><span class="mk-sub">places</span></span>',
-                label: members.length + ' places close together, ' + n + ' events: ' + members.map(function (m) { return placeHeadline(m.events).text + ', ' + m.place.name; }).slice(0, 6).join('; ') + (members.length > 6 ? '; and more' : '') + '. Press Enter to zoom in.'
+                inner: '<span class="mk-c"><span class="mk-n">' + members.length + '</span><span class="mk-sub">' + esc(I.t('map.placesWord')) + '</span></span>',
+                label: I.t('map.clusterLabel', { places: I.n('map.nPlaces', members.length), events: I.n('map.nEvents', n),
+                    list: members.map(function (m) { return placeHeadline(m.events).text + ', ' + m.place.name; }).slice(0, 6).join('; '), more: members.length > 6 ? I.t('map.andMoreSemi') : '' })
             };
         }
         var m = members[0], pl = m.place;
@@ -482,13 +485,14 @@
         var hd = placeHeadline(m.events);
         var shape = '<span class="mk-pin"><svg class="mk-pin-bg" viewBox="0 0 30 40" aria-hidden="true"><path d="M15 39C15 39 3 24.5 3 15a12 12 0 0 1 24 0c0 9.5-12 24-12 24z"/></svg>' + glyph(m.head, 'mk-gl') + '</span>';
         var tag = '<span class="mk-label" aria-hidden="true">' + esc(hd.text) + (hd.more ? ' <i>+' + hd.more + '</i>' : '') + '</span>';
-        var label = hd.text + (hd.more ? ' and ' + hd.more + ' more' : '') + ', ' + pl.name + ', ' + spanOf(m.events) +
-                    (approx ? '. Somewhere in this area, not an exact address' : '') + (m.orkney ? '. No proven link to this family' : '') + (m.associate ? '. ' + DATA.associateLabel + ', ' + DATA.associateNote.toLowerCase() : '') + '.';
+        var label = hd.text + (hd.more ? ' ' + I.t('map.andMore', { n: hd.more }) : '') + ', ' + pl.name + ', ' + spanOf(m.events) +
+                    (approx ? I.t('map.ariaApprox') : '') + (m.orkney ? '. ' + I.t('map.noProven') : '') + (m.associate ? '. ' + DATA.associateLabel + ', ' + DATA.associateNote.toLowerCase() : '') + '.';
         return { anchor: 'bottom', cls: cls, inner: shape + count + tag, label: label };
     }
     // the area chip's label: the name before its first comma, never cut mid-word
     function shortName(pl) {
-        var n = String(pl.name).replace(/\s*registration district$/i, ' district').split(',')[0].trim();
+        var reg = /\s*registration district$/i, raw = String(pl.name);
+        var n = (reg.test(raw) ? I.t('map.district', { name: raw.replace(reg, '') }) : raw).split(',')[0].trim();
         if (n.length <= 26) return n;
         var cut = n.slice(0, 26), sp = cut.lastIndexOf(' ');
         return (sp > 10 ? cut.slice(0, sp) : cut) + '\u2026';
@@ -551,18 +555,18 @@
         var pk = $('peek');
         peekFor = mk.key;
         if (mk.members.length > 1) {
-            pk.innerHTML = '<p class="pk-kicker">' + mk.members.length + ' places here</p><ul class="pk-choose">' + mk.members.map(function (m) {
+            pk.innerHTML = '<p class="pk-kicker">' + esc(I.t('map.placesHere', { n: mk.members.length })) + '</p><ul class="pk-choose">' + mk.members.map(function (m) {
                 var hd = placeHeadline(m.events);
-                return '<li><button type="button" data-open-place="' + esc(m.place.id) + '">' + glyph(m.head) + '<span>' + esc(hd.text) + (hd.more ? ' <em>and ' + hd.more + ' more</em>' : '') +
-                    '</span><small>' + esc(m.place.name) + ', ' + esc(spanOf(m.events)) + (m.place.drawAs !== 'pin' ? ', somewhere in the area' : '') + '</small></button></li>';
-            }).join('') + '</ul>' + (opts.chooser ? '' : '<p class="pk-hint">Select one to open it, or the cluster to zoom in.</p>');
+                return '<li><button type="button" data-open-place="' + esc(m.place.id) + '">' + glyph(m.head) + '<span>' + esc(hd.text) + (hd.more ? ' <em>' + esc(I.t('map.andMore', { n: hd.more })) + '</em>' : '') +
+                    '</span><small>' + esc(m.place.name) + ', ' + esc(spanOf(m.events)) + (m.place.drawAs !== 'pin' ? esc(I.t('map.somewhereInArea')) : '') + '</small></button></li>';
+            }).join('') + '</ul>' + (opts.chooser ? '' : '<p class="pk-hint">' + esc(I.t('map.pkHint')) + '</p>');
             setAreaFocus(null);
         } else {
             var m = mk.members[0], pl = m.place;
             var hd = placeHeadline(m.events);
             var rows = m.events.slice(0, 4).map(function (e) {
                 return '<li>' + glyph(e.type) + '<span>' + esc(headline(e)) + '</span><small>' + esc(dateLabel(e)) + '</small></li>';
-            }).join('') + (m.events.length > 4 ? '<li class="pk-ev-more">and ' + (m.events.length - 4) + ' more</li>' : '');
+            }).join('') + (m.events.length > 4 ? '<li class="pk-ev-more">' + esc(I.t('map.andMore', { n: m.events.length - 4 })) + '</li>' : '');
             var approx = approxLine(pl);
             pk.innerHTML =
                 '<p class="pk-kicker">' + esc(kindLabel(pl)) + ' · ' + esc(spanOf(m.events)) + '</p>' +
@@ -570,9 +574,9 @@
                 '<p class="pk-where">' + esc(pl.name) + '</p>' +
                 (approx ? '<p class="pk-approx">' + esc(approx) + '</p>' : '') +
                 (m.events.length > 1 ? '<ul class="pk-evs">' + rows + '</ul>' : '<p class="pk-line">' + esc(m.events[0].summary) + '</p>') +
-                (m.orkney ? '<p class="pk-badges"><span class="badge badge--npl">No proven link</span></p>' : '') +
+                (m.orkney ? '<p class="pk-badges"><span class="badge badge--npl">' + esc(I.t('map.noProvenShort')) + '</span></p>' : '') +
                 (m.associate ? '<p class="pk-badges"><span class="badge badge--assoc">' + esc(DATA.associateLabel) + '. ' + esc(DATA.associateNote) + '</span></p>' : '') +
-                '<div class="pk-actions"><button type="button" class="fm-btn fm-btn--sm" data-open-place="' + esc(pl.id) + '">Open</button>' + (pl.streetView ? FM.sv.button(pl, { small: true }) : '') + '</div>';
+                '<div class="pk-actions"><button type="button" class="fm-btn fm-btn--sm" data-open-place="' + esc(pl.id) + '">' + esc(I.t('map.open')) + '</button>' + (pl.streetView ? FM.sv.button(pl, { small: true }) : '') + '</div>';
             setAreaFocus(pl.drawAs !== 'pin' ? pl.id : null);
         }
         pk.hidden = false;
@@ -591,10 +595,8 @@
         pk.classList.toggle('is-below', above < 8);
     }
     function kindLabel(pl) {
-        var k = { 'home': 'Home', 'church': 'Church', 'cemetery': 'Cemetery', 'studio': "Photographer's studio", 'workplace': 'Workplace', 'hospital': 'Hospital',
-                  'military site': 'Military', 'port': 'Port', 'venue': 'Place', 'parish': 'Parish', 'registration district': 'Registration district', 'district': 'District',
-                  'town': 'Town', 'county': 'County', 'country': 'Country', 'farm': 'Farm' }[pl.kind] || 'Place';
-        return k;
+        var key = 'map.kind.' + String(pl.kind || '').replace(/\W/g, '');
+        return I.t(I.has(key) ? key : 'map.kind.other');
     }
 
     // ================================================================== panel (levels 2 and 3)
@@ -656,7 +658,7 @@
         if (!evs.length) evs = DATA.placeEvents[pid] || [];
         evs = evs.slice().sort(lifeOrder);
         var sm = placeSummary(pid, evs);
-        var parts = [{ label: 'Map', act: 'map' }];
+        var parts = [{ label: I.t('map.crumbMap'), act: 'map' }];
         if (S.person && DATA.people[S.person]) parts.push({ label: DATA.people[S.person].displayName, act: 'person', id: S.person });
         parts.push({ label: pl.name, act: 'place', id: pid });
         openPanel(placeHTML(pl, evs, sm), pl.name, parts);
@@ -668,7 +670,7 @@
         }
         if (S.style === 'then') FM.setThenEdition(yearOf(evs[0] && evs[0].dateStart), placeLL(pl));
         writeURL(opts.push);
-        announce(pl.name + ' opened. ' + evs.length + ' events.');
+        announce(I.t('map.placeOpened', { place: pl.name, events: I.n('map.nEvents', evs.length) }));
     }
     FM.openPlace = openPlace;
     function placeHTML(pl, evs, sm) {
@@ -677,21 +679,21 @@
         var crop = null; evs.some(function (e) { if (e.recordCrops && e.recordCrops.length) { crop = { file: 'images/records/' + e.recordCrops[0], caption: e.summary }; return true; } return false; });
         var then = '';
         if (img) hero = '<figure class="pn-hero"><a class="record-link" href="' + esc(img.file) + '"><img src="' + esc(img.thumb || img.file) + '" alt="' + esc(img.caption) + '" loading="lazy"></a><figcaption>' + esc(img.caption) + ' <span class="pn-credit">' + esc(img.credit) + ', ' + esc(img.year) + '</span></figcaption></figure>';
-        else if (crop) hero = '<figure class="pn-hero pn-hero--record"><a class="record-link" href="' + esc(crop.file) + '"><img src="' + esc(crop.file) + '" alt="' + esc(crop.caption) + '" loading="lazy"></a><figcaption>The record: ' + esc(crop.caption) + '</figcaption></figure>';
+        else if (crop) hero = '<figure class="pn-hero pn-hero--record"><a class="record-link" href="' + esc(crop.file) + '"><img src="' + esc(crop.file) + '" alt="' + esc(crop.caption) + '" loading="lazy"></a><figcaption>' + esc(I.t('map.theRecord', { text: crop.caption })) + '</figcaption></figure>';
         else hero = '<div class="pn-hero pn-hero--plate" aria-hidden="true">' + glyph(sm.head, 'pn-plate-gl') + '<span>' + esc(kindLabel(pl)) + '</span></div>';
         if (pl.streetView && CFG.GOOGLE_EMBED_KEY) {
             // today's street at the top; the old photo or record follows as "then"
-            if (img || crop) then = hero.replace('class="pn-hero', 'class="pn-then pn-hero').replace('<figcaption>', '<figcaption><span class="then-k">Then</span>');
-            hero = '<div class="pn-sv"><div class="pn-sv-frame"><iframe src="' + esc(FM.sv.embedUrl(pl)) + '" title="Street View of ' + esc(pl.name) + ' today" loading="lazy" referrerpolicy="no-referrer-when-downgrade" tabindex="-1"></iframe>' +
-                '<button type="button" class="pn-sv-open" data-sv="' + esc(pl.id) + '" aria-label="Open Street View of ' + esc(pl.name) + ' here in the map"><span class="pn-sv-hint">' + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Explore the street</span></button></div>' +
-                '<p class="pn-sv-cap"><span class="then-k">Today</span>' + esc(FM.sv.caption(pl)) + ' <a href="' + esc(FM.sv.mapsUrl(pl)) + '" target="_blank" rel="noopener">Open in a new tab</a></p></div>';
+            if (img || crop) then = hero.replace('class="pn-hero', 'class="pn-then pn-hero').replace('<figcaption>', '<figcaption><span class="then-k">' + esc(I.t('map.then')) + '</span>');
+            hero = '<div class="pn-sv"><div class="pn-sv-frame"><iframe src="' + esc(FM.sv.embedUrl(pl)) + '" title="' + esc(I.t('map.svTitleToday', { place: pl.name })) + '" loading="lazy" referrerpolicy="no-referrer-when-downgrade" tabindex="-1"></iframe>' +
+                '<button type="button" class="pn-sv-open" data-sv="' + esc(pl.id) + '" aria-label="' + esc(I.t('map.svOpenHere', { place: pl.name })) + '"><span class="pn-sv-hint">' + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>' + esc(I.t('map.exploreStreet')) + '</span></button></div>' +
+                '<p class="pn-sv-cap"><span class="then-k">' + esc(I.t('map.today')) + '</span>' + esc(FM.sv.caption(pl)) + ' <a href="' + esc(FM.sv.mapsUrl(pl)) + '" target="_blank" rel="noopener">' + esc(I.t('map.openNewTab')) + '</a></p></div>';
         }
-        var precision = pl.drawAs === 'area' ? (pl.kind === 'registration district' ? 'A registration district. Births, marriages and deaths here are "registered in the district", not at a known address, so the dashed pin marks the middle of the district and the shaded circle shows roughly how far it reaches.' : 'An area rather than an address: the dashed pin marks its middle and the shaded circle shows roughly how far it reaches.')
-                      : pl.drawAs === 'halo' ? 'Known to within ' + metresText(pl.uncertaintyMetres) + ', so the pin is dashed and the shaded circle shows where the house could be.'
-                      : 'A published address or named building.';
-        var sv = pl.streetView ? FM.sv.button(pl) : '<p class="pn-nosv">' + esc(pl.streetViewReason || 'No Street View for this place.') + '</p>';
-        var thenNow = '<div class="pn-tn" role="group" aria-label="Then and now"><button type="button" class="fm-btn fm-btn--sm" data-style-set="then"' + (CFG.MAPTILER_KEY && HISTORIC && !outsideHome(pl) ? '' : ' disabled title="' + (CFG.MAPTILER_KEY ? 'The old maps cover Great Britain only' : 'Needs a MapTiler key') + '"') + '>Then</button><button type="button" class="fm-btn fm-btn--sm" data-style-set="today">Today</button>' +
-                      (CFG.MAPTILER_KEY && HISTORIC && !outsideHome(pl) ? '<button type="button" class="fm-btn fm-btn--sm" data-compare="1">Swipe then and now</button>' : '') + '</div>';
+        var precision = pl.drawAs === 'area' ? I.t(pl.kind === 'registration district' ? 'map.prec.district' : 'map.prec.area')
+                      : pl.drawAs === 'halo' ? I.t('map.prec.halo', { distance: metresText(pl.uncertaintyMetres) })
+                      : I.t('map.prec.pin');
+        var sv = pl.streetView ? FM.sv.button(pl) : '<p class="pn-nosv">' + esc(pl.streetViewReason || I.t('map.noSv')) + '</p>';
+        var thenNow = '<div class="pn-tn" role="group" aria-label="' + esc(I.t('map.thenNowLabel')) + '"><button type="button" class="fm-btn fm-btn--sm" data-style-set="then"' + (CFG.MAPTILER_KEY && HISTORIC && !outsideHome(pl) ? '' : ' disabled title="' + esc(CFG.MAPTILER_KEY ? I.t('map.oldMapsGbOnly') : I.t('map.needsKeyShort')) + '"') + '>' + esc(I.t('map.then')) + '</button><button type="button" class="fm-btn fm-btn--sm" data-style-set="today">' + esc(I.t('map.today')) + '</button>' +
+                      (CFG.MAPTILER_KEY && HISTORIC && !outsideHome(pl) ? '<button type="button" class="fm-btn fm-btn--sm" data-compare="1">' + esc(I.t('map.compare')) + '</button>' : '') + '</div>';
         var today = todayText(pl, evs);
         var bomb = pl.id === '23-sutton-court-road' ? '<p class="pn-bomb">Henry George, Rosina and Sidney were killed here on 19 April 1941. <a href="http://bombsight.org/#17/51.52567/0.03349" target="_blank" rel="noopener">See the bomb census for this street on Bomb Sight</a> (October 1940 to June 1941).</p>' : '';
         var srcIds = []; evs.forEach(function (e) { e.sourceIds.forEach(function (s) { if (srcIds.indexOf(s) < 0) srcIds.push(s); }); });
@@ -699,26 +701,26 @@
         var num = {}; srcIds.forEach(function (s, i) { num[s] = i + 1; });
         var locIds = (pl.coordinateSourceIds || []).filter(function (s) { return DATA.sources[s]; });
         return '<article class="pn" data-place="' + esc(pl.id) + '">' + hero + then +
-            '<p class="pn-kicker">' + esc(kindLabel(pl)) + (sm.orkney ? ' · <span class="badge badge--npl">No proven link to this family</span>' : '') + (sm.associate ? ' · <span class="badge badge--assoc">' + esc(DATA.associateLabel) + '. ' + esc(DATA.associateNote) + '</span>' : '') + '</p>' +
+            '<p class="pn-kicker">' + esc(kindLabel(pl)) + (sm.orkney ? ' · <span class="badge badge--npl">' + esc(I.t('map.noProven')) + '</span>' : '') + (sm.associate ? ' · <span class="badge badge--assoc">' + esc(DATA.associateLabel) + '. ' + esc(DATA.associateNote) + '</span>' : '') + '</p>' +
             '<h2 class="pn-title" id="panelTitle" tabindex="-1">' + esc(pl.name) + '</h2>' +
-            ((pl.historicName && pl.historicName !== pl.name) || (pl.variants || []).length ? '<p class="pn-also">Also written ' + esc([pl.historicName].concat(pl.variants || []).filter(function (v) { return v && v !== pl.name; }).join('; ')) + '</p>' : '') +
+            ((pl.historicName && pl.historicName !== pl.name) || (pl.variants || []).length ? '<p class="pn-also">' + esc(I.t('map.alsoWritten', { names: [pl.historicName].concat(pl.variants || []).filter(function (v) { return v && v !== pl.name; }).join('; ') })) + '</p>' : '') +
             (pl.blurb ? '<p class="pn-blurb">' + esc(pl.blurb) + fn(pl.blurbSourceIds, num) + '</p>' : '') +
             '<p class="pn-prec">' + esc(precision) + '</p>' +
             '<div class="pn-actions">' + sv + thenNow + '</div>' +
-            '<h3 class="pn-h">At this place</h3><ol class="pn-events">' + evs.map(function (e) { return eventRow(e, num, { hidePlace: true }); }).join('') + '</ol>' +
-            '<h3 class="pn-h">What is here today</h3><p class="pn-today">' + esc(today) + '</p>' + bomb +
-            '<h3 class="pn-h">Sources</h3><ol class="pn-src">' + srcIds.map(function (s) { return srcItem(s, num[s]); }).join('') + '</ol>' +
-            (locIds.length || pl.coordinateMethod ? '<details class="pn-where"><summary>How it is placed on the map</summary><p>' + esc(pl.coordinateMethod || '') + '</p>' + (locIds.length ? '<ul>' + locIds.map(function (s) { return '<li>' + srcLine(s) + '</li>'; }).join('') + '</ul>' : '') + '</details>' : '') +
+            '<h3 class="pn-h">' + esc(I.t('map.atThisPlace')) + '</h3><ol class="pn-events">' + evs.map(function (e) { return eventRow(e, num, { hidePlace: true }); }).join('') + '</ol>' +
+            '<h3 class="pn-h">' + esc(I.t('map.hereToday')) + '</h3><p class="pn-today">' + esc(today) + '</p>' + bomb +
+            '<h3 class="pn-h">' + esc(I.t('map.sources')) + '</h3><ol class="pn-src">' + srcIds.map(function (s) { return srcItem(s, num[s]); }).join('') + '</ol>' +
+            (locIds.length || pl.coordinateMethod ? '<details class="pn-where"><summary>' + esc(I.t('map.howPlaced')) + '</summary><p>' + esc(pl.coordinateMethod || '') + '</p>' + (locIds.length ? '<ul>' + locIds.map(function (s) { return '<li>' + srcLine(s) + '</li>'; }).join('') + '</ul>' : '') + '</details>' : '') +
             '</article>';
     }
     function todayText(pl, evs) {
         var st = pl.standsToday;
         if (pl.todayNote) return pl.todayNote;
-        if (st === 'yes' || st === 'standing') return 'The building still stands.';
-        if (st === 'rebuilt') return 'Rebuilt: the building here today is not the one the family knew.';
-        if (st === 'demolished' || st === 'gone') return 'The building has gone.';
-        if (pl.drawAs === 'area') return 'An area rather than a building; use the Then and Today maps to look around.';
-        return 'Not yet checked: whether the building the family knew still stands has not been confirmed against the old maps.';
+        if (st === 'yes' || st === 'standing') return I.t('map.td.stands');
+        if (st === 'rebuilt') return I.t('map.td.rebuilt');
+        if (st === 'demolished' || st === 'gone') return I.t('map.td.gone');
+        if (pl.drawAs === 'area') return I.t('map.td.area');
+        return I.t('map.td.unchecked');
     }
     function fn(ids, num) {
         var l = (ids || []).filter(function (s) { return num[s]; }).map(function (s) { return '<a href="#fm-src-' + num[s] + '" class="fn" data-fn="' + num[s] + '">' + num[s] + '</a>'; });
@@ -726,12 +728,15 @@
     }
     function srcLine(s) {
         var x = DATA.sources[s] || { title: s };
-        return '<strong>' + esc(x.title) + '</strong>' + (x.repository ? '. ' + esc(x.repository) : '') + (x.url ? ' <a href="' + esc(x.url) + '" target="_blank" rel="noopener">Open</a>' : '');
+        return '<strong>' + esc(x.title) + '</strong>' + (x.repository ? '. ' + esc(x.repository) : '') + (x.url ? ' <a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(I.t('map.open')) + '</a>' : '');
     }
     function srcItem(s, n) {
         var x = DATA.sources[s] || { title: s };
         return '<li id="fm-src-' + n + '">' + srcLine(s) + (x.note ? '<span class="pn-src-note">' + esc(x.note) + '</span>' : '') + '</li>';
     }
+    // " (family)" after a statement the family made and no record has confirmed
+    function famMark(e) { return e.familyStatement && !/\(family|\(Familien/.test(e.summary) ? I.t('map.familySuffix') : ''; }
+    FM.famMark = famMark;
     function eventRow(e, num, opts) {
         opts = opts || {};
         var pl = DATA.places[e.placeId];
@@ -741,7 +746,7 @@
         return '<li class="ev ev--' + esc(e.type.replace(/\s+/g, '-')) + (e.familyStatement ? ' is-family' : '') + (e.orkney ? ' is-orkney' : '') + (e.associate ? ' is-associate' : '') + '" data-event="' + esc(e.id) + '">' +
             '<span class="ev-gl" title="' + esc(FM.data.TYPE_LABEL[e.type]) + '">' + glyph(e.type) + '</span>' +
             '<div class="ev-body"><p class="ev-date">' + esc(dateLabel(e)) + '</p>' +
-            '<p class="ev-text">' + esc(e.summary) + (e.familyStatement && !/\(family/.test(e.summary) ? ' (family)' : '') + (num ? fn(e.sourceIds, num) : '') + '</p>' +
+            '<p class="ev-text">' + esc(e.summary) + esc(famMark(e)) + (num ? fn(e.sourceIds, num) : '') + '</p>' +
             (opts.hidePlace || !pl ? '' : '<p class="ev-place"><button type="button" class="ev-plbtn" data-open-place="' + esc(pl.id) + '">' + esc(pl.name) + '</button></p>') +
             voyage + (people ? '<div class="ev-people">' + people + '</div>' : '') + (crops ? '<div class="ev-crops">' + crops + '</div>' : '') +
             (e.note ? '<p class="ev-note">' + esc(e.note) + '</p>' : '') + '</div></li>';
@@ -759,21 +764,21 @@
         var evs = (DATA.personEvents[id] || []).filter(function (e) { return !S.hidden[e.group]; }).slice().sort(lifeOrder);
         var placed = evs.filter(function (e) { return e.placeId; });
         var html = '<article class="pp">' +
-            '<div class="pp-head">' + avatar(p, 'av--lg') + '<div><p class="pn-kicker">' + (DATA.associate[id] ? '<span class="badge badge--assoc">' + esc(DATA.associateLabel) + '. ' + esc(DATA.associateNote) + '</span>' : DATA.orkney[id] ? '<span class="badge badge--npl">No proven link to this family</span>' : 'Person') + '</p>' +
+            '<div class="pp-head">' + avatar(p, 'av--lg') + '<div><p class="pn-kicker">' + (DATA.associate[id] ? '<span class="badge badge--assoc">' + esc(DATA.associateLabel) + '. ' + esc(DATA.associateNote) + '</span>' : DATA.orkney[id] ? '<span class="badge badge--npl">' + esc(I.t('map.noProven')) + '</span>' : esc(I.t('map.person'))) + '</p>' +
             '<h2 class="pn-title" id="panelTitle" tabindex="-1">' + esc(p.displayName) + '</h2>' + (p.disambiguator ? '<p class="pn-also">' + esc(p.disambiguator) + '</p>' : '') +
             '<p class="pp-years">' + esc(lifeYears(p)) + '</p></div></div>' +
             (p.summary ? '<p class="pn-blurb">' + esc(p.summary) + '</p>' : '') +
-            '<div class="pn-actions"><button type="button" class="fm-btn" data-play-person="' + esc(id) + '">' + '<svg viewBox="0 0 24 24" aria-hidden="true" class="i"><path d="M8 5l11 7-11 7z"/></svg> Play their life</button>' +
-            '<a class="fm-btn fm-btn--ghost" href="' + esc(TREE_PAGE) + '#/person/' + esc(id) + '">Full profile</a></div>' +
-            '<h3 class="pn-h">' + placed.length + ' events on the map</h3><ol class="pn-events pn-events--person">' + evs.map(function (e, i) {
+            '<div class="pn-actions"><button type="button" class="fm-btn" data-play-person="' + esc(id) + '">' + '<svg viewBox="0 0 24 24" aria-hidden="true" class="i"><path d="M8 5l11 7-11 7z"/></svg> ' + esc(I.t('map.playLife')) + '</button>' +
+            '<a class="fm-btn fm-btn--ghost" href="' + esc(TREE_PAGE) + '#/person/' + esc(id) + '">' + esc(I.t('map.fullProfile')) + '</a></div>' +
+            '<h3 class="pn-h">' + esc(I.n('map.eventsOnMap', placed.length)) + '</h3><ol class="pn-events pn-events--person">' + evs.map(function (e, i) {
                 var stop = e.placeId ? (placed.indexOf(e) + 1) : null;
-                return eventRow(e, null, { skipPerson: id }).replace('<span class="ev-gl"', (stop ? '<span class="ev-stop">' + stop + '</span>' : '<span class="ev-stop ev-stop--none" title="Not on the map">&middot;</span>') + '<span class="ev-gl"');
+                return eventRow(e, null, { skipPerson: id }).replace('<span class="ev-gl"', (stop ? '<span class="ev-stop">' + stop + '</span>' : '<span class="ev-stop ev-stop--none" title="' + esc(I.t('map.notOnMap')) + '">&middot;</span>') + '<span class="ev-gl"');
             }).join('') + '</ol></article>';
-        openPanel(html, p.displayName, [{ label: 'Map', act: 'map' }, { label: p.displayName, act: 'person', id: id }]);
+        openPanel(html, p.displayName, [{ label: I.t('map.crumbMap'), act: 'map' }, { label: p.displayName, act: 'person', id: id }]);
         drawPersonPath(id, placed);
         refreshOverlays();
         writeURL(opts.push !== false);
-        announce('Showing ' + p.displayName + ': ' + placed.length + ' events on the map.');
+        announce(I.t('map.showingPerson', { name: p.displayName, events: I.n('map.eventsOnMap', placed.length) }));
     }
     FM.openPerson = openPerson;
     function clearPersonPath() {
@@ -846,9 +851,9 @@
         $('types').innerHTML = FM.data.KEY_GROUPS.filter(function (g) { return counts[g.id]; }).map(function (g) {
             var on = !S.hidden[g.id];
             return '<li><button type="button" class="kt" aria-pressed="' + on + '" data-group="' + esc(g.id) + '">' + glyph(g.types[0], 'kt-gl') +
-                '<span class="kt-l">' + esc(g.label) + '</span><span class="kt-n" aria-label="' + counts[g.id] + ' events">' + counts[g.id] + '</span></button></li>';
+                '<span class="kt-l">' + esc(g.label) + '</span><span class="kt-n" aria-label="' + esc(I.n('map.nEvents', counts[g.id])) + '">' + counts[g.id] + '</span></button></li>';
         }).join('');
-        $('confKey').innerHTML = '<p class="fm-label">Pins</p><ul class="kc kc--prec"><li><span class="kc-pin"></span>A known address or building</li><li><span class="kc-pin kc-pin--approx"></span>Somewhere in this area: the exact place is not known</li></ul>';
+        $('confKey').innerHTML = '<p class="fm-label">' + esc(I.t('map.pins')) + '</p><ul class="kc kc--prec"><li><span class="kc-pin"></span>' + esc(I.t('map.pinKnown')) + '</li><li><span class="kc-pin kc-pin--approx"></span>' + esc(I.t('map.pinApprox')) + '</li></ul>';
     }
     function initYears() {
         var ys = [];
@@ -862,7 +867,7 @@
     }
     function showYears() {
         var a = +$('yearFrom').value, b = +$('yearTo').value;
-        $('yearsOut').textContent = (a === FM.yearBounds[0] && b === FM.yearBounds[1]) ? 'All years (undated events always shown, dashed)' : a + ' to ' + b;
+        $('yearsOut').textContent = (a === FM.yearBounds[0] && b === FM.yearBounds[1]) ? I.t('map.allYears') : a + ' ' + I.t('q.to') + ' ' + b;
     }
     function onYears() {
         var a = +$('yearFrom').value, b = +$('yearTo').value;
@@ -908,7 +913,7 @@
         peg.addEventListener('pointercancel', function (e) { end(e, true); });
         peg.addEventListener('click', function (e) {
             if (e.detail === 0) { dropPegman(map.getCenter()); return; } // keyboard
-            if (!e.defaultPrevented) note('Drag the little figure onto any street to see it in Street View.');
+            if (!e.defaultPrevented) note(I.t('map.dragFigure'));
         });
     }
     function setKeyCollapsed(on, quiet) {
@@ -917,7 +922,7 @@
         $('keyPill').setAttribute('aria-expanded', on ? 'false' : 'true');
         $('fm').classList.toggle('key-collapsed', on);
         try { localStorage.setItem('fm-key-collapsed', on ? '1' : '0'); } catch (e) {}
-        if (!quiet) { announce(on ? 'Key and filters hidden.' : 'Key and filters shown.'); if (map) updateMarkers(); }
+        if (!quiet) { announce(I.t(on ? 'map.keyHidden' : 'map.keyShown')); if (map) updateMarkers(); }
     }
     function renderFamily() {
         $('famSel').value = S.fam || '';
@@ -927,14 +932,14 @@
         var set = familySet();
         if (set) {
             var nPeople = Object.keys(set).length, nPlaces = Object.keys(DATA.placeEvents).filter(function (pid) { return visiblePlaceEvents(pid).length; }).length;
-            $('famCount').textContent = nPeople + (nPeople === 1 ? ' person, ' : ' people, ') + nPlaces + (nPlaces === 1 ? ' place' : ' places') + ' on the map.';
+            $('famCount').textContent = I.t('map.famCount', { people: I.n('map.nPeople', nPeople), places: I.n('map.nPlaces', nPlaces) });
         }
         var chip = $('famChip');
         chip.hidden = !S.fam;
         if (S.fam) {
             var g = GENS.filter(function (x) { return x[0] === S.gen; })[0];
-            chip.innerHTML = esc(FAMILIES[S.fam].label) + ': ' + esc(g ? g[1].toLowerCase() : '') + (S.sib ? ', with brothers and sisters' : '') + ' <span aria-hidden="true">&times;</span>';
-            chip.setAttribute('aria-label', 'Showing ' + FAMILIES[S.fam].label + '. Show everyone instead');
+            chip.innerHTML = esc(FAMILIES[S.fam].label) + ': ' + esc(g ? g[2] : '') + (S.sib ? esc(I.t('map.withSiblings')) : '') + ' <span aria-hidden="true">&times;</span>';
+            chip.setAttribute('aria-label', I.t('map.famAria', { label: FAMILIES[S.fam].label }));
         }
     }
     function setFamily(fam, gen, sib) {
@@ -943,17 +948,18 @@
         renderFamily(); renderKey(); renderChips(); renderPersonBox(); refreshOverlays();
         if (FM.onFiltersChanged) FM.onFiltersChanged();
         writeURL();
-        announce(fam ? 'Showing ' + FAMILIES[fam].label + '.' : 'Showing everyone on the map.');
+        announce(fam ? I.t('map.showingFam', { label: FAMILIES[fam].label }) : I.t('map.showingAll'));
     }
     function renderChips() {
         var beyond = Object.keys(DATA.places).filter(function (pid) { var pl = DATA.places[pid]; return outsideHome(pl) && pl.lat != null && visiblePlaceEvents(pid).length; });
         var b = $('beyondBtn');
         b.hidden = !beyond.length || S.beyond;
-        b.textContent = 'Beyond ' + HOME.name + ': ' + beyond.length + (beyond.length === 1 ? ' place' : ' places');
+        b.textContent = I.t('map.beyond', { home: HOME.name, places: I.n('map.nPlaces', beyond.length) });
         b._places = beyond;
         $('backEngland').hidden = !S.beyond;
+        $('backEngland').textContent = MAPC.home && MAPC.home.name ? I.t('map.backTo', { place: MAPC.home.name }) : I.t('map.backHome');
         var nUn = DATA.unplaced.filter(function (u) { return eventPasses(u); }).length;
-        $('trayBtn').textContent = 'Not yet on the map: ' + nUn;
+        $('trayBtn').textContent = I.t('map.trayChip', { n: nUn });
         $('trayBtn').hidden = !nUn;
     }
     function frameEngland(duration) { fitTo(ENGLAND, cameraPadding(30), { duration: duration == null ? (reduced() ? 0 : 1100) : duration }); }
@@ -988,10 +994,10 @@
                 comboItems.push({ id: p.id, disabled: !n });
                 return '<li role="option" id="opt-' + esc(p.id) + '" data-idx="' + idx + '" aria-selected="false"' + (n ? '' : ' aria-disabled="true"') + ' class="lb-opt' + (n ? '' : ' is-off') + '">' +
                     avatar(p, 'av--sm') + '<span class="lb-t"><span class="lb-n">' + esc(p.displayName) + '</span><span class="lb-d">' + esc(p.disambiguator || lifeYears(p)) + '</span></span>' +
-                    '<span class="lb-c">' + (n ? n + (n === 1 ? ' place' : ' places') : 'no places yet') + '</span></li>';
+                    '<span class="lb-c">' + esc(n ? I.n('map.nPlaces', n) : I.t('map.noPlacesYet')) + '</span></li>';
             }).join('');
         }).join('');
-        $('personList').innerHTML = html || '<li class="lb-empty" role="presentation">No one by that name on the map.</li>';
+        $('personList').innerHTML = html || '<li class="lb-empty" role="presentation">' + esc(I.t('map.noOne')) + '</li>';
         comboActive = -1;
     }
     function openCombo() { renderPersonList($('personInput').value); $('personList').hidden = false; $('personInput').setAttribute('aria-expanded', 'true'); }
@@ -1011,7 +1017,7 @@
         S.scope = 'self';
         openPerson(it.id);
     }
-    var SCOPES = [['self', 'Just them'], ['spouse', 'With spouse'], ['family', 'Parents and children'], ['ancestors', 'All ancestors'], ['descendants', 'All descendants']];
+    var SCOPES = ['self', 'spouse', 'family', 'ancestors', 'descendants'].map(function (k) { return [k, I.t('map.scope.' + k)]; });
     function renderPersonBox() {
         var p = S.person && DATA.people[S.person];
         $('personInput').value = p ? p.displayName : '';
@@ -1027,7 +1033,7 @@
         if (!$('panel').hidden) closePanel({ silent: true });
         if (FM.onFiltersChanged) FM.onFiltersChanged();
         writeURL();
-        announce('Filters cleared.');
+        announce(I.t('map.filtersCleared'));
     }
 
     // ================================================================== Street View
@@ -1047,14 +1053,14 @@
         function embedUrl(t) {
             var v = viewOf(t);
             return 'https://www.google.com/maps/embed/v1/streetview?key=' + encodeURIComponent(CFG.GOOGLE_EMBED_KEY) + '&location=' + f(v.lat) + ',' + f(v.lng) +
-                (v.heading != null ? '&heading=' + Math.round(v.heading) : '') + '&pitch=' + Math.round(v.pitch) + '&fov=' + Math.round(v.fov) + '&language=en-GB';
+                (v.heading != null ? '&heading=' + Math.round(v.heading) : '') + '&pitch=' + Math.round(v.pitch) + '&fov=' + Math.round(v.fov) + '&language=' + I.t('map.svLanguage');
         }
         var ICON = glyph('streetview', 'sv-gl');
         function button(pl, opts) {
             opts = opts || {};
             var cls = 'sv-btn' + (opts.small ? ' sv-btn--sm' : '');
-            if (CFG.GOOGLE_EMBED_KEY) return '<button type="button" class="' + cls + '" data-sv="' + esc(pl.id) + '">' + ICON + '<span>Street View</span></button>';
-            return '<a class="' + cls + '" data-sv-link="' + esc(pl.id) + '" href="' + esc(mapsUrl(pl)) + '" target="_blank" rel="noopener" aria-label="Street View of ' + esc(pl.name) + ' (opens Google Maps in a new tab)">' + ICON + '<span>Street View</span></a>';
+            if (CFG.GOOGLE_EMBED_KEY) return '<button type="button" class="' + cls + '" data-sv="' + esc(pl.id) + '">' + ICON + '<span>' + esc(I.t('map.streetView')) + '</span></button>';
+            return '<a class="' + cls + '" data-sv-link="' + esc(pl.id) + '" href="' + esc(mapsUrl(pl)) + '" target="_blank" rel="noopener" aria-label="' + esc(I.t('map.svLinkAria', { place: pl.name })) + '">' + ICON + '<span>' + esc(I.t('map.streetView')) + '</span></a>';
         }
         function caption(pl) {
             var sv = pl.streetView || {};
@@ -1062,11 +1068,11 @@
             var ev = (DATA.placeEvents[pl.id] || [])[0];
             var why = pl.blurb || (ev ? ev.summary : '');
             var subj = sv.subject;
-            var lead = subj === 'original building' ? pl.name + ', today.' :
-                       subj === 'rebuilt on the site' ? pl.name + ' was rebuilt; what stands here today is not the building the family knew.' :
-                       subj === 'site only' ? 'The building that stood here has gone. This is the site today.' :
-                       'The street today. Whether the building the family knew still stands has not been checked.';
-            return lead + (why ? ' ' + why : '') + (sv.checked ? '' : ' (The viewpoint has not yet been checked by eye.)');
+            var lead = subj === 'original building' ? I.t('map.sv.original', { name: pl.name }) :
+                       subj === 'rebuilt on the site' ? I.t('map.sv.rebuilt', { name: pl.name }) :
+                       subj === 'site only' ? I.t('map.sv.siteOnly') :
+                       I.t('map.sv.street');
+            return lead + (why ? ' ' + why : '') + (sv.checked ? '' : I.t('map.sv.unchecked'));
         }
         // the title on the Street View card: the place's own title if it has one, otherwise who and what
         function svTitleFor(pl, evs) {
@@ -1075,7 +1081,7 @@
             var first = order[0] ? headline(order[0]) : pl.name;
             var second = order.filter(function (e) { return e.type !== (order[0] || {}).type; })[0];
             if (!second) return first;
-            var noun = headline(second).replace(/^.*'s?\s+/, '');
+            var noun = FM.data.nounOf(second, DATA.places[second.placeId]);
             return first + ' & ' + noun;
         }
         function thenOf(pl) {
@@ -1084,7 +1090,7 @@
             var evs = DATA.placeEvents[pl.id] || [];
             for (var i = 0; i < evs.length; i++) {
                 var c = (evs[i].recordCrops || [])[0];
-                if (c) return { file: 'images/records/' + c, thumb: 'images/records/' + c, alt: evs[i].summary, caption: 'The record: ' + evs[i].summary };
+                if (c) return { file: 'images/records/' + c, thumb: 'images/records/' + c, alt: evs[i].summary, caption: I.t('map.theRecord', { text: evs[i].summary }) };
             }
             return null;
         }
@@ -1096,16 +1102,16 @@
             resumeAfter = !!(FM.player && FM.player.playing);
             if (FM.player && FM.player.playing) FM.player.pause();
             var box = $('sv');
-            $('svTitle').textContent = pl.name ? 'Street View: ' + pl.name : 'Street View';
-            $('svTab').href = mapsUrl(pl); $('svTab').setAttribute('aria-label', 'Open Street View in Google Maps in a new tab');
-            $('svFrame').innerHTML = '<iframe title="Street View of ' + esc(pl.name || 'this spot') + '" src="' + esc(embedUrl(pl)) + '" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>';
-            $('svCap').textContent = pl.id ? caption(pl) : 'The street nearest where you dropped the figure. Drag to look around; the arrows walk along the street.';
+            $('svTitle').textContent = pl.name ? I.t('map.svTitleNamed', { name: pl.name }) : I.t('map.streetView');
+            $('svTab').href = mapsUrl(pl); $('svTab').setAttribute('aria-label', I.t('map.svOpenGoogle'));
+            $('svFrame').innerHTML = '<iframe title="' + esc(I.t('map.svTitleOf', { place: pl.name || I.t('map.thisSpot') })) + '" src="' + esc(embedUrl(pl)) + '" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>';
+            $('svCap').textContent = pl.id ? caption(pl) : I.t('map.svDropped');
             var evs = pl.id ? (DATA.placeEvents[pl.id] || []) : [];
-            $('svHead').textContent = pl.id ? svTitleFor(pl, evs) : 'Street View';
-            $('svKicker').textContent = pl.id ? pl.name + (evs.length ? ' \u00b7 ' + spanOf(evs) : '') : 'Wherever you dropped the figure';
+            $('svHead').textContent = pl.id ? svTitleFor(pl, evs) : I.t('map.streetView');
+            $('svKicker').textContent = pl.id ? pl.name + (evs.length ? ' \u00b7 ' + spanOf(evs) : '') : I.t('map.svWherever');
             // then and now: the place's old photo or record sits over the corner of today's view
             var then = pl.id ? thenOf(pl) : null;
-            $('svThen').innerHTML = then ? '<a class="record-link" href="' + esc(then.file) + '"><img src="' + esc(then.thumb) + '" alt="' + esc(then.alt) + '" loading="lazy"></a><figcaption><span class="then-k">Then</span>' + esc(then.caption) + '</figcaption>' : '';
+            $('svThen').innerHTML = then ? '<a class="record-link" href="' + esc(then.file) + '"><img src="' + esc(then.thumb) + '" alt="' + esc(then.alt) + '" loading="lazy"></a><figcaption><span class="then-k">' + esc(I.t('map.then')) + '</span>' + esc(then.caption) + '</figcaption>' : '';
             $('svThen').hidden = !then;
             box.hidden = false;
             document.body.classList.add('sv-open');
@@ -1136,7 +1142,7 @@
     // ================================================================== then and now
     function setCompare(on) {
         if (on && !HISTORIC) on = false;
-        if (on && !CFG.MAPTILER_KEY) { note('Then and now needs a free MapTiler key for the old maps, in the site settings.'); on = false; }
+        if (on && !CFG.MAPTILER_KEY) { note(I.t('map.compareNeedsKey')); on = false; }
         S.compare = on;
         $('compareBtn').setAttribute('aria-pressed', on ? 'true' : 'false');
         var wrap = $('compareWrap');
@@ -1150,7 +1156,7 @@
             }
             cmap.resize(); cmap.jumpTo({ center: map.getCenter(), zoom: map.getZoom() });
             setDivider(50);
-            $('cmpEdition').textContent = map.getStyle() && map.getStyle().metadata && map.getStyle().metadata.edition ? map.getStyle().metadata.edition.name : 'Then';
+            $('cmpEdition').textContent = map.getStyle() && map.getStyle().metadata && map.getStyle().metadata.edition ? map.getStyle().metadata.edition.name : I.t('map.then');
         }
         writeURL();
     }
@@ -1168,7 +1174,7 @@
             .sort(function (a, b) { return (a.evs[0].dateStart || '9') < (b.evs[0].dateStart || '9') ? -1 : 1; });
         $('listBody').innerHTML = '<ol class="lv">' + placesSorted.map(function (x) {
             return '<li class="lv-place"><h3><button type="button" class="lv-open" data-open-place="' + esc(x.pl.id) + '">' + esc(x.pl.name) + '</button></h3>' +
-                '<p class="lv-meta">' + esc(kindLabel(x.pl)) + '. ' + esc(x.pl.drawAs === 'area' ? 'An area.' : x.pl.drawAs === 'halo' ? 'Known to within ' + metresText(x.pl.uncertaintyMetres) + '.' : 'A known address or building.') + (x.pl.noProvenLink ? ' No proven link to this family.' : '') + '</p>' +
+                '<p class="lv-meta">' + esc(kindLabel(x.pl)) + '. ' + esc(x.pl.drawAs === 'area' ? I.t('map.lv.area') : x.pl.drawAs === 'halo' ? I.t('map.lv.halo', { distance: metresText(x.pl.uncertaintyMetres) }) : I.t('map.lv.pin')) + (x.pl.noProvenLink ? esc(' ' + I.t('map.noProven') + '.') : '') + '</p>' +
                 '<ol class="lv-events">' + x.evs.map(function (e) { return '<li><strong>' + esc(dateLabel(e)) + '</strong>, ' + esc(FM.data.TYPE_LABEL[e.type].toLowerCase()) + ': ' + esc(e.summary) + ' <span class="lv-people">(' + esc(e.personIds.map(personName).join(', ')) + ')</span></li>'; }).join('') + '</ol></li>';
         }).join('') + '</ol>';
         showSheet('listView', $('listOpen'));
@@ -1177,7 +1183,7 @@
         var items = DATA.unplaced.filter(function (u) { return eventPasses(u); }).sort(FM.data.byDate);
         $('trayList').innerHTML = items.map(function (u) {
             var p = DATA.people[u.personIds[0]];
-            return '<li><span class="ev-gl">' + glyph(u.type) + '</span><div><p class="ev-date">' + esc(dateLabel(u)) + '</p><p class="ev-text">' + esc(p.displayName) + ': ' + esc(u.summary) + '</p><p class="ev-note">What would place it: ' + esc(u.what) + '</p></div></li>';
+            return '<li><span class="ev-gl">' + glyph(u.type) + '</span><div><p class="ev-date">' + esc(dateLabel(u)) + '</p><p class="ev-text">' + esc(p.displayName) + ': ' + esc(u.summary) + '</p><p class="ev-note">' + esc(I.t('map.whatWouldPlace', { what: u.what })) + '</p></div></li>';
         }).join('');
         showSheet('tray', $('trayBtn'));
     }
@@ -1270,13 +1276,13 @@
         if (modes[id].enter) modes[id].enter(opts.state || {});
         refreshOverlays();
         if (!opts.silent) writeURL(true);
-        announce(modes[id].label + ' mode.');
+        announce(I.t('map.modeAnnounce', { label: modes[id].label }));
     }
     FM.setMode = setMode;
     FM.state = S;
 
     registerMode('explore', {
-        label: 'Explore',
+        label: I.t('map.modeExplore'),
         enter: function () { hidePeek(); },
         leave: function () { hidePeek(); }
     });
@@ -1354,7 +1360,7 @@
             S.scope = b.dataset.scope; renderPersonBox(); refreshOverlays();
             if (FM.onFiltersChanged) FM.onFiltersChanged();
             writeURL();
-            var ids = scopeIds(); announce('Showing ' + Object.keys(ids || {}).length + ' people.');
+            var ids = scopeIds(); announce(I.t('map.showingPeople', { people: I.n('map.nPeople', Object.keys(ids || {}).length) }));
         });
         // delegated actions anywhere on the page
         document.addEventListener('click', function (e) {
@@ -1435,7 +1441,7 @@
             });
             map.touchZoomRotate.disableRotation();
             map.keyboard.disableRotation && map.keyboard.disableRotation();
-            map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: 'Family data: this site' }), 'bottom-right');
+            map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: I.t('map.attribution') }), 'bottom-right');
             FM.map = map;
             // fall back to the shipped style if the free tile service does not answer
             var gotTiles = false;
@@ -1445,7 +1451,7 @@
                 var msg = String((e && e.error && e.error.message) || '');
                 if (!styleState.failed && (src === 'openmaptiles' || /openfreemap|Failed to fetch|NetworkError|AJAXError/i.test(msg)) && (S.style === 'atlas' || S.style === 'today' || S.style === 'then') && !gotTiles) {
                     styleState.failed = true;
-                    note('The modern map is not loading, so a simpler map is shown. The family\'s places are all here.', 7000);
+                    note(I.t('map.modernMapDown'), 7000);
                     loadStyleJson('fallback').then(function (fb) {
                         if (S.style === 'then' && CFG.MAPTILER_KEY) styleFor('then', thenContext()).then(function (s2) { map.setStyle(s2); });
                         else map.setStyle(fb);
@@ -1455,7 +1461,7 @@
             setTimeout(function () {
                 if (!gotTiles && !styleState.failed && (S.style === 'atlas' || S.style === 'today')) {
                     styleState.failed = true;
-                    loadStyleJson('fallback').then(function (fb) { map.setStyle(fb); note('The modern map is slow to load, so a simpler map is shown.', 6000); });
+                    loadStyleJson('fallback').then(function (fb) { map.setStyle(fb); note(I.t('map.modernMapSlow'), 6000); });
                 }
             }, 8000);
             map.on('style.load', addOverlays);
@@ -1474,7 +1480,7 @@
             // zoom controls in the site's style
             var zc = document.createElement('div');
             zc.className = 'fm-zoom';
-            zc.innerHTML = '<button type="button" aria-label="Zoom in">+</button><button type="button" aria-label="Zoom out">&minus;</button><button type="button" aria-label="Show all of ' + esc(HOME.name) + '" class="fm-zoom-home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4.5l8 7M6 10v9.5h12V10"/></svg></button>';
+            zc.innerHTML = '<button type="button" aria-label="' + esc(I.t('map.zoomIn')) + '">+</button><button type="button" aria-label="' + esc(I.t('map.zoomOut')) + '">&minus;</button><button type="button" aria-label="' + esc(I.t('map.showAllOf', { home: HOME.name })) + '" class="fm-zoom-home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4.5l8 7M6 10v9.5h12V10"/></svg></button>';
             $('stage').appendChild(zc);
             zc.children[0].addEventListener('click', function () { map.zoomIn({ duration: reduced() ? 0 : 300 }); });
             zc.children[1].addEventListener('click', function () { map.zoomOut({ duration: reduced() ? 0 : 300 }); });
@@ -1482,8 +1488,8 @@
             // the little figure: drag it onto any street to see Street View there (Enter drops it in the middle of the map)
             var peg = document.createElement('button');
             peg.type = 'button'; peg.className = 'fm-peg'; peg.id = 'pegman';
-            peg.setAttribute('aria-label', 'Street View: drag the figure onto a street, or press Enter for the middle of the map');
-            peg.title = 'Drag onto a street for Street View';
+            peg.setAttribute('aria-label', I.t('map.pegAria'));
+            peg.title = I.t('map.pegTitle');
             peg.innerHTML = PEG_SVG;
             $('stage').appendChild(peg);
             bindPegman(peg);
@@ -1505,7 +1511,7 @@
             renderFamily(); renderKey(); initYears(); renderPersonBox(); bindUI();
             if (!hasWebGL() || !window.maplibregl) {
                 document.body.classList.add('no-webgl');
-                $('listHint').textContent = 'This device cannot draw the map, so here is every place and event as a list.';
+                $('listHint').textContent = I.t('map.noWebgl');
                 ready = true;
                 openList();
                 FM.ready = true;
@@ -1526,7 +1532,7 @@
             });
         }).catch(function (err) {
             console.error(err);
-            note('The map could not load its data. Please reload the page.', 20000);
+            note(I.t('map.loadFail'), 20000);
         });
     }
     FM.start = start;

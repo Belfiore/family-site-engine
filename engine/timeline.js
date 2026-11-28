@@ -1,3 +1,4 @@
+/* @i18n timeline */
 /* The Discovery Timeline page in the browser. The page arrives complete (the build wrote every find and every
  * day); this script adds what needs a visitor:
  *   - "N new finds since your last visit on 12 Nov", with the new finds marked, and a button to the first one;
@@ -9,6 +10,13 @@
  */
 (function () {
     'use strict';
+    var I = window.FamilyI18n;
+    I.apply();
+    // a site with more than one language has the page in each, kept in a <template>: swap in the one the visitor chose
+    if (I.lang !== I.default) {
+        var alt = document.getElementById('tl-lang-' + I.lang), cur = document.querySelector('.tl-root');
+        if (alt && cur) cur.parentNode.replaceChild(alt.content.cloneNode(true), cur);
+    }
     var root = document.querySelector('.tl-root');
     if (!root) return;
     document.documentElement.classList.add('tl-js');
@@ -51,6 +59,10 @@
         var d = new Date(t), now = new Date();
         var o = { day: 'numeric', month: 'short' };
         if (d.getFullYear() !== now.getFullYear()) o.year = 'numeric';
+        if (I.lang !== 'en') {         // the engine's own month names, so this reads like every other date on the site
+            var mm = d.getMonth() + 1, dd = d.getDate();
+            return d.getFullYear() !== now.getFullYear() ? I.dateParts(d.getFullYear(), mm, dd, { short: true }) : I.t('date.dm', { d: dd, month: I.month(mm, true) });
+        }
         try { return d.toLocaleDateString(lang, o); } catch (e) { return d.toDateString(); }
     }
     var fresh = [];
@@ -61,7 +73,7 @@
                 c.classList.add('is-new');
                 var tag = document.createElement('span');
                 tag.className = 'tl-new-tag';
-                tag.textContent = 'New';
+                tag.textContent = I.t('timeline.new');
                 var type = c.querySelector('.tl-type');
                 if (type) type.appendChild(tag);
                 fresh.push(c);
@@ -71,19 +83,18 @@
     var banner = document.getElementById('tlBanner');
     function showBanner() {
         if (!banner || !fresh.length) return;
-        document.getElementById('tlBannerText').textContent = fresh.length + ' new find' + (fresh.length === 1 ? '' : 's') + ' since your last visit on ' + shortDate(prevVisit) + '.';
+        document.getElementById('tlBannerText').textContent = I.n('timeline.banner', fresh.length, { date: shortDate(prevVisit) });
         banner.hidden = false;
     }
 
     // ---------------------------------------------------------------- filters and collapsed days
-    function join(xs) { return xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1]; }
     function summary(visible) {
-        var n = visible.length, base = n + ' new find' + (n === 1 ? '' : 's');
+        var n = visible.length, base = I.n('timeline.newFinds', n);
         var used = LINE_IDS.filter(function (id) { return visible.some(function (c) { return (c.getAttribute('data-lines') || '').split(' ').indexOf(id) >= 0; }); });
         var many = LINE_IDS.length > 1 && document.querySelector('.tl-chips[data-filter="line"]');
-        if (many && used.length >= 2) return base + ' across ' + join(used.map(function (id) { return LINES[id]; })) + '.';
-        if (many && used.length === 1) return base + ' in ' + LINES[used[0]] + '.';
-        return base + '.';
+        if (many && used.length >= 2) return I.t('timeline.summaryAcross', { count: base, lines: I.list(used.map(function (id) { return LINES[id]; })) });
+        if (many && used.length === 1) return I.t('timeline.summaryIn', { count: base, line: LINES[used[0]] });
+        return I.t('timeline.summaryPlain', { count: base });
     }
     function matches(c) {
         if (filters.type && c.getAttribute('data-type') !== filters.type) return false;
@@ -105,7 +116,7 @@
             vis.forEach(function (c, i) { c.classList.toggle('tl-extra', vis.length > OVER && i >= SHOWN); c.classList.toggle('is-folded', fold && i >= SHOWN); });
             if (more) {
                 more.hidden = vis.length <= OVER;
-                more.textContent = expanded[date] ? 'Show fewer' : 'Show all ' + vis.length + ' finds';
+                more.textContent = expanded[date] ? I.t('timeline.showFewer') : I.n('timeline.showAll', vis.length);
                 more.setAttribute('aria-expanded', expanded[date] ? 'true' : 'false');
             }
         });
