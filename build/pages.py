@@ -115,6 +115,12 @@ def visitor_head(cfg, ctx):
             '<script src="%svisitor.js"></script>' % ctx['base']]
 
 
+def basic_head(cfg, ctx, filename):
+    """The basic family password script (docs/basic-access.md), for the pages its scope covers. Nothing for a site without it."""
+    import basic_access
+    return basic_access.head(cfg, ctx, filename)
+
+
 def settings_scripts(ctx):
     return ['<script src="%s"></script>' % ctx['config'], '<script src="%snav.js" defer></script>' % ctx['base']]
 
@@ -156,6 +162,7 @@ def render_engine_page(kind, template, cfg, ctx, extra=None):
     head += ['<link rel="stylesheet" href="%s%s">' % (ctx['base'], c) for c in assets['css']]
     head += tail_css(cfg, ctx)
     head += visitor_head(cfg, ctx)
+    head += basic_head(cfg, ctx, page.get('file'))
     scripts = settings_scripts(ctx) + ['<script src="%s%s"></script>' % (ctx['base'], j) for j in assets['js']]
     if stuart_on(cfg) and cfg['widget'].get('enabled', True) and assets.get('widget'):
         scripts.append(widget_tag(ctx, assets['widget']))
@@ -235,7 +242,7 @@ def process_site_page(src, filename, cfg, ctx, widget_opts):
     # the head ends with Stuart's stylesheet, the theme and nav.css
     i = src.lower().rfind('</head>')
     if i >= 0:
-        src = src[:i] + '\n'.join(tail_css(cfg, ctx) + visitor_head(cfg, ctx)) + '\n' + src[i:]
+        src = src[:i] + '\n'.join(tail_css(cfg, ctx) + visitor_head(cfg, ctx) + basic_head(cfg, ctx, filename)) + '\n' + src[i:]
     # the body ends with the settings, the menu script and Stuart's button
     tail = settings_scripts(ctx)
     if widget_opts is not None:
