@@ -184,7 +184,7 @@ const json = (f, fn) => { const d = JSON.parse(fs.readFileSync(f, 'utf8')); fn(d
 
         // the other way: chosen on the tree page, there on the map
         await page.evaluate(() => { location.hash = ''; });
-        await page.selectOption('#viewpoint', 'susan-hartley');
+        await page.evaluate(() => { const v = document.getElementById('viewpoint'); v.value = 'susan-hartley'; v.dispatchEvent(new Event('change')); });   // the control can be hidden on a narrow screen
         await page.goto(URL + 'map.html', { waitUntil: 'load' });
         await mapReady(page);
         check(await page.$eval('#vpSel', s => s.value) === 'susan-hartley', 'a choice made on the tree page is the choice on the map');
