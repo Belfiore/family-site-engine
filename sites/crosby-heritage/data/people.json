@@ -1,0 +1,2668 @@
+{
+ "meta": {
+  "schemaVersion": 1,
+  "title": "Crosby, Magwire, Farr, Richardson, Pierce, Spaulding and Putnam",
+  "updated": "2026-11-27",
+  "confidenceScale": [
+   "confirmed",
+   "probable",
+   "family tradition",
+   "unverified"
+  ],
+  "note": "Built from the research files dated 2026-11-27. Living people have a name and a relationship only. Lead claims are not in this file."
+ },
+ "people": [
+  {
+   "id": "tracy-jo-magwire-crosby",
+   "displayName": "Tracy Jo (Magwire) Crosby",
+   "givenNames": "Tracy Jo",
+   "surname": "Crosby",
+   "sex": "F",
+   "generation": 4,
+   "isLiving": true,
+   "parents": [
+    "howard-frank-magwire",
+    "gwendolyn-farr-magwire"
+   ],
+   "children": [
+    "brittany-crosby",
+    "mitch-crosby",
+    "travis-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "richard-r-crosby",
+     "order": 1,
+     "confidence": "probable"
+    }
+   ],
+   "disambiguator": "Starting person; wife of Rick Crosby; mother of Brittany, Mitch and Travis",
+   "summary": "Starting person; wife of Rick Crosby; mother of Brittany, Mitch and Travis.",
+   "parentLinkConfidence": "probable"
+  },
+  {
+   "id": "richard-r-crosby",
+   "displayName": "Richard \"Rick\" R. Crosby",
+   "givenNames": "Richard R.",
+   "surname": "Crosby",
+   "sex": "M",
+   "generation": 4,
+   "isLiving": true,
+   "parents": [
+    "roy-e-crosby",
+    "dorothy-r-richardson-crosby"
+   ],
+   "children": [
+    "brittany-crosby",
+    "mitch-crosby",
+    "travis-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "tracy-jo-magwire-crosby",
+     "order": 1,
+     "confidence": "probable"
+    }
+   ],
+   "knownAs": "Rick",
+   "disambiguator": "Husband of Tracy; father of Brittany, Mitch and Travis",
+   "summary": "Husband of Tracy; father of Brittany, Mitch and Travis.",
+   "parentLinkConfidence": "probable"
+  },
+  {
+   "id": "brittany-crosby",
+   "displayName": "Brittany Crosby",
+   "givenNames": "Brittany",
+   "surname": "Crosby",
+   "sex": "F",
+   "generation": 5,
+   "isLiving": true,
+   "parents": [
+    "richard-r-crosby",
+    "tracy-jo-magwire-crosby"
+   ],
+   "children": [],
+   "spouses": [],
+   "order": 1,
+   "disambiguator": "Daughter of Rick and Tracy",
+   "summary": "Daughter of Rick and Tracy.",
+   "parentLinkConfidence": "probable"
+  },
+  {
+   "id": "mitch-crosby",
+   "displayName": "Mitch Crosby",
+   "givenNames": "Mitch",
+   "surname": "Crosby",
+   "sex": "M",
+   "generation": 5,
+   "isLiving": true,
+   "parents": [
+    "richard-r-crosby",
+    "tracy-jo-magwire-crosby"
+   ],
+   "children": [],
+   "spouses": [],
+   "order": 2,
+   "disambiguator": "Son of Rick and Tracy",
+   "summary": "Son of Rick and Tracy.",
+   "parentLinkConfidence": "probable"
+  },
+  {
+   "id": "travis-crosby",
+   "displayName": "Travis Crosby",
+   "givenNames": "Travis",
+   "surname": "Crosby",
+   "sex": "M",
+   "generation": 5,
+   "isLiving": true,
+   "parents": [
+    "richard-r-crosby",
+    "tracy-jo-magwire-crosby"
+   ],
+   "children": [],
+   "spouses": [],
+   "order": 3,
+   "disambiguator": "Son of Rick and Tracy",
+   "summary": "Son of Rick and Tracy.",
+   "parentLinkConfidence": "probable"
+  },
+  {
+   "id": "howard-frank-magwire",
+   "displayName": "Howard Frank Magwire",
+   "givenNames": "Howard Frank",
+   "surname": "Magwire",
+   "sex": "M",
+   "generation": 3,
+   "isLiving": false,
+   "parents": [
+    "frank-albert-magwire",
+    "alice-evadna-bates-magwire"
+   ],
+   "children": [
+    "tracy-jo-magwire-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "gwendolyn-farr-magwire",
+     "order": 1,
+     "marriageDate": "1961-01-07",
+     "marriageDisplay": "January 7, 1961",
+     "place": "Springfield, VT",
+     "confidence": "probable",
+     "sourceIds": [
+      "s01",
+      "s10",
+      "s13"
+     ],
+     "placeId": "springfield-vt"
+    }
+   ],
+   "order": 3,
+   "birth": {
+    "confidence": "confirmed",
+    "sourceIds": [
+     "s01",
+     "s10",
+     "s13"
+    ],
+    "date": "1919-01-01",
+    "display": "January 1, 1919",
+    "place": "Springfield, Windsor Co., Vermont",
+    "placeId": "springfield-vt"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s01",
+     "s10",
+     "s13"
+    ],
+    "date": "2014",
+    "display": "2014"
+   },
+   "burial": {
+    "place": "Oakland Cemetery, Springfield, VT (Sec. G, Tier 10, Lot 52)",
+    "confidence": "probable",
+    "sourceIds": [
+     "s01",
+     "s10",
+     "s13"
+    ],
+    "placeId": "springfield-vt"
+   },
+   "parentLinkConfidence": "confirmed",
+   "story": "Howard Frank Magwire was born on New Year's Day 1919 in Springfield, Vermont, one of twin boys born that morning to Frank A. Magwire and Alice (Bates) Magwire; his twin was Harold Charles. The town's own printed register of births for 1919 lists the two boys one above the other. Howard grew up in a family well known in Springfield: his father ran Magwire's Pharmacy in Springfield for thirty seven years. By 1967 Howard was living in West Springfield, Massachusetts. On January 7, 1961 he married Gwendolyn Farr in Springfield, Vermont, and their daughter Tracy married Rick Crosby. Gwendolyn died before him. Howard died in 2014 and was laid to rest in Oakland Cemetery in Springfield, beside his parents' lot. [^s01] [^s10] [^s13]",
+   "summary": "Howard Frank Magwire was born on New Year's Day 1919 in Springfield, Vermont, one of twin boys born that morning to Frank A.",
+   "relatedPages": [
+    {
+     "url": "magwire.html",
+     "title": "The Magwire line"
+    }
+   ],
+   "cardPlace": "Springfield",
+   "confidence": "probable",
+   "isDirectLine": true,
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1919-birth-magwire-twins-springfield-vt-townreport-zoom.jpg",
+     "thumb": "images/records/1919-birth-magwire-twins-springfield-vt-townreport-zoom.jpg",
+     "caption": "Springfield VT births, January 1919: lines for 1 Jan, sons Harold Charles and Howard Frank, father Frank A. Magwire",
+     "alt": "Springfield VT births, January 1919: lines for 1 Jan, sons Harold Charles and Howard Frank, father Frank A. Magwire",
+     "sourceId": "s01"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1919-birth-magwire-twins-springfield-vt-townreport-highlighted.jpg",
+     "thumb": "images/records/1919-birth-magwire-twins-springfield-vt-townreport-zoom.jpg",
+     "caption": "Full page, with the entry marked: Springfield VT births, January 1919: lines for 1 Jan, sons Harold Charles and Howard Frank, father Frank A. Magwire",
+     "alt": "Full record page with the entry marked. Springfield VT births, January 1919: lines for 1 Jan, sons Harold Charles and Howard Frank, father Frank A. Magwire",
+     "sourceId": "s01"
+    }
+   ]
+  },
+  {
+   "id": "gwendolyn-farr-magwire",
+   "displayName": "Gwendolyn (Farr) Magwire",
+   "givenNames": "Gwendolyn",
+   "surname": "Magwire",
+   "sex": "F",
+   "generation": 3,
+   "isLiving": false,
+   "parents": [
+    "harry-james-farr",
+    "mary-abbie-west-farr"
+   ],
+   "children": [
+    "tracy-jo-magwire-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "howard-frank-magwire",
+     "order": 1,
+     "marriageDate": "1961-01-07",
+     "marriageDisplay": "January 7, 1961",
+     "place": "Springfield, VT",
+     "confidence": "probable",
+     "sourceIds": [
+      "s36",
+      "s27",
+      "s10"
+     ],
+     "placeId": "springfield-vt"
+    }
+   ],
+   "order": 1,
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s36",
+     "s27",
+     "s10"
+    ],
+    "date": "1927",
+    "display": "1927",
+    "place": "Springfield, Windsor Co., Vermont",
+    "placeId": "springfield-vt"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s36",
+     "s27",
+     "s10"
+    ],
+    "date": "2009-09-06",
+    "display": "September 6, 2009",
+    "place": "Suffield, Hartford Co., Connecticut",
+    "placeId": "suffield-ct"
+   },
+   "burial": {
+    "place": "Services private",
+    "confidence": "probable",
+    "sourceIds": [
+     "s36",
+     "s27",
+     "s10"
+    ]
+   },
+   "parentLinkConfidence": "probable",
+   "story": "Gwendolyn Farr was born in Springfield, Vermont, in 1927, a daughter of Harry James Farr and Mary Abbie (West) Farr; her brother Richard's 2009 obituary names those parents. Family tradition: West cousins remembered summer visits with Aunt Abby and Uncle Harry. That memory is not on the map. On January 7, 1961 she married Howard Frank Magwire in Springfield, and they made their home in West Springfield, Massachusetts. Their daughter is Tracy Jo Crosby. Gwen loved quilting, knitting and sewing, walks with her husband and coffee with friends, and was remembered for her ever present smile. After many years of congestive heart failure she died at Suffield, Connecticut, on September 6, 2009, after 48 years of marriage. Services were private. [^s36] [^s27] [^s10]",
+   "summary": "Gwendolyn Farr was born in Springfield, Vermont, in 1927, a daughter of Harry James Farr and Mary Abbie (West) Farr; her brother Richard's 2009 obituary names those parents.",
+   "relatedPages": [
+    {
+     "url": "farr.html",
+     "title": "The Farr line"
+    }
+   ],
+   "cardPlace": "Springfield",
+   "confidence": "probable",
+   "isDirectLine": true
+  },
+  {
+   "id": "frank-albert-magwire",
+   "displayName": "Frank Albert Magwire",
+   "givenNames": "Frank Albert",
+   "surname": "Magwire",
+   "sex": "M",
+   "generation": 2,
+   "isLiving": false,
+   "parents": [
+    "albert-a-magwire",
+    "alice-jenny-spaulding-magwire"
+   ],
+   "children": [
+    "howard-frank-magwire",
+    "raymond-bates-magwire",
+    "harold-charles-magwire"
+   ],
+   "spouses": [
+    {
+     "id": "alice-evadna-bates-magwire",
+     "order": 1,
+     "marriageDate": "1912-07-10",
+     "marriageDisplay": "July 10, 1912",
+     "place": "Springfield, VT",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s02",
+      "s13",
+      "s18"
+     ],
+     "placeId": "springfield-vt"
+    }
+   ],
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s02",
+     "s13",
+     "s18"
+    ],
+    "date": "1889-02-14",
+    "display": "February 14, 1889",
+    "place": "Springfield, Windsor Co., Vermont",
+    "placeId": "springfield-vt"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s02",
+     "s13",
+     "s18"
+    ],
+    "date": "1967-10-08",
+    "display": "October 8, 1967",
+    "place": "Springfield Hospital, Springfield, Vermont",
+    "placeId": "springfield-vt"
+   },
+   "burial": {
+    "place": "Oakland Cemetery, Springfield, VT (Sec. G, Tier 10, Lot 51)",
+    "confidence": "confirmed",
+    "sourceIds": [
+     "s02",
+     "s13",
+     "s18"
+    ]
+   },
+   "parentLinkConfidence": "probable",
+   "story": "Frank Albert Magwire was born on February 14, 1889 in Springfield, Vermont, the son of Albert A. Magwire and Alice Jenny (Spaulding) Magwire. He graduated from Springfield High School in 1909, and on July 10, 1912 he married Alice Evadna Bates in Springfield; the marriage appears in the town's printed register for that year. For thirty seven years Frank owned and ran Magwire's Pharmacy in Springfield, retiring in 1954. In 1940 he kept three state licensed pinball machines in the store, and when the village demanded its own large license fee he paid under protest and sued; in January 1941 the Vermont Supreme Court reversed the dismissal of his suit and sent it back for trial. He belonged to St. John's Lodge No. 41 F&AM and Independent Order of Odd Fellows Lodge No. 42 for more than fifty years, was a 32nd Degree Mason and a member of Mt. Sinai Shrine in Montpelier. Frank and Alice raised three sons: Raymond (born 1913) and the twins Harold and Howard (born January 1, 1919). Frank died at Springfield Hospital on October 8, 1967 and was buried in Oakland Cemetery. [^s02] [^s13] [^s18]",
+   "summary": "Frank Albert Magwire was born on February 14, 1889 in Springfield, Vermont, the son of Albert A.",
+   "relatedPages": [
+    {
+     "url": "magwire.html",
+     "title": "The Magwire line"
+    }
+   ],
+   "cardPlace": "Springfield",
+   "confidence": "confirmed",
+   "occupations": [
+    {
+     "title": "Owner of Magwire's Pharmacy",
+     "place": "Springfield, Vermont",
+     "years": "about 1917 to 1954",
+     "confidence": "probable",
+     "sourceIds": [
+      "s13"
+     ],
+     "note": "Thirty seven years, retired in 1954.",
+     "placeId": "springfield-vt"
+    }
+   ],
+   "facts": [
+    {
+     "label": "Vermont Supreme Court, 1941",
+     "value": "Frank Magwire sued the Village of Springfield over a license fee on pinball machines at Magwire's Pharmacy. In January 1941 the court reversed the dismissal and sent the civil case back for trial.",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s37"
+     ]
+    }
+   ],
+   "isDirectLine": true,
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1912-marriage-magwire-bates-springfield-vt-townreport-zoom.jpg",
+     "thumb": "images/records/1912-marriage-magwire-bates-springfield-vt-townreport-zoom.jpg",
+     "caption": "Springfield VT marriages, page 81: July 10, Frank Albert Magwire and Alice Evadna Bates",
+     "alt": "Springfield VT marriages, page 81: July 10, Frank Albert Magwire and Alice Evadna Bates",
+     "sourceId": "s02"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1912-marriage-magwire-bates-springfield-vt-townreport-highlighted.jpg",
+     "thumb": "images/records/1912-marriage-magwire-bates-springfield-vt-townreport-zoom.jpg",
+     "caption": "Full page, with the entry marked: Springfield VT marriages, page 81: July 10, Frank Albert Magwire and Alice Evadna Bates",
+     "alt": "Full record page with the entry marked. Springfield VT marriages, page 81: July 10, Frank Albert Magwire and Alice Evadna Bates",
+     "sourceId": "s02"
+    }
+   ]
+  },
+  {
+   "id": "alice-evadna-bates-magwire",
+   "displayName": "Alice Evadna (Bates) Magwire",
+   "givenNames": "Alice Evadna",
+   "surname": "Magwire",
+   "sex": "F",
+   "generation": 2,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "howard-frank-magwire",
+    "raymond-bates-magwire",
+    "harold-charles-magwire"
+   ],
+   "spouses": [
+    {
+     "id": "frank-albert-magwire",
+     "order": 1,
+     "marriageDate": "1912-07-10",
+     "marriageDisplay": "July 10, 1912",
+     "place": "Springfield, VT",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s02",
+      "s14",
+      "s13"
+     ],
+     "placeId": "springfield-vt"
+    }
+   ],
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s02",
+     "s14",
+     "s13"
+    ],
+    "date": "1889-09-07",
+    "display": "September 7, 1889",
+    "place": "Williamstown, Berkshire Co., Massachusetts",
+    "placeId": "williamstown-ma"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s02",
+     "s14",
+     "s13"
+    ],
+    "date": "1972-03-29",
+    "display": "March 29, 1972",
+    "place": "Springfield, Windsor Co., Vermont",
+    "placeId": "springfield-vt"
+   },
+   "burial": {
+    "place": "Oakland Cemetery, Springfield, VT",
+    "confidence": "probable",
+    "sourceIds": [
+     "s02",
+     "s14",
+     "s13"
+    ]
+   },
+   "story": "Alice Evadna Bates was born on September 7, 1889 in Williamstown, Massachusetts. She married Frank Albert Magwire in Springfield, Vermont, on July 10, 1912, and spent the rest of her life in Springfield, where she raised sons Raymond, Harold and Howard. She died on March 29, 1972 and is buried with Frank in Oakland Cemetery. Her own parents have not yet been identified; her Williamstown birth record has been requested. [^s02] [^s14] [^s13]",
+   "summary": "Alice Evadna Bates was born on September 7, 1889 in Williamstown, Massachusetts.",
+   "relatedPages": [
+    {
+     "url": "magwire.html",
+     "title": "The Magwire line"
+    }
+   ],
+   "cardPlace": "Williamstown",
+   "confidence": "probable",
+   "isDirectLine": true,
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1912-marriage-magwire-bates-springfield-vt-townreport-zoom.jpg",
+     "thumb": "images/records/1912-marriage-magwire-bates-springfield-vt-townreport-zoom.jpg",
+     "caption": "Springfield VT marriages, page 81: July 10, Frank Albert Magwire and Alice Evadna Bates",
+     "alt": "Springfield VT marriages, page 81: July 10, Frank Albert Magwire and Alice Evadna Bates",
+     "sourceId": "s02"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1912-marriage-magwire-bates-springfield-vt-townreport-highlighted.jpg",
+     "thumb": "images/records/1912-marriage-magwire-bates-springfield-vt-townreport-zoom.jpg",
+     "caption": "Full page, with the entry marked: Springfield VT marriages, page 81: July 10, Frank Albert Magwire and Alice Evadna Bates",
+     "alt": "Full record page with the entry marked. Springfield VT marriages, page 81: July 10, Frank Albert Magwire and Alice Evadna Bates",
+     "sourceId": "s02"
+    }
+   ]
+  },
+  {
+   "id": "albert-a-magwire",
+   "displayName": "Albert A. Magwire",
+   "givenNames": "Albert A.",
+   "surname": "Magwire",
+   "sex": "M",
+   "generation": 1,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "frank-albert-magwire"
+   ],
+   "spouses": [
+    {
+     "id": "alice-jenny-spaulding-magwire",
+     "order": 1,
+     "marriageDate": "1887-11-08",
+     "marriageDisplay": "November 8, 1887",
+     "place": "Cavendish, VT",
+     "confidence": "probable",
+     "sourceIds": [
+      "s15",
+      "s16",
+      "s18",
+      "s13"
+     ],
+     "placeId": "cavendish-vt"
+    }
+   ],
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s15",
+     "s16",
+     "s18",
+     "s13"
+    ],
+    "date": "1845-10-10",
+    "display": "October 10, 1845",
+    "place": "Brooklyn, Kings Co., New York",
+    "placeId": "brooklyn-ny"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s15",
+     "s16",
+     "s18",
+     "s13"
+    ],
+    "date": "1929-02-21",
+    "display": "February 21, 1929",
+    "place": "Springfield, Windsor Co., Vermont",
+    "placeId": "springfield-vt"
+   },
+   "burial": {
+    "place": "Oakland Cemetery, Springfield, VT (Ward C, Tier 3, Lot 75)",
+    "confidence": "probable",
+    "sourceIds": [
+     "s15",
+     "s16",
+     "s18",
+     "s13"
+    ]
+   },
+   "story": "Albert A. Magwire was born on October 10, 1845 in Brooklyn, New York. A Find a Grave note names his parents as George and Mary (Prentice) Magwire, which is still unconfirmed. On November 8, 1887 he married Alice Jenny Spaulding in Cavendish, Vermont, and the couple made their home in Springfield, where their children Ethel, Frank Albert, Edna, Charles E. and Harrold were born. Albert died in Springfield on February 21, 1929 and is buried in Oakland Cemetery. [^s15] [^s16] [^s18] [^s13]",
+   "summary": "Albert A.",
+   "relatedPages": [
+    {
+     "url": "magwire.html",
+     "title": "The Magwire line"
+    }
+   ],
+   "cardPlace": "Brooklyn",
+   "confidence": "probable",
+   "isDirectLine": true
+  },
+  {
+   "id": "alice-jenny-spaulding-magwire",
+   "displayName": "Alice Jenny (Spaulding) Magwire",
+   "givenNames": "Alice Jenny",
+   "surname": "Magwire",
+   "sex": "F",
+   "generation": 1,
+   "isLiving": false,
+   "parents": [
+    "charles-elliot-spaulding",
+    "amantha-putnam-spaulding"
+   ],
+   "children": [
+    "frank-albert-magwire"
+   ],
+   "spouses": [
+    {
+     "id": "albert-a-magwire",
+     "order": 1,
+     "marriageDate": "1887-11-08",
+     "marriageDisplay": "November 8, 1887",
+     "place": "Cavendish, VT",
+     "confidence": "probable",
+     "sourceIds": [
+      "s06",
+      "s07",
+      "s16"
+     ],
+     "placeId": "cavendish-vt"
+    }
+   ],
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s06",
+     "s07",
+     "s16"
+    ],
+    "date": "1866-08-17",
+    "display": "August 17, 1866",
+    "place": "Cavendish, Windsor Co., Vermont",
+    "placeId": "cavendish-vt"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s06",
+     "s07",
+     "s16"
+    ],
+    "date": "1951-11-13",
+    "display": "November 13, 1951",
+    "place": "West Lebanon, Grafton Co., New Hampshire",
+    "placeId": "west-lebanon-nh"
+   },
+   "burial": {
+    "place": "Oakland Cemetery, Springfield, VT (Ward C, Tier 3, Lot 75)",
+    "confidence": "probable",
+    "sourceIds": [
+     "s06",
+     "s07",
+     "s16"
+    ]
+   },
+   "parentLinkConfidence": "probable",
+   "story": "Alice Jenny Spaulding was born on August 17, 1866 in Cavendish, Vermont, the fourth daughter of Charles Elliot and Amantha (Putnam) Spaulding. Two separate family histories, the Spalding Memorial of 1872 and the Dickey Genealogy of 1898, list her birth date. She married Albert A. Magwire in Cavendish in November 1887 and raised her family in Springfield. She died on November 13, 1951 in West Lebanon, New Hampshire, and was buried with Albert in Oakland Cemetery, Springfield. [^s06] [^s07] [^s16]",
+   "summary": "Alice Jenny Spaulding was born on August 17, 1866 in Cavendish, Vermont, the fourth daughter of Charles Elliot and Amantha (Putnam) Spaulding.",
+   "relatedPages": [
+    {
+     "url": "spaulding.html",
+     "title": "The Spaulding and Putnam line"
+    }
+   ],
+   "cardPlace": "Cavendish",
+   "confidence": "probable",
+   "isDirectLine": true,
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1872-spalding-memorial-p448-charles-elliot-spaulding-family-zoom.jpg",
+     "thumb": "images/records/1872-spalding-memorial-p448-charles-elliot-spaulding-family-zoom.jpg",
+     "caption": "The Spalding Memorial (1872), page 448, entries 8733 to 8737: Charles-Elliot, m. Amantha Putnam 25 Mar 1856; children incl. Alice-Jennie b. 17 Aug 1866",
+     "alt": "The Spalding Memorial (1872), page 448, entries 8733 to 8737: Charles-Elliot, m. Amantha Putnam 25 Mar 1856; children incl. Alice-Jennie b. 17 Aug 1866",
+     "sourceId": "s06"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1872-spalding-memorial-p448-charles-elliot-spaulding-family-highlighted.jpg",
+     "thumb": "images/records/1872-spalding-memorial-p448-charles-elliot-spaulding-family-zoom.jpg",
+     "caption": "Full page, with the entry marked: The Spalding Memorial (1872), page 448, entries 8733 to 8737: Charles-Elliot, m. Amantha Putnam 25 Mar 1856; children incl. Alice-Jennie b. 17 Aug 1866",
+     "alt": "Full record page with the entry marked. The Spalding Memorial (1872), page 448, entries 8733 to 8737: Charles-Elliot, m. Amantha Putnam 25 Mar 1856; children incl. Alice-Jennie b. 17 Aug 1866",
+     "sourceId": "s06"
+    }
+   ]
+  },
+  {
+   "id": "charles-elliot-spaulding",
+   "displayName": "Charles Elliot Spaulding",
+   "givenNames": "Charles Elliot",
+   "surname": "Spaulding",
+   "sex": "M",
+   "generation": 0,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "alice-jenny-spaulding-magwire"
+   ],
+   "spouses": [
+    {
+     "id": "amantha-putnam-spaulding",
+     "order": 1,
+     "marriageDate": "1856-03-25",
+     "marriageDisplay": "March 25, 1856",
+     "place": "Springfield, VT",
+     "confidence": "probable",
+     "sourceIds": [
+      "s06",
+      "s07",
+      "s17"
+     ],
+     "placeId": "springfield-vt"
+    }
+   ],
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s06",
+     "s07",
+     "s17"
+    ],
+    "date": "1833-07-24",
+    "display": "July 24, 1833",
+    "place": "Springfield, Windsor Co., Vermont"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s06",
+     "s07",
+     "s17"
+    ],
+    "date": "1890-03-26",
+    "display": "March 26, 1890",
+    "place": "Cavendish, Windsor Co., Vermont",
+    "placeId": "cavendish-vt"
+   },
+   "burial": {
+    "place": "Cavendish Village Cemetery, Cavendish, VT",
+    "confidence": "probable",
+    "sourceIds": [
+     "s06",
+     "s07",
+     "s17"
+    ]
+   },
+   "story": "Charles Elliot Spaulding was born on July 24, 1833 and married Amantha Putnam in Springfield, Vermont, on March 25, 1856. He farmed in Cavendish, where the couple raised Addie Cora, Ida Jenny (who died young), Anna Emma, Alice Jenny, Frank Charles, Lilla May and Gertie Inez. The Spalding Memorial of 1872 traces him eight generations back to Edward Spalding, the immigrant ancestor of the American Spaldings; that pedigree is still a lead. Charles died on March 26, 1890 and is buried in Cavendish Village Cemetery. [^s06] [^s07] [^s17]",
+   "summary": "Charles Elliot Spaulding was born on July 24, 1833 and married Amantha Putnam in Springfield, Vermont, on March 25, 1856.",
+   "relatedPages": [
+    {
+     "url": "spaulding.html",
+     "title": "The Spaulding and Putnam line"
+    }
+   ],
+   "cardPlace": "Springfield",
+   "confidence": "probable",
+   "isDirectLine": true,
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1872-spalding-memorial-p448-charles-elliot-spaulding-family-zoom.jpg",
+     "thumb": "images/records/1872-spalding-memorial-p448-charles-elliot-spaulding-family-zoom.jpg",
+     "caption": "The Spalding Memorial (1872), page 448, entries 8733 to 8737: Charles-Elliot, m. Amantha Putnam 25 Mar 1856; children incl. Alice-Jennie b. 17 Aug 1866",
+     "alt": "The Spalding Memorial (1872), page 448, entries 8733 to 8737: Charles-Elliot, m. Amantha Putnam 25 Mar 1856; children incl. Alice-Jennie b. 17 Aug 1866",
+     "sourceId": "s06"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1872-spalding-memorial-p448-charles-elliot-spaulding-family-highlighted.jpg",
+     "thumb": "images/records/1872-spalding-memorial-p448-charles-elliot-spaulding-family-zoom.jpg",
+     "caption": "Full page, with the entry marked: The Spalding Memorial (1872), page 448, entries 8733 to 8737: Charles-Elliot, m. Amantha Putnam 25 Mar 1856; children incl. Alice-Jennie b. 17 Aug 1866",
+     "alt": "Full record page with the entry marked. The Spalding Memorial (1872), page 448, entries 8733 to 8737: Charles-Elliot, m. Amantha Putnam 25 Mar 1856; children incl. Alice-Jennie b. 17 Aug 1866",
+     "sourceId": "s06"
+    }
+   ]
+  },
+  {
+   "id": "amantha-putnam-spaulding",
+   "displayName": "Amantha (Putnam) Spaulding",
+   "givenNames": "Amantha",
+   "surname": "Spaulding",
+   "sex": "F",
+   "generation": 0,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "alice-jenny-spaulding-magwire"
+   ],
+   "spouses": [
+    {
+     "id": "charles-elliot-spaulding",
+     "order": 1,
+     "marriageDate": "1856-03-25",
+     "marriageDisplay": "March 25, 1856",
+     "place": "Springfield, VT",
+     "confidence": "probable",
+     "sourceIds": [
+      "s07",
+      "s06",
+      "s17"
+     ],
+     "placeId": "springfield-vt"
+    }
+   ],
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s07",
+     "s06",
+     "s17"
+    ],
+    "date": "1837-09-09",
+    "display": "September 9, 1837",
+    "place": "Springfield, Windsor Co., Vermont"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s07",
+     "s06",
+     "s17"
+    ],
+    "date": "1926-05-30",
+    "display": "May 30, 1926",
+    "place": "Proctorsville, Windsor Co., Vermont",
+    "placeId": "proctorsville-vt"
+   },
+   "burial": {
+    "place": "Cavendish Village Cemetery, Cavendish, VT",
+    "confidence": "probable",
+    "sourceIds": [
+     "s07",
+     "s06",
+     "s17"
+    ]
+   },
+   "story": "Amantha Putnam was born on September 9, 1837, a daughter of Timothy Putnam and Betsey Hall according to the Dickey Genealogy. She married Charles Elliot Spaulding in Springfield, Vermont, in 1856 and lived in Cavendish for most of her life. She outlived her husband by thirty six years, dying in Proctorsville on May 30, 1926, and rests beside him in Cavendish Village Cemetery. Timothy Putnam and Betsey Hall are named only in that compiled genealogy, so they are not drawn on the tree. [^s07] [^s06] [^s17]",
+   "summary": "Amantha Putnam was born on September 9, 1837, a daughter of Timothy Putnam and Betsey Hall according to the Dickey Genealogy.",
+   "relatedPages": [
+    {
+     "url": "spaulding.html",
+     "title": "The Spaulding and Putnam line"
+    }
+   ],
+   "cardPlace": "Springfield",
+   "confidence": "probable",
+   "isDirectLine": true,
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1898-dickey-genealogy-p285-amantha-putnam-spaulding-family-zoom.jpg",
+     "thumb": "images/records/1898-dickey-genealogy-p285-amantha-putnam-spaulding-family-zoom.jpg",
+     "caption": "Dickey Genealogy (1898), page 285, entries 2130 to 2137: Amantha Putnam, b. 9 Sep 1837, m. Charles Elliot Spaulding; children incl. Alice Jenny b. 17 Aug 1866",
+     "alt": "Dickey Genealogy (1898), page 285, entries 2130 to 2137: Amantha Putnam, b. 9 Sep 1837, m. Charles Elliot Spaulding; children incl. Alice Jenny b. 17 Aug 1866",
+     "sourceId": "s07"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1898-dickey-genealogy-p285-amantha-putnam-spaulding-family-highlighted.jpg",
+     "thumb": "images/records/1898-dickey-genealogy-p285-amantha-putnam-spaulding-family-zoom.jpg",
+     "caption": "Full page, with the entry marked: Dickey Genealogy (1898), page 285, entries 2130 to 2137: Amantha Putnam, b. 9 Sep 1837, m. Charles Elliot Spaulding; children incl. Alice Jenny b. 17 Aug 1866",
+     "alt": "Full record page with the entry marked. Dickey Genealogy (1898), page 285, entries 2130 to 2137: Amantha Putnam, b. 9 Sep 1837, m. Charles Elliot Spaulding; children incl. Alice Jenny b. 17 Aug 1866",
+     "sourceId": "s07"
+    }
+   ]
+  },
+  {
+   "id": "raymond-bates-magwire",
+   "displayName": "Raymond Bates Magwire",
+   "givenNames": "Raymond Bates",
+   "surname": "Magwire",
+   "sex": "M",
+   "generation": 3,
+   "isLiving": false,
+   "parents": [
+    "frank-albert-magwire",
+    "alice-evadna-bates-magwire"
+   ],
+   "children": [],
+   "spouses": [],
+   "order": 1,
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s12",
+     "s13"
+    ],
+    "date": "1913-03-18",
+    "display": "March 18, 1913",
+    "place": "Springfield, Vermont",
+    "placeId": "springfield-vt"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s12",
+     "s13"
+    ],
+    "date": "1997-04-26",
+    "display": "April 26, 1997",
+    "place": "Rutland, Vermont",
+    "placeId": "rutland-vt"
+   },
+   "burial": {
+    "place": "Hillside Cemetery, Castleton, VT",
+    "confidence": "probable",
+    "sourceIds": [
+     "s12",
+     "s13"
+    ],
+    "placeId": "castleton-vt"
+   },
+   "parentLinkConfidence": "probable",
+   "story": "Raymond Bates Magwire, the eldest son of Frank and Alice Magwire, was born in Springfield, Vermont, on March 18, 1913. He was living in Montpelier in 1967. He died in Rutland on April 26, 1997 and is buried in Hillside Cemetery, Castleton. [^s12] [^s13]",
+   "summary": "Raymond Bates Magwire, the eldest son of Frank and Alice Magwire, was born in Springfield, Vermont, on March 18, 1913.",
+   "relatedPages": [
+    {
+     "url": "magwire.html",
+     "title": "The Magwire line"
+    }
+   ],
+   "cardPlace": "Springfield",
+   "confidence": "probable"
+  },
+  {
+   "id": "harold-charles-magwire",
+   "displayName": "Harold Charles Magwire",
+   "givenNames": "Harold Charles",
+   "surname": "Magwire",
+   "sex": "M",
+   "generation": 3,
+   "isLiving": false,
+   "parents": [
+    "frank-albert-magwire",
+    "alice-evadna-bates-magwire"
+   ],
+   "children": [],
+   "spouses": [],
+   "order": 2,
+   "birth": {
+    "confidence": "confirmed",
+    "sourceIds": [
+     "s01",
+     "s11"
+    ],
+    "date": "1919-01-01",
+    "display": "January 1, 1919",
+    "place": "Springfield, Vermont",
+    "placeId": "springfield-vt"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s01",
+     "s11"
+    ],
+    "date": "2002-10-16",
+    "display": "October 16, 2002",
+    "place": "Ormond Beach, Florida",
+    "placeId": "ormond-beach-fl"
+   },
+   "burial": {
+    "place": "Vermont Veterans Memorial Cemetery, Randolph Center, VT",
+    "confidence": "probable",
+    "sourceIds": [
+     "s01",
+     "s11"
+    ],
+    "placeId": "randolph-center-vt"
+   },
+   "parentLinkConfidence": "confirmed",
+   "story": "Harold Charles Magwire was born on January 1, 1919 in Springfield, Vermont, the twin brother of Howard. He served in the U.S. Navy and married Nellie Magwire. Her details are not published. He died in Ormond Beach, Florida, on October 16, 2002. He is buried in the Vermont Veterans Memorial Cemetery at Randolph Center. [^s01] [^s11]",
+   "summary": "Harold Charles Magwire was born on January 1, 1919 in Springfield, Vermont, the twin brother of Howard.",
+   "relatedPages": [
+    {
+     "url": "magwire.html",
+     "title": "The Magwire line"
+    }
+   ],
+   "cardPlace": "Springfield",
+   "confidence": "confirmed",
+   "occupations": [
+    {
+     "title": "U.S. Navy",
+     "confidence": "probable",
+     "sourceIds": [
+      "s11"
+     ]
+    }
+   ],
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1919-birth-magwire-twins-springfield-vt-townreport-zoom.jpg",
+     "thumb": "images/records/1919-birth-magwire-twins-springfield-vt-townreport-zoom.jpg",
+     "caption": "Springfield VT births, January 1919: lines for 1 Jan, sons Harold Charles and Howard Frank, father Frank A. Magwire",
+     "alt": "Springfield VT births, January 1919: lines for 1 Jan, sons Harold Charles and Howard Frank, father Frank A. Magwire",
+     "sourceId": "s01"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1919-birth-magwire-twins-springfield-vt-townreport-highlighted.jpg",
+     "thumb": "images/records/1919-birth-magwire-twins-springfield-vt-townreport-zoom.jpg",
+     "caption": "Full page, with the entry marked: Springfield VT births, January 1919: lines for 1 Jan, sons Harold Charles and Howard Frank, father Frank A. Magwire",
+     "alt": "Full record page with the entry marked. Springfield VT births, January 1919: lines for 1 Jan, sons Harold Charles and Howard Frank, father Frank A. Magwire",
+     "sourceId": "s01"
+    }
+   ]
+  },
+  {
+   "id": "harry-james-farr",
+   "displayName": "Harry James Farr",
+   "givenNames": "Harry James",
+   "surname": "Farr",
+   "sex": "M",
+   "generation": 2,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "gwendolyn-farr-magwire",
+    "richard-h-farr",
+    "alma-farr-cook"
+   ],
+   "spouses": [
+    {
+     "id": "laura-mary-seward-farr",
+     "order": 1,
+     "marriageDate": "1912-12-04",
+     "marriageDisplay": "December 4, 1912",
+     "place": "Springfield, VT",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s05",
+      "s03",
+      "s27"
+     ],
+     "placeId": "springfield-vt"
+    },
+    {
+     "id": "mary-abbie-west-farr",
+     "order": 2,
+     "confidence": "probable",
+     "sourceIds": [
+      "s05",
+      "s03",
+      "s27"
+     ]
+    }
+   ],
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s05",
+     "s03",
+     "s27"
+    ],
+    "date": "1888",
+    "display": "about 1888",
+    "dateQualifier": "about",
+    "place": "Colorado",
+    "placeId": "colorado"
+   },
+   "story": "Harry James Farr was born in Colorado about 1888 and settled in Springfield, Vermont. On December 4, 1912 he married Laura Mary Seward there. With his second wife, Mary Abbie West, he raised Gwendolyn (born 1927), Richard (born 1930) and Alma; in the 1950 census Harry, then 62, was living in Springfield with his wife Mary A. Their daughter Alma is named in that household. Her age is on the record and is not repeated here. Family tradition: the family remembered summer days at a West farm in Wells, Maine. That place is only a lead, so it is not on the map. His own parents and his Colorado birthplace are still being researched. [^s05] [^s03] [^s27]",
+   "summary": "Harry James Farr was born in Colorado about 1888 and settled in Springfield, Vermont.",
+   "relatedPages": [
+    {
+     "url": "farr.html",
+     "title": "The Farr line"
+    }
+   ],
+   "cardPlace": "Colorado",
+   "confidence": "probable",
+   "isDirectLine": true,
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1950-census-farr-harry-springfield-vt-ed14-41-zoom.jpg",
+     "thumb": "images/records/1950-census-farr-harry-springfield-vt-ed14-41-zoom.jpg",
+     "caption": "1950 census, Springfield VT, ED 14-41, sheet 12, lines 24 to 26: Harry J. Farr (head, 62, Colorado), Mary A. (wife, 48, Vermont, postal clerk), Alma B. (daughter, 16)",
+     "alt": "1950 census, Springfield VT, ED 14-41, sheet 12, lines 24 to 26: Harry J. Farr (head, 62, Colorado), Mary A. (wife, 48, Vermont, postal clerk), Alma B. (daughter, 16)",
+     "sourceId": "s05"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1950-census-farr-harry-springfield-vt-ed14-41-highlighted.jpg",
+     "thumb": "images/records/1950-census-farr-harry-springfield-vt-ed14-41-zoom.jpg",
+     "caption": "Full page, with the entry marked: 1950 census, Springfield VT, ED 14-41, sheet 12, lines 24 to 26: Harry J. Farr (head, 62, Colorado), Mary A. (wife, 48, Vermont, postal clerk), Alma B. (daughter, 16)",
+     "alt": "Full record page with the entry marked. 1950 census, Springfield VT, ED 14-41, sheet 12, lines 24 to 26: Harry J. Farr (head, 62, Colorado), Mary A. (wife, 48, Vermont, postal clerk), Alma B. (daughter, 16)",
+     "sourceId": "s05"
+    }
+   ],
+   "residences": [
+    {
+     "place": "Living with wife Mary A. (1950 census)",
+     "placeId": "springfield-vt",
+     "years": "1950",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s05",
+      "s03",
+      "s27"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mary-abbie-west-farr",
+   "displayName": "Mary Abbie (West) Farr",
+   "givenNames": "Mary Abbie",
+   "surname": "Farr",
+   "sex": "F",
+   "generation": 2,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "gwendolyn-farr-magwire",
+    "richard-h-farr",
+    "alma-farr-cook"
+   ],
+   "spouses": [
+    {
+     "id": "harry-james-farr",
+     "order": 1,
+     "confidence": "probable",
+     "sourceIds": [
+      "s27",
+      "s05",
+      "s36"
+     ]
+    }
+   ],
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s27",
+     "s05",
+     "s36"
+    ],
+    "date": "1902",
+    "display": "about 1902",
+    "dateQualifier": "about",
+    "place": "Vermont"
+   },
+   "story": "Mary Abbie West, called Abby in the family, was born in Vermont about 1902. She married Harry James Farr and was the mother of Gwendolyn, Richard and Alma; her son Richard's obituary gives her full name as Mary Abbie West Farr. In 1950 she worked as a clerk at the post office in Springfield. Family tradition: West relatives remembered a farm in Wells, Maine. That visit is not on the map. Her parents are not yet identified. [^s27] [^s05] [^s36]",
+   "summary": "Mary Abbie West, called Abby in the family, was born in Vermont about 1902.",
+   "relatedPages": [
+    {
+     "url": "farr.html",
+     "title": "The Farr line"
+    }
+   ],
+   "cardPlace": "Vermont",
+   "confidence": "probable",
+   "nameVariants": [
+    {
+     "name": "Mary A. Farr",
+     "note": "The name on the 1950 census line.",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s05"
+     ]
+    }
+   ],
+   "occupations": [
+    {
+     "title": "Post office clerk",
+     "place": "Springfield, Vermont",
+     "years": "1950",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s05"
+     ]
+    }
+   ],
+   "isDirectLine": true,
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1950-census-farr-harry-springfield-vt-ed14-41-zoom.jpg",
+     "thumb": "images/records/1950-census-farr-harry-springfield-vt-ed14-41-zoom.jpg",
+     "caption": "1950 census, Springfield VT, ED 14-41, sheet 12, lines 24 to 26: Harry J. Farr (head, 62, Colorado), Mary A. (wife, 48, Vermont, postal clerk), Alma B. (daughter, 16)",
+     "alt": "1950 census, Springfield VT, ED 14-41, sheet 12, lines 24 to 26: Harry J. Farr (head, 62, Colorado), Mary A. (wife, 48, Vermont, postal clerk), Alma B. (daughter, 16)",
+     "sourceId": "s05"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1950-census-farr-harry-springfield-vt-ed14-41-highlighted.jpg",
+     "thumb": "images/records/1950-census-farr-harry-springfield-vt-ed14-41-zoom.jpg",
+     "caption": "Full page, with the entry marked: 1950 census, Springfield VT, ED 14-41, sheet 12, lines 24 to 26: Harry J. Farr (head, 62, Colorado), Mary A. (wife, 48, Vermont, postal clerk), Alma B. (daughter, 16)",
+     "alt": "Full record page with the entry marked. 1950 census, Springfield VT, ED 14-41, sheet 12, lines 24 to 26: Harry J. Farr (head, 62, Colorado), Mary A. (wife, 48, Vermont, postal clerk), Alma B. (daughter, 16)",
+     "sourceId": "s05"
+    }
+   ]
+  },
+  {
+   "id": "laura-mary-seward-farr",
+   "displayName": "Laura Mary (Seward) Farr",
+   "givenNames": "Laura Mary",
+   "surname": "Farr",
+   "sex": "F",
+   "generation": 2,
+   "isLiving": false,
+   "parents": [],
+   "children": [],
+   "spouses": [
+    {
+     "id": "harry-james-farr",
+     "order": 1,
+     "marriageDate": "1912-12-04",
+     "marriageDisplay": "December 4, 1912",
+     "place": "Springfield, VT",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s03"
+     ],
+     "placeId": "springfield-vt"
+    }
+   ],
+   "story": "Laura Mary Seward married Harry James Farr in Springfield, Vermont, on December 4, 1912, the town's printed register shows. She was Harry's first wife; the children Gwendolyn, Richard and Alma were born to his later marriage with Mary Abbie West. What became of Laura is not yet known. [^s03]",
+   "summary": "Laura Mary Seward married Harry James Farr in Springfield, Vermont, on December 4, 1912, the town's printed register shows.",
+   "relatedPages": [
+    {
+     "url": "farr.html",
+     "title": "The Farr line"
+    }
+   ],
+   "confidence": "probable",
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1912-marriage-farr-seward-springfield-vt-townreport-zoom.jpg",
+     "thumb": "images/records/1912-marriage-farr-seward-springfield-vt-townreport-zoom.jpg",
+     "caption": "Springfield VT marriages: Dec. 4, Harry James Farr and Laura Mary Seward",
+     "alt": "Springfield VT marriages: Dec. 4, Harry James Farr and Laura Mary Seward",
+     "sourceId": "s03"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1912-marriage-farr-seward-springfield-vt-townreport-highlighted.jpg",
+     "thumb": "images/records/1912-marriage-farr-seward-springfield-vt-townreport-zoom.jpg",
+     "caption": "Full page, with the entry marked: Springfield VT marriages: Dec. 4, Harry James Farr and Laura Mary Seward",
+     "alt": "Full record page with the entry marked. Springfield VT marriages: Dec. 4, Harry James Farr and Laura Mary Seward",
+     "sourceId": "s03"
+    }
+   ]
+  },
+  {
+   "id": "roy-e-crosby",
+   "displayName": "Roy E. Crosby",
+   "givenNames": "Roy E.",
+   "surname": "Crosby",
+   "sex": "M",
+   "generation": 3,
+   "isLiving": false,
+   "parents": [
+    "ernest-a-crosby",
+    "eva-e-pierce-crosby"
+   ],
+   "children": [
+    "richard-r-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "dorothy-r-richardson-crosby",
+     "order": 1,
+     "confidence": "probable",
+     "sourceIds": [
+      "s20",
+      "s21",
+      "s23",
+      "s24"
+     ]
+    }
+   ],
+   "order": 4,
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s20",
+     "s21",
+     "s23",
+     "s24"
+    ],
+    "date": "1925-02-25",
+    "display": "February 25, 1925",
+    "place": "Chicopee, Hampden Co., Massachusetts",
+    "placeId": "chicopee-ma"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s20",
+     "s21",
+     "s23",
+     "s24"
+    ],
+    "date": "2014-05-02",
+    "display": "May 2, 2014",
+    "place": "West Springfield, Massachusetts"
+   },
+   "burial": {
+    "place": "Massachusetts Veterans Memorial Cemetery, Agawam, MA (Sec. 0A, Row M, Site 215)",
+    "confidence": "probable",
+    "sourceIds": [
+     "s20",
+     "s21",
+     "s23",
+     "s24"
+    ],
+    "placeId": "agawam-ma"
+   },
+   "parentLinkConfidence": "probable",
+   "story": "Roy E. Crosby was born on February 25, 1925 and raised in Chicopee, Massachusetts, one of at least nine children of Ernest and Eva (Pierce) Crosby. In the Second World War he served in the U.S. Navy aboard the escort carrier Marcus Island and fought in the Battle of Leyte Gulf in October 1944. He married Dorothy Richardson, and in 1950 they moved to West Springfield, where they raised Robert, Debra, Rick and Lynn. Roy worked as a pressman for the Springfield Newspapers, where he also played AA ball, and finished his career as an HVAC technician at Western New England College. A lifelong Yankees fan, he built a summer home on Otis Reservoir with his family. He died at home on May 2, 2014 after 65 years of marriage and was buried with military honors at the Massachusetts Veterans Memorial Cemetery in Agawam. [^s20] [^s21] [^s23] [^s24]",
+   "summary": "Roy E.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "cardPlace": "Chicopee",
+   "confidence": "probable",
+   "occupations": [
+    {
+     "title": "U.S. Navy, USS Marcus Island",
+     "years": "1944",
+     "confidence": "probable",
+     "sourceIds": [
+      "s20"
+     ],
+     "note": "Aboard the escort carrier at the Battle of Leyte Gulf in October 1944."
+    },
+    {
+     "title": "Pressman, Springfield Newspapers",
+     "confidence": "probable",
+     "sourceIds": [
+      "s20"
+     ]
+    },
+    {
+     "title": "HVAC technician, Western New England College",
+     "confidence": "probable",
+     "sourceIds": [
+      "s20"
+     ]
+    }
+   ],
+   "residences": [
+    {
+     "place": "Moved here; died at home 2014",
+     "placeId": "west-springfield-ma",
+     "years": "1950",
+     "confidence": "probable",
+     "sourceIds": [
+      "s20",
+      "s21",
+      "s23",
+      "s24"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "dorothy-r-richardson-crosby",
+   "displayName": "Dorothy R. (Richardson) Crosby",
+   "givenNames": "Dorothy R.",
+   "surname": "Crosby",
+   "sex": "F",
+   "generation": 3,
+   "isLiving": false,
+   "parents": [
+    "robert-h-richardson",
+    "anna-e-ernst-richardson"
+   ],
+   "children": [
+    "richard-r-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "roy-e-crosby",
+     "order": 1,
+     "confidence": "probable",
+     "sourceIds": [
+      "s21",
+      "s20"
+     ]
+    }
+   ],
+   "order": 2,
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s21",
+     "s20"
+    ],
+    "date": "1928-10-24",
+    "display": "October 24, 1928",
+    "place": "Chicopee, Massachusetts",
+    "placeId": "chicopee-ma"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s21",
+     "s20"
+    ],
+    "date": "2022-02",
+    "display": "February 2022"
+   },
+   "burial": {
+    "place": "Massachusetts Veterans Memorial Cemetery, Agawam, MA",
+    "confidence": "probable",
+    "sourceIds": [
+     "s21",
+     "s20"
+    ],
+    "placeId": "agawam-ma"
+   },
+   "parentLinkConfidence": "probable",
+   "story": "Dorothy R. Richardson was born on October 24, 1928 to Robert and Anne (Ernst) Richardson and raised in Chicopee, Massachusetts. She married Roy E. Crosby and moved with him to West Springfield in 1950, where she was a proud homemaker. Like Roy she was a lifelong Yankees fan, and she spent her summers at the family's home on Otis Reservoir. Her brother Robert Richardson and sister Barbara Vogel died before her. Dorothy died in February 2022 and was interred with Roy at the Massachusetts Veterans Memorial Cemetery in Agawam. [^s21] [^s20]",
+   "summary": "Dorothy R.",
+   "relatedPages": [
+    {
+     "url": "richardson.html",
+     "title": "The Richardson line"
+    }
+   ],
+   "cardPlace": "Chicopee",
+   "confidence": "probable",
+   "occupations": [
+    {
+     "title": "Homemaker",
+     "confidence": "probable",
+     "sourceIds": [
+      "s21"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ernest-a-crosby",
+   "displayName": "Ernest A. Crosby",
+   "givenNames": "Ernest A.",
+   "surname": "Crosby",
+   "sex": "M",
+   "generation": 2,
+   "isLiving": false,
+   "parents": [
+    "james-william-crosby",
+    "asenath-porter-crosby"
+   ],
+   "children": [
+    "roy-e-crosby",
+    "muriel-j-crosby-strauss",
+    "bernard-m-crosby",
+    "thelma-l-crosby",
+    "ruby-evelyn-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "eva-e-pierce-crosby",
+     "order": 1,
+     "marriageDate": "1906-07-06",
+     "marriageDisplay": "July 6, 1906",
+     "place": "Wakefield, MA",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s28",
+      "s04",
+      "s22",
+      "s23"
+     ],
+     "placeId": "wakefield-ma"
+    }
+   ],
+   "birth": {
+    "confidence": "confirmed",
+    "sourceIds": [
+     "s28",
+     "s04",
+     "s22",
+     "s23"
+    ],
+    "date": "1884",
+    "display": "about 1884",
+    "dateQualifier": "about",
+    "place": "Norwood, Yarmouth Co., Nova Scotia",
+    "placeId": "norwood-ns"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s28",
+     "s04",
+     "s22",
+     "s23"
+    ],
+    "date": "1958",
+    "display": "1958"
+   },
+   "burial": {
+    "place": "Hillcrest Park Cemetery, Springfield, MA",
+    "confidence": "probable",
+    "sourceIds": [
+     "s28",
+     "s04",
+     "s22",
+     "s23"
+    ],
+    "placeId": "springfield-ma"
+   },
+   "parentLinkConfidence": "probable",
+   "story": "Ernest A. Crosby was born about 1884 at Norwood, Yarmouth County, Nova Scotia, the son of James W. and Asenath (Porter) Crosby. Like many young people from Yarmouth County he moved to Massachusetts, and on July 6, 1906, aged 22, he married Eva E. Pierce of Brazil Lake at Wakefield. Their first child, Ruby Evelyn, was born in Wakefield that November. The family later settled in Chicopee, where they raised at least nine children: Esther, Ruby, Winston, Ivoline, Thelma, Gordon, Muriel, Roy and Bernard. Eva died in 1944. In the 1950 census Ernest, then 65 and widowed, was still in Chicopee with his daughter Thelma, and with his daughter Muriel and her husband Douglas Rhodes. He died in 1958 and is buried beside Eva in Hillcrest Park Cemetery, Springfield. [^s28] [^s04] [^s22] [^s23]",
+   "summary": "Ernest A.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "cardPlace": "Norwood",
+   "confidence": "probable",
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1950-census-crosby-ernest-chicopee-ma-ed7-40-sheet73-zoom.jpg",
+     "thumb": "images/records/1950-census-crosby-ernest-chicopee-ma-ed7-40-sheet73-zoom.jpg",
+     "caption": "1950 census, Chicopee MA, ED 7-40, sheet 73, lines 14 to 17: Ernest A. Crosby (head, 65, Wd, Nova Scotia), Thelma L. (daughter, 33), Douglas Rhodes (son-in-law, 33), Muriel J. (daughter, 29)",
+     "alt": "1950 census, Chicopee MA, ED 7-40, sheet 73, lines 14 to 17: Ernest A. Crosby (head, 65, Wd, Nova Scotia), Thelma L. (daughter, 33), Douglas Rhodes (son-in-law, 33), Muriel J. (daughter, 29)",
+     "sourceId": "s04"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1950-census-crosby-ernest-chicopee-ma-ed7-40-sheet73-highlighted.jpg",
+     "thumb": "images/records/1950-census-crosby-ernest-chicopee-ma-ed7-40-sheet73-zoom.jpg",
+     "caption": "Full page, with the entry marked: 1950 census, Chicopee MA, ED 7-40, sheet 73, lines 14 to 17: Ernest A. Crosby (head, 65, Wd, Nova Scotia), Thelma L. (daughter, 33), Douglas Rhodes (son-in-law, 33), Muriel J. (daughter, 29)",
+     "alt": "Full record page with the entry marked. 1950 census, Chicopee MA, ED 7-40, sheet 73, lines 14 to 17: Ernest A. Crosby (head, 65, Wd, Nova Scotia), Thelma L. (daughter, 33), Douglas Rhodes (son-in-law, 33), Muriel J. (daughter, 29)",
+     "sourceId": "s04"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1906-marriage-crosby-pierce-wakefield-ma-townreport-zoom.jpg",
+     "thumb": "images/records/1906-marriage-crosby-pierce-wakefield-ma-townreport-zoom.jpg",
+     "caption": "Wakefield MA marriages registered in 1906, page 143: July 6, Ernest A. Crosby 22, Norwood N.S., James W. and Asenath; Eva E. Pierce 21, Brazil Lake N.S., Charles and Alice; by John R. Chaffee",
+     "alt": "Wakefield MA marriages registered in 1906, page 143: July 6, Ernest A. Crosby 22, Norwood N.S., James W. and Asenath; Eva E. Pierce 21, Brazil Lake N.S., Charles and Alice; by John R. Chaffee",
+     "sourceId": "s28"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1906-marriage-crosby-pierce-wakefield-ma-townreport-highlighted.jpg",
+     "thumb": "images/records/1906-marriage-crosby-pierce-wakefield-ma-townreport-zoom.jpg",
+     "caption": "Full page, with the entry marked: Wakefield MA marriages registered in 1906, page 143: July 6, Ernest A. Crosby 22, Norwood N.S., James W. and Asenath; Eva E. Pierce 21, Brazil Lake N.S., Charles and Alice; by John R. Chaffee",
+     "alt": "Full record page with the entry marked. Wakefield MA marriages registered in 1906, page 143: July 6, Ernest A. Crosby 22, Norwood N.S., James W. and Asenath; Eva E. Pierce 21, Brazil Lake N.S., Charles and Alice; by John R. Chaffee",
+     "sourceId": "s28"
+    }
+   ],
+   "residences": [
+    {
+     "place": "Household in 1950 census",
+     "placeId": "chicopee-ma",
+     "years": "1950",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s28",
+      "s04",
+      "s22",
+      "s23"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "eva-e-pierce-crosby",
+   "displayName": "Eva E. (Pierce) Crosby",
+   "givenNames": "Eva E.",
+   "surname": "Crosby",
+   "sex": "F",
+   "generation": 2,
+   "isLiving": false,
+   "parents": [
+    "charles-pierce",
+    "alice-pierce"
+   ],
+   "children": [
+    "roy-e-crosby",
+    "muriel-j-crosby-strauss",
+    "bernard-m-crosby",
+    "thelma-l-crosby",
+    "ruby-evelyn-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "ernest-a-crosby",
+     "order": 1,
+     "marriageDate": "1906-07-06",
+     "marriageDisplay": "July 6, 1906",
+     "place": "Wakefield, MA",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s28",
+      "s22",
+      "s23"
+     ],
+     "placeId": "wakefield-ma"
+    }
+   ],
+   "birth": {
+    "confidence": "confirmed",
+    "sourceIds": [
+     "s28",
+     "s22",
+     "s23"
+    ],
+    "date": "1885",
+    "display": "about 1885",
+    "dateQualifier": "about",
+    "place": "Brazil Lake, Yarmouth Co., Nova Scotia",
+    "placeId": "brazil-lake-ns"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s28",
+     "s22",
+     "s23"
+    ],
+    "date": "1944",
+    "display": "1944"
+   },
+   "burial": {
+    "place": "Hillcrest Park Cemetery, Springfield, MA",
+    "confidence": "probable",
+    "sourceIds": [
+     "s28",
+     "s22",
+     "s23"
+    ],
+    "placeId": "springfield-ma"
+   },
+   "parentLinkConfidence": "probable",
+   "story": "Eva E. Pierce was born about 1885 at Brazil Lake, Yarmouth County, Nova Scotia, the daughter of Charles and Alice Pierce. She married Ernest A. Crosby, a neighbor from nearby Norwood, at Wakefield, Massachusetts, on July 6, 1906, and their daughter Ruby was born there that November. She raised a large family in Chicopee and died in 1944. She is buried in Hillcrest Park Cemetery, Springfield, Massachusetts. [^s28] [^s22] [^s23]",
+   "summary": "Eva E.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "cardPlace": "Brazil Lake",
+   "confidence": "probable",
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1906-marriage-crosby-pierce-wakefield-ma-townreport-zoom.jpg",
+     "thumb": "images/records/1906-marriage-crosby-pierce-wakefield-ma-townreport-zoom.jpg",
+     "caption": "Wakefield MA marriages registered in 1906, page 143: July 6, Ernest A. Crosby 22, Norwood N.S., James W. and Asenath; Eva E. Pierce 21, Brazil Lake N.S., Charles and Alice; by John R. Chaffee",
+     "alt": "Wakefield MA marriages registered in 1906, page 143: July 6, Ernest A. Crosby 22, Norwood N.S., James W. and Asenath; Eva E. Pierce 21, Brazil Lake N.S., Charles and Alice; by John R. Chaffee",
+     "sourceId": "s28"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1906-marriage-crosby-pierce-wakefield-ma-townreport-highlighted.jpg",
+     "thumb": "images/records/1906-marriage-crosby-pierce-wakefield-ma-townreport-zoom.jpg",
+     "caption": "Full page, with the entry marked: Wakefield MA marriages registered in 1906, page 143: July 6, Ernest A. Crosby 22, Norwood N.S., James W. and Asenath; Eva E. Pierce 21, Brazil Lake N.S., Charles and Alice; by John R. Chaffee",
+     "alt": "Full record page with the entry marked. Wakefield MA marriages registered in 1906, page 143: July 6, Ernest A. Crosby 22, Norwood N.S., James W. and Asenath; Eva E. Pierce 21, Brazil Lake N.S., Charles and Alice; by John R. Chaffee",
+     "sourceId": "s28"
+    }
+   ]
+  },
+  {
+   "id": "robert-h-richardson",
+   "displayName": "Robert H. Richardson",
+   "givenNames": "Robert H.",
+   "surname": "Richardson",
+   "sex": "M",
+   "generation": 2,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "dorothy-r-richardson-crosby",
+    "barbara-eleanor-richardson-vogel"
+   ],
+   "spouses": [
+    {
+     "id": "anna-e-ernst-richardson",
+     "order": 1,
+     "marriageDate": "1920-09-06",
+     "marriageDisplay": "September 6, 1920",
+     "place": "Holyoke, MA",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s34",
+      "s35",
+      "s21",
+      "s33"
+     ],
+     "placeId": "holyoke-ma"
+    }
+   ],
+   "story": "Robert H. Richardson married Anna E. Ernst at Holyoke, Massachusetts, on September 6, 1920; the marriage was registered in Wayland, where the couple lived. Their daughter Barbara Eleanor was born in Wayland (Cochituate) in October 1921, and the family later moved to Chicopee, where Dorothy was born in 1928. A son, Bob, completed the family. Robert's parents are not yet identified. [^s34] [^s35] [^s21] [^s33]",
+   "summary": "Robert H.",
+   "relatedPages": [
+    {
+     "url": "richardson.html",
+     "title": "The Richardson line"
+    }
+   ],
+   "confidence": "probable",
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1920-marriage-richardson-ernst-holyoke-wayland-ma-townreport-zoom.jpg",
+     "thumb": "images/records/1920-marriage-richardson-ernst-holyoke-wayland-ma-townreport-zoom.jpg",
+     "caption": "Wayland MA marriages registered in 1920, page 56: September 6, Robert H. Richardson and Anna E. Ernst, at Holyoke, by Rev. Edwin B. Robinson",
+     "alt": "Wayland MA marriages registered in 1920, page 56: September 6, Robert H. Richardson and Anna E. Ernst, at Holyoke, by Rev. Edwin B. Robinson",
+     "sourceId": "s34"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1920-marriage-richardson-ernst-holyoke-wayland-ma-townreport-highlighted.jpg",
+     "thumb": "images/records/1920-marriage-richardson-ernst-holyoke-wayland-ma-townreport-zoom.jpg",
+     "caption": "Full page, with the entry marked: Wayland MA marriages registered in 1920, page 56: September 6, Robert H. Richardson and Anna E. Ernst, at Holyoke, by Rev. Edwin B. Robinson",
+     "alt": "Full record page with the entry marked. Wayland MA marriages registered in 1920, page 56: September 6, Robert H. Richardson and Anna E. Ernst, at Holyoke, by Rev. Edwin B. Robinson",
+     "sourceId": "s34"
+    }
+   ]
+  },
+  {
+   "id": "anna-e-ernst-richardson",
+   "displayName": "Anna E. \"Anne\" (Ernst) Richardson",
+   "givenNames": "Anna E.",
+   "surname": "Richardson",
+   "sex": "F",
+   "generation": 2,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "dorothy-r-richardson-crosby",
+    "barbara-eleanor-richardson-vogel"
+   ],
+   "spouses": [
+    {
+     "id": "robert-h-richardson",
+     "order": 1,
+     "marriageDate": "1920-09-06",
+     "marriageDisplay": "September 6, 1920",
+     "place": "Holyoke, MA",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s34",
+      "s35",
+      "s21",
+      "s33"
+     ],
+     "placeId": "holyoke-ma"
+    }
+   ],
+   "knownAs": "Anne",
+   "story": "Anna E. Ernst, known as Anne, married Robert H. Richardson at Holyoke on September 6, 1920. She was the mother of Barbara (born 1921 in Wayland), Dorothy (born 1928 in Chicopee) and Robert. Both daughters' obituaries name her. Her own parents are not yet identified. [^s34] [^s35] [^s21] [^s33]",
+   "summary": "Anna E.",
+   "relatedPages": [
+    {
+     "url": "richardson.html",
+     "title": "The Richardson line"
+    }
+   ],
+   "confidence": "probable",
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1920-marriage-richardson-ernst-holyoke-wayland-ma-townreport-zoom.jpg",
+     "thumb": "images/records/1920-marriage-richardson-ernst-holyoke-wayland-ma-townreport-zoom.jpg",
+     "caption": "Wayland MA marriages registered in 1920, page 56: September 6, Robert H. Richardson and Anna E. Ernst, at Holyoke, by Rev. Edwin B. Robinson",
+     "alt": "Wayland MA marriages registered in 1920, page 56: September 6, Robert H. Richardson and Anna E. Ernst, at Holyoke, by Rev. Edwin B. Robinson",
+     "sourceId": "s34"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1920-marriage-richardson-ernst-holyoke-wayland-ma-townreport-highlighted.jpg",
+     "thumb": "images/records/1920-marriage-richardson-ernst-holyoke-wayland-ma-townreport-zoom.jpg",
+     "caption": "Full page, with the entry marked: Wayland MA marriages registered in 1920, page 56: September 6, Robert H. Richardson and Anna E. Ernst, at Holyoke, by Rev. Edwin B. Robinson",
+     "alt": "Full record page with the entry marked. Wayland MA marriages registered in 1920, page 56: September 6, Robert H. Richardson and Anna E. Ernst, at Holyoke, by Rev. Edwin B. Robinson",
+     "sourceId": "s34"
+    }
+   ]
+  },
+  {
+   "id": "muriel-j-crosby-strauss",
+   "displayName": "Muriel J. (Crosby) Strauss",
+   "givenNames": "Muriel J.",
+   "surname": "Strauss",
+   "sex": "F",
+   "generation": 3,
+   "isLiving": false,
+   "parents": [
+    "ernest-a-crosby",
+    "eva-e-pierce-crosby"
+   ],
+   "children": [],
+   "spouses": [],
+   "order": 3,
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s23"
+    ],
+    "date": "1921-03-02",
+    "display": "March 2, 1921",
+    "place": "Chicopee, Massachusetts",
+    "placeId": "chicopee-ma"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s23"
+    ],
+    "date": "2013-10-20",
+    "display": "October 20, 2013",
+    "place": "Springfield, Massachusetts"
+   },
+   "burial": {
+    "place": "Fairview Cemetery (with husband Leonard N. Strauss)",
+    "confidence": "probable",
+    "sourceIds": [
+     "s23"
+    ]
+   },
+   "parentLinkConfidence": "confirmed",
+   "story": "Muriel J. Crosby was born in Chicopee on March 2, 1921, a daughter of Ernest and Eva (Pierce) Crosby. In 1950 she lived in her father's household with her husband at the time, Douglas Rhodes. She later married Leonard N. Strauss, became stepmother to his three children, and died on October 20, 2013. She is buried with Leonard in Fairview Cemetery. [^s23]",
+   "summary": "Muriel J.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "cardPlace": "Chicopee",
+   "confidence": "probable"
+  },
+  {
+   "id": "bernard-m-crosby",
+   "displayName": "Bernard M. \"Mel\" Crosby",
+   "givenNames": "Bernard M.",
+   "surname": "Crosby",
+   "sex": "M",
+   "generation": 3,
+   "isLiving": false,
+   "parents": [
+    "ernest-a-crosby",
+    "eva-e-pierce-crosby"
+   ],
+   "children": [],
+   "spouses": [
+    {
+     "id": "beatrice-a-patterson-crosby",
+     "order": 1,
+     "marriageDate": "1948-06-26",
+     "marriageDisplay": "June 26, 1948",
+     "confidence": "probable",
+     "sourceIds": [
+      "s24",
+      "s20"
+     ]
+    }
+   ],
+   "knownAs": "Mel",
+   "order": 5,
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s24",
+     "s20"
+    ],
+    "date": "1926-06-17",
+    "display": "June 17, 1926",
+    "place": "Chicopee, Massachusetts",
+    "placeId": "chicopee-ma"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s24",
+     "s20"
+    ],
+    "date": "2024-11-14",
+    "display": "November 14, 2024",
+    "place": "West Springfield, Massachusetts",
+    "placeId": "west-springfield-ma"
+   },
+   "parentLinkConfidence": "probable",
+   "story": "Bernard Melvin \"Mel\" Crosby was born in Chicopee on June 17, 1926, Roy's younger brother. He married Beatrice Patterson on June 26, 1948, and they shared seventy years together in West Springfield. He died on November 14, 2024, aged 98. [^s24] [^s20]",
+   "summary": "Bernard Melvin \"Mel\" Crosby was born in Chicopee on June 17, 1926, Roy's younger brother.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "cardPlace": "Chicopee",
+   "confidence": "probable"
+  },
+  {
+   "id": "beatrice-a-patterson-crosby",
+   "displayName": "Beatrice A. (Patterson) Crosby",
+   "givenNames": "Beatrice A.",
+   "surname": "Crosby",
+   "sex": "F",
+   "generation": 3,
+   "isLiving": false,
+   "parents": [],
+   "children": [],
+   "spouses": [
+    {
+     "id": "bernard-m-crosby",
+     "order": 1,
+     "marriageDate": "1948-06-26",
+     "marriageDisplay": "June 26, 1948",
+     "confidence": "probable",
+     "sourceIds": [
+      "s25"
+     ]
+    }
+   ],
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s25"
+    ],
+    "date": "1929-04-06",
+    "display": "April 6, 1929",
+    "place": "Chicopee, Massachusetts"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s25"
+    ],
+    "date": "2018-09-23",
+    "display": "September 23, 2018",
+    "place": "West Springfield, Massachusetts"
+   },
+   "story": "Beatrice A. Patterson was born in Chicopee on April 6, 1929 to William and Charlotte (Smyth) Patterson. She married Bernard Crosby in 1948 and died at home in West Springfield on September 23, 2018. [^s25]",
+   "summary": "Beatrice A.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "cardPlace": "Chicopee",
+   "confidence": "probable"
+  },
+  {
+   "id": "richard-h-farr",
+   "displayName": "Richard H. Farr",
+   "givenNames": "Richard H.",
+   "surname": "Farr",
+   "sex": "M",
+   "generation": 3,
+   "isLiving": false,
+   "parents": [
+    "harry-james-farr",
+    "mary-abbie-west-farr"
+   ],
+   "children": [],
+   "spouses": [],
+   "order": 2,
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s27"
+    ],
+    "date": "1930-07-01",
+    "display": "July 1, 1930",
+    "place": "Springfield, Windsor Co., Vermont",
+    "placeId": "springfield-vt"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s27"
+    ],
+    "date": "2009-05-11",
+    "display": "May 11, 2009",
+    "place": "Rockport, Essex Co., Massachusetts",
+    "placeId": "rockport-ma"
+   },
+   "burial": {
+    "place": "Private burial, Springfield, VT",
+    "confidence": "probable",
+    "sourceIds": [
+     "s27"
+    ]
+   },
+   "parentLinkConfidence": "probable",
+   "story": "Richard H. Farr was born in Springfield, Vermont, on July 1, 1930, the son of Harry James Farr and Mary Abbie West Farr. He served in the U.S. Navy from 1948 to 1952, married Doris Ann Elliott. Her details are not published. He lived on Cape Ann in Massachusetts. He died at Rockport on May 11, 2009, survived by his sisters Alma and Gwendolyn, and was buried privately in Springfield, Vermont. [^s27]",
+   "summary": "Richard H.",
+   "relatedPages": [
+    {
+     "url": "farr.html",
+     "title": "The Farr line"
+    }
+   ],
+   "cardPlace": "Springfield",
+   "confidence": "probable",
+   "occupations": [
+    {
+     "title": "U.S. Navy",
+     "years": "1948 to 1952",
+     "confidence": "probable",
+     "sourceIds": [
+      "s27"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "alma-farr-cook",
+   "displayName": "Alma (Farr) Cook",
+   "givenNames": "Alma",
+   "surname": "Cook",
+   "sex": "F",
+   "generation": 3,
+   "isLiving": true,
+   "parents": [
+    "harry-james-farr",
+    "mary-abbie-west-farr"
+   ],
+   "children": [],
+   "spouses": [],
+   "order": 3,
+   "disambiguator": "Sister of Gwendolyn and Richard; daughter of Harry and Mary Abbie Farr",
+   "summary": "Sister of Gwendolyn and Richard; daughter of Harry and Mary Abbie Farr.",
+   "parentLinkConfidence": "probable"
+  },
+  {
+   "id": "thelma-l-crosby",
+   "displayName": "Thelma L. Crosby",
+   "givenNames": "Thelma L.",
+   "surname": "Crosby",
+   "sex": "F",
+   "generation": 3,
+   "isLiving": false,
+   "parents": [
+    "ernest-a-crosby",
+    "eva-e-pierce-crosby"
+   ],
+   "children": [],
+   "spouses": [],
+   "order": 2,
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s04",
+     "s38"
+    ],
+    "date": "1916",
+    "display": "1916"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s04",
+     "s38"
+    ],
+    "date": "1991",
+    "display": "1991"
+   },
+   "burial": {
+    "place": "Hillcrest Park Cemetery, Springfield, MA",
+    "confidence": "probable",
+    "sourceIds": [
+     "s04",
+     "s38"
+    ],
+    "placeId": "springfield-ma"
+   },
+   "parentLinkConfidence": "confirmed",
+   "story": "Thelma L. Crosby was born in 1916, a daughter of Ernest and Eva (Pierce) Crosby. In 1950 she was living with her widowed father in Chicopee. She died in 1991 and is buried at Hillcrest Park Cemetery in Springfield, Massachusetts. [^s04] [^s38]",
+   "summary": "Thelma L.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "confidence": "probable"
+  },
+  {
+   "id": "ruby-evelyn-crosby",
+   "displayName": "Ruby Evelyn Crosby",
+   "givenNames": "Ruby Evelyn",
+   "surname": "Crosby",
+   "sex": "F",
+   "generation": 3,
+   "isLiving": false,
+   "parents": [
+    "ernest-a-crosby",
+    "eva-e-pierce-crosby"
+   ],
+   "children": [],
+   "spouses": [],
+   "order": 1,
+   "birth": {
+    "confidence": "confirmed",
+    "sourceIds": [
+     "s29",
+     "s20"
+    ],
+    "date": "1906-11-18",
+    "display": "November 18, 1906",
+    "place": "Wakefield, Middlesex Co., Massachusetts",
+    "placeId": "wakefield-ma"
+   },
+   "parentLinkConfidence": "confirmed",
+   "story": "Ruby Evelyn Crosby was born in Wakefield, Massachusetts, on November 18, 1906, the first child of Ernest A. and Eva E. (Pierce) Crosby, a few months after her parents' wedding there. She grew up with her brothers and sisters in Chicopee. [^s29] [^s20]",
+   "summary": "Ruby Evelyn Crosby was born in Wakefield, Massachusetts, on November 18, 1906, the first child of Ernest A.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "cardPlace": "Wakefield",
+   "confidence": "confirmed",
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1906-birth-ruby-evelyn-crosby-wakefield-ma-townreport-zoom.jpg",
+     "thumb": "images/records/1906-birth-ruby-evelyn-crosby-wakefield-ma-townreport-zoom.jpg",
+     "caption": "Wakefield MA births 1906, page 137: Nov. 18, Ruby Evelyn Crosby, parents Ernest A. and Eva E. (Pierce)",
+     "alt": "Wakefield MA births 1906, page 137: Nov. 18, Ruby Evelyn Crosby, parents Ernest A. and Eva E. (Pierce)",
+     "sourceId": "s29"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1906-birth-ruby-evelyn-crosby-wakefield-ma-townreport-highlighted.jpg",
+     "thumb": "images/records/1906-birth-ruby-evelyn-crosby-wakefield-ma-townreport-zoom.jpg",
+     "caption": "Full page, with the entry marked: Wakefield MA births 1906, page 137: Nov. 18, Ruby Evelyn Crosby, parents Ernest A. and Eva E. (Pierce)",
+     "alt": "Full record page with the entry marked. Wakefield MA births 1906, page 137: Nov. 18, Ruby Evelyn Crosby, parents Ernest A. and Eva E. (Pierce)",
+     "sourceId": "s29"
+    }
+   ]
+  },
+  {
+   "id": "james-william-crosby",
+   "displayName": "James William Crosby",
+   "givenNames": "James William",
+   "surname": "Crosby",
+   "sex": "M",
+   "generation": 1,
+   "isLiving": false,
+   "parents": [
+    "joseph-crosby",
+    "eunice-saunders-crosby"
+   ],
+   "children": [
+    "ernest-a-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "asenath-porter-crosby",
+     "order": 1,
+     "marriageDate": "1882-01-21",
+     "marriageDisplay": "January 21, 1882",
+     "place": "Ohio, Yarmouth Co., NS",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s30",
+      "s32",
+      "s28"
+     ],
+     "placeId": "ohio-ns"
+    }
+   ],
+   "birth": {
+    "confidence": "confirmed",
+    "sourceIds": [
+     "s30",
+     "s32",
+     "s28"
+    ],
+    "date": "1857-10-31",
+    "display": "October 31, 1857",
+    "place": "Pleasant Valley, Yarmouth Co., Nova Scotia",
+    "placeId": "pleasant-valley-ns"
+   },
+   "death": {
+    "confidence": "confirmed",
+    "sourceIds": [
+     "s30",
+     "s32",
+     "s28"
+    ],
+    "date": "1937-12-22",
+    "display": "December 22, 1937",
+    "place": "Brazil Lake, Yarmouth Co., Nova Scotia",
+    "placeId": "brazil-lake-ns"
+   },
+   "parentLinkConfidence": "probable",
+   "story": "James William Crosby was born at Pleasant Valley, Yarmouth County, Nova Scotia, on October 31, 1857, the son of Joseph Crosby and Eunice Saunders. On January 21, 1882 he married Asenath Porter at Ohio, Yarmouth County (the register index reads James H.). Their son Ernest was born at Norwood about 1884, and a son William was still near home in 1938. James died at Brazil Lake on December 22, 1937, aged 80. [^s30] [^s32] [^s28]",
+   "summary": "James William Crosby was born at Pleasant Valley, Yarmouth County, Nova Scotia, on October 31, 1857, the son of Joseph Crosby and Eunice Saunders.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "cardPlace": "Pleasant Valley",
+   "confidence": "probable",
+   "nameVariants": [
+    {
+     "name": "James H. Crosby",
+     "note": "The 1882 marriage index reads James H. The 1937 death registration reads James William.",
+     "confidence": "probable",
+     "sourceIds": [
+      "s30",
+      "s32"
+     ]
+    }
+   ],
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1882-marriage-crosby-porter-ohio-yarmouth-ns-zoom.jpg",
+     "thumb": "images/records/1882-marriage-crosby-porter-ohio-yarmouth-ns-zoom.jpg",
+     "caption": "Nova Scotia marriage register, Yarmouth Co., 21 Jan 1882: James Crosby and Asenath Porter at Ohio",
+     "alt": "Nova Scotia marriage register, Yarmouth Co., 21 Jan 1882: James Crosby and Asenath Porter at Ohio",
+     "sourceId": "s30"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1882-marriage-crosby-porter-ohio-yarmouth-ns-highlighted.jpg",
+     "thumb": "images/records/1882-marriage-crosby-porter-ohio-yarmouth-ns-zoom.jpg",
+     "caption": "Full page, with the entry marked: Nova Scotia marriage register, Yarmouth Co., 21 Jan 1882: James Crosby and Asenath Porter at Ohio",
+     "alt": "Full record page with the entry marked. Nova Scotia marriage register, Yarmouth Co., 21 Jan 1882: James Crosby and Asenath Porter at Ohio",
+     "sourceId": "s30"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1937-death-james-william-crosby-brazil-lake-ns-zoom.jpg",
+     "thumb": "images/records/1937-death-james-william-crosby-brazil-lake-ns-zoom.jpg",
+     "caption": "Nova Scotia death registration 1937: James William Crosby, Brazil Lake, died 22 Dec 1937, born 31 Oct 1857 Pleasant Valley, father Joseph Crosby, mother Eunice Saunders",
+     "alt": "Nova Scotia death registration 1937: James William Crosby, Brazil Lake, died 22 Dec 1937, born 31 Oct 1857 Pleasant Valley, father Joseph Crosby, mother Eunice Saunders",
+     "sourceId": "s32"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1937-death-james-william-crosby-brazil-lake-ns-highlighted.jpg",
+     "thumb": "images/records/1937-death-james-william-crosby-brazil-lake-ns-zoom.jpg",
+     "caption": "Full page, with the entry marked: Nova Scotia death registration 1937: James William Crosby, Brazil Lake, died 22 Dec 1937, born 31 Oct 1857 Pleasant Valley, father Joseph Crosby, mother Eunice Saunders",
+     "alt": "Full record page with the entry marked. Nova Scotia death registration 1937: James William Crosby, Brazil Lake, died 22 Dec 1937, born 31 Oct 1857 Pleasant Valley, father Joseph Crosby, mother Eunice Saunders",
+     "sourceId": "s32"
+    }
+   ]
+  },
+  {
+   "id": "asenath-porter-crosby",
+   "displayName": "Asenath (Porter) Crosby",
+   "givenNames": "Asenath",
+   "surname": "Crosby",
+   "sex": "F",
+   "generation": 1,
+   "isLiving": false,
+   "parents": [
+    "hezekiah-porter",
+    "celia-porter"
+   ],
+   "children": [
+    "ernest-a-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "james-william-crosby",
+     "order": 1,
+     "marriageDate": "1882-01-21",
+     "marriageDisplay": "January 21, 1882",
+     "place": "Ohio, Yarmouth Co., NS",
+     "confidence": "confirmed",
+     "sourceIds": [
+      "s30",
+      "s31",
+      "s28"
+     ],
+     "placeId": "ohio-ns"
+    }
+   ],
+   "birth": {
+    "confidence": "confirmed",
+    "sourceIds": [
+     "s30",
+     "s31",
+     "s28"
+    ],
+    "date": "1860-04-12",
+    "display": "April 12, 1860",
+    "place": "Ohio, Yarmouth Co., Nova Scotia",
+    "placeId": "ohio-ns"
+   },
+   "death": {
+    "confidence": "confirmed",
+    "sourceIds": [
+     "s30",
+     "s31",
+     "s28"
+    ],
+    "date": "1938-11-02",
+    "display": "November 2, 1938",
+    "place": "Brazil Lake, Yarmouth Co., Nova Scotia",
+    "placeId": "brazil-lake-ns"
+   },
+   "parentLinkConfidence": "probable",
+   "story": "Asenath Porter was born at Ohio, Yarmouth County, Nova Scotia, on April 12, 1860, the daughter of Hezekiah and Celia Porter. She married James William Crosby on January 21, 1882 and was the mother of Ernest A. Crosby. She died at Brazil Lake on November 2, 1938, eleven months after her husband; her son William gave the information for her death record. [^s30] [^s31] [^s28]",
+   "summary": "Asenath Porter was born at Ohio, Yarmouth County, Nova Scotia, on April 12, 1860, the daughter of Hezekiah and Celia Porter.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "cardPlace": "Ohio",
+   "confidence": "probable",
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1882-marriage-crosby-porter-ohio-yarmouth-ns-zoom.jpg",
+     "thumb": "images/records/1882-marriage-crosby-porter-ohio-yarmouth-ns-zoom.jpg",
+     "caption": "Nova Scotia marriage register, Yarmouth Co., 21 Jan 1882: James Crosby and Asenath Porter at Ohio",
+     "alt": "Nova Scotia marriage register, Yarmouth Co., 21 Jan 1882: James Crosby and Asenath Porter at Ohio",
+     "sourceId": "s30"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1882-marriage-crosby-porter-ohio-yarmouth-ns-highlighted.jpg",
+     "thumb": "images/records/1882-marriage-crosby-porter-ohio-yarmouth-ns-zoom.jpg",
+     "caption": "Full page, with the entry marked: Nova Scotia marriage register, Yarmouth Co., 21 Jan 1882: James Crosby and Asenath Porter at Ohio",
+     "alt": "Full record page with the entry marked. Nova Scotia marriage register, Yarmouth Co., 21 Jan 1882: James Crosby and Asenath Porter at Ohio",
+     "sourceId": "s30"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1938-death-asenath-porter-crosby-brazil-lake-ns-zoom.jpg",
+     "thumb": "images/records/1938-death-asenath-porter-crosby-brazil-lake-ns-zoom.jpg",
+     "caption": "Nova Scotia death registration 1938: Asenath Crosby, Brazil Lake, died 2 Nov 1938, born 12 Apr 1860 Ohio, father Hezekiah Porter, mother Celia Porter",
+     "alt": "Nova Scotia death registration 1938: Asenath Crosby, Brazil Lake, died 2 Nov 1938, born 12 Apr 1860 Ohio, father Hezekiah Porter, mother Celia Porter",
+     "sourceId": "s31"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1938-death-asenath-porter-crosby-brazil-lake-ns-highlighted.jpg",
+     "thumb": "images/records/1938-death-asenath-porter-crosby-brazil-lake-ns-zoom.jpg",
+     "caption": "Full page, with the entry marked: Nova Scotia death registration 1938: Asenath Crosby, Brazil Lake, died 2 Nov 1938, born 12 Apr 1860 Ohio, father Hezekiah Porter, mother Celia Porter",
+     "alt": "Full record page with the entry marked. Nova Scotia death registration 1938: Asenath Crosby, Brazil Lake, died 2 Nov 1938, born 12 Apr 1860 Ohio, father Hezekiah Porter, mother Celia Porter",
+     "sourceId": "s31"
+    }
+   ]
+  },
+  {
+   "id": "joseph-crosby",
+   "displayName": "Joseph Crosby",
+   "givenNames": "Joseph",
+   "surname": "Crosby",
+   "sex": "M",
+   "generation": 0,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "james-william-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "eunice-saunders-crosby",
+     "order": 1,
+     "confidence": "probable",
+     "sourceIds": [
+      "s32"
+     ]
+    }
+   ],
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s32"
+    ],
+    "place": "Pleasant Lake, Yarmouth Co., Nova Scotia"
+   },
+   "story": "Joseph Crosby, born at Pleasant Lake, Yarmouth County, Nova Scotia, was the father of James William Crosby, as his son's 1937 death record states. He married Eunice Saunders. His dates are not yet found. [^s32]",
+   "summary": "Joseph Crosby, born at Pleasant Lake, Yarmouth County, Nova Scotia, was the father of James William Crosby, as his son's 1937 death record states.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "cardPlace": "Pleasant Lake",
+   "confidence": "probable"
+  },
+  {
+   "id": "eunice-saunders-crosby",
+   "displayName": "Eunice (Saunders) Crosby",
+   "givenNames": "Eunice",
+   "surname": "Crosby",
+   "sex": "F",
+   "generation": 0,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "james-william-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "joseph-crosby",
+     "order": 1,
+     "confidence": "probable",
+     "sourceIds": [
+      "s32"
+     ]
+    }
+   ],
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s32"
+    ],
+    "place": "Lake George, Yarmouth Co., Nova Scotia"
+   },
+   "story": "Eunice Saunders was born at Lake George, Yarmouth County, Nova Scotia, and married Joseph Crosby. She was the mother of James William Crosby, as his 1937 death record states. [^s32]",
+   "summary": "Eunice Saunders was born at Lake George, Yarmouth County, Nova Scotia, and married Joseph Crosby.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "cardPlace": "Lake George",
+   "confidence": "probable"
+  },
+  {
+   "id": "hezekiah-porter",
+   "displayName": "Hezekiah Porter",
+   "givenNames": "Hezekiah",
+   "surname": "Porter",
+   "sex": "M",
+   "generation": 0,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "asenath-porter-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "celia-porter",
+     "order": 1,
+     "confidence": "probable",
+     "sourceIds": [
+      "s31"
+     ]
+    }
+   ],
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s31"
+    ],
+    "place": "Ohio, Yarmouth Co., Nova Scotia"
+   },
+   "story": "Hezekiah Porter, born at Ohio, Yarmouth County, Nova Scotia, was the father of Asenath (Porter) Crosby, as her 1938 death record states. [^s31]",
+   "summary": "Hezekiah Porter, born at Ohio, Yarmouth County, Nova Scotia, was the father of Asenath (Porter) Crosby, as her 1938 death record states.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "cardPlace": "Ohio",
+   "confidence": "probable"
+  },
+  {
+   "id": "celia-porter",
+   "displayName": "Celia Porter",
+   "givenNames": "Celia",
+   "surname": "Porter",
+   "sex": "F",
+   "generation": 0,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "asenath-porter-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "hezekiah-porter",
+     "order": 1,
+     "confidence": "probable",
+     "sourceIds": [
+      "s31"
+     ]
+    }
+   ],
+   "birth": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s31"
+    ],
+    "place": "South Ohio, Yarmouth Co., Nova Scotia"
+   },
+   "story": "Celia Porter, born at South Ohio, Yarmouth County, Nova Scotia, was the mother of Asenath (Porter) Crosby, as her 1938 death record states. [^s31]",
+   "summary": "Celia Porter, born at South Ohio, Yarmouth County, Nova Scotia, was the mother of Asenath (Porter) Crosby, as her 1938 death record states.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "cardPlace": "South Ohio",
+   "confidence": "probable"
+  },
+  {
+   "id": "charles-pierce",
+   "displayName": "Charles Pierce",
+   "givenNames": "Charles",
+   "surname": "Pierce",
+   "sex": "M",
+   "generation": 0,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "eva-e-pierce-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "alice-pierce",
+     "order": 1,
+     "confidence": "probable",
+     "sourceIds": [
+      "s28",
+      "s39"
+     ]
+    }
+   ],
+   "story": "Charles Pierce of Brazil Lake, Nova Scotia, was the father of Eva E. (Pierce) Crosby, as her 1906 marriage record states. [^s28] [^s39]",
+   "summary": "Charles Pierce of Brazil Lake, Nova Scotia, was the father of Eva E.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "confidence": "probable"
+  },
+  {
+   "id": "alice-pierce",
+   "displayName": "Alice Pierce",
+   "givenNames": "Alice",
+   "surname": "Pierce",
+   "sex": "F",
+   "generation": 0,
+   "isLiving": false,
+   "parents": [],
+   "children": [
+    "eva-e-pierce-crosby"
+   ],
+   "spouses": [
+    {
+     "id": "charles-pierce",
+     "order": 1,
+     "confidence": "probable",
+     "sourceIds": [
+      "s28",
+      "s39"
+     ]
+    }
+   ],
+   "story": "Alice Pierce was the mother of Eva E. (Pierce) Crosby, as Eva's 1906 marriage record states. [^s28] [^s39]",
+   "summary": "Alice Pierce was the mother of Eva E.",
+   "relatedPages": [
+    {
+     "url": "crosby.html",
+     "title": "The Crosby line"
+    }
+   ],
+   "confidence": "probable"
+  },
+  {
+   "id": "barbara-eleanor-richardson-vogel",
+   "displayName": "Barbara Eleanor (Richardson) Vogel",
+   "givenNames": "Barbara Eleanor",
+   "surname": "Vogel",
+   "sex": "F",
+   "generation": 3,
+   "isLiving": false,
+   "parents": [
+    "robert-h-richardson",
+    "anna-e-ernst-richardson"
+   ],
+   "children": [],
+   "spouses": [],
+   "order": 1,
+   "birth": {
+    "confidence": "confirmed",
+    "sourceIds": [
+     "s35",
+     "s33"
+    ],
+    "date": "1921-10-26",
+    "display": "October 26, 1921",
+    "place": "Wayland (Cochituate), Middlesex Co., Massachusetts",
+    "placeId": "wayland-cochituate-ma"
+   },
+   "death": {
+    "confidence": "probable",
+    "sourceIds": [
+     "s35",
+     "s33"
+    ],
+    "date": "2016-11-24",
+    "display": "November 24, 2016"
+   },
+   "burial": {
+    "place": "Massachusetts Veterans Memorial Cemetery, Agawam, MA",
+    "confidence": "probable",
+    "sourceIds": [
+     "s35",
+     "s33"
+    ],
+    "placeId": "agawam-ma"
+   },
+   "parentLinkConfidence": "confirmed",
+   "story": "Barbara Eleanor Richardson was born on October 26, 1921 in Cochituate, a village of Wayland, Massachusetts, the elder daughter of Robert H. and Anna E. (Ernst) Richardson. She married Roland Vogel, lived for many years in Chicopee and worked as an insurance agent for Palmer, Goodell and Keeney. Skier, golfer, swimmer and square dancer, she spent more than 50 summers on Otis Reservoir. She died on November 24, 2016, survived by her sister Dorothy \"Ducky\" Crosby, and was buried at the Massachusetts Veterans Memorial Cemetery in Agawam. [^s35] [^s33]",
+   "summary": "Barbara Eleanor Richardson was born on October 26, 1921 in Cochituate, a village of Wayland, Massachusetts, the elder daughter of Robert H.",
+   "relatedPages": [
+    {
+     "url": "richardson.html",
+     "title": "The Richardson line"
+    }
+   ],
+   "cardPlace": "Wayland (Cochituate)",
+   "confidence": "probable",
+   "occupations": [
+    {
+     "title": "Insurance agent",
+     "confidence": "probable",
+     "sourceIds": [
+      "s33"
+     ]
+    }
+   ],
+   "media": [
+    {
+     "type": "document",
+     "file": "images/records/1921-birth-barbara-eleanor-richardson-wayland-ma-townreport-zoom.jpg",
+     "thumb": "images/records/1921-birth-barbara-eleanor-richardson-wayland-ma-townreport-zoom.jpg",
+     "caption": "Wayland MA births 1921, page 35: October 26, Barbara Eleanor Richardson, parents Robert H. and Anna E.",
+     "alt": "Wayland MA births 1921, page 35: October 26, Barbara Eleanor Richardson, parents Robert H. and Anna E.",
+     "sourceId": "s35"
+    },
+    {
+     "type": "document",
+     "file": "images/records/1921-birth-barbara-eleanor-richardson-wayland-ma-townreport-highlighted.jpg",
+     "thumb": "images/records/1921-birth-barbara-eleanor-richardson-wayland-ma-townreport-zoom.jpg",
+     "caption": "Full page, with the entry marked: Wayland MA births 1921, page 35: October 26, Barbara Eleanor Richardson, parents Robert H. and Anna E.",
+     "alt": "Full record page with the entry marked. Wayland MA births 1921, page 35: October 26, Barbara Eleanor Richardson, parents Robert H. and Anna E.",
+     "sourceId": "s35"
+    }
+   ]
+  }
+ ]
+}

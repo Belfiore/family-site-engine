@@ -1,0 +1,1412 @@
+{
+ "meta": {
+  "note": "Places taken from the research place table. Possible rows are left off."
+ },
+ "places": [
+  {
+   "id": "springfield-vt",
+   "name": "Springfield, VT",
+   "kind": "town",
+   "precision": "town",
+   "lat": 43.2984,
+   "lng": -72.4823,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-springfield-vt-01",
+     "type": "born",
+     "personIds": [
+      "howard-frank-magwire"
+     ],
+     "dateStart": "1919",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Howard Frank Magwire: Born (twin of Harold), 1919",
+     "sourceIds": [
+      "s01",
+      "s10",
+      "s13"
+     ],
+     "factRef": "howard-frank-magwire.birth",
+     "recordCrops": [
+      "1919-birth-magwire-twins-springfield-vt-townreport-zoom.jpg"
+     ]
+    },
+    {
+     "id": "pe-springfield-vt-02",
+     "type": "born",
+     "personIds": [
+      "harold-charles-magwire"
+     ],
+     "dateStart": "1919",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Harold Charles Magwire: Born (twin of Howard), 1919",
+     "sourceIds": [
+      "s01",
+      "s11"
+     ],
+     "factRef": "harold-charles-magwire.birth",
+     "recordCrops": [
+      "1919-birth-magwire-twins-springfield-vt-townreport-zoom.jpg"
+     ]
+    },
+    {
+     "id": "pe-springfield-vt-03",
+     "type": "married",
+     "personIds": [
+      "howard-frank-magwire"
+     ],
+     "dateStart": "1961",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Howard Frank Magwire: Married Gwendolyn Farr, 1961",
+     "sourceIds": [
+      "s01",
+      "s10",
+      "s13"
+     ],
+     "factRef": "howard-frank-magwire.spouses[0]"
+    },
+    {
+     "id": "pe-springfield-vt-04",
+     "type": "buried",
+     "personIds": [
+      "howard-frank-magwire"
+     ],
+     "dateStart": "2014",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Howard Frank Magwire: Buried, Oakland Cemetery, 2014",
+     "sourceIds": [
+      "s01",
+      "s10",
+      "s13"
+     ],
+     "factRef": "howard-frank-magwire.burial"
+    },
+    {
+     "id": "pe-springfield-vt-05",
+     "type": "born",
+     "personIds": [
+      "frank-albert-magwire"
+     ],
+     "dateStart": "1889",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Frank Albert Magwire: Born, 1889",
+     "sourceIds": [
+      "s02",
+      "s13",
+      "s18"
+     ],
+     "factRef": "frank-albert-magwire.birth"
+    },
+    {
+     "id": "pe-springfield-vt-06",
+     "type": "married",
+     "personIds": [
+      "frank-albert-magwire"
+     ],
+     "dateStart": "1912",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Frank Albert Magwire: Married Alice Evadna Bates, 1912",
+     "sourceIds": [
+      "s02",
+      "s13",
+      "s18"
+     ],
+     "factRef": "frank-albert-magwire.spouses[0]",
+     "recordCrops": [
+      "1912-marriage-magwire-bates-springfield-vt-townreport-zoom.jpg"
+     ]
+    },
+    {
+     "id": "pe-springfield-vt-07",
+     "type": "worked",
+     "personIds": [
+      "frank-albert-magwire"
+     ],
+     "dateStart": "1917",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Frank Albert Magwire: Ran Magwire's Pharmacy (37 years to 1954), 1917",
+     "sourceIds": [
+      "s13"
+     ],
+     "factRef": "frank-albert-magwire.occupations[0]"
+    },
+    {
+     "id": "pe-springfield-vt-08",
+     "type": "died",
+     "personIds": [
+      "frank-albert-magwire"
+     ],
+     "dateStart": "1967",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Frank Albert Magwire: Died, Springfield Hospital, 1967",
+     "sourceIds": [
+      "s02",
+      "s13",
+      "s18"
+     ],
+     "factRef": "frank-albert-magwire.death"
+    },
+    {
+     "id": "pe-springfield-vt-09",
+     "type": "died",
+     "personIds": [
+      "alice-evadna-bates-magwire"
+     ],
+     "dateStart": "1972",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Alice Evadna (Bates) Magwire: Died, 1972",
+     "sourceIds": [
+      "s02",
+      "s14",
+      "s13"
+     ],
+     "factRef": "alice-evadna-bates-magwire.death"
+    },
+    {
+     "id": "pe-springfield-vt-10",
+     "type": "died",
+     "personIds": [
+      "albert-a-magwire"
+     ],
+     "dateStart": "1929",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Albert A. Magwire: Died, 1929",
+     "sourceIds": [
+      "s15",
+      "s16",
+      "s18",
+      "s13"
+     ],
+     "factRef": "albert-a-magwire.death"
+    },
+    {
+     "id": "pe-springfield-vt-11",
+     "type": "married",
+     "personIds": [
+      "charles-elliot-spaulding"
+     ],
+     "dateStart": "1856",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Charles Elliot Spaulding: Married Amantha Putnam, 1856",
+     "sourceIds": [
+      "s06",
+      "s07",
+      "s17"
+     ],
+     "factRef": "charles-elliot-spaulding.spouses[0]",
+     "recordCrops": [
+      "1872-spalding-memorial-p448-charles-elliot-spaulding-family-zoom.jpg"
+     ]
+    },
+    {
+     "id": "pe-springfield-vt-12",
+     "type": "born",
+     "personIds": [
+      "raymond-bates-magwire"
+     ],
+     "dateStart": "1913",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Raymond Bates Magwire: Born, 1913",
+     "sourceIds": [
+      "s12",
+      "s13"
+     ],
+     "factRef": "raymond-bates-magwire.birth"
+    },
+    {
+     "id": "pe-springfield-vt-13",
+     "type": "married",
+     "personIds": [
+      "harry-james-farr"
+     ],
+     "dateStart": "1912",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Harry James Farr: Married Laura Mary Seward, 1912",
+     "sourceIds": [
+      "s05",
+      "s03",
+      "s27"
+     ],
+     "factRef": "harry-james-farr.spouses[0]",
+     "recordCrops": [
+      "1912-marriage-farr-seward-springfield-vt-townreport-zoom.jpg"
+     ]
+    },
+    {
+     "id": "pe-springfield-vt-14",
+     "type": "lived",
+     "personIds": [
+      "harry-james-farr"
+     ],
+     "dateStart": "1950",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Harry James Farr: Living with wife Mary A. (1950 census), 1950",
+     "sourceIds": [
+      "s05",
+      "s03",
+      "s27"
+     ],
+     "factRef": "harry-james-farr.residences[0]",
+     "recordCrops": [
+      "1950-census-farr-harry-springfield-vt-ed14-41-zoom.jpg"
+     ]
+    },
+    {
+     "id": "pe-springfield-vt-15",
+     "type": "born",
+     "personIds": [
+      "gwendolyn-farr-magwire"
+     ],
+     "dateStart": "1927",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Gwendolyn (Farr) Magwire: Born, 1927",
+     "sourceIds": [
+      "s36",
+      "s27",
+      "s10"
+     ],
+     "factRef": "gwendolyn-farr-magwire.birth"
+    },
+    {
+     "id": "pe-springfield-vt-16",
+     "type": "born",
+     "personIds": [
+      "richard-h-farr"
+     ],
+     "dateStart": "1930",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Richard H. Farr: Born, 1930",
+     "sourceIds": [
+      "s27"
+     ],
+     "factRef": "richard-h-farr.birth"
+    },
+    {
+     "id": "pe-springfield-vt-17",
+     "type": "civil case",
+     "personIds": [
+      "frank-albert-magwire"
+     ],
+     "dateStart": "1940",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Frank Albert Magwire: Magwire's Pharmacy pinball license case (Vermont Supreme Court), 1940",
+     "sourceIds": [
+      "s37"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "williamstown-ma",
+   "name": "Williamstown, MA",
+   "kind": "town",
+   "precision": "town",
+   "lat": 42.712,
+   "lng": -73.2037,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-williamstown-ma-01",
+     "type": "born",
+     "personIds": [
+      "alice-evadna-bates-magwire"
+     ],
+     "dateStart": "1889",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Alice Evadna (Bates) Magwire: Born, 1889",
+     "sourceIds": [
+      "s02",
+      "s14",
+      "s13"
+     ],
+     "factRef": "alice-evadna-bates-magwire.birth"
+    }
+   ]
+  },
+  {
+   "id": "brooklyn-ny",
+   "name": "Brooklyn, NY",
+   "kind": "town",
+   "precision": "town",
+   "lat": 40.6782,
+   "lng": -73.9442,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": false,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-brooklyn-ny-01",
+     "type": "born",
+     "personIds": [
+      "albert-a-magwire"
+     ],
+     "dateStart": "1845",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Albert A. Magwire: Born, 1845",
+     "sourceIds": [
+      "s15",
+      "s16",
+      "s18",
+      "s13"
+     ],
+     "factRef": "albert-a-magwire.birth"
+    }
+   ]
+  },
+  {
+   "id": "cavendish-vt",
+   "name": "Cavendish, VT",
+   "kind": "town",
+   "precision": "town",
+   "lat": 43.3826,
+   "lng": -72.6093,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-cavendish-vt-01",
+     "type": "married",
+     "personIds": [
+      "albert-a-magwire"
+     ],
+     "dateStart": "1887",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Albert A. Magwire: Married Alice Jenny Spaulding, 1887",
+     "sourceIds": [
+      "s15",
+      "s16",
+      "s18",
+      "s13"
+     ],
+     "factRef": "albert-a-magwire.spouses[0]"
+    },
+    {
+     "id": "pe-cavendish-vt-02",
+     "type": "born",
+     "personIds": [
+      "alice-jenny-spaulding-magwire"
+     ],
+     "dateStart": "1866",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Alice Jenny (Spaulding) Magwire: Born, 1866",
+     "sourceIds": [
+      "s06",
+      "s07",
+      "s16"
+     ],
+     "factRef": "alice-jenny-spaulding-magwire.birth",
+     "recordCrops": [
+      "1872-spalding-memorial-p448-charles-elliot-spaulding-family-zoom.jpg"
+     ]
+    },
+    {
+     "id": "pe-cavendish-vt-03",
+     "type": "died",
+     "personIds": [
+      "charles-elliot-spaulding"
+     ],
+     "dateStart": "1890",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Charles Elliot Spaulding: Farmed and died; buried Cavendish Village Cemetery, 1890",
+     "sourceIds": [
+      "s06",
+      "s07",
+      "s17"
+     ],
+     "factRef": "charles-elliot-spaulding.death"
+    }
+   ]
+  },
+  {
+   "id": "west-lebanon-nh",
+   "name": "West Lebanon, NH",
+   "kind": "town",
+   "precision": "town",
+   "lat": 43.6445,
+   "lng": -72.3109,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-west-lebanon-nh-01",
+     "type": "died",
+     "personIds": [
+      "alice-jenny-spaulding-magwire"
+     ],
+     "dateStart": "1951",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Alice Jenny (Spaulding) Magwire: Died, 1951",
+     "sourceIds": [
+      "s06",
+      "s07",
+      "s16"
+     ],
+     "factRef": "alice-jenny-spaulding-magwire.death"
+    }
+   ]
+  },
+  {
+   "id": "proctorsville-vt",
+   "name": "Proctorsville, VT",
+   "kind": "town",
+   "precision": "town",
+   "lat": 43.3818,
+   "lng": -72.639,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-proctorsville-vt-01",
+     "type": "died",
+     "personIds": [
+      "amantha-putnam-spaulding"
+     ],
+     "dateStart": "1926",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Amantha (Putnam) Spaulding: Died, 1926",
+     "sourceIds": [
+      "s07",
+      "s06",
+      "s17"
+     ],
+     "factRef": "amantha-putnam-spaulding.death"
+    }
+   ]
+  },
+  {
+   "id": "rutland-vt",
+   "name": "Rutland, VT",
+   "kind": "town",
+   "precision": "town",
+   "lat": 43.6106,
+   "lng": -72.9726,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-rutland-vt-01",
+     "type": "died",
+     "personIds": [
+      "raymond-bates-magwire"
+     ],
+     "dateStart": "1997",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Raymond Bates Magwire: Died, 1997",
+     "sourceIds": [
+      "s12",
+      "s13"
+     ],
+     "factRef": "raymond-bates-magwire.death"
+    }
+   ]
+  },
+  {
+   "id": "castleton-vt",
+   "name": "Castleton, VT",
+   "kind": "town",
+   "precision": "town",
+   "lat": 43.6101,
+   "lng": -73.1793,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-castleton-vt-01",
+     "type": "buried",
+     "personIds": [
+      "raymond-bates-magwire"
+     ],
+     "dateStart": "1997",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Raymond Bates Magwire: Buried, Hillside Cemetery, 1997",
+     "sourceIds": [
+      "s12",
+      "s13"
+     ],
+     "factRef": "raymond-bates-magwire.burial"
+    }
+   ]
+  },
+  {
+   "id": "ormond-beach-fl",
+   "name": "Ormond Beach, FL",
+   "kind": "town",
+   "precision": "town",
+   "lat": 29.2858,
+   "lng": -81.0559,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": false,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-ormond-beach-fl-01",
+     "type": "died",
+     "personIds": [
+      "harold-charles-magwire"
+     ],
+     "dateStart": "2002",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Harold Charles Magwire: Died, 2002",
+     "sourceIds": [
+      "s01",
+      "s11"
+     ],
+     "factRef": "harold-charles-magwire.death"
+    }
+   ]
+  },
+  {
+   "id": "randolph-center-vt",
+   "name": "Randolph Center, VT",
+   "kind": "town",
+   "precision": "town",
+   "lat": 43.9376,
+   "lng": -72.5976,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-randolph-center-vt-01",
+     "type": "buried",
+     "personIds": [
+      "harold-charles-magwire"
+     ],
+     "dateStart": "2002",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Harold Charles Magwire: Buried, Vermont Veterans Memorial Cemetery, 2002",
+     "sourceIds": [
+      "s01",
+      "s11"
+     ],
+     "factRef": "harold-charles-magwire.burial"
+    }
+   ]
+  },
+  {
+   "id": "colorado",
+   "name": "Colorado",
+   "kind": "state",
+   "precision": "state",
+   "lat": 39.55,
+   "lng": -105.78,
+   "uncertaintyMetres": 180000,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "state",
+   "drawAs": "area",
+   "inHomeRegion": false,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-colorado-01",
+     "type": "born",
+     "personIds": [
+      "harry-james-farr"
+     ],
+     "dateStart": "1888",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Harry James Farr: Born (state only), 1888",
+     "sourceIds": [
+      "s05",
+      "s03",
+      "s27"
+     ],
+     "factRef": "harry-james-farr.birth"
+    }
+   ]
+  },
+  {
+   "id": "chicopee-ma",
+   "name": "Chicopee, MA",
+   "kind": "town",
+   "precision": "town",
+   "lat": 42.1487,
+   "lng": -72.6079,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-chicopee-ma-01",
+     "type": "lived",
+     "personIds": [
+      "ernest-a-crosby"
+     ],
+     "dateStart": "1950",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Ernest A. Crosby: Household in 1950 census, 1950",
+     "sourceIds": [
+      "s28",
+      "s04",
+      "s22",
+      "s23"
+     ],
+     "factRef": "ernest-a-crosby.residences[0]",
+     "recordCrops": [
+      "1950-census-crosby-ernest-chicopee-ma-ed7-40-sheet73-zoom.jpg"
+     ]
+    },
+    {
+     "id": "pe-chicopee-ma-02",
+     "type": "born",
+     "personIds": [
+      "roy-e-crosby"
+     ],
+     "dateStart": "1925",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Roy E. Crosby: Born and raised, 1925",
+     "sourceIds": [
+      "s20",
+      "s21",
+      "s23",
+      "s24"
+     ],
+     "factRef": "roy-e-crosby.birth"
+    },
+    {
+     "id": "pe-chicopee-ma-03",
+     "type": "born",
+     "personIds": [
+      "dorothy-r-richardson-crosby"
+     ],
+     "dateStart": "1928",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Dorothy R. (Richardson) Crosby: Born and raised, 1928",
+     "sourceIds": [
+      "s21",
+      "s20"
+     ],
+     "factRef": "dorothy-r-richardson-crosby.birth"
+    },
+    {
+     "id": "pe-chicopee-ma-04",
+     "type": "born",
+     "personIds": [
+      "muriel-j-crosby-strauss"
+     ],
+     "dateStart": "1921",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Muriel J. (Crosby) Strauss: Born, 1921",
+     "sourceIds": [
+      "s23"
+     ],
+     "factRef": "muriel-j-crosby-strauss.birth"
+    },
+    {
+     "id": "pe-chicopee-ma-05",
+     "type": "born",
+     "personIds": [
+      "bernard-m-crosby"
+     ],
+     "dateStart": "1926",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Bernard M. Crosby: Born, 1926",
+     "sourceIds": [
+      "s24",
+      "s20"
+     ],
+     "factRef": "bernard-m-crosby.birth"
+    }
+   ]
+  },
+  {
+   "id": "springfield-ma",
+   "name": "Springfield, MA",
+   "kind": "town",
+   "precision": "town",
+   "lat": 42.1015,
+   "lng": -72.5898,
+   "uncertaintyMetres": 2500,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "halo",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-springfield-ma-01",
+     "type": "buried",
+     "personIds": [
+      "ernest-a-crosby"
+     ],
+     "dateStart": "1958",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Ernest A. Crosby: Buried, Hillcrest Park Cemetery, 1958",
+     "sourceIds": [
+      "s28",
+      "s04",
+      "s22",
+      "s23"
+     ],
+     "factRef": "ernest-a-crosby.burial"
+    },
+    {
+     "id": "pe-springfield-ma-02",
+     "type": "buried",
+     "personIds": [
+      "eva-e-pierce-crosby"
+     ],
+     "dateStart": "1944",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Eva E. (Pierce) Crosby: Buried, Hillcrest Park Cemetery, 1944",
+     "sourceIds": [
+      "s28",
+      "s22",
+      "s23"
+     ],
+     "factRef": "eva-e-pierce-crosby.burial"
+    },
+    {
+     "id": "pe-springfield-ma-03",
+     "type": "buried",
+     "personIds": [
+      "thelma-l-crosby"
+     ],
+     "dateStart": "1991",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Thelma L. Crosby: Buried, Hillcrest Park Cemetery, 1991",
+     "sourceIds": [
+      "s04",
+      "s38"
+     ],
+     "factRef": "thelma-l-crosby.burial"
+    }
+   ]
+  },
+  {
+   "id": "west-springfield-ma",
+   "name": "West Springfield, MA",
+   "kind": "town",
+   "precision": "town",
+   "lat": 42.107,
+   "lng": -72.6204,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-west-springfield-ma-01",
+     "type": "lived",
+     "personIds": [
+      "roy-e-crosby"
+     ],
+     "dateStart": "1950",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Roy E. Crosby: Moved here; died at home 2014, 1950",
+     "sourceIds": [
+      "s20",
+      "s21",
+      "s23",
+      "s24"
+     ],
+     "factRef": "roy-e-crosby.residences[0]"
+    },
+    {
+     "id": "pe-west-springfield-ma-02",
+     "type": "died",
+     "personIds": [
+      "bernard-m-crosby"
+     ],
+     "dateStart": "2024",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Bernard M. Crosby: Lived from 1956; died 2024, 2024",
+     "sourceIds": [
+      "s24",
+      "s20"
+     ],
+     "factRef": "bernard-m-crosby.death"
+    }
+   ]
+  },
+  {
+   "id": "agawam-ma",
+   "name": "Agawam, MA",
+   "kind": "town",
+   "precision": "town",
+   "lat": 42.0695,
+   "lng": -72.6148,
+   "uncertaintyMetres": 2500,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "halo",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-agawam-ma-01",
+     "type": "buried",
+     "personIds": [
+      "roy-e-crosby"
+     ],
+     "dateStart": "2014",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Roy E. Crosby: Buried, Massachusetts Veterans Memorial Cemetery, 2014",
+     "sourceIds": [
+      "s20",
+      "s21",
+      "s23",
+      "s24"
+     ],
+     "factRef": "roy-e-crosby.burial"
+    },
+    {
+     "id": "pe-agawam-ma-02",
+     "type": "buried",
+     "personIds": [
+      "dorothy-r-richardson-crosby"
+     ],
+     "dateStart": "2022",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Dorothy R. (Richardson) Crosby: Interred with Roy, 2022",
+     "sourceIds": [
+      "s21",
+      "s20"
+     ],
+     "factRef": "dorothy-r-richardson-crosby.burial"
+    },
+    {
+     "id": "pe-agawam-ma-03",
+     "type": "buried",
+     "personIds": [
+      "barbara-eleanor-richardson-vogel"
+     ],
+     "dateStart": "2016",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Barbara Eleanor (Richardson) Vogel: Buried, Massachusetts Veterans Memorial Cemetery, 2016",
+     "sourceIds": [
+      "s35",
+      "s33"
+     ],
+     "factRef": "barbara-eleanor-richardson-vogel.burial"
+    }
+   ]
+  },
+  {
+   "id": "suffield-ct",
+   "name": "Suffield, CT",
+   "kind": "town",
+   "precision": "town",
+   "lat": 41.9817,
+   "lng": -72.6506,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-suffield-ct-01",
+     "type": "died",
+     "personIds": [
+      "gwendolyn-farr-magwire"
+     ],
+     "dateStart": "2009",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Gwendolyn (Farr) Magwire: Died, 2009",
+     "sourceIds": [
+      "s36",
+      "s27",
+      "s10"
+     ],
+     "factRef": "gwendolyn-farr-magwire.death"
+    }
+   ]
+  },
+  {
+   "id": "rockport-ma",
+   "name": "Rockport, MA",
+   "kind": "town",
+   "precision": "town",
+   "lat": 42.6556,
+   "lng": -70.6203,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-rockport-ma-01",
+     "type": "died",
+     "personIds": [
+      "richard-h-farr"
+     ],
+     "dateStart": "2009",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "probable",
+     "summary": "Richard H. Farr: Died, 2009",
+     "sourceIds": [
+      "s27"
+     ],
+     "factRef": "richard-h-farr.death"
+    }
+   ]
+  },
+  {
+   "id": "wakefield-ma",
+   "name": "Wakefield, MA",
+   "kind": "town",
+   "precision": "town",
+   "lat": 42.5065,
+   "lng": -71.0728,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-wakefield-ma-01",
+     "type": "married",
+     "personIds": [
+      "ernest-a-crosby"
+     ],
+     "dateStart": "1906",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Ernest A. Crosby: Married Eva E. Pierce, 1906",
+     "sourceIds": [
+      "s28",
+      "s04",
+      "s22",
+      "s23"
+     ],
+     "factRef": "ernest-a-crosby.spouses[0]",
+     "recordCrops": [
+      "1906-marriage-crosby-pierce-wakefield-ma-townreport-zoom.jpg"
+     ]
+    },
+    {
+     "id": "pe-wakefield-ma-02",
+     "type": "born",
+     "personIds": [
+      "ruby-evelyn-crosby"
+     ],
+     "dateStart": "1906",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Ruby Evelyn Crosby: Born, 1906",
+     "sourceIds": [
+      "s29",
+      "s20"
+     ],
+     "factRef": "ruby-evelyn-crosby.birth",
+     "recordCrops": [
+      "1906-birth-ruby-evelyn-crosby-wakefield-ma-townreport-zoom.jpg"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "norwood-ns",
+   "name": "Norwood, NS",
+   "kind": "town",
+   "precision": "village",
+   "lat": 43.939,
+   "lng": -66.029,
+   "uncertaintyMetres": 4000,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "halo",
+   "inHomeRegion": false,
+   "country": "Canada",
+   "events": [
+    {
+     "id": "pe-norwood-ns-01",
+     "type": "born",
+     "personIds": [
+      "ernest-a-crosby"
+     ],
+     "dateStart": "1884",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Ernest A. Crosby: Born (village from 1906 marriage record), 1884",
+     "sourceIds": [
+      "s28",
+      "s04",
+      "s22",
+      "s23"
+     ],
+     "factRef": "ernest-a-crosby.birth"
+    }
+   ]
+  },
+  {
+   "id": "brazil-lake-ns",
+   "name": "Brazil Lake, NS",
+   "kind": "town",
+   "precision": "village",
+   "lat": 43.962,
+   "lng": -65.99,
+   "uncertaintyMetres": 4000,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "halo",
+   "inHomeRegion": false,
+   "country": "Canada",
+   "events": [
+    {
+     "id": "pe-brazil-lake-ns-01",
+     "type": "born",
+     "personIds": [
+      "eva-e-pierce-crosby"
+     ],
+     "dateStart": "1885",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Eva E. (Pierce) Crosby: Born (village from 1906 marriage record), 1885",
+     "sourceIds": [
+      "s28",
+      "s22",
+      "s23"
+     ],
+     "factRef": "eva-e-pierce-crosby.birth"
+    },
+    {
+     "id": "pe-brazil-lake-ns-02",
+     "type": "died",
+     "personIds": [
+      "james-william-crosby"
+     ],
+     "dateStart": "1937",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "James William Crosby: Died, 1937",
+     "sourceIds": [
+      "s30",
+      "s32",
+      "s28"
+     ],
+     "factRef": "james-william-crosby.death",
+     "recordCrops": [
+      "1937-death-james-william-crosby-brazil-lake-ns-zoom.jpg"
+     ]
+    },
+    {
+     "id": "pe-brazil-lake-ns-03",
+     "type": "died",
+     "personIds": [
+      "asenath-porter-crosby"
+     ],
+     "dateStart": "1938",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Asenath (Porter) Crosby: Died, 1938",
+     "sourceIds": [
+      "s30",
+      "s31",
+      "s28"
+     ],
+     "factRef": "asenath-porter-crosby.death",
+     "recordCrops": [
+      "1938-death-asenath-porter-crosby-brazil-lake-ns-zoom.jpg"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pleasant-valley-ns",
+   "name": "Pleasant Valley, NS",
+   "kind": "town",
+   "precision": "village",
+   "lat": 43.98,
+   "lng": -66.03,
+   "uncertaintyMetres": 4000,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "halo",
+   "inHomeRegion": false,
+   "country": "Canada",
+   "events": [
+    {
+     "id": "pe-pleasant-valley-ns-01",
+     "type": "born",
+     "personIds": [
+      "james-william-crosby"
+     ],
+     "dateStart": "1857",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "James William Crosby: Born, 1857",
+     "sourceIds": [
+      "s30",
+      "s32",
+      "s28"
+     ],
+     "factRef": "james-william-crosby.birth"
+    }
+   ]
+  },
+  {
+   "id": "ohio-ns",
+   "name": "Ohio, NS",
+   "kind": "town",
+   "precision": "village",
+   "lat": 43.965,
+   "lng": -66.043,
+   "uncertaintyMetres": 4000,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "halo",
+   "inHomeRegion": false,
+   "country": "Canada",
+   "events": [
+    {
+     "id": "pe-ohio-ns-01",
+     "type": "married",
+     "personIds": [
+      "james-william-crosby"
+     ],
+     "dateStart": "1882",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "James William Crosby: Married Asenath Porter, 1882",
+     "sourceIds": [
+      "s30",
+      "s32",
+      "s28"
+     ],
+     "factRef": "james-william-crosby.spouses[0]",
+     "recordCrops": [
+      "1882-marriage-crosby-porter-ohio-yarmouth-ns-zoom.jpg"
+     ]
+    },
+    {
+     "id": "pe-ohio-ns-02",
+     "type": "born",
+     "personIds": [
+      "asenath-porter-crosby"
+     ],
+     "dateStart": "1860",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Asenath (Porter) Crosby: Born, 1860",
+     "sourceIds": [
+      "s30",
+      "s31",
+      "s28"
+     ],
+     "factRef": "asenath-porter-crosby.birth"
+    }
+   ]
+  },
+  {
+   "id": "holyoke-ma",
+   "name": "Holyoke, MA",
+   "kind": "town",
+   "precision": "town",
+   "lat": 42.2043,
+   "lng": -72.6162,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-holyoke-ma-01",
+     "type": "married",
+     "personIds": [
+      "robert-h-richardson"
+     ],
+     "dateStart": "1920",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Robert H. Richardson: Married Anna E. Ernst, 1920",
+     "sourceIds": [
+      "s34",
+      "s35",
+      "s21",
+      "s33"
+     ],
+     "factRef": "robert-h-richardson.spouses[0]",
+     "recordCrops": [
+      "1920-marriage-richardson-ernst-holyoke-wayland-ma-townreport-zoom.jpg"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "wayland-cochituate-ma",
+   "name": "Wayland (Cochituate), MA",
+   "kind": "town",
+   "precision": "town",
+   "lat": 42.322,
+   "lng": -71.362,
+   "uncertaintyMetres": 600,
+   "coordinateMethod": "A town, village or state point from the research place table. It is not a street address.",
+   "coordinatePrecision": "town",
+   "drawAs": "pin",
+   "inHomeRegion": true,
+   "country": "United States",
+   "events": [
+    {
+     "id": "pe-wayland-cochituate-ma-01",
+     "type": "born",
+     "personIds": [
+      "barbara-eleanor-richardson-vogel"
+     ],
+     "dateStart": "1921",
+     "datePrecision": "year",
+     "approximate": false,
+     "confidence": "confirmed",
+     "summary": "Barbara Eleanor (Richardson) Vogel: Born, 1921",
+     "sourceIds": [
+      "s35",
+      "s33"
+     ],
+     "factRef": "barbara-eleanor-richardson-vogel.birth",
+     "recordCrops": [
+      "1921-birth-barbara-eleanor-richardson-wayland-ma-townreport-zoom.jpg"
+     ]
+    }
+   ]
+  }
+ ]
+}

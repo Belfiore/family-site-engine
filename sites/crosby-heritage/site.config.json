@@ -1,0 +1,185 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Belfiore/family-site-engine/main/schema/site-config.schema.json",
+  "$comment": "Crosby family heritage, built the same way as Vigliotti Heritage: stable channel, Discovery Timeline on, no map API keys. The map uses the engine's keyless OpenFreeMap style. Do not put a MapTiler or Google key in this file.",
+  "schemaVersion": 1,
+  "engine": {"channel": "stable"},
+  "timeline": {"enabled": true},
+  "site": {
+    "name": "Crosby",
+    "familyName": "the Crosby, Magwire, Farr, Richardson, Pierce, Spaulding and Putnam families",
+    "lang": "en-US",
+    "description": "The Crosby family heritage: Nova Scotia roots, the Magwire, Farr, Richardson, Pierce, Spaulding and Putnam lines, the records behind them, and a timeline of each research find."
+  },
+  "pages": {
+    "home": "index.html",
+    "tree": {
+      "file": "family-tree.html",
+      "title": "Family Tree | Crosby",
+      "description": "An interactive tree of the Crosby, Magwire, Farr, Richardson, Pierce, Spaulding and Putnam families. A dashed line is a probable link. Living people are names and relationships only.",
+      "heading": "The family tree",
+      "stylesheets": ["styles.css"]
+    },
+    "map": {
+      "file": "map.html",
+      "title": "Family Map | Crosby",
+      "description": "Places from the research table: births, homes, marriages, work, a civil case, deaths and burials. Approximate places are soft circles. Living people are not on the map.",
+      "heading": "The family map",
+      "stylesheets": ["styles.css"]
+    },
+    "ask": null
+  },
+  "nav": [
+    {"href": "index.html", "label": "Home"},
+    {"href": "family-tree.html", "label": "Tree"},
+    {"href": "map.html", "label": "Map"},
+    {"href": "crosby.html", "label": "Crosbys"},
+    {"href": "magwire.html", "label": "Magwires"},
+    {"href": "farr.html", "label": "Farrs"},
+    {"href": "richardson.html", "label": "Richardsons"},
+    {"href": "spaulding.html", "label": "Spaulding"},
+    {"href": "research.html", "label": "Research"},
+    {"href": "discoveries.html", "label": "Discoveries"}
+  ],
+  "head": {"fonts": null, "stylesheets": ["styles.css"]},
+  "theme": {
+    "--gold": "#8a5a2a",
+    "--gold-dark": "#6e4520",
+    "--ink": "#1c2430",
+    "--cream": "#f6f3eb",
+    "--pc-bg": "#f6f3eb",
+    "--pc-bg-2": "#efe6d6",
+    "--pc-paper": "#fbf8f1",
+    "--pc-rule": "#d9cbb6",
+    "--pc-rule-soft": "rgba(31, 77, 58, 0.14)",
+    "--pc-ink": "#1c2430",
+    "--pc-ink-2": "#2c3644",
+    "--pc-muted": "#5e5346",
+    "--pc-gold": "#8a5a2a",
+    "--pc-accent": "#1f4d3a",
+    "--pc-accent-deep": "#143528",
+    "--pc-accent-light": "#2f6a50",
+    "--pc-accent-rgb": "31, 77, 58",
+    "--pc-accent-deep-rgb": "20, 53, 40",
+    "--pc-title": "#143528",
+    "--pc-line": "#8d7b64",
+    "--pc-line-direct": "#1f4d3a",
+    "--pc-focus": "#1f4d3a",
+    "--pc-shadow": "0 1px 2px rgba(28, 36, 48, 0.06), 0 6px 18px rgba(28, 36, 48, 0.07)",
+    "--pc-shadow-lift": "0 2px 4px rgba(28, 36, 48, 0.08), 0 14px 32px rgba(28, 36, 48, 0.12)",
+    "--pc-living-1": "#5b7f63",
+    "--pc-living-2": "#3f6a4a",
+    "--pc-living-3": "#2c4f35",
+    "--pc-dark": "#1c2430",
+    "--pc-rail-1": "#efe6d6",
+    "--pc-rail-2": "#f6f3eb",
+    "--pc-tint": "#fbf8f1",
+    "--pc-tint-2": "#efe6d6",
+    "--pc-tint-3": "#f3f7f4",
+    "--pc-tint-4": "#fbf8f1",
+    "--pc-cta-focus": "#b7d0c4",
+    "--pc-conf-confirmed": "#145024",
+    "--pc-conf-confirmed-line": "rgba(31, 77, 58, 0.45)",
+    "--pc-conf-confirmed-bg": "rgba(31, 77, 58, 0.06)",
+    "--pc-conf-probable": "#5f4a10",
+    "--pc-conf-probable-line": "rgba(138, 90, 42, 0.55)",
+    "--pc-conf-probable-bg": "rgba(138, 90, 42, 0.1)",
+    "--pc-conf-tradition": "#5a3a58",
+    "--pc-conf-tradition-line": "rgba(90, 58, 88, 0.4)",
+    "--pc-conf-tradition-bg": "rgba(90, 58, 88, 0.06)",
+    "--pc-conf-unverified": "#6b2f2a",
+    "--pc-conf-unverified-bg": "rgba(139, 32, 32, 0.05)"
+  },
+  "data": {"dir": "data"},
+  "tree": {
+    "familyLabel": "Crosby family",
+    "directLineLabel": "Tracy's direct line",
+    "rootPersonId": "tracy-jo-magwire-crosby",
+    "cardPhotos": "best",
+    "coupleBlocks": "auto",
+    "legendNote": " A solid line is a link a record states. A dashed line is probable: the records point to it, and a certificate would make it firmer. People known only as leads are not drawn. They are on the research page.",
+    "noscript": "The <a href=\"research.html\">research page</a> and the line pages work without it.",
+    "initialView": {
+      "ids": ["tracy-jo-magwire-crosby", "richard-r-crosby", "howard-frank-magwire", "gwendolyn-farr-magwire", "roy-e-crosby", "dorothy-r-richardson-crosby"],
+      "fromGen": 2,
+      "toGen": 5
+    },
+    "generations": [
+      {"generation": 0, "label": "I", "title": "Earliest generation on this tree", "range": "from 1833"},
+      {"generation": 1, "label": "II", "title": "James and Asenath, Albert and Alice Jenny", "range": "1845 to 1866"},
+      {"generation": 2, "label": "III", "title": "Ernest and Eva, Frank and Alice, Harry, Robert and Anna", "range": "1884 to about 1902"},
+      {"generation": 3, "label": "IV", "title": "Roy and Dorothy, Howard and Gwendolyn, and their brothers and sisters", "range": "1906 to 1930"},
+      {"generation": 4, "label": "V", "title": "Tracy and Rick", "range": null},
+      {"generation": 5, "label": "VI", "title": "Their children", "range": null}
+    ]
+  },
+  "map": {
+    "home": {
+      "name": "New England",
+      "bounds": [[-73.7, 41.15], [-69.85, 45.05]]
+    },
+    "historicMaps": null,
+    "branches": [
+      {
+        "id": "crosby",
+        "label": "The Crosbys",
+        "pages": ["crosby.html"],
+        "default": true,
+        "people": [
+          "joseph-crosby", "eunice-saunders-crosby", "hezekiah-porter", "celia-porter",
+          "james-william-crosby", "asenath-porter-crosby", "ernest-a-crosby", "eva-e-pierce-crosby",
+          "charles-pierce", "alice-pierce", "ruby-evelyn-crosby", "thelma-l-crosby",
+          "muriel-j-crosby-strauss", "roy-e-crosby", "bernard-m-crosby", "beatrice-a-patterson-crosby",
+          "richard-r-crosby", "brittany-crosby", "mitch-crosby", "travis-crosby"
+        ]
+      },
+      {
+        "id": "magwire",
+        "label": "The Magwires",
+        "pages": ["magwire.html"],
+        "people": [
+          "albert-a-magwire", "frank-albert-magwire", "alice-evadna-bates-magwire",
+          "howard-frank-magwire", "harold-charles-magwire", "raymond-bates-magwire",
+          "tracy-jo-magwire-crosby"
+        ]
+      },
+      {
+        "id": "farr",
+        "label": "The Farrs",
+        "pages": ["farr.html"],
+        "people": [
+          "harry-james-farr", "mary-abbie-west-farr", "laura-mary-seward-farr",
+          "gwendolyn-farr-magwire", "richard-h-farr", "alma-farr-cook"
+        ]
+      },
+      {
+        "id": "richardson",
+        "label": "The Richardsons",
+        "pages": ["richardson.html"],
+        "people": [
+          "robert-h-richardson", "anna-e-ernst-richardson",
+          "dorothy-r-richardson-crosby", "barbara-eleanor-richardson-vogel"
+        ]
+      },
+      {
+        "id": "spaulding",
+        "label": "Spaulding and Putnam",
+        "pages": ["spaulding.html"],
+        "people": [
+          "charles-elliot-spaulding", "amantha-putnam-spaulding", "alice-jenny-spaulding-magwire"
+        ]
+      }
+    ],
+    "kinAnchors": [
+      {"id": "tracy-jo-magwire-crosby", "name": "Tracy"},
+      {"id": "richard-r-crosby", "name": "Rick"}
+    ],
+    "families": [
+      {"id": "crosby", "label": "Rick's family", "option": "Rick's family (Crosby)", "roots": ["richard-r-crosby"]},
+      {"id": "magwire", "label": "Tracy's family", "option": "Tracy's family (Magwire)", "roots": ["tracy-jo-magwire-crosby"]},
+      {"id": "both", "label": "Tracy's and Rick's families", "option": "Tracy's and Rick's families", "roots": ["tracy-jo-magwire-crosby", "richard-r-crosby"]}
+    ],
+    "noscript": "Every mapped place is also described on the line pages and on the <a href=\"research.html\">research page</a>."
+  },
+  "widget": {"enabled": false},
+  "publish": {"exclude": ["README.md", "tests/", "data/discoveries.json"]}
+}
