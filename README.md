@@ -91,6 +91,7 @@ What a site can set today is [`site.config.json`](docs/site-config.md), checked 
 | `timeline.enabled` | The Discovery Timeline. Off unless set to true. `timeline.file` names the page (default `discoveries.html`). |
 | `access.enabled` | A family password in front of the whole site. Off unless set to true. Needs a private repository and Cloudflare Pages. See [Private access](docs/access.md). |
 | `language` | English and German. The site picks a default language and which ones visitors can switch between (a small EN and DE switcher in the header). Research text takes `story_de` style translations. Without it the site is English only and builds as before. See [Languages](docs/languages.md). |
+| `style.heritage` | A heritage style for the whole site (fonts, colours, ornaments, the map's colours): english, german, italian, irish, scottish, french, spanish, polish, scandinavian, jewish, or the Classic Archive (the default, today's look). The settings page suggests one from the family's own places and lets you try it before saving. See [Heritage styles](docs/themes.md). |
 | `visitor.enabled` | "Who are you?": the visitor says who they are and the tree opens from their place. Off unless set to true. See [Visitor identity](docs/visitor.md). |
 | `nav` | The shared navigation bar, in order. |
 | `theme`, `tree`, `map`, `stuart` | Colours, and how the tree, the map and Stuart behave for this family. |
@@ -290,7 +291,7 @@ node tests/check-access.js
 node tests/check-i18n.js
 ```
 
-Further reading: [Adding a site](docs/adding-a-site.md), [the data format](docs/data-format.md), [site settings](docs/site-config.md), [the Discovery Timeline](docs/discovery-timeline.md), [private access](docs/access.md), [visitor identity](docs/visitor.md), [languages](docs/languages.md), [releases](docs/releasing.md), [the map](docs/map.md), [map keys](docs/map-keys.md), [Stuart](docs/stuart.md).
+Further reading: [Adding a site](docs/adding-a-site.md), [the data format](docs/data-format.md), [site settings](docs/site-config.md), [the Discovery Timeline](docs/discovery-timeline.md), [private access](docs/access.md), [visitor identity](docs/visitor.md), [languages](docs/languages.md), [heritage styles](docs/themes.md), [releases](docs/releasing.md), [the map](docs/map.md), [map keys](docs/map-keys.md), [Stuart](docs/stuart.md).
 
 ## Licence
 

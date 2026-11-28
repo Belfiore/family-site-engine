@@ -834,5 +834,8 @@
   "nav.tree": "Stammbaum",
   "nav.map": "Familienkarte",
   "nav.ask": "Stuart fragen",
-  "nav.discoveries": "Entdeckungen"
+  "nav.discoveries": "Entdeckungen",
+  "heritage.previewing": "Sie probieren den Stil {name} aus. Er ist nicht gespeichert.",
+  "heritage.back": "Zurück zu den Einstellungen",
+  "heritage.stop": "Nicht mehr ausprobieren"
 }

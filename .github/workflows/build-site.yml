@@ -22,7 +22,7 @@
 # (secrets: inherit does it): SITE_PASSWORD, CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID. A site without it is
 # published to GitHub Pages exactly as before and none of the steps for it run.
 #
-# A site that turns on the Discovery Timeline (timeline.enabled in site.config.json) also has the history of what
+# A site that turns on the Discovery Timeline (pages.discoveries, or the older timeline.enabled, in site.config.json) also has the history of what
 # was found fetched from its live site before the build, and written back with the new build. Other sites skip
 # those steps.
 name: Build and publish a family site
@@ -113,7 +113,10 @@ jobs:
           print('Engine %s (%s)' % (v, why))
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write('version=%s\n' % v)
-              if (json.load(open(os.path.join(os.environ['SITE_DIR'], 'site.config.json'), encoding='utf-8')).get('timeline') or {}).get('enabled') is True:
+              # the Discovery Timeline is on when pages.discoveries says so; if the site does not say, the older timeline.enabled does
+              cfg = json.load(open(os.path.join(os.environ['SITE_DIR'], 'site.config.json'), encoding='utf-8'))
+              d = (cfg.get('pages') if isinstance(cfg.get('pages'), dict) else {}).get('discoveries')
+              if d is True or (not isinstance(d, bool) and (cfg.get('timeline') or {}).get('enabled') is True):
                   f.write('timeline=true\n')
               acc = json.load(open(os.path.join(os.environ['SITE_DIR'], 'site.config.json'), encoding='utf-8')).get('access') or {}
               if acc.get('enabled') is True:

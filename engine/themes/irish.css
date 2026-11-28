@@ -1,0 +1,48 @@
+/* Heritage theme: Irish. Illuminated manuscript: uncial headings, moss green and parchment.
+ * Palette, type, ornaments and map colours only; the shared rules are in base.css.
+ * Fonts: Uncial Antiqua and Crimson Pro (SIL Open Font Licence), self-hosted in fonts/. */
+@font-face { font-family: 'hf-uncial-antiqua'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/uncial-antiqua-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-uncial-antiqua'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/uncial-antiqua-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-crimson-pro'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/crimson-pro-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-crimson-pro'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/crimson-pro-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-crimson-pro'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/crimson-pro-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-crimson-pro'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/crimson-pro-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-crimson-pro'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/crimson-pro-latin-400-italic.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-crimson-pro'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/crimson-pro-latin-ext-400-italic.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+
+:root[data-heritage="irish"] {
+    /* palette */
+    --h-paper: #efe9d3; --h-paper-rgb: 239, 233, 211;
+    --h-card: #f8f4e4; --h-card-rgb: 248, 244, 228;
+    --h-ink: #232a1c; --h-ink-rgb: 35, 42, 28;
+    --h-accent: #3e5a2b; --h-accent-rgb: 62, 90, 43;
+    --h-gold: #9d802b; --h-gold-rgb: 157, 128, 43;
+    --h-goldtext: #6b5413; --h-goldtext-rgb: 107, 84, 19;
+    --h-brown: #55482f; --h-brown-rgb: 85, 72, 47;
+    --h-line: #cfc7a2; --h-line-rgb: 207, 199, 162;
+    --h-green: #2f4f3a; --h-green-rgb: 47, 79, 58;
+    --h-accent-deep-rgb: 34, 50, 24;
+    /* map: the Atlas style's land, water and roads */
+    --h-map-land: #ece6cd;
+    --h-map-water: #bccfc4;
+    --h-map-park: #d6dfb8;
+    --h-map-road: #ddd3ae;
+    --h-map-roadmajor: #cbbd8c;
+    --h-map-line: #9c9066;
+    --h-map-label: #2a331f;
+    /* type */
+    --h-font-heading: 'hf-uncial-antiqua', 'Uncial Antiqua', Georgia, serif;
+    --h-font-body: 'hf-crimson-pro', 'Crimson Pro', Georgia, serif;
+    --h-heading-weight: 400;
+    --h-heading-spacing: .02em;
+    /* shape */
+    --h-radius: 8px;
+    --h-radius-btn: 999px;
+    --h-pin-radius: 50%;
+    /* ornament and texture (small SVG or CSS; texture off with data-h-texture=off, data saver and reduced data) */
+    --h-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12' width='48' height='12'%3E%3Cpath d='M0 6C6 0 12 0 18 6S30 12 36 6S42 0 48 6' fill='none' stroke='%233e5a2b' stroke-width='2.2'/%3E%3Cpath d='M0 6C6 12 12 12 18 6S30 0 36 6S42 12 48 6' fill='none' stroke='%239d802b' stroke-width='2.2'/%3E%3Cpath d='M0 6C6 0 12 0 18 6' fill='none' stroke='%233e5a2b' stroke-width='2.2' stroke-dasharray='0 11 5 99'/%3E%3C/svg%3E");
+    --h-divider-repeat: repeat-x;
+    --h-divider-w: 48px;
+    --h-divider-h: 12px;
+    --h-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.333 0 0 0 0 0.282 0 0 0 0 0.184 0 0 0 0.060 0'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23n)'/%3E%3C/svg%3E");
+}

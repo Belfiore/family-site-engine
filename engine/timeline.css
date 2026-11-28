@@ -1,13 +1,13 @@
 /* The Discovery Timeline page. Its colours and fonts come from the site's own tokens (--ink, --cream, --gold,
    --gold-dark, --font-display, --font-body: tokens.css, and the site's theme), so it looks like the rest of the site. */
 .tl-body {
-    --tl-ink: var(--ink, #1a1a2e);
+    --tl-ink: var(--ink, var(--h-ink, #1a1a2e));
     --tl-muted: color-mix(in srgb, var(--tl-ink) 62%, transparent);
-    --tl-paper: var(--cream, #fdf8f0);
-    --tl-card: color-mix(in srgb, #ffffff 72%, var(--tl-paper));
-    --tl-accent: var(--gold-dark, #8a6a2f);
+    --tl-paper: var(--cream, var(--h-paper, #fdf8f0));
+    --tl-card: color-mix(in srgb, var(--h-card, #ffffff) 72%, var(--tl-paper));
+    --tl-accent: var(--gold-dark, var(--h-brown, #8a6a2f));
     --tl-line: color-mix(in srgb, var(--tl-accent) 26%, var(--tl-paper));
-    --tl-new: color-mix(in srgb, var(--gold, #d4af37) 14%, var(--tl-paper));
+    --tl-new: color-mix(in srgb, var(--gold, var(--h-gold-soft, #d4af37)) 14%, var(--tl-paper));
     --tl-display: var(--font-display, Georgia, serif);
     --tl-text: var(--font-body, Georgia, serif);
     --tl-nav: 56px;
@@ -20,8 +20,8 @@
 }
 .tl-body *, .tl-body *::before, .tl-body *::after { box-sizing: border-box; }
 .tl-body .main-nav { position: sticky; top: 0; }
-.tl-skip { position: absolute; left: 1rem; top: -4rem; z-index: 3000; background: var(--tl-accent); color: #fff; padding: .5rem .9rem; border-radius: 6px; text-decoration: none; }
-.tl-skip:focus { top: .6rem; outline: 3px solid var(--gold, #d4af37); outline-offset: 2px; }
+.tl-skip { position: absolute; left: 1rem; top: -4rem; z-index: 3000; background: var(--tl-accent); color: var(--h-on-dark, #fff); padding: .5rem .9rem; border-radius: 6px; text-decoration: none; }
+.tl-skip:focus { top: .6rem; outline: 3px solid var(--gold, var(--h-gold-soft, #d4af37)); outline-offset: 2px; }
 
 .tl-page { max-width: 46rem; margin: 0 auto; padding: 0 1.4rem 5rem; }
 .tl-head { padding: 3.2rem 0 1.6rem; text-align: left; }
@@ -50,7 +50,7 @@
 .tl-chips { display: flex; flex-wrap: wrap; gap: .45rem; }
 .tl-chip { font: inherit; font-size: .98rem; line-height: 1.2; color: var(--tl-ink); background: transparent; border: 1px solid var(--tl-line); border-radius: 999px; padding: .4rem .9rem; min-height: 40px; cursor: pointer; transition: background .18s, border-color .18s, color .18s; }
 .tl-chip:hover { border-color: var(--tl-accent); }
-.tl-chip[aria-pressed="true"] { background: var(--tl-accent); border-color: var(--tl-accent); color: #fff; }
+.tl-chip[aria-pressed="true"] { background: var(--tl-accent); border-color: var(--tl-accent); color: var(--h-on-dark, #fff); }
 .tl-empty { margin: 2rem 0; text-align: center; font-style: italic; color: var(--tl-muted); }
 .tl-empty[hidden] { display: none; }
 

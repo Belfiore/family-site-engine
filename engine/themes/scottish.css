@@ -1,0 +1,48 @@
+/* Heritage theme: Scottish. Granite grey, heather purple and deep blue, with a faint tartan weave.
+ * Palette, type, ornaments and map colours only; the shared rules are in base.css.
+ * Fonts: Spectral and Source Serif 4 (SIL Open Font Licence), self-hosted in fonts/. */
+@font-face { font-family: 'hf-spectral'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/spectral-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-spectral'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/spectral-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-source-serif-4'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/source-serif-4-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-source-serif-4'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/source-serif-4-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-source-serif-4'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/source-serif-4-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-source-serif-4'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/source-serif-4-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-source-serif-4'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/source-serif-4-latin-400-italic.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-source-serif-4'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/source-serif-4-latin-ext-400-italic.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+
+:root[data-heritage="scottish"] {
+    /* palette */
+    --h-paper: #eeeff0; --h-paper-rgb: 238, 239, 240;
+    --h-card: #f8f8f9; --h-card-rgb: 248, 248, 249;
+    --h-ink: #1f2430; --h-ink-rgb: 31, 36, 48;
+    --h-accent: #5b3f7a; --h-accent-rgb: 91, 63, 122;
+    --h-gold: #8c7a4a; --h-gold-rgb: 140, 122, 74;
+    --h-goldtext: #5e4f20; --h-goldtext-rgb: 94, 79, 32;
+    --h-brown: #50545e; --h-brown-rgb: 80, 84, 94;
+    --h-line: #cbced6; --h-line-rgb: 203, 206, 214;
+    --h-green: #1f3f66; --h-green-rgb: 31, 63, 102;
+    --h-accent-deep-rgb: 50, 35, 67;
+    /* map: the Atlas style's land, water and roads */
+    --h-map-land: #ebecee;
+    --h-map-water: #bfcbd8;
+    --h-map-park: #d9dfd2;
+    --h-map-road: #dcdee3;
+    --h-map-roadmajor: #c6cad3;
+    --h-map-line: #9aa0ad;
+    --h-map-label: #262c3a;
+    /* type */
+    --h-font-heading: 'hf-spectral', 'Spectral', Georgia, serif;
+    --h-font-body: 'hf-source-serif-4', 'Source Serif 4', Georgia, serif;
+    --h-heading-weight: 600;
+    --h-heading-spacing: .01em;
+    /* shape */
+    --h-radius: 4px;
+    --h-radius-btn: 3px;
+    --h-pin-radius: 50%;
+    /* ornament and texture (small SVG or CSS; texture off with data-h-texture=off, data saver and reduced data) */
+    --h-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 12' width='24' height='12'%3E%3Cpath d='M0 6h24' stroke='%23cbced6' stroke-width='.8'/%3E%3Cpath d='M12 1l5 5-5 5-5-5z' fill='%23eeeff0' stroke='%235b3f7a' stroke-width='.8'/%3E%3C/svg%3E");
+    --h-divider-repeat: repeat-x;
+    --h-divider-w: 24px;
+    --h-divider-h: 12px;
+    --h-texture: repeating-linear-gradient(90deg, rgba(91,63,122,.05) 0 3px, transparent 3px 22px), repeating-linear-gradient(0deg, rgba(31,63,102,.05) 0 3px, transparent 3px 22px), repeating-linear-gradient(90deg, rgba(80,84,94,.04) 0 1px, transparent 1px 7px);
+}

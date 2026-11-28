@@ -223,7 +223,35 @@ def validate_site(site, cfg):
                     if o not in by: errors.append('places.json %s: event %s names %s, who is not in people.json' % (pl.get('id'), e.get('id'), o))
     e2, w2 = check_settings_refs(site, cfg, by)
     e3, w3 = check_timeline(site, cfg, ddir, pdoc, ldoc)
-    return {'errors': errors + e2 + e3, 'warnings': warnings + w2 + w3}
+    e4, w4 = check_content_pages(site, cfg, by)
+    return {'errors': errors + e2 + e3 + e4, 'warnings': warnings + w2 + w3 + w4}
+
+
+def check_content_pages(site, cfg, by):
+    """The Stories and the Records and Research pages, only for a site that has them (any other site is checked exactly
+    as before): the files the build would overwrite, and the stories themselves."""
+    errors, warnings = [], []
+    import stories
+    for kind in ('stories', 'records'):
+        page = cfg['pages'].get(kind)
+        if not page: continue
+        if os.path.exists(os.path.join(site, page['file'])):
+            errors.append('pages.%s: the site already has %s, which the build would overwrite. Rename it, or set pages.%s.file' % (kind, page['file'], kind))
+        clash = [k for k, v in cfg['_pages'].items() if k not in ('home', kind) and v == page['file']]
+        if clash: errors.append('pages.%s.file is %s, which is also the %s page' % (kind, page['file'], clash[0]))
+    if cfg.get('_admin'):
+        if os.path.exists(os.path.join(site, 'admin', 'index.html')):
+            errors.append('admin: the site already has admin/index.html, which the build would overwrite. Rename it, or leave admin.enabled off')
+        repo = cfg['_admin'].get('repo')
+        if not repo: warnings.append('admin: no repository is set (admin.repo), so the page will ask for it, or read it from a github.io address')
+    if cfg['pages'].get('stories'):
+        items, e, w = stories.load(site, cfg, by)
+        errors += e
+        warnings += w
+        for s in items:
+            if os.path.exists(os.path.join(site, s['file'])):
+                errors.append('%s: would make %s, which the site already has. Rename the story file' % (s['source'], s['file']))
+    return errors, warnings
 
 
 DASHES = ('\u2014', '\u2013')
@@ -370,6 +398,7 @@ def check_settings_refs(site, cfg, by):
     for where, f in named:
         f2 = local_page(f)
         if f2 and not exists(f2): warnings.append('%s: %s is not in the site' % (where, f))
+    warnings += check_links_to_off_pages(site, cfg)
     return errors, warnings
 
 
@@ -378,13 +407,37 @@ def check_config(cfg):
     root = schema('site-config.schema.json')
     c = Checker(root)
     c.check(cfg['_raw'], root, 'site.config.json')
-    return {'errors': c.errors, 'warnings': c.warnings + warnings}
+    pages = cfg['_raw'].get('pages')
+    if isinstance(pages, dict) and pages.get('home') is False:
+        errors.append('site.config.json.pages.home: the home page cannot be turned off')
+    return {'errors': c.errors + errors, 'warnings': c.warnings + warnings}
+
+
+def check_links_to_off_pages(site, cfg):
+    """Warnings for the site's own pages that link to a page that is switched off. The navigation bar is rebuilt without
+    the link, and a link in the page's own words is shown as plain text, so nothing leads to a page that is not there."""
+    off = cfg.get('_off_files') or {}
+    if not off: return []
+    out = []
+    names = sorted(n for n in os.listdir(site) if n.endswith('.html'))
+    for name in names:
+        try:
+            with open(os.path.join(site, name), encoding='utf-8') as f: text = f.read()
+        except (OSError, UnicodeDecodeError):
+            continue
+        text = re.sub(r'<nav\b[^>]*\bmain-nav\b.*?</nav>', '', text, flags=re.S)       # the bar is rebuilt from "nav"
+        for href in sorted(set(re.findall(r'href="([^"#?]+)', text))):
+            if href in off:
+                out.append('%s links to %s, but pages.%s is turned off. The build shows that link as plain text' % (name, href, off[href]))
+    return out
 
 
 def check_features(site, cfg):
     """The settings of the optional features that need more than the schema (private access, visitor identity)."""
-    import access
+    import access, heritage
     errors, warnings = access.check(cfg, site)
+    e2, w2 = heritage.check(cfg)
+    errors, warnings = errors + e2, warnings + w2
     return {'errors': errors, 'warnings': warnings}
 
 

@@ -6,6 +6,8 @@ A page that lists what a family has newly learned, newest first, so a relative w
 "timeline": { "enabled": true }
 ```
 
+The same switch is `"pages": { "discoveries": true }`, which is the one the [settings page](admin.md) changes. When `pages.discoveries` is there it decides (`false` turns the page off even if `timeline.enabled` is true); when it is not there, `timeline.enabled` decides, as before.
+
 The page is `discoveries.html` (set another name with `timeline.file`), with a "Discoveries" entry in the navigation bar. It works without JavaScript: the build writes the whole page. JavaScript adds the "new since your last visit" banner, the filters and the folding of busy days.
 
 ## What counts as a discovery
@@ -180,7 +182,7 @@ On the FitzMaurice and Andrews site's real history (23 data commits) the script 
 
 1. Take an engine release that has the timeline, and move `build-site.yml@vX.Y.Z` to that release in `deploy.yml` and `check.yml`.
 2. The deploy workflow must give its job `pages: write` (the build reads the live site's address from the Pages API). A check-only run falls back to `https://<owner>.github.io/<repo>/`.
-3. Set `"timeline": { "enabled": true }` in `site.config.json`.
+3. Set `"timeline": { "enabled": true }` (or `"pages": { "discoveries": true }`) in `site.config.json`. A site that pins an older `build-site.yml` tag needs the bump in step 1 before it uses `pages.discoveries`; `timeline.enabled` works with every release that has the timeline.
 4. Publish. That publication is the baseline. Optionally run the backfill and add what you approve.
 
 A site with a custom domain is read at the address the Pages API reports. If it cannot be found on a deploy run, the build stops rather than start again.

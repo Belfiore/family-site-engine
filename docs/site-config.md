@@ -31,20 +31,56 @@ Only `schemaVersion`, `site` and `nav` are required. Everything else has a defau
 
 ## pages
 
-The site's home page, and which of the engine's three pages it has:
+The site's home page, and which of the standard pages it has. Every page can be turned on or off from here (or from the [settings page](admin.md) at `/admin/`):
 
 ```json
 "pages": {
   "home": "index.html",
+  "stories": true,
   "tree": { "file": "family-tree.html", "title": "Family Tree | Hartley & Moreau", "description": "...", "stylesheets": ["styles.css"] },
   "map": "map.html",
-  "ask": null
+  "records": true,
+  "discoveries": true,
+  "ask": false
 }
 ```
 
-Each of `tree`, `map` and `ask` (Stuart) is a file name, an object with `file`, `title`, `description`, `heading` and `stylesheets`, or `null` for a site without that page. `heading` replaces the engine's heading at the top of the page ("The Family Tree"). When a page is off the engine leaves out every link to it (the tree's "Show on the family map", "Ask Stuart about", Stuart's button) and the build refuses a navigation bar that still links to it. A map needs `data/places.json`.
+| Page | Made when | What it is |
+| --- | --- | --- |
+| `home` | always | The site's own home page (a file name, default `index.html`). It cannot be turned off, and `"home": false` is an error. |
+| `stories` | not switched off, and the site has a story in `content/stories/` (or `stories` is `true`) | Stories, articles and essays written as Markdown. See [Stories](stories.md). |
+| `tree` | `true`, a file name, or an object | The family tree. |
+| `map` | `true`, a file name, or an object | The family map. Needs `data/places.json`. |
+| `records` | `true`, or an object | Records and Research: every record in `data/sources.json`, and the open questions on people the site shows. |
+| `discoveries` | `true`, or (when `discoveries` is not there) `timeline.enabled` is `true` | The [Discovery Timeline](discovery-timeline.md). |
+| `ask` | `true`, a file name, or an object | Stuart's page. |
 
-`stylesheets` are the site's own stylesheets for that page; without them the page uses `head.stylesheets`.
+Each of these can be `true` (on, with the engine's file name and wording), `false` (off), or an object with `file`, `title`, `description`, `heading`, `stylesheets` and `enabled`. `tree`, `map` and `ask` can also be a file name, and `null` (or leaving the key out) means the site has no such page. `heading` replaces the engine's heading at the top of the page ("The Family Tree"). `stylesheets` are the site's own stylesheets for that page; without them the page uses `head.stylesheets`. An object with `"enabled": false` is off but keeps its other settings, so switching the page back on brings its title and file name with it.
+
+**A key that is not there.** For the three pages that are new (`stories`, `records`, `discoveries`) a missing key means "not switched off", so a site that says nothing gets what it already had: no Stories page until the site has a story, no Records and Research page (every site has sources, and some already have a page for them), and the Discovery Timeline only if `timeline.enabled` is on. For `tree`, `map` and `ask`, a missing key (or `null`) has always meant "this site has no such page", and still does, so a site that did not have a tree does not suddenly get one.
+
+**What turning a page off does.** The page is not built, so its address does not exist. The navigation bar is made without it, on every page. A link to it in a page's own words is shown as plain text, and the build prints a warning naming the page and the link. The engine's own pages leave out every link to it (the tree's "Show on the family map", Stuart's button), Stuart's index does not point to it, and a `sitemap.xml` the site keeps itself loses the entry. A navigation entry that links to a page that was never there (`null`, or a key left out) is still an error, as it was; `false` is the way to say "off, and take the link out".
+
+**The navigation bar adds the new pages by itself.** A page the build adds (Stories, Records and Research, Discoveries) gets an entry at the end of the bar unless `nav` already links to its file. To put it somewhere else, add the entry to `nav` yourself.
+
+**The older timeline setting.** `timeline.enabled` is still read, and still works when `pages.discoveries` is not there. When `pages.discoveries` is there, it decides: `true` turns the page on even if `timeline.enabled` is false, and `false` turns it off even if `timeline.enabled` is true.
+
+The pages block is described by `schema/pages.schema.json`, which the build and CI check every site against.
+
+## admin
+
+Optional. The settings page at `/admin/`: a static page where people with write access to the site's repository switch pages on and off, and change the site's title, tagline and engine channel. Off unless turned on; a site that leaves it off builds exactly as before. See [the settings page](admin.md).
+
+| Setting | Default | |
+| --- | --- | --- |
+| `enabled` | `false` | Make the page at `/admin/` |
+| `repo` | the repository the build runs in | The site's GitHub repository, `owner/name` |
+| `branch` | the repository's default branch | Where saved settings are committed |
+| `configPath` | `site.config.json` | Where the settings file is, for a site in a sub-folder |
+
+```json
+"admin": { "enabled": true }
+```
 
 ## nav
 
@@ -160,7 +196,7 @@ Optional. The Discovery Timeline: a page of what the family has newly learned, n
 
 | Setting | Default | |
 | --- | --- | --- |
-| `enabled` | `false` | Make the page and its "Discoveries" navigation entry, and keep the history of finds between publications |
+| `enabled` | `false` | Make the page and its "Discoveries" navigation entry, and keep the history of finds between publications. `pages.discoveries`, when it is there, decides instead |
 | `file` | `discoveries.html` | The page's file name |
 
 ```json
@@ -173,6 +209,7 @@ Other settings, all optional:
 | --- | --- |
 | `showRegions` | Hidden regions (`tree.hiddenRegions`) whose deceased people may be finds on the page, with no link to the tree or the map. Living people stay withheld. Default none. See [the Discovery Timeline](discovery-timeline.md#showing-some-hidden-regions-on-the-timeline) |
 | `showConfidence` | `true` shows each find's confidence label (Confirmed, Probable, Family tradition, Unverified). Default `false`: the data keeps it, the page does not draw it |
+The same switch is `"pages": { "discoveries": true }`, which is the one the [settings page](admin.md) changes; `timeline.enabled` is still read when `pages.discoveries` is missing. `timeline.file` still sets the page's file name.
 
 A site that turns it on needs an engine release that has the timeline, `build-site.yml` from the same release in its `deploy.yml` and `check.yml`, and `pages: write` for the deploy job. The site must not already have a `discoveries.html` or a `discoveries/` folder (the build stops if it does).
 
@@ -228,6 +265,19 @@ Optional. Without it the site is English only and builds exactly as before.
 - `available`: the languages a visitor can choose from (default: only `default`). With more than one, the navigation bar shows an `EN | DE` switcher; the choice is kept in the visitor's browser and sets `<html lang>`.
 
 Words a site writes itself take a language ending (`label_de`, `title_de`, `name_de`) and so does research text in the data (`story_de`); the original is used where the German is missing. See [languages](languages.md) for what is translated, what stays English and how to add a language.
+
+## style
+
+```json
+"style": { "heritage": "german", "options": { "texture": false } }
+```
+
+Optional. A heritage style for the whole site: fonts, colours, ornaments and the map's colours on every page the engine makes. Without it, or with `"classic"`, the site looks as it always did.
+
+- `heritage`: `classic` (the default), `english`, `german`, `italian`, `irish`, `scottish`, `french`, `spanish`, `polish`, `scandinavian` or `jewish`.
+- `options.texture`: `false` turns the paper texture off for the styles that have one (default `true`).
+
+The settings page can try a style on the live site and saves this block when a person applies it. See [heritage styles](themes.md).
 
 ## publish and process
 

@@ -1,0 +1,48 @@
+/* Heritage theme: Italian. Renaissance print: terracotta, ochre and olive on marbled paper.
+ * Palette, type, ornaments and map colours only; the shared rules are in base.css.
+ * Fonts: Marcellus and EB Garamond (SIL Open Font Licence), self-hosted in fonts/. */
+@font-face { font-family: 'hf-marcellus'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/marcellus-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-marcellus'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/marcellus-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-eb-garamond'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/eb-garamond-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-eb-garamond'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/eb-garamond-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-eb-garamond'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/eb-garamond-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-eb-garamond'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/eb-garamond-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-eb-garamond'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/eb-garamond-latin-400-italic.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-eb-garamond'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/eb-garamond-latin-ext-400-italic.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+
+:root[data-heritage="italian"] {
+    /* palette */
+    --h-paper: #f6ecdc; --h-paper-rgb: 246, 236, 220;
+    --h-card: #fcf7ee; --h-card-rgb: 252, 247, 238;
+    --h-ink: #2e2118; --h-ink-rgb: 46, 33, 24;
+    --h-accent: #a04529; --h-accent-rgb: 160, 69, 41;
+    --h-gold: #ac7d26; --h-gold-rgb: 172, 125, 38;
+    --h-goldtext: #7a5410; --h-goldtext-rgb: 122, 84, 16;
+    --h-brown: #5f4630; --h-brown-rgb: 95, 70, 48;
+    --h-line: #dfcdb0; --h-line-rgb: 223, 205, 176;
+    --h-green: #5b6430; --h-green-rgb: 91, 100, 48;
+    --h-accent-deep-rgb: 88, 38, 23;
+    /* map: the Atlas style's land, water and roads */
+    --h-map-land: #f3e7d2;
+    --h-map-water: #c8d3cc;
+    --h-map-park: #e3e0c0;
+    --h-map-road: #e8d4b2;
+    --h-map-roadmajor: #dbbf92;
+    --h-map-line: #b09670;
+    --h-map-label: #3a2a1e;
+    /* type */
+    --h-font-heading: 'hf-marcellus', 'Marcellus', Georgia, serif;
+    --h-font-body: 'hf-eb-garamond', 'EB Garamond', Georgia, serif;
+    --h-heading-weight: 400;
+    --h-heading-spacing: .04em;
+    /* shape */
+    --h-radius: 6px;
+    --h-radius-btn: 4px;
+    --h-pin-radius: 50%;
+    /* ornament and texture (small SVG or CSS; texture off with data-h-texture=off, data saver and reduced data) */
+    --h-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 12' width='240' height='12'%3E%3Cpath d='M0 6h96M144 6h96' stroke='%23ac7d26' stroke-width='1'/%3E%3Ccircle cx='108' cy='6' r='2' fill='%23a04529'/%3E%3Ccircle cx='120' cy='6' r='3.2' fill='%23ac7d26'/%3E%3Ccircle cx='132' cy='6' r='2' fill='%23a04529'/%3E%3C/svg%3E");
+    --h-divider-repeat: no-repeat;
+    --h-divider-w: 240px;
+    --h-divider-h: 12px;
+    --h-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .02' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.627 0 0 0 0 0.271 0 0 0 0 0.161 0 0 0 0.090 0'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23n)'/%3E%3C/svg%3E");
+}

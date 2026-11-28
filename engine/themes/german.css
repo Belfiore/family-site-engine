@@ -1,0 +1,48 @@
+/* Heritage theme: German. Bauhaus restraint with a blackletter accent: charcoal, slate and muted gold.
+ * Palette, type, ornaments and map colours only; the shared rules are in base.css.
+ * Fonts: Work Sans and Work Sans (SIL Open Font Licence), self-hosted in fonts/. */
+@font-face { font-family: 'hf-work-sans'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/work-sans-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-work-sans'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/work-sans-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-work-sans'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/work-sans-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-work-sans'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/work-sans-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-work-sans'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/work-sans-latin-400-italic.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-work-sans'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/work-sans-latin-ext-400-italic.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-unifrakturcook'; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/unifrakturcook-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+
+:root[data-heritage="german"] {
+    /* palette */
+    --h-paper: #f2f1ee; --h-paper-rgb: 242, 241, 238;
+    --h-card: #fafaf8; --h-card-rgb: 250, 250, 248;
+    --h-ink: #22262b; --h-ink-rgb: 34, 38, 43;
+    --h-accent: #3b4f61; --h-accent-rgb: 59, 79, 97;
+    --h-gold: #a18439; --h-gold-rgb: 161, 132, 57;
+    --h-goldtext: #6c5518; --h-goldtext-rgb: 108, 85, 24;
+    --h-brown: #53585e; --h-brown-rgb: 83, 88, 94;
+    --h-line: #cfd0cc; --h-line-rgb: 207, 208, 204;
+    --h-green: #3d5a4c; --h-green-rgb: 61, 90, 76;
+    --h-accent-deep-rgb: 32, 43, 53;
+    /* map: the Atlas style's land, water and roads */
+    --h-map-land: #eeede8;
+    --h-map-water: #c4cfd6;
+    --h-map-park: #dde2d6;
+    --h-map-road: #dedcd4;
+    --h-map-roadmajor: #cdc9bb;
+    --h-map-line: #9a9a92;
+    --h-map-label: #2c3238;
+    /* type */
+    --h-font-heading: 'hf-work-sans', 'Work Sans', Georgia, serif;
+    --h-font-body: 'hf-work-sans', 'Work Sans', Georgia, serif;
+    --h-font-title: 'hf-unifrakturcook', 'UnifrakturCook', serif;
+    --h-heading-weight: 600;
+    --h-heading-spacing: 0;
+    /* shape */
+    --h-radius: 0px;
+    --h-radius-btn: 0px;
+    --h-pin-radius: 2px;
+    /* ornament and texture (small SVG or CSS; texture off with data-h-texture=off, data saver and reduced data) */
+    --h-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 12' width='240' height='12'%3E%3Crect x='0' y='5' width='96' height='2' fill='%2322262b'/%3E%3Crect x='104' y='1' width='10' height='10' fill='%23a18439'/%3E%3Crect x='118' y='5' width='122' height='2' fill='%2322262b' fill-opacity='.45'/%3E%3C/svg%3E");
+    --h-divider-repeat: no-repeat;
+    --h-divider-w: 240px;
+    --h-divider-h: 12px;
+    --h-texture: none;
+}
