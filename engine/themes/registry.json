@@ -1,0 +1,310 @@
+{
+  "version": 1,
+  "default": "classic",
+  "themes": [
+    {
+      "id": "classic",
+      "name": "Classic Archive",
+      "blurb": "The look the site has today: parchment, burgundy and gold. Nothing is changed.",
+      "file": null,
+      "fonts": {
+        "heading": "Cinzel",
+        "body": "Cormorant Garamond"
+      },
+      "swatches": {
+        "paper": "#fdf8f0",
+        "ink": "#1a1a2e",
+        "accent": "#8b0000",
+        "gold": "#b8860b",
+        "line": "#e3d3c4"
+      },
+      "countries": []
+    },
+    {
+      "id": "english",
+      "name": "English",
+      "blurb": "Victorian and Edwardian print: engraved rules, deep green and oxblood.",
+      "file": "english.css",
+      "fonts": {
+        "heading": "IM Fell English",
+        "body": "Libre Baskerville"
+      },
+      "swatches": {
+        "paper": "#f4efe1",
+        "ink": "#1f2a22",
+        "accent": "#7a1f2b",
+        "gold": "#a48439",
+        "line": "#d3c7a8"
+      },
+      "countries": [
+        "GB-ENG",
+        "GB-WLS"
+      ],
+      "options": {
+        "texture": {
+          "label": "Paper texture",
+          "default": true
+        }
+      }
+    },
+    {
+      "id": "german",
+      "name": "German",
+      "blurb": "Bauhaus restraint with a blackletter accent: charcoal, slate and muted gold.",
+      "file": "german.css",
+      "fonts": {
+        "heading": "Work Sans",
+        "body": "Work Sans"
+      },
+      "swatches": {
+        "paper": "#f2f1ee",
+        "ink": "#22262b",
+        "accent": "#3b4f61",
+        "gold": "#a18439",
+        "line": "#cfd0cc"
+      },
+      "countries": [
+        "DE",
+        "AT",
+        "CH-DE"
+      ],
+      "options": {}
+    },
+    {
+      "id": "italian",
+      "name": "Italian",
+      "blurb": "Renaissance print: terracotta, ochre and olive on marbled paper.",
+      "file": "italian.css",
+      "fonts": {
+        "heading": "Marcellus",
+        "body": "EB Garamond"
+      },
+      "swatches": {
+        "paper": "#f6ecdc",
+        "ink": "#2e2118",
+        "accent": "#a04529",
+        "gold": "#ac7d26",
+        "line": "#dfcdb0"
+      },
+      "countries": [
+        "IT",
+        "SM",
+        "VA"
+      ],
+      "options": {
+        "texture": {
+          "label": "Paper texture",
+          "default": true
+        }
+      }
+    },
+    {
+      "id": "irish",
+      "name": "Irish",
+      "blurb": "Illuminated manuscript: uncial headings, moss green and parchment.",
+      "file": "irish.css",
+      "fonts": {
+        "heading": "Uncial Antiqua",
+        "body": "Crimson Pro"
+      },
+      "swatches": {
+        "paper": "#efe9d3",
+        "ink": "#232a1c",
+        "accent": "#3e5a2b",
+        "gold": "#9d802b",
+        "line": "#cfc7a2"
+      },
+      "countries": [
+        "IE",
+        "GB-NIR"
+      ],
+      "options": {
+        "texture": {
+          "label": "Paper texture",
+          "default": true
+        }
+      }
+    },
+    {
+      "id": "scottish",
+      "name": "Scottish",
+      "blurb": "Granite grey, heather purple and deep blue, with a faint tartan weave.",
+      "file": "scottish.css",
+      "fonts": {
+        "heading": "Spectral",
+        "body": "Source Serif 4"
+      },
+      "swatches": {
+        "paper": "#eeeff0",
+        "ink": "#1f2430",
+        "accent": "#5b3f7a",
+        "gold": "#8c7a4a",
+        "line": "#cbced6"
+      },
+      "countries": [
+        "GB-SCT"
+      ],
+      "options": {
+        "texture": {
+          "label": "Paper texture",
+          "default": true
+        }
+      }
+    },
+    {
+      "id": "french",
+      "name": "French",
+      "blurb": "Belle Epoque: Art Nouveau curves in ivory, sage and gilt.",
+      "file": "french.css",
+      "fonts": {
+        "heading": "Playfair Display",
+        "body": "Lora"
+      },
+      "swatches": {
+        "paper": "#f6f1e3",
+        "ink": "#2b2d27",
+        "accent": "#4f6b4d",
+        "gold": "#a5872b",
+        "line": "#d8d0b5"
+      },
+      "countries": [
+        "FR",
+        "MC",
+        "LU",
+        "BE-FR"
+      ],
+      "options": {}
+    },
+    {
+      "id": "spanish",
+      "name": "Spanish and Latin",
+      "blurb": "Azulejo tile: cobalt and white borders on warm sand, with saffron.",
+      "file": "spanish.css",
+      "fonts": {
+        "heading": "Fraunces",
+        "body": "Karla"
+      },
+      "swatches": {
+        "paper": "#f3e9d6",
+        "ink": "#1f2433",
+        "accent": "#1f4e9c",
+        "gold": "#a97c17",
+        "line": "#d9c8a4"
+      },
+      "countries": [
+        "ES",
+        "PT",
+        "MX",
+        "AR",
+        "CL",
+        "CO",
+        "PE",
+        "VE",
+        "CU",
+        "PR",
+        "DO",
+        "GT",
+        "EC",
+        "BO",
+        "UY",
+        "PY",
+        "CR",
+        "PA",
+        "HN",
+        "SV",
+        "NI"
+      ],
+      "options": {
+        "texture": {
+          "label": "Paper texture",
+          "default": true
+        }
+      }
+    },
+    {
+      "id": "polish",
+      "name": "Polish and Eastern European",
+      "blurb": "Paper-cut (wycinanki) motifs in crimson, cream and forest green.",
+      "file": "polish.css",
+      "fonts": {
+        "heading": "Bitter",
+        "body": "Alegreya Sans"
+      },
+      "swatches": {
+        "paper": "#f7f0e1",
+        "ink": "#2a2420",
+        "accent": "#a3182e",
+        "gold": "#a98128",
+        "line": "#dccfb4"
+      },
+      "countries": [
+        "PL",
+        "CZ",
+        "SK",
+        "HU",
+        "UA",
+        "BY",
+        "LT",
+        "LV",
+        "EE",
+        "RO",
+        "BG",
+        "RS",
+        "HR",
+        "SI",
+        "RU"
+      ],
+      "options": {}
+    },
+    {
+      "id": "scandinavian",
+      "name": "Scandinavian",
+      "blurb": "Nordic minimal: birch, slate blue and angular, rune-like dividers.",
+      "file": "scandinavian.css",
+      "fonts": {
+        "heading": "Josefin Sans",
+        "body": "Source Sans 3"
+      },
+      "swatches": {
+        "paper": "#f1efe9",
+        "ink": "#232b33",
+        "accent": "#3b5a78",
+        "gold": "#9e8556",
+        "line": "#d0d2cc"
+      },
+      "countries": [
+        "SE",
+        "NO",
+        "DK",
+        "FI",
+        "IS"
+      ],
+      "options": {
+        "texture": {
+          "label": "Paper texture",
+          "default": true
+        }
+      }
+    },
+    {
+      "id": "jewish",
+      "name": "Jewish and Ashkenazi",
+      "blurb": "Archival letterpress: indigo, parchment and brass.",
+      "file": "jewish.css",
+      "fonts": {
+        "heading": "Frank Ruhl Libre",
+        "body": "Crimson Text"
+      },
+      "swatches": {
+        "paper": "#f3ecda",
+        "ink": "#1f2038",
+        "accent": "#2d2f6b",
+        "gold": "#a4802b",
+        "line": "#d6cba9"
+      },
+      "countries": [],
+      "options": {},
+      "suggest": false
+    }
+  ]
+}

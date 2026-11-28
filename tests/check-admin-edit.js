@@ -135,6 +135,52 @@ test('verify refuses an edit that changed something else', () => {
     assert.throws(() => A.verify(before, '{"a": 1, "pages": {"map": false, "other": 1}}', { pages: { map: false } }), /other page settings/);
 });
 
+test('language: reads the way the build reads it, and edits only what changed', () => {
+    assert.deepStrictEqual(A.langSettings({}), { default: 'en', available: ['en'] });
+    assert.deepStrictEqual(A.langSettings({ language: { default: 'de' } }), { default: 'de', available: ['de'] });
+    assert.deepStrictEqual(A.langSettings({ language: { default: 'de', available: ['en'] } }), { default: 'de', available: ['de', 'en'] });
+    const file = '{\n  "site": {"name": "X"},\n  "nav": []\n}\n';
+    // nothing wanted that differs: no edit
+    assert.strictEqual(A.edit(file, { language: { default: 'en', available: ['en'] } }).changes.length, 0);
+    // default de, both choosable
+    const r = A.edit(file, { language: { default: 'de', available: ['de', 'en'], names: { de: 'Deutsch', en: 'English' } } });
+    const cfg = JSON.parse(r.text);
+    assert.deepStrictEqual(cfg.language, { default: 'de', available: ['de', 'en'] });
+    assert.strictEqual(r.changes.length, 2);
+    assert.deepStrictEqual(JSON.parse(r.text).nav, []);
+    // a site that already lists both and only changes the default writes only the default
+    const f2 = '{"site": {"name": "X"}, "language": {"default": "en", "available": ["en", "de"]}}';
+    const r2 = A.edit(f2, { language: { default: 'de', available: ['en', 'de'] } });
+    assert.strictEqual(r2.changes.length, 1);
+    assert.deepStrictEqual(JSON.parse(r2.text).language, { default: 'de', available: ['en', 'de'] });
+    // other members of the block are never touched
+    assert.throws(() => A.verify('{"language": {"default": "en"}}', '{"language": {"default": "en", "x": 1}}', {}), /other language settings/);
+});
+
+test('style: the Classic Archive is the same as none, and options are separate', () => {
+    assert.strictEqual(A.styleId({}), 'classic');
+    assert.strictEqual(A.styleId({ style: { heritage: 'german' } }), 'german');
+    assert.strictEqual(A.styleTexture({ style: { heritage: 'english', options: { texture: false } } }), false);
+    const file = '{\n  "site": {"name": "X"}\n}\n';
+    assert.strictEqual(A.edit(file, { style: { id: 'classic', hasTexture: false } }).changes.length, 0);
+    const names = { classic: 'Classic Archive', english: 'English' };
+    const r = A.edit(file, { style: { id: 'english', names: names, hasTexture: true, texture: true } });
+    assert.deepStrictEqual(JSON.parse(r.text).style, { heritage: 'english' });
+    assert.deepStrictEqual(r.changes.map(c => c.label), ['Site style']);
+    const r2 = A.edit(r.text, { style: { id: 'english', names: names, hasTexture: true, texture: false } });
+    assert.deepStrictEqual(JSON.parse(r2.text).style, { heritage: 'english', options: { texture: false } });
+    assert.deepStrictEqual(r2.changes.map(c => c.label), ['Paper texture']);
+    // moving to a style with no texture option writes no texture
+    const r3 = A.edit(r2.text, { style: { id: 'german', names: names, hasTexture: false, texture: false } });
+    assert.strictEqual(JSON.parse(r3.text).style.heritage, 'german');
+    assert.throws(() => A.verify('{"style": {"heritage": "english"}}', '{"style": {"heritage": "english", "other": 1}}', {}), /other style settings/);
+    assert.throws(() => A.verify('{"style": {"options": {"texture": true, "x": 1}}}', '{"style": {"options": {"texture": false}}}', {}), /other style options/);
+    assert.throws(() => A.verify('{"style": {"heritage": "english"}}', '{"style": {"heritage": "german"}}', { style: { id: 'english' } }), /did not come out as asked/);
+    // style and language are two settings: changing one never writes the other
+    const both = A.edit(file, { style: { id: 'english', names: names, hasTexture: true, texture: true }, language: { default: 'en', available: ['en'] } });
+    assert.strictEqual(JSON.parse(both.text).language, undefined);
+});
+
 test('words: a long dash or an empty title is a problem', () => {
     const dash = String.fromCharCode(0x2014);
     assert.deepStrictEqual(A.checkWords('Fine title', 'Fine tagline'), []);

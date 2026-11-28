@@ -4,7 +4,7 @@ The settings are documented in docs/site-config.md and checked against schema/si
 """
 import copy, json, os
 
-import access
+import access, heritage
 
 DEFAULTS = {
     'schemaVersion': 1,
@@ -149,6 +149,7 @@ def load(site_dir):
     cfg['_toggles'] = toggles
     # private access and visitor identity: both are off unless the site says enabled: true, and then nothing else changes
     cfg['_access'] = access.access_settings(raw)
+    cfg['_style'] = heritage.style_settings(raw)         # a heritage style (docs/themes.md); None unless the site has applied one
     cfg['_visitor'] = access.visitor_settings(raw)
     # the settings page: only a site that turns it on gets /admin/
     ad = cfg.get('admin') or {}

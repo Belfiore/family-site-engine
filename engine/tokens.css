@@ -6,10 +6,10 @@
  * theme stylesheet that loads after the engine's.
  */
 :root {
-    --gold: #FFD700;
-    --gold-dark: #B8860B;
-    --cream: #FDF8F0;
-    --ink: #1a1a2e;
+    --gold: var(--h-gold-soft, #FFD700);
+    --gold-dark: var(--h-gold, #B8860B);
+    --cream: var(--h-paper, #FDF8F0);
+    --ink: var(--h-ink, #1a1a2e);
     --font-display: 'Cinzel', serif;
     --font-body: 'Cormorant Garamond', serif;
     --font-accent: 'EB Garamond', serif;

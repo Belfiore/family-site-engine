@@ -1,0 +1,48 @@
+/* Heritage theme: English. Victorian and Edwardian print: engraved rules, deep green and oxblood.
+ * Palette, type, ornaments and map colours only; the shared rules are in base.css.
+ * Fonts: IM Fell English and Libre Baskerville (SIL Open Font Licence), self-hosted in fonts/. */
+@font-face { font-family: 'hf-im-fell-english'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/im-fell-english-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-im-fell-english'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/im-fell-english-latin-400-italic.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-libre-baskerville'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/libre-baskerville-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-libre-baskerville'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/libre-baskerville-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-libre-baskerville'; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/libre-baskerville-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-libre-baskerville'; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/libre-baskerville-latin-ext-700-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-libre-baskerville'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/libre-baskerville-latin-400-italic.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-libre-baskerville'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/libre-baskerville-latin-ext-400-italic.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+
+:root[data-heritage="english"] {
+    /* palette */
+    --h-paper: #f4efe1; --h-paper-rgb: 244, 239, 225;
+    --h-card: #fbf8ef; --h-card-rgb: 251, 248, 239;
+    --h-ink: #1f2a22; --h-ink-rgb: 31, 42, 34;
+    --h-accent: #7a1f2b; --h-accent-rgb: 122, 31, 43;
+    --h-gold: #a48439; --h-gold-rgb: 164, 132, 57;
+    --h-goldtext: #6e5516; --h-goldtext-rgb: 110, 85, 22;
+    --h-brown: #5b4a36; --h-brown-rgb: 91, 74, 54;
+    --h-line: #d3c7a8; --h-line-rgb: 211, 199, 168;
+    --h-green: #1f4d3a; --h-green-rgb: 31, 77, 58;
+    --h-accent-deep-rgb: 67, 17, 24;
+    /* map: the Atlas style's land, water and roads */
+    --h-map-land: #f1ead6;
+    --h-map-water: #c3d0c6;
+    --h-map-park: #dfe3cb;
+    --h-map-road: #e2d6b6;
+    --h-map-roadmajor: #d3c49a;
+    --h-map-line: #a89a74;
+    --h-map-label: #2f3a30;
+    /* type */
+    --h-font-heading: 'hf-im-fell-english', 'IM Fell English', Georgia, serif;
+    --h-font-body: 'hf-libre-baskerville', 'Libre Baskerville', Georgia, serif;
+    --h-heading-weight: 400;
+    --h-heading-spacing: .01em;
+    /* shape */
+    --h-radius: 3px;
+    --h-radius-btn: 2px;
+    --h-pin-radius: 50%;
+    /* ornament and texture (small SVG or CSS; texture off with data-h-texture=off, data saver and reduced data) */
+    --h-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 12' width='240' height='12'%3E%3Cpath d='M0 4h104M136 4h104' stroke='%23a48439' stroke-width='1.4'/%3E%3Cpath d='M0 8h104M136 8h104' stroke='%23a48439' stroke-width='.6'/%3E%3Cpath d='M120 0l6 6-6 6-6-6z' fill='%237a1f2b'/%3E%3Ccircle cx='108' cy='6' r='1.4' fill='%23a48439'/%3E%3Ccircle cx='132' cy='6' r='1.4' fill='%23a48439'/%3E%3C/svg%3E");
+    --h-divider-repeat: no-repeat;
+    --h-divider-w: 240px;
+    --h-divider-h: 12px;
+    --h-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.357 0 0 0 0 0.290 0 0 0 0 0.212 0 0 0 0.070 0'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23n)'/%3E%3C/svg%3E");
+}

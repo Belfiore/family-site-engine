@@ -14,7 +14,7 @@ The build then makes `admin/index.html`. The page is not in the navigation bar, 
 
 1. **Reads** the settings from the repository through the GitHub API (public repositories can be read without signing in).
 2. **Signs in** with a GitHub token pasted into the page. The page then asks GitHub whether that person can write to the repository. If not, or if there is no token, everything is shown as **Read only** and nothing can be saved.
-3. **Shows the switches**: Home (always on and locked), Stories, Family Tree, Family Map, Records and Research, Discoveries, then the site title, the tagline and the engine channel.
+3. **Shows the switches**: Home (always on and locked), Stories, Family Tree, Family Map, Records and Research, Discoveries, then the site title, the tagline, the language, the site style and the engine channel.
 4. **Shows what will change** before anything is saved: each switch that moved, and each setting that changed, from the old value to the new.
 5. **Commits** the change. The file is edited line by line, not written out again, so the commit shows only what the person changed and the file keeps its layout. Before sending, the page reads the result back and checks that every setting it does not own is exactly as it was.
 6. **Links to the build** that the commit started, and to the commit.
@@ -42,11 +42,21 @@ The branch can be protected. If it only accepts changes through a pull request, 
 | Family Tree, Family Map | `pages.tree`, `pages.map`: `true` or `false`; an object gets `enabled` inside it so its file and title are kept; a file name becomes `{"file": "...", "enabled": false}` |
 | Site title | `site.name` |
 | Tagline | `site.description` |
+| Default language, languages visitors can choose | `language.default`, `language.available` (see [languages](languages.md)). Writing only what changed |
+| Site style | `style.heritage` (`classic` for the Classic Archive) and, for a style with a texture, `style.options.texture`. See [heritage styles](themes.md) |
 | Engine channel | `engine.channel` (a pinned `engine.version` still wins, and the page says so) |
 
 The tagline is `site.description`. The engine itself does not print it on any page; a site shows it if its own pages or theme do.
 
 Turning **Discoveries** on needs the site's workflows to use `build-site.yml` from engine 1.2.0 or newer (see [releases](releasing.md#the-build-workflow)). A long dash in the title or tagline is refused.
+
+## Language and site style
+
+Both sections are on the same page and are separate: one never changes the other.
+
+**Language** picks the default language and the languages a visitor can switch between. The default is always one of them.
+
+**Site style** shows the heritage styles as cards, marks the one the family's own data suggests, and lets you try any of them on the real site without saving. **Apply this style** goes through the same review and commit as every other change; **Cancel** goes back to what is saved. Anyone can try a style; only someone who can write to the repository can apply one. The page's content security policy allows its own files (the style sheets and fonts) and `api.github.com`. See [heritage styles](themes.md).
 
 ## Settings
 

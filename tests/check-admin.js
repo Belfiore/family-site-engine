@@ -137,9 +137,9 @@ class FakeGitHub {
         gh.reset(SITE.config);
         const page = await open();
         check((await page.locator('.ad-ro').innerText()).includes('Read only'), 'it says "Read only"');
-        const boxes = await page.locator('.ad-set input[type=checkbox]').count();
+        const boxes = await page.locator('.ad-row input[role=switch]').count();
         check(boxes === 6, 'all six page switches are shown', String(boxes));
-        check(await page.locator('.ad-set input:not([disabled])').count() === 0, 'every switch is locked');
+        check(await page.locator('.ad-row input:not([disabled])').count() === 0, 'every switch is locked');
         check(await page.locator('#ad-name').isDisabled() && await page.locator('#ad-tagline').isDisabled() && await page.locator('#ad-channel').isDisabled(), 'the title, tagline and channel are locked');
         check(await page.locator('text=Review changes').count() === 0, 'there is no save button');
         check(await sw(page, 'home').isChecked() && await sw(page, 'home').isDisabled(), 'Home is on and cannot be turned off');
@@ -157,7 +157,7 @@ class FakeGitHub {
         const page = await open();
         await signIn(page, READ_ONLY);
         check((await page.locator('.ad-ro').innerText()).includes('does not have write access'), 'it says the token cannot write');
-        check(await page.locator('.ad-set input:not([disabled])').count() === 0, 'the switches stay locked');
+        check(await page.locator('.ad-row input:not([disabled])').count() === 0, 'the switches stay locked');
         check(gh.puts.length === 0, 'nothing was saved');
         await page.context().close();
     }
@@ -237,6 +237,107 @@ class FakeGitHub {
         check(cookies.length === 0, 'no cookie holds it');
         check(await page.evaluate(() => localStorage.length) === 0, 'and nothing is kept after the tab closes');
         check(page.errors.length === 0, 'no errors in the page', page.errors.join(' | '));
+        await page.context().close();
+    }
+
+    section('Language and site style are two separate settings on the same page');
+    {
+        gh.reset(SITE.config);
+        const page = await open();
+        const html = await page.content();
+        check(await page.locator('.ad-lang').count() === 1 && await page.locator('.ad-style').count() === 1, 'the page has a Language section and a Site style section');
+        check(await page.locator('.ad-style-card').count() === 11, 'there is a card for the Classic Archive and each of the ten styles', String(await page.locator('.ad-style-card').count()));
+        check(await page.locator('#ad-style-classic').isChecked(), 'the site\'s own style (the Classic Archive) is the one picked');
+        check(await page.locator('.ad-badge').count() >= 1 && (await page.locator('.ad-style-card:has(.ad-badge)').first().innerText()).includes('Suggested for this family'), 'one card says "Suggested for this family"');
+        check(/places|birthplaces|data/i.test(await page.locator('.ad-suggest').innerText()), 'with the reasons in plain words');
+        check(await page.evaluate(() => document.documentElement.getAttribute('data-heritage')) === null, 'and suggesting changes nothing: the page still has no style');
+        check(!new RegExp('[' + String.fromCharCode(0x2013, 0x2014) + ']').test(await page.locator('.ad-style').innerText()), 'no long dashes in the section');
+        check(await page.locator('#ad-style-texture').isHidden(), 'the texture option is hidden for the Classic Archive');
+        check(await page.locator('#ad-lang-default option').count() >= 2, 'the language selector lists the engine\'s languages');
+        check(await page.locator('#ad-lang-default').isDisabled(), 'and is locked until someone signs in');
+
+        await signIn(page, GOOD);
+        // try, cancel
+        await page.click('label[for=ad-style-italian]');
+        await page.waitForFunction(() => document.documentElement.getAttribute('data-heritage') === 'italian');
+        check(true, 'clicking a card shows that style at once, without saving');
+        check(await page.locator('.ad-stylebar').isVisible() && /not saved|Nothing is saved/.test(await page.locator('.ad-say').innerText()), 'with a note that nothing is saved yet');
+        check(await page.locator('#h-preview').count() === 0, 'and no second banner on the settings page');
+        check(gh.puts.length === 0, 'nothing was sent to GitHub');
+        const swatch = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h-accent').trim());
+        check(/^#[0-9a-f]{6}$/i.test(swatch), 'the page really took the style\'s colours', swatch);
+        await shot(page, 'admin-style-preview');
+        // the preview follows the tab to the rest of the site
+        await page.goto(URL + 'family-tree.html');
+        await page.waitForFunction(() => document.documentElement.getAttribute('data-heritage') === 'italian');
+        check(await page.locator('#h-preview').count() === 1, 'the site\'s pages show it too, with a bar that says it is a trial');
+        await page.goBack();
+        await page.waitForSelector('#ad-app:not([hidden])'); await page.waitForTimeout(400);
+        check(await page.locator('#ad-style-italian').isChecked(), 'coming back to the settings page, the trial is still the one picked');
+        await page.click('text=Cancel');
+        await page.waitForFunction(() => document.documentElement.getAttribute('data-heritage') === null);
+        check(await page.locator('#ad-style-classic').isChecked() && await page.locator('.ad-stylebar').isHidden(), 'Cancel puts the page back and hides the bar');
+        check(await page.evaluate(() => sessionStorage.getItem('family-style-preview')) === null, 'and forgets the trial');
+
+        // apply a style
+        await page.click('label[for=ad-style-english]');
+        await page.waitForFunction(() => document.documentElement.getAttribute('data-heritage') === 'english');
+        check(await page.locator('#ad-style-texture').isVisible() && await page.locator('#ad-style-texture').isChecked(), 'a style with a texture shows the texture option, on by default');
+        await page.click('text=Apply this style');
+        const list = (await page.locator('.ad-changes').innerText()).replace(/\s+/g, ' ');
+        check(/Site style: Classic Archive to English/.test(list) && !/Language|texture/i.test(list), 'Apply lists only the style change for review', list);
+        check(gh.puts.length === 0, 'and saves nothing before the person confirms');
+        await page.click('text=Save and rebuild');
+        await page.waitForTimeout(500);
+        check(gh.puts.length === 1, 'one commit was made', String(gh.puts.length));
+        const a1 = JSON.parse(Buffer.from(gh.puts[0].body.content, 'base64').toString('utf8')), b1 = JSON.parse(SITE.config);
+        check(a1.style && a1.style.heritage === 'english' && !('language' in a1) && JSON.stringify(a1.pages) === JSON.stringify(b1.pages), 'the file now has style.heritage and nothing else changed');
+        check(Object.keys(b1).every(k => k === 'style' || JSON.stringify(b1[k]) === JSON.stringify(a1[k])), 'no other setting moved');
+
+        // texture off, a separate option
+        await page.click('#ad-style-texture', { force: true }).catch(() => {});
+        await page.locator('#ad-style-texture').uncheck({ force: true });
+        await page.waitForTimeout(250);
+        check(await page.evaluate(() => document.documentElement.getAttribute('data-h-texture')) === 'off', 'turning the texture off is shown at once');
+        await page.click('text=Apply this style');
+        check(/Paper texture: on to off/.test((await page.locator('.ad-changes').innerText()).replace(/\s+/g, ' ')), 'and is its own change in the review');
+        await page.click('text=Save and rebuild');
+        await page.waitForTimeout(500);
+        const a2 = JSON.parse(Buffer.from(gh.puts[1].body.content, 'base64').toString('utf8'));
+        check(a2.style.heritage === 'english' && a2.style.options && a2.style.options.texture === false, 'saved as style.options.texture false');
+
+        // back to the Classic Archive
+        await page.click('label[for=ad-style-classic]');
+        await page.waitForFunction(() => document.documentElement.getAttribute('data-heritage') === null);
+        await page.click('text=Apply this style');
+        await page.click('text=Save and rebuild');
+        await page.waitForTimeout(500);
+        const a3 = JSON.parse(Buffer.from(gh.puts[2].body.content, 'base64').toString('utf8'));
+        check(a3.style.heritage === 'classic', 'choosing the Classic Archive again is saved as classic');
+
+        // language, on its own
+        await page.selectOption('#ad-lang-default', 'de');
+        check(await page.locator('#ad-lang-de').isChecked() && await page.locator('#ad-lang-de').isDisabled(), 'the default language is always one visitors can use');
+        await page.locator('#ad-lang-en').check({ force: true });
+        await page.click('text=Review changes');
+        const list2 = (await page.locator('.ad-changes').innerText()).replace(/\s+/g, ' ');
+        check(/Default language: English to Deutsch/.test(list2) && /Languages visitors can choose/.test(list2) && !/Site style/.test(list2), 'language changes are listed on their own', list2);
+        await page.click('text=Save and rebuild');
+        await page.waitForTimeout(500);
+        const a4 = JSON.parse(Buffer.from(gh.puts[3].body.content, 'base64').toString('utf8'));
+        check(a4.language && a4.language.default === 'de' && JSON.stringify(a4.language.available.slice().sort()) === '["de","en"]' && a4.style.heritage === 'classic', 'saved as language.default and language.available, the style untouched');
+        check(!JSON.stringify(gh.requests.map(r => r.path)).includes('github_pat'), 'no token in any address');
+        check(page.errors.length === 0, 'no errors in the page', page.errors.join(' | '));
+        await page.context().close();
+    }
+
+    section('Someone who cannot save can still look at a style');
+    {
+        const page = await open();
+        await page.click('label[for=ad-style-scottish]');
+        await page.waitForFunction(() => document.documentElement.getAttribute('data-heritage') === 'scottish');
+        check(await page.locator('text=Apply this style').isDisabled(), 'but cannot apply it');
+        check(/sign in/i.test(await page.locator('.ad-say').innerText()), 'and is told why');
         await page.context().close();
     }
 

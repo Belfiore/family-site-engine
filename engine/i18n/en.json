@@ -834,5 +834,8 @@
   "nav.tree": "Family Tree",
   "nav.map": "Family Map",
   "nav.ask": "Ask Stuart",
-  "nav.discoveries": "Discoveries"
+  "nav.discoveries": "Discoveries",
+  "heritage.previewing": "Trying the {name} style. It is not saved.",
+  "heritage.back": "Back to settings",
+  "heritage.stop": "Stop trying it"
 }

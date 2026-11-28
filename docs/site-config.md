@@ -266,6 +266,19 @@ Optional. Without it the site is English only and builds exactly as before.
 
 Words a site writes itself take a language ending (`label_de`, `title_de`, `name_de`) and so does research text in the data (`story_de`); the original is used where the German is missing. See [languages](languages.md) for what is translated, what stays English and how to add a language.
 
+## style
+
+```json
+"style": { "heritage": "german", "options": { "texture": false } }
+```
+
+Optional. A heritage style for the whole site: fonts, colours, ornaments and the map's colours on every page the engine makes. Without it, or with `"classic"`, the site looks as it always did.
+
+- `heritage`: `classic` (the default), `english`, `german`, `italian`, `irish`, `scottish`, `french`, `spanish`, `polish`, `scandinavian` or `jewish`.
+- `options.texture`: `false` turns the paper texture off for the styles that have one (default `true`).
+
+The settings page can try a style on the live site and saves this block when a person applies it. See [heritage styles](themes.md).
+
 ## publish and process
 
 - `publish.exclude`: files and folders not to publish (globs from the site folder: `"drafts/"`, `"*.psd"`). `.git`, `.github`, `node_modules`, `_site` and `site.config.json` are never published.

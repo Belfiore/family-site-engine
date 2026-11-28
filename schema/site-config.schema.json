@@ -1067,6 +1067,41 @@
    },
    "additionalProperties": false,
    "description": "The settings page at /admin/: a static page where people with write access to the repository change the page switches, the site's title and tagline and the engine channel. See docs/admin.md."
+  },
+  "style": {
+   "type": "object",
+   "properties": {
+    "heritage": {
+     "type": "string",
+     "enum": [
+      "classic",
+      "english",
+      "german",
+      "italian",
+      "irish",
+      "scottish",
+      "french",
+      "spanish",
+      "polish",
+      "scandinavian",
+      "jewish"
+     ],
+     "description": "The heritage style of the whole site: classic (the look the site has today, the default), english, german, italian, irish, scottish, french, spanish, polish, scandinavian or jewish. See docs/themes.md."
+    },
+    "options": {
+     "type": "object",
+     "properties": {
+      "texture": {
+       "type": "boolean",
+       "description": "false turns the paper texture of the styles that have one off (default true)."
+      }
+     },
+     "additionalProperties": false,
+     "description": "Settings that belong to the chosen style."
+    }
+   },
+   "additionalProperties": false,
+   "description": "Optional. A heritage style for the whole site: fonts, colours, ornaments and the map's colours, for every page the engine makes. Without it the site looks as it always did. The settings page (admin) suggests one from the family's own places and saves the choice here. See docs/themes.md."
   }
  }
 }

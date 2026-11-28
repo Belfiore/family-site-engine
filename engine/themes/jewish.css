@@ -1,0 +1,50 @@
+/* Heritage theme: Jewish and Ashkenazi. Archival letterpress: indigo, parchment and brass.
+ * Palette, type, ornaments and map colours only; the shared rules are in base.css.
+ * Fonts: Frank Ruhl Libre and Crimson Text (SIL Open Font Licence), self-hosted in fonts/. */
+@font-face { font-family: 'hf-frank-ruhl-libre'; font-style: normal; font-weight: 500; font-display: swap; src: url(fonts/frank-ruhl-libre-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-frank-ruhl-libre'; font-style: normal; font-weight: 500; font-display: swap; src: url(fonts/frank-ruhl-libre-latin-ext-500-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-frank-ruhl-libre'; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/frank-ruhl-libre-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-frank-ruhl-libre'; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/frank-ruhl-libre-latin-ext-700-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-crimson-text'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/crimson-text-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-crimson-text'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/crimson-text-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-crimson-text'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/crimson-text-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-crimson-text'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/crimson-text-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-crimson-text'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/crimson-text-latin-400-italic.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-crimson-text'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/crimson-text-latin-ext-400-italic.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+
+:root[data-heritage="jewish"] {
+    /* palette */
+    --h-paper: #f3ecda; --h-paper-rgb: 243, 236, 218;
+    --h-card: #faf6e8; --h-card-rgb: 250, 246, 232;
+    --h-ink: #1f2038; --h-ink-rgb: 31, 32, 56;
+    --h-accent: #2d2f6b; --h-accent-rgb: 45, 47, 107;
+    --h-gold: #a4802b; --h-gold-rgb: 164, 128, 43;
+    --h-goldtext: #6c5110; --h-goldtext-rgb: 108, 81, 16;
+    --h-brown: #524a3a; --h-brown-rgb: 82, 74, 58;
+    --h-line: #d6cba9; --h-line-rgb: 214, 203, 169;
+    --h-green: #3c5b4b; --h-green-rgb: 60, 91, 75;
+    --h-accent-deep-rgb: 25, 26, 59;
+    /* map: the Atlas style's land, water and roads */
+    --h-map-land: #efe7d2;
+    --h-map-water: #c2cdd6;
+    --h-map-park: #dbe0c4;
+    --h-map-road: #e3d8b9;
+    --h-map-roadmajor: #d3c390;
+    --h-map-line: #a69870;
+    --h-map-label: #26273f;
+    /* type */
+    --h-font-heading: 'hf-frank-ruhl-libre', 'Frank Ruhl Libre', Georgia, serif;
+    --h-font-body: 'hf-crimson-text', 'Crimson Text', Georgia, serif;
+    --h-heading-weight: 500;
+    --h-heading-spacing: .01em;
+    /* shape */
+    --h-radius: 3px;
+    --h-radius-btn: 2px;
+    --h-pin-radius: 50%;
+    /* ornament and texture (small SVG or CSS; texture off with data-h-texture=off, data saver and reduced data) */
+    --h-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 12' width='240' height='12'%3E%3Cpath d='M0 6h108M132 6h108' stroke='%231f2038' stroke-width='.9'/%3E%3Cpath d='M120 1.5l4.5 4.5-4.5 4.5-4.5-4.5z' fill='%23a4802b'/%3E%3Crect x='108' y='4.5' width='3' height='3' fill='%23a4802b'/%3E%3Crect x='129' y='4.5' width='3' height='3' fill='%23a4802b'/%3E%3C/svg%3E");
+    --h-divider-repeat: no-repeat;
+    --h-divider-w: 240px;
+    --h-divider-h: 12px;
+    --h-texture: none;
+}

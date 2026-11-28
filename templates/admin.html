@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.github.com; base-uri 'none'; form-action 'none'">
     <meta name="robots" content="noindex, nofollow, noarchive">
     <title>Site settings | {{siteName}}</title>
     <link rel="stylesheet" href="{{base}}tokens.css">
-{{theme}}    <link rel="stylesheet" href="{{base}}admin.css">
+{{theme}}{{heritage}}    <link rel="stylesheet" href="{{base}}admin.css">
 </head>
 <body class="ad-body">
 <a class="ad-skip" href="#ad-main">Skip to the settings</a>
@@ -19,7 +19,7 @@
 </header>
 <main class="ad-main" id="ad-main">
     <h1>Site settings</h1>
-    <p class="ad-lede">Switch pages on and off and change the site's title, tagline and engine channel. Saving commits <code>site.config.json</code> to the site's GitHub repository, and the site rebuilds by itself.</p>
+    <p class="ad-lede">Switch pages on and off, change the site's title, tagline, language and style, and the engine channel. Saving commits <code>site.config.json</code> to the site's GitHub repository, and the site rebuilds by itself.</p>
     <noscript><p class="ad-warn">This page needs JavaScript. Without it, edit <code>site.config.json</code> in the repository by hand.</p></noscript>
     <div id="ad-app" class="ad-app" hidden></div>
 </main>

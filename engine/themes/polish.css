@@ -1,0 +1,48 @@
+/* Heritage theme: Polish and Eastern European. Paper-cut (wycinanki) motifs in crimson, cream and forest green.
+ * Palette, type, ornaments and map colours only; the shared rules are in base.css.
+ * Fonts: Bitter and Alegreya Sans (SIL Open Font Licence), self-hosted in fonts/. */
+@font-face { font-family: 'hf-bitter'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/bitter-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-bitter'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/bitter-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-alegreya-sans'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/alegreya-sans-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-alegreya-sans'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/alegreya-sans-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-alegreya-sans'; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/alegreya-sans-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-alegreya-sans'; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/alegreya-sans-latin-ext-700-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-alegreya-sans'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/alegreya-sans-latin-400-italic.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-alegreya-sans'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/alegreya-sans-latin-ext-400-italic.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+
+:root[data-heritage="polish"] {
+    /* palette */
+    --h-paper: #f7f0e1; --h-paper-rgb: 247, 240, 225;
+    --h-card: #fdf9ee; --h-card-rgb: 253, 249, 238;
+    --h-ink: #2a2420; --h-ink-rgb: 42, 36, 32;
+    --h-accent: #a3182e; --h-accent-rgb: 163, 24, 46;
+    --h-gold: #a98128; --h-gold-rgb: 169, 129, 40;
+    --h-goldtext: #6f5214; --h-goldtext-rgb: 111, 82, 20;
+    --h-brown: #5a4838; --h-brown-rgb: 90, 72, 56;
+    --h-line: #dccfb4; --h-line-rgb: 220, 207, 180;
+    --h-green: #2e5a3a; --h-green-rgb: 46, 90, 58;
+    --h-accent-deep-rgb: 90, 13, 25;
+    /* map: the Atlas style's land, water and roads */
+    --h-map-land: #f3ead7;
+    --h-map-water: #c3d3d2;
+    --h-map-park: #dce3c3;
+    --h-map-road: #e6d8b9;
+    --h-map-roadmajor: #d8c291;
+    --h-map-line: #ab9a74;
+    --h-map-label: #352a24;
+    /* type */
+    --h-font-heading: 'hf-bitter', 'Bitter', Georgia, serif;
+    --h-font-body: 'hf-alegreya-sans', 'Alegreya Sans', Georgia, serif;
+    --h-heading-weight: 600;
+    --h-heading-spacing: .01em;
+    /* shape */
+    --h-radius: 10px;
+    --h-radius-btn: 8px;
+    --h-pin-radius: 50%;
+    /* ornament and texture (small SVG or CSS; texture off with data-h-texture=off, data saver and reduced data) */
+    --h-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 14' width='240' height='14'%3E%3Cpath d='M0 8h96M144 8h96' stroke='%23dccfb4' stroke-width='1'/%3E%3Cpath d='M120 1C115 4 114 9 120 13C126 9 125 4 120 1Z' fill='%23a3182e'/%3E%3Cpath d='M110 8C102 3 97 9 104 12C108 12 110 10 110 8ZM130 8C138 3 143 9 136 12C132 12 130 10 130 8Z' fill='%232e5a3a'/%3E%3C/svg%3E");
+    --h-divider-repeat: no-repeat;
+    --h-divider-w: 240px;
+    --h-divider-h: 14px;
+    --h-texture: none;
+}

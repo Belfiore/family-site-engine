@@ -172,7 +172,22 @@
     FM.filters = { eventPasses: eventPasses, scopeIds: scopeIds, state: S };
 
     // ================================================================== map styles
+    // A heritage style (docs/themes.md) recolours the Atlas look's land, water and roads. With none, the style is left exactly as it is.
+    var TINT = { '#f4ecdb': 'land', '#efe6d3': 'land', '#e8dcc6': 'land', '#c9d5d3': 'water', '#b3c4c3': 'water', '#e6e3cc': 'park', '#e1dfc6': 'park',
+                 '#e6d6ba': 'road', '#dcc6a0': 'roadmajor', '#d4b98d': 'roadmajor', '#cdb48a': 'line', '#b8a283': 'line', '#c9b79b': 'line', '#3d3328': 'label' };
+    function themed(s) {
+        var H = window.FamilyHeritage;
+        if (!H || H.current() === 'classic') return s;
+        var t = JSON.stringify(s);
+        Object.keys(TINT).forEach(function (k) { var v = H.cv('--h-map-' + TINT[k]); if (v) t = t.split(k).join(v); });
+        return JSON.parse(t);
+    }
+    // a colour from the heritage style, or today's colour when there is none
+    function HC(name, fallback) { var H = window.FamilyHeritage; return (H && H.current() !== 'classic' && H.cv(name)) || fallback; }
     function loadStyleJson(name) {
+        return rawStyleJson(name).then(themed);
+    }
+    function rawStyleJson(name) {
         if (styleCache[name]) return Promise.resolve(JSON.parse(JSON.stringify(styleCache[name])));
         return fetch(BASE + ENGINE + 'map-styles/' + name + '.json').then(function (r) { return r.json(); }).then(function (s) {
             var t = JSON.stringify(s).split('{GLYPHS}').join(BASE + ENGINE + 'fonts/{fontstack}/{range}.pbf').split('{BASE}').join(BASE + ENGINE);
@@ -325,17 +340,17 @@
         function src(id) { if (!map.getSource(id)) map.addSource(id, { type: 'geojson', data: { type: 'FeatureCollection', features: [] } }); }
         ['fm-areas', 'fm-halos', 'fm-path', 'fm-arcs', 'fm-trails', 'fm-hl'].forEach(src);
         function layer(def) { if (!map.getLayer(def.id)) map.addLayer(def, before); }
-        layer({ id: 'fm-area-fill', type: 'fill', source: 'fm-areas', paint: { 'fill-color': ['case', ['get', 'orkney'], '#8b0000', '#704214'], 'fill-opacity': 0.08 } });
-        layer({ id: 'fm-area-line', type: 'line', source: 'fm-areas', paint: { 'line-color': ['case', ['get', 'orkney'], '#8b0000', '#704214'], 'line-width': ['case', ['get', 'hl'], 2, 1.1], 'line-dasharray': [3, 2.4], 'line-opacity': ['case', ['get', 'faded'], 0.25, 0.65] } });
+        layer({ id: 'fm-area-fill', type: 'fill', source: 'fm-areas', paint: { 'fill-color': ['case', ['get', 'orkney'], HC('--h-accent', '#8b0000'), HC('--h-brown', '#704214')], 'fill-opacity': 0.08 } });
+        layer({ id: 'fm-area-line', type: 'line', source: 'fm-areas', paint: { 'line-color': ['case', ['get', 'orkney'], HC('--h-accent', '#8b0000'), HC('--h-brown', '#704214')], 'line-width': ['case', ['get', 'hl'], 2, 1.1], 'line-dasharray': [3, 2.4], 'line-opacity': ['case', ['get', 'faded'], 0.25, 0.65] } });
         layer({ id: 'fm-halo', type: 'circle', source: 'fm-halos', paint: {
             'circle-radius': ['interpolate', ['exponential', 2], ['zoom'], 0, ['get', 'k'], 22, ['*', ['get', 'k'], 4194304]],
-            'circle-color': ['case', ['get', 'orkney'], '#8b0000', '#b8860b'],
+            'circle-color': ['case', ['get', 'orkney'], HC('--h-accent', '#8b0000'), HC('--h-gold', '#b8860b')],
             'circle-opacity': 0.14, 'circle-blur': 0.55,
-            'circle-stroke-width': ['case', ['get', 'hl'], 1.2, 0], 'circle-stroke-color': '#8b0000', 'circle-stroke-opacity': 0.5 } });
-        layer({ id: 'fm-trails', type: 'line', source: 'fm-trails', layout: { 'line-cap': 'round' }, paint: { 'line-color': '#8b0000', 'line-width': 1.6, 'line-opacity': ['get', 'o'], 'line-dasharray': [1, 2.2] } });
-        layer({ id: 'fm-path-casing', type: 'line', source: 'fm-path', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#fffdf9', 'line-width': 5, 'line-opacity': 0.8 } });
-        layer({ id: 'fm-path', type: 'line', source: 'fm-path', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#8b0000', 'line-width': 2, 'line-dasharray': [2, 2] } });
-        layer({ id: 'fm-arcs', type: 'line', source: 'fm-arcs', layout: { 'line-cap': 'round' }, paint: { 'line-color': '#7f5c0b', 'line-width': 2, 'line-opacity': 0.85, 'line-dasharray': [0.5, 2] } });
+            'circle-stroke-width': ['case', ['get', 'hl'], 1.2, 0], 'circle-stroke-color': HC('--h-accent', '#8b0000'), 'circle-stroke-opacity': 0.5 } });
+        layer({ id: 'fm-trails', type: 'line', source: 'fm-trails', layout: { 'line-cap': 'round' }, paint: { 'line-color': HC('--h-accent', '#8b0000'), 'line-width': 1.6, 'line-opacity': ['get', 'o'], 'line-dasharray': [1, 2.2] } });
+        layer({ id: 'fm-path-casing', type: 'line', source: 'fm-path', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': HC('--h-card', '#fffdf9'), 'line-width': 5, 'line-opacity': 0.8 } });
+        layer({ id: 'fm-path', type: 'line', source: 'fm-path', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': HC('--h-accent', '#8b0000'), 'line-width': 2, 'line-dasharray': [2, 2] } });
+        layer({ id: 'fm-arcs', type: 'line', source: 'fm-arcs', layout: { 'line-cap': 'round' }, paint: { 'line-color': HC('--h-goldtext', '#7f5c0b'), 'line-width': 2, 'line-opacity': 0.85, 'line-dasharray': [0.5, 2] } });
         refreshOverlays();
         if (FM.onOverlays) FM.onOverlays();
     }
@@ -1494,6 +1509,13 @@
                 }
             }, 8000);
             map.on('style.load', addOverlays);
+            // a heritage style tried or applied on this page: the lines, rings and the Atlas colours are drawn by script, so draw them again
+            document.addEventListener('heritage:change', function () {
+                if (!map || !map.getStyle()) return;
+                if (S.style === 'atlas' || styleState.failed) { setStyle(S.style, { silent: true }); return; }
+                ['fm-area-fill', 'fm-area-line', 'fm-halo', 'fm-trails', 'fm-path-casing', 'fm-path', 'fm-arcs'].forEach(function (id) { if (map.getLayer(id)) map.removeLayer(id); });
+                addOverlays();
+            });
             map.on('styledata', function () { if (map.isStyleLoaded() && !map.getSource('fm-areas')) addOverlays(); });
             var raf = null;
             map.on('move', function () { if (raf) return; raf = requestAnimationFrame(function () { raf = null; updateMarkers(); if (!$('peek').hidden && peekFor && markers[peekFor]) positionPeek(markers[peekFor]); }); });

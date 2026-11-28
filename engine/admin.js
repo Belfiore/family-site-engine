@@ -156,9 +156,50 @@
         return [{ path: ['pages', key], text: yes }];
     }
 
-    // wanted: { pages: {key: bool}, name, description, channel }. Returns { ops, changes }: only what differs from cfg.
+    /* languages: read the way build/i18n.py settings() reads them */
+    function langSettings(cfg) {
+        var b = isObject(cfg.language) ? cfg.language : {};
+        var def = typeof b.default === 'string' && b.default ? b.default : 'en';
+        var av = Array.isArray(b.available) && b.available.length ? b.available.slice() : [def];
+        if (av.indexOf(def) < 0) av.unshift(def);
+        return { default: def, available: av };
+    }
+    function sameSet(a, b) { return a.length === b.length && a.every(function (x) { return b.indexOf(x) >= 0; }); }
+    function langName(code, names) { return (names && names[code]) || code; }
+
+    // the style the settings name: an id, or 'classic' when none (the Classic Archive is the same as having no style)
+    function styleId(cfg) { return isObject(cfg.style) && typeof cfg.style.heritage === 'string' && cfg.style.heritage ? cfg.style.heritage : 'classic'; }
+    function styleTexture(cfg) { return !(isObject(cfg.style) && isObject(cfg.style.options) && cfg.style.options.texture === false); }
+
+    // wanted: { pages: {key: bool}, name, description, channel, language: {default, available}, style: {id, texture, names, hasTexture} }.
+    // Returns { ops, changes }: only what differs from cfg.
     function plan(cfg, wanted) {
         var ops = [], changes = [];
+        if (wanted.language && typeof wanted.language.default === 'string' && Array.isArray(wanted.language.available)) {
+            var L = langSettings(cfg), W = wanted.language, names = W.names || {};
+            var wantAv = W.available.indexOf(W.default) < 0 ? [W.default].concat(W.available) : W.available.slice();
+            if (W.default !== L.default) {
+                ops.push({ path: ['language', 'default'], text: JSON.stringify(W.default) });
+                changes.push({ label: 'Default language', from: langName(L.default, names), to: langName(W.default, names), plain: true });
+            }
+            var after = langSettings({ language: { default: W.default, available: isObject(cfg.language) ? cfg.language.available : undefined } });
+            if (!sameSet(after.available, wantAv)) {
+                ops.push({ path: ['language', 'available'], text: JSON.stringify(wantAv) });
+                changes.push({ label: 'Languages visitors can choose', from: L.available.map(function (c) { return langName(c, names); }).join(', '),
+                               to: wantAv.map(function (c) { return langName(c, names); }).join(', '), plain: true });
+            }
+        }
+        if (wanted.style && typeof wanted.style.id === 'string') {
+            var X = wanted.style, names2 = X.names || {}, was = styleId(cfg);
+            if (X.id !== was) {
+                ops.push({ path: ['style', 'heritage'], text: JSON.stringify(X.id) });
+                changes.push({ label: 'Site style', from: names2[was] || was, to: names2[X.id] || X.id, plain: true });
+            }
+            if (X.id !== 'classic' && X.hasTexture && typeof X.texture === 'boolean' && X.texture !== styleTexture(cfg)) {
+                ops.push({ path: ['style', 'options', 'texture'], text: X.texture ? 'true' : 'false' });
+                changes.push({ label: 'Paper texture', from: styleTexture(cfg) ? 'on' : 'off', to: X.texture ? 'on' : 'off' });
+            }
+        }
         PAGE_KEYS.forEach(function (key) {
             if (key === 'home' || !wanted.pages || typeof wanted.pages[key] !== 'boolean') return;
             var was = pageOn(key, cfg);
@@ -193,7 +234,7 @@
         var b, a;
         try { b = JSON.parse(before); a = JSON.parse(after); } catch (e) { throw new Error('The edited settings could not be read back, so nothing was saved.'); }
         Object.keys(b).concat(Object.keys(a)).forEach(function (k) {
-            if (k === 'pages' || k === 'site' || k === 'engine') return;
+            if (k === 'pages' || k === 'site' || k === 'engine' || k === 'language' || k === 'style') return;
             if (!same(b[k], a[k])) throw new Error('Editing would have changed "' + k + '", so nothing was saved.');
         });
         function rest(o, drop) {
@@ -201,6 +242,9 @@
         }
         if (!same(rest(b.site, ['name', 'description']), rest(a.site, ['name', 'description']))) throw new Error('Editing would have changed other site settings, so nothing was saved.');
         if (!same(rest(b.engine, ['channel']), rest(a.engine, ['channel']))) throw new Error('Editing would have changed other engine settings, so nothing was saved.');
+        if (!same(rest(b.language, ['default', 'available']), rest(a.language, ['default', 'available']))) throw new Error('Editing would have changed other language settings, so nothing was saved.');
+        if (!same(rest(b.style, ['heritage', 'options']), rest(a.style, ['heritage', 'options']))) throw new Error('Editing would have changed other style settings, so nothing was saved.');
+        if (!same(rest(isObject(b.style) ? b.style.options : null, ['texture']), rest(isObject(a.style) ? a.style.options : null, ['texture']))) throw new Error('Editing would have changed other style options, so nothing was saved.');
         if (!same(rest(b.pages, PAGE_KEYS), rest(a.pages, PAGE_KEYS))) throw new Error('Editing would have changed other page settings, so nothing was saved.');
         if (!same(isObject(b.pages) ? b.pages.home : undefined, isObject(a.pages) ? a.pages.home : undefined)) throw new Error('The home page setting must not change.');
         PAGE_KEYS.forEach(function (key) {
@@ -214,6 +258,15 @@
         ['name', 'description'].forEach(function (k) {
             if (typeof wanted[k] === 'string' && (isObject(a.site) ? a.site[k] || '' : '') !== wanted[k]) throw new Error('The ' + k + ' did not come out as asked, so nothing was saved.');
         });
+        if (wanted.language && typeof wanted.language.default === 'string' && Array.isArray(wanted.language.available)) {
+            var got = langSettings(a), W2 = wanted.language;
+            var wantAv2 = W2.available.indexOf(W2.default) < 0 ? [W2.default].concat(W2.available) : W2.available;
+            if (got.default !== W2.default || !sameSet(got.available, wantAv2)) throw new Error('The language settings did not come out as asked, so nothing was saved.');
+        }
+        if (wanted.style && typeof wanted.style.id === 'string') {
+            if (styleId(a) !== wanted.style.id) throw new Error('The style did not come out as asked, so nothing was saved.');
+            if (wanted.style.id !== 'classic' && wanted.style.hasTexture && typeof wanted.style.texture === 'boolean' && styleTexture(a) !== wanted.style.texture) throw new Error('The paper texture did not come out as asked, so nothing was saved.');
+        }
         if (typeof wanted.channel === 'string' && ((isObject(a.engine) ? a.engine.channel : null) || 'stable') !== wanted.channel) throw new Error('The channel did not come out as asked, so nothing was saved.');
         return a;
     }
@@ -324,8 +377,23 @@
         function wanted() {
             var pages = {};
             (ui.switches || []).forEach(function (s) { pages[s.key] = s.input.checked; });
-            return { pages: pages, name: ui.name ? ui.name.value : '', description: ui.tagline ? ui.tagline.value : '', channel: ui.channel ? ui.channel.value : '' };
+            var w = { pages: pages, name: ui.name ? ui.name.value : '', description: ui.tagline ? ui.tagline.value : '', channel: ui.channel ? ui.channel.value : '' };
+            if (ui.langDefault) {
+                var names = {};
+                data.language.have.forEach(function (c) { names[c.code] = c.name; });
+                w.language = { default: ui.langDefault.value, names: names, available: (ui.langBoxes || []).filter(function (b) { return b.input.checked; }).map(function (b) { return b.code; }) };
+            }
+            if (S.styleSel) {
+                var tn = {}, t = themeOf(S.styleSel);
+                data.style.themes.forEach(function (x) { tn[x.id] = x.name; });
+                w.style = { id: S.styleSel, names: tn, hasTexture: !!(t && t.options && t.options.texture), texture: S.styleTexture };
+            }
+            return w;
         }
+
+        function themeOf(id) { return data.style.themes.filter(function (t) { return t.id === id; })[0] || null; }
+        function slug(name) { return String(name).toLowerCase().replace(/ /g, '-'); }
+        function fam(name) { return '"hf-' + slug(name) + '", "' + name + '", Georgia, serif'; }
 
         function drawAccount() {
             var a = ui.account;
@@ -395,6 +463,8 @@
             f.appendChild(h('div', { class: 'ad-field' }, [h('label', { for: 'ad-name', text: 'Site title' }), ui.name]));
             f.appendChild(h('div', { class: 'ad-field' }, [h('label', { for: 'ad-tagline', text: 'Tagline' }), ui.tagline,
                 h('span', { class: 'ad-note', text: 'Saved as site.description. Pages show it only if the site\'s own pages or theme use it.' })]));
+            drawLanguage(f, ro);
+            drawStyle(f, ro);
             ui.channel = h('select', { id: 'ad-channel', disabled: ro }, data.channels.map(function (c) { return h('option', { value: c, text: c }); }));
             ui.channel.value = eng.channel || 'stable';
             var chNote = eng.version ? 'This site is pinned to engine ' + eng.version + ', which overrides the channel. Remove engine.version in site.config.json to follow the channel.' : 'stable is the default. beta and canary get new engine versions first.';
@@ -405,6 +475,131 @@
             f.appendChild(ui.problems);
             if (!ro) f.appendChild(h('div', { class: 'ad-actions' }, [ui.save]));
             onInput();
+        }
+
+
+        /* ---------------------------------------------------------- language */
+        function syncLang() {
+            var d = ui.langDefault.value;
+            (ui.langBoxes || []).forEach(function (b) {
+                if (b.code === d) b.input.checked = true;
+                b.input.disabled = !S.canWrite || b.code === d;
+            });
+        }
+        function drawLanguage(f, ro) {
+            var cur = langSettings(S.cfg || { language: { default: data.language.default, available: data.language.available } });
+            var fs = h('fieldset', { class: 'ad-set ad-lang' }, [h('legend', { text: 'Language' })]);
+            ui.langDefault = h('select', { id: 'ad-lang-default', disabled: ro }, data.language.have.map(function (c) { return h('option', { value: c.code, text: c.name }); }));
+            ui.langDefault.value = cur.default;
+            fs.appendChild(h('div', { class: 'ad-field' }, [h('label', { for: 'ad-lang-default', text: 'Default language' }), ui.langDefault,
+                h('span', { class: 'ad-note', text: 'The language of the engine\'s own words (menus, buttons, dates) until a visitor chooses another. The site\'s own text stays as written.' })]));
+            ui.langBoxes = [];
+            fs.appendChild(h('p', { class: 'ad-sublabel', id: 'ad-lang-av', text: 'Languages visitors can choose' }));
+            var group = h('div', { class: 'ad-langs', role: 'group', 'aria-labelledby': 'ad-lang-av' });
+            data.language.have.forEach(function (c) {
+                var input = h('input', { type: 'checkbox', id: 'ad-lang-' + c.code, value: c.code });
+                input.checked = cur.available.indexOf(c.code) >= 0;
+                input.addEventListener('change', onInput);
+                ui.langBoxes.push({ code: c.code, input: input });
+                group.appendChild(h('label', { class: 'ad-check', for: 'ad-lang-' + c.code }, [input, ' ' + c.name]));
+            });
+            fs.appendChild(group);
+            fs.appendChild(h('span', { class: 'ad-note', text: 'With more than one, the navigation bar shows a switcher and the visitor\'s choice is kept in their browser. The style below does not depend on the language.' }));
+            ui.langDefault.addEventListener('change', function () { syncLang(); onInput(); });
+            f.appendChild(fs);
+            syncLang();
+        }
+
+        /* ---------------------------------------------------------- site style */
+        function savedStyle() { return S.cfg ? styleId(S.cfg) : data.style.saved; }
+        function savedTexture() { return S.cfg ? styleTexture(S.cfg) : data.style.texture; }
+
+        function previewNow() {
+            var H = win.FamilyHeritage;
+            if (!H) return;
+            var t = themeOf(S.styleSel), hasTex = !!(t && t.options && t.options.texture);
+            var tex = hasTex ? S.styleTexture : undefined;
+            if (S.styleSel === savedStyle() && tex === savedTexture()) tex = undefined;
+            H.preview(S.styleSel, { texture: tex, admin: win.location.href });
+        }
+
+        function syncStyle() {
+            var changed = S.styleSel !== savedStyle() || (!!(themeOf(S.styleSel) && themeOf(S.styleSel).options.texture) && S.styleTexture !== savedTexture());
+            (ui.styleCards || []).forEach(function (c) {
+                c.input.checked = c.id === S.styleSel;
+                c.card.classList.toggle('is-picked', c.id === S.styleSel);
+                c.card.classList.toggle('is-saved', c.id === savedStyle());
+            });
+            var t = themeOf(S.styleSel), hasTex = !!(t && t.options && t.options.texture);
+            ui.texRow.hidden = !hasTex;
+            ui.tex.checked = S.styleTexture;
+            ui.styleBar.hidden = !changed;
+            ui.styleApply.disabled = !S.canWrite || !S.cfg;
+            ui.styleSay.textContent = changed
+                ? 'Trying the ' + (t ? t.name : S.styleSel) + ' style on every page of this site, in this browser tab only. Nothing is saved yet.' + (S.canWrite ? '' : ' Saving needs a token with write access (sign in above).')
+                : '';
+        }
+
+        function drawStyle(f, ro) {
+            var st = data.style, sg = st.suggestion, H = win.FamilyHeritage;
+            var prev = H && H.previewing ? H.previewing() : null;
+            if (!S.styleTouched) {
+                S.styleSel = prev ? prev.id : savedStyle();
+                S.styleTexture = prev && typeof prev.texture === 'boolean' ? prev.texture : savedTexture();
+            }
+            if (!themeOf(S.styleSel)) S.styleSel = 'classic';
+            var fs = h('fieldset', { class: 'ad-set ad-style' }, [h('legend', { id: 'ad-style-h', text: 'Site style' })]);
+            fs.appendChild(h('p', { class: 'ad-note ad-style-lede', text: 'A heritage style changes the fonts, colours, ornaments and the map\'s colours on every page. Choose one to try it on the real site. Nothing changes for visitors until you apply it.' }));
+            if (sg) {
+                var line = sg.reason;
+                if (sg.mixed && sg.ranked && sg.ranked.length > 1) line += ' Closest matches: ' + sg.ranked.map(function (r) { return r.name + ' ' + r.percent + '%'; }).join(', ') + '.';
+                fs.appendChild(h('p', { class: 'ad-suggest', text: line }));
+            }
+            var grid = h('div', { class: 'ad-styles', role: 'radiogroup', 'aria-labelledby': 'ad-style-h' });
+            ui.styleCards = [];
+            st.themes.forEach(function (t) {
+                var input = h('input', { type: 'radio', name: 'ad-style', id: 'ad-style-' + t.id, value: t.id, class: 'ad-style-in' });
+                var mock = h('span', { class: 'ad-mock', 'aria-hidden': 'true' }, [
+                    h('span', { class: 'ad-mock-bar' }, [h('span', { class: 'ad-mock-title', text: 'Family name' })]),
+                    h('span', { class: 'ad-mock-body' }, [h('span', { class: 'ad-mock-rule' }), h('span', { class: 'ad-mock-pin' }), h('span', { class: 'ad-mock-chip' })])]);
+                ['paper', 'ink', 'accent', 'gold', 'line'].forEach(function (k) { mock.style.setProperty('--sw-' + k, t.swatches[k]); });
+                mock.firstChild.firstChild.style.fontFamily = fam(t.fonts.heading);
+                var sw = h('span', { class: 'ad-swatches', 'aria-hidden': 'true' }, ['paper', 'ink', 'accent', 'gold', 'line'].map(function (k) {
+                    var d = h('span', { class: 'ad-sw' }); d.style.setProperty('background', t.swatches[k]); return d; }));
+                var name = h('span', { class: 'ad-style-name', text: t.name });
+                name.style.fontFamily = fam(t.fonts.heading);
+                var badge = null;
+                if (sg && sg.suggested === t.id) badge = h('span', { class: 'ad-badge' }, ['Suggested for this family' + (sg.mixed && sg.ranked[0] ? ', ' + sg.ranked[0].percent + '%' : '')]);
+                else if (sg && sg.mixed) { var r = sg.ranked.filter(function (x) { return x.id === t.id; })[0]; if (r) badge = h('span', { class: 'ad-badge ad-badge-soft' }, ['Also fits, ' + r.percent + '%']); }
+                var card = h('label', { class: 'ad-style-card', for: input.id }, [input, mock, name, badge, h('span', { class: 'ad-style-blurb', text: t.blurb }), h('span', { class: 'ad-style-fonts', text: t.fonts.heading === t.fonts.body ? t.fonts.heading : t.fonts.heading + ' and ' + t.fonts.body }), sw]);
+                input.addEventListener('change', function () {
+                    S.styleTouched = true; S.styleSel = t.id; S.styleTexture = savedTexture() === false && t.id !== savedStyle() ? true : S.styleTexture;
+                    syncStyle(); previewNow(); onInput();
+                });
+                ui.styleCards.push({ id: t.id, input: input, card: card });
+                grid.appendChild(card);
+            });
+            fs.appendChild(grid);
+            ui.tex = h('input', { type: 'checkbox', id: 'ad-style-texture' });
+            ui.texRow = h('div', { class: 'ad-opt' }, [h('label', { class: 'ad-check', for: 'ad-style-texture' }, [ui.tex, ' Paper texture']),
+                h('span', { class: 'ad-note', text: 'A light paper grain behind the pages. It is off for visitors who ask their device for less motion or to save data.' })]);
+            ui.tex.addEventListener('change', function () { S.styleTouched = true; S.styleTexture = ui.tex.checked; syncStyle(); previewNow(); onInput(); });
+            fs.appendChild(ui.texRow);
+            ui.styleSay = h('p', { class: 'ad-say', role: 'status' });
+            ui.styleApply = h('button', { type: 'button', class: 'ad-btn ad-btn-main', text: 'Apply this style' });
+            ui.styleCancel = h('button', { type: 'button', class: 'ad-btn ad-btn-quiet', text: 'Cancel' });
+            ui.styleApply.addEventListener('click', function () { review(); });
+            ui.styleCancel.addEventListener('click', function () {
+                S.styleTouched = false; S.styleSel = savedStyle(); S.styleTexture = savedTexture();
+                if (H) H.stopPreview();
+                syncStyle(); onInput();
+            });
+            ui.styleBar = h('div', { class: 'ad-stylebar', hidden: true }, [ui.styleSay, h('div', { class: 'ad-actions' }, [ui.styleApply, ui.styleCancel])]);
+            fs.appendChild(ui.styleBar);
+            f.appendChild(fs);
+            syncStyle();
+            // every style's fonts are on hand so the cards show their own heading face
+            if (H && H.registry) H.registry().then(function (reg) { reg.themes.forEach(function (t) { H.themeSheet(t).catch(function () { /* the card falls back to a serif */ }); }); }, function () { /* no styles to preview */ });
         }
 
         function currentCfg() { return S.cfg || {}; }
@@ -497,7 +692,7 @@
             gh.call('PUT', '/repos/' + S.repo + '/contents/' + pathPart(data.configPath), { message: msg + ' (from /admin)', content: b64encode(S.pending.text), sha: S.sha, branch: S.branch }).then(function (res) {
                 S.busy = false;
                 if (res.status !== 200 && res.status !== 201) { setOut(explain(res, 'save the settings'), 'error'); onInput(); return; }
-                S.text = S.pending.text; S.cfg = JSON.parse(S.text); S.pending = null;
+                S.text = S.pending.text; S.cfg = JSON.parse(S.text); S.pending = null; S.styleTouched = false;
                 S.sha = res.body && res.body.content ? res.body.content.sha : S.sha;
                 var commit = res.body && res.body.commit ? res.body.commit : {};
                 drawForm();
@@ -524,5 +719,5 @@
     }
 
     return { pageState: pageState, pageOn: pageOn, setValue: setValue, plan: plan, apply: apply, verify: verify, edit: edit,
-             checkWords: checkWords, guessRepo: guessRepo, start: start, PAGE_KEYS: PAGE_KEYS };
+             checkWords: checkWords, guessRepo: guessRepo, start: start, PAGE_KEYS: PAGE_KEYS, langSettings: langSettings, styleId: styleId, styleTexture: styleTexture };
 });

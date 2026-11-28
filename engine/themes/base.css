@@ -1,0 +1,132 @@
+/* Heritage themes: the shared rules.
+ *
+ * A theme file (german.css and the others) sets about 40 values on :root[data-heritage="<id>"]: nine palette roles
+ * (--h-paper, --h-card, --h-ink, --h-accent, --h-gold, --h-goldtext, --h-brown, --h-line, --h-green, each with an
+ * -rgb twin for see-through tints), the map's colours, two fonts, the shapes and two ornaments. Everything below is
+ * the same for every theme: it works out the shades from those roles, passes them to the names the engine's pages
+ * and a site's own stylesheet already use, and draws the dividers and the texture. No theme changes a component.
+ *
+ * Nothing here applies unless <html data-heritage="..."> is set, so a site without a style looks as it always did.
+ * See docs/themes.md.
+ */
+:root[data-heritage] {
+    /* shades, worked out from the roles (a theme never sets these) */
+    --h-paper-2: color-mix(in srgb, var(--h-paper) 93%, var(--h-ink));
+    --h-paper-3: color-mix(in srgb, var(--h-paper) 86%, var(--h-ink));
+    --h-ink-2: color-mix(in srgb, var(--h-ink) 85%, var(--h-paper));
+    --h-ink-3: color-mix(in srgb, var(--h-ink) 65%, var(--h-paper));
+    --h-ink-deep: color-mix(in srgb, var(--h-ink) 80%, black);
+    --h-accent-deep: color-mix(in srgb, var(--h-accent) 55%, black);
+    --h-accent-light: color-mix(in srgb, var(--h-accent) 85%, white);
+    --h-on-dark: var(--h-card);
+    --h-gold-pale: color-mix(in srgb, var(--h-gold) 22%, var(--h-card));
+    --h-gold-soft: color-mix(in srgb, var(--h-gold) 70%, var(--h-card));
+    --h-line-strong: color-mix(in srgb, var(--h-line) 35%, var(--h-brown));
+    --h-green-pale: color-mix(in srgb, var(--h-green) 12%, var(--h-card));
+    --h-green-deep: color-mix(in srgb, var(--h-green) 55%, black);
+
+    /* the names the engine's own pages read (tokens.css) and the ones the five sites' stylesheets define.
+       This block has more weight than a site's own :root, so the theme wins whatever the order. */
+    --gold: var(--h-gold-soft);
+    --gold-dark: var(--h-goldtext);
+    --gold-deep: var(--h-goldtext);
+    --gold-light: var(--h-gold-pale);
+    --cream: var(--h-paper);
+    --cream-dark: var(--h-paper-2);
+    --parchment: var(--h-paper-2);
+    --paper: var(--h-paper);
+    --paper-light: var(--h-card);
+    --paper-dark: var(--h-paper-3);
+    --paper-edge: var(--h-line);
+    --ink: var(--h-ink);
+    --ink-light: var(--h-ink-2);
+    --ink-soft: var(--h-ink-2);
+    --ink-faded: var(--h-brown);
+    --sepia: var(--h-brown);
+    --border: var(--h-line);
+    --burgundy: var(--h-accent);
+    --burgundy-dark: var(--h-accent-deep);
+    --rosso: var(--h-accent);
+    --rosso-dark: var(--h-accent-deep);
+    --verde: var(--h-green);
+    --verde-dark: var(--h-green-deep);
+    --font-display: var(--h-font-heading);
+    --font-body: var(--h-font-body);
+    --font-accent: var(--h-font-body);
+
+    /* shape */
+    --pc-radius: var(--h-radius);
+    --fm-radius: var(--h-radius);
+    font-synthesis-weight: none;        /* a face with one weight is never faked bold */
+}
+
+/* Stuart sets his own copies of the palette and fonts on his own elements */
+:root[data-heritage] :is(.st, .st-panel, .st-launch, .st-tip) {
+    --st-display: var(--h-font-heading);
+    --st-text: var(--h-font-body);
+}
+
+/* headings take the theme's weight and spacing */
+:root[data-heritage] :is(h1, h2, h3, .fm-title h1, .cp-head h1, .tl-head h1) {
+    font-weight: var(--h-heading-weight);
+    letter-spacing: var(--h-heading-spacing);
+}
+/* the one place a theme may use its accent face (German: blackletter): the page's own title, never body text */
+:root[data-heritage] :is(.fm-title h1, .tl-head h1, .cp-head h1, .tc-head h1) {
+    font-family: var(--h-font-title, var(--h-font-heading));
+    text-transform: none;
+}
+
+/* buttons and pins */
+:root[data-heritage] :is(.fm-modes button, .fm-seg button, .fm-tools button, .tc-head button, .st-send, .st-chip) {
+    border-radius: var(--h-radius-btn);
+}
+:root[data-heritage] .mk-med { border-radius: var(--h-pin-radius); }
+
+/* dividers: under the navigation bar on every page, and under the title of the map and of the long pages */
+:root[data-heritage] .main-nav::after,
+:root[data-heritage] .fm-bar::after,
+:root[data-heritage] :is(.tl-head, .cp-head)::after {
+    content: '';
+    display: block;
+    height: var(--h-divider-h);
+    background: var(--h-divider) center / var(--h-divider-w) var(--h-divider-h) var(--h-divider-repeat);
+    pointer-events: none;
+}
+:root[data-heritage] .main-nav { position: relative; }
+:root[data-heritage] .main-nav::after { position: absolute; left: 0; right: 0; bottom: calc(var(--h-divider-h) * -1); z-index: 1; }
+:root[data-heritage] .fm-bar::after { border-top: 0; left: 0; right: 0; bottom: calc(var(--h-divider-h) * -1); }
+:root[data-heritage] :is(.tl-head, .cp-head)::after { margin-top: .9rem; }
+
+/* texture: behind everything, never over a control */
+:root[data-heritage]:not([data-h-texture="off"]) body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--h-texture);
+}
+@media (prefers-reduced-data: reduce) {
+    :root[data-heritage] body::before, :root[data-heritage] :is(.main-nav, .fm-bar, .tl-head, .cp-head)::after { display: none; }
+}
+/* the same for a browser that only says so through the Save-Data setting (heritage.js sets data-h-save) */
+:root[data-heritage][data-h-save] body::before, :root[data-heritage][data-h-save] :is(.main-nav, .fm-bar, .tl-head, .cp-head)::after { display: none; }
+
+/* the colour change when a style is tried or applied: 200 ms, colour only, so nothing moves */
+:root.h-fade, :root.h-fade *, :root.h-fade *::before, :root.h-fade *::after {
+    transition: background-color .2s ease-out, color .2s ease-out, border-color .2s ease-out, fill .2s ease-out, stroke .2s ease-out !important;
+}
+@media (prefers-reduced-motion: reduce) {
+    :root.h-fade, :root.h-fade *, :root.h-fade *::before, :root.h-fade *::after { transition: none !important; }
+}
+
+/* the bar that says a style is being tried (heritage.js), on every page of the tab that is trying it */
+#h-preview {
+    position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 9000;
+    display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; justify-content: center;
+    max-width: calc(100vw - 24px); padding: .55rem 1rem; border-radius: 999px;
+    background: #1f2430; color: #ffffff; font: 600 14px/1.3 system-ui, sans-serif; box-shadow: 0 4px 18px rgba(0, 0, 0, .3);
+}
+#h-preview a, #h-preview button { color: #ffffff; background: none; border: 0; padding: 0; font: inherit; text-decoration: underline; cursor: pointer; }
+#h-preview a:focus-visible, #h-preview button:focus-visible { outline: 2px solid #ffffff; outline-offset: 3px; }

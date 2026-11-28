@@ -434,8 +434,10 @@ def check_links_to_off_pages(site, cfg):
 
 def check_features(site, cfg):
     """The settings of the optional features that need more than the schema (private access, visitor identity)."""
-    import access
+    import access, heritage
     errors, warnings = access.check(cfg, site)
+    e2, w2 = heritage.check(cfg)
+    errors, warnings = errors + e2, warnings + w2
     return {'errors': errors, 'warnings': warnings}
 
 

@@ -5,11 +5,11 @@
  * theme restyles them as it restyles the rest. Nothing here depends on the site's own styles.
  */
 .cp-body {
-    --cp-ink: var(--ink, #1a1a2e);
+    --cp-ink: var(--ink, var(--h-ink, #1a1a2e));
     --cp-muted: color-mix(in srgb, var(--cp-ink) 64%, transparent);
-    --cp-paper: var(--cream, #fdf8f0);
-    --cp-card: color-mix(in srgb, #ffffff 72%, var(--cp-paper));
-    --cp-accent: var(--gold-dark, #8a6a2f);
+    --cp-paper: var(--cream, var(--h-paper, #fdf8f0));
+    --cp-card: color-mix(in srgb, var(--h-card, #ffffff) 72%, var(--cp-paper));
+    --cp-accent: var(--gold-dark, var(--h-brown, #8a6a2f));
     --cp-line: color-mix(in srgb, var(--cp-accent) 26%, var(--cp-paper));
     margin: 0;
     background: var(--cp-paper);
@@ -18,8 +18,8 @@
     font-size: 1.125rem;
     line-height: 1.65;
 }
-.cp-skip { position: absolute; left: 1rem; top: -4rem; z-index: 3000; background: var(--cp-accent); color: #fff; padding: .5rem .9rem; border-radius: 6px; text-decoration: none; }
-.cp-skip:focus { top: .6rem; outline: 3px solid var(--gold, #d4af37); outline-offset: 2px; }
+.cp-skip { position: absolute; left: 1rem; top: -4rem; z-index: 3000; background: var(--cp-accent); color: var(--h-on-dark, #fff); padding: .5rem .9rem; border-radius: 6px; text-decoration: none; }
+.cp-skip:focus { top: .6rem; outline: 3px solid var(--gold, var(--h-gold-soft, #d4af37)); outline-offset: 2px; }
 .cp-body *, .cp-body *::before, .cp-body *::after { box-sizing: border-box; }
 .cp-body .main-nav { position: sticky; top: 0; }
 .cp-page { max-width: 62rem; margin: 0 auto; padding: 2.6rem 1.25rem 4rem; }

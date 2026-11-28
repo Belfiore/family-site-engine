@@ -14,7 +14,7 @@ On the site's own pages the build:
 import html, os, re
 from urllib.parse import urlparse
 
-import i18n
+import heritage, i18n
 
 ENGINE_CSS_GONE = {'nav.css', 'stuart.css', 'tree-canvas.css', 'map.css', 'tokens.css', 'source-preview.css'}
 ENGINE_JS_GONE = {'stuart.js', 'nav.js', 'config.js', 'tree-canvas.js', 'map-data.js', 'map-ui.js', 'map-timeline.js',
@@ -164,6 +164,7 @@ def tail_css(cfg, ctx):
     if stuart_on(cfg): out.append('<link rel="stylesheet" href="%sstuart.css">' % ctx['base'])
     if ctx.get('theme'): out.append('<link rel="stylesheet" href="%s">' % ctx['theme'])
     out.append('<link rel="stylesheet" href="%snav.css">' % ctx['base'])
+    out += heritage.head_tags(cfg, ctx)      # a heritage style goes last so it wins; nothing for a site without one
     return out
 
 
@@ -276,7 +277,7 @@ def render_engine_page(kind, template, cfg, ctx, extra=None):
         out = out.replace('{{%s}}' % k, v)
     left = re.findall(r'\{\{[a-zA-Z]+\}\}', out)
     if left: raise SystemExit('template %s: no value for %s' % (kind, ', '.join(sorted(set(left)))))
-    return out
+    return heritage.mark_html(out, cfg)
 
 
 # ------------------------------------------------------------------ the site's own pages
@@ -343,7 +344,7 @@ def process_site_page(src, filename, cfg, ctx, widget_opts):
     j = src.lower().rfind('</body>')
     if j >= 0:
         src = src[:j] + '\n'.join(tail) + '\n' + src[j:]
-    return src
+    return heritage.mark_html(src, cfg)
 
 
 # ------------------------------------------------------------------ the sitemap

@@ -15,13 +15,13 @@ The shared engine behind three public family history sites. Each site keeps its 
 
 | Path | What it is |
 | --- | --- |
-| `engine/` | Everything the browser runs (the words are in `engine/i18n/en.json` and `de.json`): tree, map, Stuart, nav, lightbox, default tokens, MapLibre, fonts, `kinship.js` (how two people are related: the only code that works it out), `map-viewpoint.js`, `source-preview.js` and `.css`, and `visitor.js`, `visitor-match.js`, `visitor.css` ("Who are you?", copied only when `visitor.enabled`) |
+| `engine/` | Everything the browser runs (the words are in `engine/i18n/en.json` and `de.json`): `heritage.js` and `themes/` (the heritage styles: `base.css`, `registry.json`, one css file for each style, self-hosted `fonts/`), tree, map, Stuart, nav, lightbox, default tokens, MapLibre, fonts, `kinship.js` (how two people are related: the only code that works it out), `map-viewpoint.js`, `source-preview.js` and `.css`, and `visitor.js`, `visitor-match.js`, `visitor.css` ("Who are you?", copied only when `visitor.enabled`) |
 | `templates/` | `tree.html`, `map.html`, `ask.html`, `timeline.html`, filled in from a site's settings; `gate-worker.js`, `gate.html`, `gate.js` (the password gate, built into `_worker.js` only when `access.enabled`) |
-| `build/` | `build_site.py` (the build), `i18n.py` (languages: the dictionaries written into the scripts, dates, plurals), `validate.py`, `migrate.py`, `archive.py`, `pages.py`, `sitecfg.py`, and the Discovery Timeline: `discoveries.py` (detection), `timeline.py` (history between builds), `timeline_page.py` (the page), `previous_site.py` (fetches the live history), and private access: `access.py` (settings checks for `access` and `visitor`, and the gate build) |
+| `build/` | `build_site.py` (the build), `i18n.py` (languages: the dictionaries written into the scripts, dates, plurals), `validate.py`, `migrate.py`, `archive.py`, `pages.py`, `sitecfg.py`, and the Discovery Timeline: `discoveries.py` (detection), `timeline.py` (history between builds), `timeline_page.py` (the page), `previous_site.py` (fetches the live history), and private access: `access.py` (settings checks for `access` and `visitor`, and the gate build), and heritage styles: `heritage.py` (the setting, the files a site is sent, the suggestion from a family's data), `admin_page.py` (the settings page's data) |
 | `schema/` | `family-data.schema.json` and `site-config.schema.json` |
 | `sample/` | Made-up family used by tests and as a starter site |
-| `tests/` | `test_build.py` and `test_discoveries.py` (Python), `test_access.py` (Python), `test_i18n.py` (Python), `check-i18n.js` (Playwright, with `i18n_fixtures.py`), `check-sample.js`, `check-timeline.js`, `check-gate.js`, `check-visitor.js`, `check-access.js` and `check-map-relations.js` (Playwright and Node), `timeline_fixtures.py` (seven made-up versions of a family), `access_fixtures.py` (the sample with access and visitor on, plus extra made-up people), `gate-server.js` (runs the real `_worker.js` locally), `helpers.js` |
-| `tools/` | Map fonts and styles, Street View viewpoints, `backfill-discoveries.py` |
+| `tests/` | `test_build.py` and `test_discoveries.py` (Python), `test_access.py` (Python), `test_i18n.py` (Python), `check-i18n.js` (Playwright, with `i18n_fixtures.py`), `check-sample.js`, `check-timeline.js`, `check-gate.js`, `check-visitor.js`, `check-access.js` and `check-map-relations.js` (Playwright and Node), `timeline_fixtures.py` (seven made-up versions of a family), `access_fixtures.py` (the sample with access and visitor on, plus extra made-up people), `gate-server.js` (runs the real `_worker.js` locally), `helpers.js`, `test_themes.py` (heritage styles, with `themes_fixtures.py`), `check-themes.js` |
+| `tools/` | Map fonts and styles, Street View viewpoints, `backfill-discoveries.py`, `build-theme-fonts.py` (copies the heritage styles' free fonts from `@fontsource`) |
 | `channels.json` | Which engine version each channel (canary, beta, stable) builds with |
 | `sites.json` | Sites to notify when `channels.json` changes |
 | `VERSION`, `CHANGELOG.md` | Current version and release notes |
@@ -43,7 +43,7 @@ Because the workflow is pinned by tag in each site's `deploy.yml` and `check.yml
 
 ## Site settings
 
-`site.config.json` is validated against `schema/site-config.schema.json` (`additionalProperties: false` nearly everywhere). Required: `schemaVersion` (const 1), `site` (with `name`), `nav`. Top-level sections: `engine` (`channel` of stable, beta or canary, or `version` pin which overrides the channel), `site`, `pages` (home, stories, tree, map, records, discoveries, ask; see Page toggles below), `admin`, `nav`, `head`, `theme` (CSS custom properties written to `site-theme.css`), `data`, `tree`, `map`, `stuart`, `widget`, `publish`, `process`. Document every new key in `docs/site-config.md` and add it to the schema. A new key must be optional.
+`site.config.json` is validated against `schema/site-config.schema.json` (`additionalProperties: false` nearly everywhere). Required: `schemaVersion` (const 1), `site` (with `name`), `nav`. Top-level sections: `engine` (`channel` of stable, beta or canary, or `version` pin which overrides the channel), `site`, `pages` (home, stories, tree, map, records, discoveries, ask; see Page toggles below), `admin`, `style`, `nav`, `head`, `theme` (CSS custom properties written to `site-theme.css`), `data`, `tree`, `map`, `stuart`, `widget`, `publish`, `process`. Document every new key in `docs/site-config.md` and add it to the schema. A new key must be optional.
 
 ## Releases
 
@@ -83,6 +83,8 @@ node tests/check-map-relations.js       # the map's Relationships to, no Street 
 python3 tests/test_pages.py
 node tests/check-admin-edit.js
 node tests/check-admin.js               # SHOTS=dir saves screenshots of /admin and a nav with pages off
+python3 tests/test_themes.py            # heritage styles: files, tokens, WCAG AA, the suggestion and its privacy cases
+node tests/check-themes.js              # every page in every style, desktop and phone; SHOTS=dir for screenshots
 ```
 
 ## Previewing an engine change against a real site
@@ -179,6 +181,19 @@ Docs: `docs/site-config.md#pages`, `docs/stories.md`, `docs/admin.md`. What to k
 - **The settings page is static and opt-in** (`admin.enabled`). `noindex`, no nav, no sitemap, no Stuart. The token lives only in `sessionStorage` and goes only to `api.github.com` in an `Authorization` header; never log it, never put it in a URL, never commit one. The CSP in `templates/admin.html` allows no other host. Saving edits `site.config.json` in place and `verify()` refuses any change outside the settings the page owns.
 - **The switch rules exist twice** (`build/sitecfg.py`, `engine/admin.js`). `tests/fixtures/pages-cases.json` is the shared set of cases; add a case there whenever the rules change, and both test suites must pass.
 - **The pages block has a schema** (`schema/pages.schema.json`, also inlined in `site-config.schema.json`); keep them in step. CI runs the page tests.
+
+## Heritage styles
+
+Optional (`style.heritage`, default none, which is the Classic Archive). Full design in `docs/themes.md`. What to keep true:
+
+- **Off means unchanged.** A site with no `style` (or `classic`) and no settings page has no `data-heritage` attribute, no `themes/` folder, no `heritage.js` and no extra tag in any page. Its pages, data and `site-config.js` build byte for byte as before. Only `engine/<version>/*.css` and `map-ui.js` differ, because they now read tokens: `diff -r` a real site against the base, and compare screenshots.
+- **The engine's CSS reads tokens with the old value as fallback**: `var(--h-accent, #8b0000)`. Never write a bare colour into engine CSS for something a style should change, and never change a fallback.
+- **A style is data, not code.** One `engine/themes/<id>.css` of values plus an entry in `registry.json` (and the schema's list). No per-style component rules, no per-style JavaScript. Shared rules live in `themes/base.css`.
+- **Every style passes WCAG AA** (`tests/test_themes.py` computes it from the files). Change a colour, run it.
+- **Classic is no attribute at all.** The aliases in `base.css` would otherwise override a site's own colours.
+- **The suggestion only suggests.** It never writes a setting, reads no living person, no hidden region and no placeholder, returns no name, and never suggests the Jewish and Ashkenazi style (nothing in the data can say it). Add a case to `Suggestion` in `tests/test_themes.py` when changing it.
+- **Ornaments and textures are small inline SVG or CSS**, off for reduced data and Save-Data. No flags, no stereotype imagery, no raster images, no fonts from another host.
+- **The settings page owns `language.*` and `style.*` too.** `verify()` in `engine/admin.js` refuses a change to any other member.
 
 ## Style
 

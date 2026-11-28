@@ -28,7 +28,7 @@ import argparse, datetime, fnmatch, hashlib, json, os, shutil, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ENGINE_ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-import access, admin_page, archive, i18n, pages, records_page, sitecfg, stories, timeline, validate  # noqa: E402
+import access, admin_page, archive, heritage, i18n, pages, records_page, sitecfg, stories, timeline, validate  # noqa: E402
 
 ALWAYS_SKIP = {'.git', '.github', 'node_modules', '.DS_Store', '_site', 'site.config.json', '__pycache__'}
 
@@ -148,8 +148,12 @@ def main(argv=None):
     # (the files of the Stories and Records pages and of the settings page go only to a site that has that page)
     if not (cfg['pages'].get('stories') or cfg['pages'].get('records')): not_sent.append('content-pages.css')
     if not cfg.get('_admin'): not_sent += ['admin.js', 'admin.css']
+    # (the heritage styles, their fonts and heritage.js go only to a site that applied a style or has the settings page)
+    if not heritage.wanted(cfg): not_sent.append('heritage.js')
+    if not cfg.get('_admin'): not_sent.append('themes')       # a site with only a style gets just that style's files, below
     shutil.copytree(os.path.join(ENGINE_ROOT, 'engine'), os.path.join(out, base), dirs_exist_ok=True,
                     ignore=shutil.ignore_patterns(*not_sent))
+    if cfg.get('_style') and not cfg.get('_admin'): heritage.copy_assets(os.path.join(ENGINE_ROOT, 'engine'), os.path.join(out, base), cfg)
     i18n.bundle(os.path.join(out, base), cfg)
 
     # 4b. the Discovery Timeline: what is new since the last publication
@@ -207,7 +211,7 @@ def main(argv=None):
             tpl = f.read()
         os.makedirs(os.path.join(out, 'admin'), exist_ok=True)
         with open(os.path.join(out, 'admin', 'index.html'), 'w', encoding='utf-8') as f:
-            f.write(admin_page.render(tpl, cfg, ctx, version))
+            f.write(admin_page.render(tpl, cfg, ctx, version, site))
 
     # 8. the site's own pages
     widget = cfg.get('widget') or {}

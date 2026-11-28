@@ -1,0 +1,50 @@
+/* Heritage theme: French. Belle Epoque: Art Nouveau curves in ivory, sage and gilt.
+ * Palette, type, ornaments and map colours only; the shared rules are in base.css.
+ * Fonts: Playfair Display and Lora (SIL Open Font Licence), self-hosted in fonts/. */
+@font-face { font-family: 'hf-playfair-display'; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/playfair-display-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-playfair-display'; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/playfair-display-latin-ext-700-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-playfair-display'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/playfair-display-latin-400-italic.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-playfair-display'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/playfair-display-latin-ext-400-italic.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-lora'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/lora-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-lora'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/lora-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-lora'; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/lora-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-lora'; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/lora-latin-ext-700-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'hf-lora'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/lora-latin-400-italic.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'hf-lora'; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/lora-latin-ext-400-italic.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+
+:root[data-heritage="french"] {
+    /* palette */
+    --h-paper: #f6f1e3; --h-paper-rgb: 246, 241, 227;
+    --h-card: #fcf9f0; --h-card-rgb: 252, 249, 240;
+    --h-ink: #2b2d27; --h-ink-rgb: 43, 45, 39;
+    --h-accent: #4f6b4d; --h-accent-rgb: 79, 107, 77;
+    --h-gold: #a5872b; --h-gold-rgb: 165, 135, 43;
+    --h-goldtext: #725a14; --h-goldtext-rgb: 114, 90, 20;
+    --h-brown: #5c5a4a; --h-brown-rgb: 92, 90, 74;
+    --h-line: #d8d0b5; --h-line-rgb: 216, 208, 181;
+    --h-green: #3d5a45; --h-green-rgb: 61, 90, 69;
+    --h-accent-deep-rgb: 43, 59, 42;
+    /* map: the Atlas style's land, water and roads */
+    --h-map-land: #f2eddb;
+    --h-map-water: #c9d6d0;
+    --h-map-park: #dfe6cc;
+    --h-map-road: #e5dcc0;
+    --h-map-roadmajor: #d6c9a2;
+    --h-map-line: #a9a082;
+    --h-map-label: #33362e;
+    /* type */
+    --h-font-heading: 'hf-playfair-display', 'Playfair Display', Georgia, serif;
+    --h-font-body: 'hf-lora', 'Lora', Georgia, serif;
+    --h-heading-weight: 700;
+    --h-heading-spacing: 0;
+    /* shape */
+    --h-radius: 14px;
+    --h-radius-btn: 999px;
+    --h-pin-radius: 50%;
+    /* ornament and texture (small SVG or CSS; texture off with data-h-texture=off, data saver and reduced data) */
+    --h-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 14' width='240' height='14'%3E%3Cg fill='none' stroke='%23a5872b' stroke-width='1.3' stroke-linecap='round'%3E%3Cpath d='M0 8H78C92 8 94 2 104 2C112 2 114 8 108 9'/%3E%3Cpath d='M240 8H162C148 8 146 2 136 2C128 2 126 8 132 9'/%3E%3C/g%3E%3Ccircle cx='120' cy='7' r='2.4' fill='%234f6b4d'/%3E%3C/svg%3E");
+    --h-divider-repeat: no-repeat;
+    --h-divider-w: 240px;
+    --h-divider-h: 14px;
+    --h-texture: none;
+}

@@ -442,7 +442,8 @@ class TestAdminPage(Case):
         self.ok()
         page = self.site.text('admin', 'index.html')
         self.assertIn('<meta name="robots" content="noindex, nofollow, noarchive">', page)
-        self.assertIn("connect-src https://api.github.com", page)
+        self.assertIn("connect-src 'self' https://api.github.com;", page)          # its own files (the styles) and GitHub, no other host
+        self.assertIn("font-src 'self'", page)
         self.assertIn("script-src 'self'", page)
         self.assertNotIn('main-nav', page)
         self.assertNotIn('stuart', page.lower())
@@ -477,7 +478,7 @@ class TestAdminPage(Case):
         self.ok()
         page = self.site.text('admin', 'index.html')
         self.assertNotIn('<script>alert', page)
-        self.assertEqual(page.count('<script'), 2)
+        self.assertEqual(page.count('<script'), 3)          # the styles' script, the data, the page's script
 
     def test_no_token_or_secret_is_in_the_page_or_the_script(self):
         self.turn_on()

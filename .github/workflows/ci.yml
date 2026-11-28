@@ -38,6 +38,9 @@ jobs:
       - name: Page switches, Stories, Records and Research, the settings page and the pages schema
         run: python3 tests/test_pages.py
 
+      - name: Heritage styles, colours and the suggestion
+        run: python3 tests/test_themes.py
+
       - name: The sample site's data
         run: python3 build/validate.py --site sample
 
@@ -75,3 +78,6 @@ jobs:
 
       - name: The settings page in a browser, against a pretend GitHub
         run: node tests/check-admin.js
+
+      - name: Heritage styles on every page, in a browser
+        run: node tests/check-themes.js
